@@ -315,6 +315,7 @@
                 margin-right: 1rem;
             }
         }
+
         @media (min-width: 1024px) {
             .navbar-container {
                 margin-left: 2rem;
@@ -334,8 +335,11 @@
             justify-content: space-between;
             align-items: center;
         }
+
         @media (min-width: 1024px) {
-            .glass-nav { padding: 0.75rem 1.5rem; }
+            .glass-nav {
+                padding: 0.75rem 1.5rem;
+            }
         }
 
         .nav-brand-group {
@@ -357,8 +361,13 @@
             font-weight: bold;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
+
         @media (min-width: 768px) {
-            .brand-icon { width: 2.5rem; height: 2.5rem; font-size: 1rem; }
+            .brand-icon {
+                width: 2.5rem;
+                height: 2.5rem;
+                font-size: 1rem;
+            }
         }
 
         .brand-text {
@@ -370,15 +379,21 @@
         }
 
         @media (min-width: 640px) {
-            .brand-text { display: block; }
+            .brand-text {
+                display: block;
+            }
         }
+
         @media (min-width: 768px) {
-            .brand-text { font-size: 1.125rem; }
+            .brand-text {
+                font-size: 1.125rem;
+            }
         }
 
         .nav-desktop-menu {
             display: none;
         }
+
         @media (min-width: 768px) {
             .nav-desktop-menu {
                 display: flex;
@@ -428,6 +443,7 @@
             overflow-x: auto;
             gap: 0.25rem;
         }
+
         @media (min-width: 768px) {
             .nav-mobile-menu {
                 display: none;
@@ -448,9 +464,11 @@
             text-align: center;
             white-space: nowrap;
         }
+
         .nav-pill-mobile:hover {
             background: #f3f4f6;
         }
+
         .nav-pill-mobile:active {
             background: #eff6ff;
             color: #2563eb;
@@ -460,9 +478,9 @@
             padding: 0.375rem 0.75rem;
             font-size: 0.75rem;
             font-weight: 700;
-            color: #0f766e;
-            background: #f0fdfa;
-            border: 1px solid #ccfbf1;
+            color: #1d4ed8;
+            background: #eff6ff;
+            border: 1px solid #dbeafe;
             border-radius: 0.5rem;
             text-decoration: none;
             display: flex;
@@ -471,14 +489,16 @@
             transition: all 0.2s ease;
             white-space: nowrap;
         }
+
         @media (min-width: 768px) {
             .switch-app-btn {
                 padding: 0.5rem 1rem;
                 font-size: 0.875rem;
             }
         }
+
         .switch-app-btn:hover {
-            background: #0d9488;
+            background: #2563eb;
             color: white;
         }
 
@@ -488,17 +508,25 @@
             align-items: flex-end;
             margin-right: 0.25rem;
         }
+
         @media (min-width: 768px) {
-            .user-info { margin-right: 0.5rem; }
+            .user-info {
+                margin-right: 0.5rem;
+            }
         }
+
         #nav-user-name {
             font-size: 0.75rem;
             font-weight: 700;
             color: #1f2937;
         }
+
         @media (min-width: 768px) {
-            #nav-user-name { font-size: 0.875rem; }
+            #nav-user-name {
+                font-size: 0.875rem;
+            }
         }
+
         .user-role {
             font-size: 0.5625rem;
             font-weight: 700;
@@ -506,8 +534,11 @@
             color: #3b82f6;
             text-transform: uppercase;
         }
+
         @media (min-width: 768px) {
-            .user-role { font-size: 0.625rem; }
+            .user-role {
+                font-size: 0.625rem;
+            }
         }
 
         .logout-btn {
@@ -523,12 +554,14 @@
             cursor: pointer;
             transition: all 0.2s ease;
         }
+
         @media (min-width: 768px) {
             .logout-btn {
                 width: 2.5rem;
                 height: 2.5rem;
             }
         }
+
         .logout-btn:hover {
             background: #ef4444;
             color: white;
@@ -548,12 +581,18 @@
             align-items: center;
             justify-content: center;
         }
+
         @media (min-width: 768px) {
-            .nav-notify-icon { font-size: 1.1rem; padding: 0.5rem; }
+            .nav-notify-icon {
+                font-size: 1.1rem;
+                padding: 0.5rem;
+            }
         }
+
         .nav-notify-icon:hover {
             background: #f3f4f6;
         }
+
         #nav-notify-badge {
             position: absolute;
             top: 0;
@@ -1277,12 +1316,16 @@
                 <div class="nav-brand-group">
                     <div class="brand-icon"><i class="fa-solid fa-flask"></i></div>
                     <span class="brand-text">Lab Book+</span>
-                    
+
                     <div class="nav-desktop-menu">
-                        <button class="nav-pill active" onclick="app.showView('dashboard-view')" id="tab-desktop-dashboard">Dashboard</button>
-                        <button class="nav-pill" onclick="app.showView('equipment-view')" id="tab-desktop-equipment">Equipments</button>
-                        <button class="nav-pill" onclick="app.showView('data-table-view')" id="tab-desktop-datatable">Data Table</button>
-                        <button class="nav-pill hidden" id="nav-admin-btn" onclick="app.showView('admin-view')">Admin</button>
+                        <button class="nav-pill active" onclick="app.showView('dashboard-view')"
+                            id="tab-desktop-dashboard">Dashboard</button>
+                        <button class="nav-pill" onclick="app.showView('equipment-view')"
+                            id="tab-desktop-equipment">Equipments</button>
+                        <button class="nav-pill" onclick="app.showView('data-table-view')"
+                            id="tab-desktop-datatable">Data Table</button>
+                        <button class="nav-pill hidden" id="nav-admin-btn"
+                            onclick="app.showView('admin-view')">Admin</button>
                     </div>
                 </div>
 
@@ -1293,7 +1336,8 @@
                     </button>
 
                     <a href="CarePlus.html" class="switch-app-btn">
-                        <i class="fa-solid fa-laptop-medical"></i> <span class="hidden sm:inline">Lab Care Plus</span><span class="sm:hidden">LC+</span>
+                        <i class="fa-solid fa-laptop-medical"></i> <span class="hidden sm:inline">Lab Care
+                            Plus</span><span class="sm:hidden">LC+</span>
                     </a>
 
                     <div class="user-info">
@@ -1302,7 +1346,8 @@
                     </div>
 
                     <button class="logout-btn" onclick="app.logout()">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
                             <polyline points="16 17 21 12 16 7"></polyline>
                             <line x1="21" y1="12" x2="9" y2="12"></line>
@@ -1313,10 +1358,14 @@
 
             <!-- Mobile Nav Menu -->
             <div class="nav-mobile-menu">
-                <button class="nav-pill-mobile active-mobile" onclick="app.showView('dashboard-view')" id="tab-mobile-dashboard">📊 Dash</button>
-                <button class="nav-pill-mobile" onclick="app.showView('equipment-view')" id="tab-mobile-equipment">📦 Equip</button>
-                <button class="nav-pill-mobile" onclick="app.showView('data-table-view')" id="tab-mobile-datatable">📑 Data</button>
-                <button class="nav-pill-mobile hidden" id="nav-admin-btn-mobile" onclick="app.showView('admin-view')">⚙️ Admin</button>
+                <button class="nav-pill-mobile active-mobile" onclick="app.showView('dashboard-view')"
+                    id="tab-mobile-dashboard">📊 Dash</button>
+                <button class="nav-pill-mobile" onclick="app.showView('equipment-view')" id="tab-mobile-equipment">📦
+                    Equip</button>
+                <button class="nav-pill-mobile" onclick="app.showView('data-table-view')" id="tab-mobile-datatable">📑
+                    Data</button>
+                <button class="nav-pill-mobile hidden" id="nav-admin-btn-mobile" onclick="app.showView('admin-view')">⚙️
+                    Admin</button>
             </div>
         </nav>
 
@@ -1338,8 +1387,12 @@
                 <form id="login-form" onsubmit="app.login(event)">
                     <div class="form-group">
                         <label>Username</label>
-                        <input type="text" id="login-user" required placeholder="admin@lab.com"
-                            style="background-color: white; border: none; border-radius: 12px; padding: 1rem; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);">
+                        <div style="position: relative; display: flex; align-items: center;">
+                            <input type="text" id="login-user" required placeholder="Username"
+                                style="width: 100%; background-color: white; border: none; border-radius: 12px; padding: 1rem 5.5rem 1rem 1rem; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);">
+                            <span
+                                style="position: absolute; right: 1rem; color: #6b7280; font-weight: 500; pointer-events: none; user-select: none;">@lab.com</span>
+                        </div>
                     </div>
                     <div class="form-group" style="margin-top: 1.5rem;">
                         <label>Password</label>
@@ -1584,22 +1637,27 @@
                         <input type="hidden" id="adminEqId">
                         <div style="flex: 1; min-width: 150px;">
                             <label style="font-size: 0.8rem; color: var(--text-muted);">Name</label>
-                            <input type="text" id="adminEqName" style="width: 100%; padding: 0.5rem; border-radius: 8px; border: 1px solid var(--border-color);">
+                            <input type="text" id="adminEqName"
+                                style="width: 100%; padding: 0.5rem; border-radius: 8px; border: 1px solid var(--border-color);">
                         </div>
                         <div style="flex: 1; min-width: 150px;">
                             <label style="font-size: 0.8rem; color: var(--text-muted);">Location</label>
-                            <select id="adminEqLoc" style="width: 100%; padding: 0.5rem; border-radius: 8px; border: 1px solid var(--border-color);"></select>
+                            <select id="adminEqLoc"
+                                style="width: 100%; padding: 0.5rem; border-radius: 8px; border: 1px solid var(--border-color);"></select>
                         </div>
                         <div style="flex: 1; min-width: 150px;">
                             <label style="font-size: 0.8rem; color: var(--text-muted);">Serial Number</label>
-                            <input type="text" id="adminEqSerial" style="width: 100%; padding: 0.5rem; border-radius: 8px; border: 1px solid var(--border-color);">
+                            <input type="text" id="adminEqSerial"
+                                style="width: 100%; padding: 0.5rem; border-radius: 8px; border: 1px solid var(--border-color);">
                         </div>
                         <div style="flex: 1; min-width: 150px;">
                             <label style="font-size: 0.8rem; color: var(--text-muted);">Custodian</label>
-                            <input type="text" id="adminEqCustodian" style="width: 100%; padding: 0.5rem; border-radius: 8px; border: 1px solid var(--border-color);">
+                            <input type="text" id="adminEqCustodian"
+                                style="width: 100%; padding: 0.5rem; border-radius: 8px; border: 1px solid var(--border-color);">
                         </div>
                         <button class="btn" id="btnSaveEq" onclick="app.adminSaveEquipment()">Add</button>
-                        <button class="btn btn-outline hidden" id="btnCancelEq" onclick="app.adminCancelEquipment()">Cancel</button>
+                        <button class="btn btn-outline hidden" id="btnCancelEq"
+                            onclick="app.adminCancelEquipment()">Cancel</button>
                     </div>
                 </div>
                 <div class="table-container">
@@ -1628,10 +1686,12 @@
                         <input type="hidden" id="adminLocId">
                         <div style="flex: 1;">
                             <label style="font-size: 0.8rem; color: var(--text-muted);">Location Name</label>
-                            <input type="text" id="adminLocName" placeholder="New Location Name" style="width: 100%; padding: 0.5rem; border-radius: 8px; border: 1px solid var(--border-color);">
+                            <input type="text" id="adminLocName" placeholder="New Location Name"
+                                style="width: 100%; padding: 0.5rem; border-radius: 8px; border: 1px solid var(--border-color);">
                         </div>
                         <button class="btn" id="btnSaveLoc" onclick="app.adminSaveLocation()">Add</button>
-                        <button class="btn btn-outline hidden" id="btnCancelLoc" onclick="app.adminCancelLocation()">Cancel</button>
+                        <button class="btn btn-outline hidden" id="btnCancelLoc"
+                            onclick="app.adminCancelLocation()">Cancel</button>
                     </div>
                 </div>
                 <div class="table-container">
@@ -1656,25 +1716,30 @@
                         <input type="hidden" id="adminUserId">
                         <div style="flex: 1; min-width: 150px;">
                             <label style="font-size: 0.8rem; color: var(--text-muted);">Email / Username</label>
-                            <input type="text" id="adminUserEmail" style="width: 100%; padding: 0.5rem; border-radius: 8px; border: 1px solid var(--border-color);">
+                            <input type="text" id="adminUserEmail"
+                                style="width: 100%; padding: 0.5rem; border-radius: 8px; border: 1px solid var(--border-color);">
                         </div>
                         <div style="flex: 1; min-width: 150px;">
                             <label style="font-size: 0.8rem; color: var(--text-muted);">Full Name</label>
-                            <input type="text" id="adminUserName" style="width: 100%; padding: 0.5rem; border-radius: 8px; border: 1px solid var(--border-color);">
+                            <input type="text" id="adminUserName"
+                                style="width: 100%; padding: 0.5rem; border-radius: 8px; border: 1px solid var(--border-color);">
                         </div>
                         <div style="flex: 1; min-width: 150px;">
                             <label style="font-size: 0.8rem; color: var(--text-muted);">Password</label>
-                            <input type="text" id="adminUserPass" style="width: 100%; padding: 0.5rem; border-radius: 8px; border: 1px solid var(--border-color);">
+                            <input type="text" id="adminUserPass"
+                                style="width: 100%; padding: 0.5rem; border-radius: 8px; border: 1px solid var(--border-color);">
                         </div>
                         <div style="width: 100px;">
                             <label style="font-size: 0.8rem; color: var(--text-muted);">Role</label>
-                            <select id="adminUserRole" style="width: 100%; padding: 0.5rem; border-radius: 8px; border: 1px solid var(--border-color);">
+                            <select id="adminUserRole"
+                                style="width: 100%; padding: 0.5rem; border-radius: 8px; border: 1px solid var(--border-color);">
                                 <option value="user">User</option>
                                 <option value="admin">Admin</option>
                             </select>
                         </div>
                         <button class="btn" id="btnSaveUser" onclick="app.adminSaveUser()">Add</button>
-                        <button class="btn btn-outline hidden" id="btnCancelUser" onclick="app.adminCancelUser()">Cancel</button>
+                        <button class="btn btn-outline hidden" id="btnCancelUser"
+                            onclick="app.adminCancelUser()">Cancel</button>
                     </div>
                 </div>
                 <div class="table-container">
@@ -1948,7 +2013,7 @@
                 const b = buildings.find(x => x.id == id);
                 return b ? b.name : 'Unknown';
             },
-            
+
             // --- Initialization ---
             init() {
                 this.loadState();
@@ -2056,18 +2121,18 @@
                     nav.classList.remove('hidden');
                     document.getElementById('nav-user-name').innerHTML = `${this.state.user.name}`;
                     document.getElementById('nav-user-role').innerHTML = `${this.state.user.role}`;
-                    
+
                     const isAdmin = this.state.user.role === 'admin';
                     document.getElementById('nav-admin-btn')?.classList.toggle('hidden', !isAdmin);
                     document.getElementById('nav-admin-btn-mobile')?.classList.toggle('hidden', !isAdmin);
-                    
+
                     // Reset all nav tabs active state
                     document.querySelectorAll('.nav-pill').forEach(el => el.classList.remove('active'));
                     document.querySelectorAll('.nav-pill-mobile').forEach(el => {
                         el.style.backgroundColor = 'transparent';
                         el.style.color = '#4b5563';
                     });
-                    
+
                     // Set active tab based on view
                     let dtId = '';
                     let mtId = '';
@@ -2075,10 +2140,10 @@
                     else if (viewId === 'equipment-view') { dtId = 'tab-desktop-equipment'; mtId = 'tab-mobile-equipment'; }
                     else if (viewId === 'data-table-view') { dtId = 'tab-desktop-datatable'; mtId = 'tab-mobile-datatable'; }
                     else if (viewId === 'admin-view') { dtId = 'nav-admin-btn'; mtId = 'nav-admin-btn-mobile'; }
-                    
+
                     const desktopEl = document.getElementById(dtId);
                     if (desktopEl) desktopEl.classList.add('active');
-                    
+
                     const mobileEl = document.getElementById(mtId);
                     if (mobileEl) {
                         mobileEl.style.backgroundColor = '#eff6ff';
@@ -2292,7 +2357,7 @@
                 const bid = parseInt(document.getElementById('adminEqLoc').value);
                 const serial = document.getElementById('adminEqSerial').value;
                 const custodian = document.getElementById('adminEqCustodian').value;
-                
+
                 if (name && bid) {
                     if (id) {
                         const e = this.state.equipments.find(x => x.id === id);
@@ -2345,7 +2410,7 @@
                 document.getElementById('adminUserName').value = u.name;
                 document.getElementById('adminUserPass').value = u.password;
                 document.getElementById('adminUserRole').value = u.role;
-                
+
                 const emailInput = document.getElementById('adminUserEmail');
                 emailInput.disabled = true;
                 emailInput.style.opacity = '0.5';
@@ -2379,7 +2444,7 @@
                 document.getElementById('adminUserName').value = '';
                 document.getElementById('adminUserPass').value = '';
                 document.getElementById('adminUserRole').value = 'user';
-                
+
                 const emailInput = document.getElementById('adminUserEmail');
                 emailInput.disabled = false;
                 emailInput.style.opacity = '1';
@@ -2399,7 +2464,8 @@
             // --- Auth ---
             login(e) {
                 e.preventDefault();
-                const u = document.getElementById('login-user').value;
+                let u = document.getElementById('login-user').value;
+                if (!u.includes('@lab.com')) u += '@lab.com';
                 const p = document.getElementById('login-pass').value;
                 const err = document.getElementById('login-error');
                 const foundUser = this.state.users.find(user => user.username === u && user.password === p);
@@ -2885,7 +2951,7 @@
                     while (currentStart.isSameOrBefore(endLimit)) {
                         const eq = this.state.equipments.find(e => e.id === eqId);
                         const eqName = eq ? eq.name : '';
-                        
+
                         // Check Maintenance conflicts (CarePlus)
                         const maintenanceRecords = this.state.records || [];
                         const conflictingMaintenance = maintenanceRecords.find(r => {
