@@ -17,6 +17,8 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Prompt:wght@300;400;500;600&display=swap"
         rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         /* --- Base & Typography --- */
@@ -275,8 +277,9 @@
 <body class="text-gray-800 antialiased selection:bg-blue-500 selection:text-white">
 
     <div id="loginPage" class="min-h-screen flex items-center justify-center px-4 relative login-bg">
-        <a href="index.html" class="absolute top-6 right-6 bg-white/80 backdrop-blur text-teal-800 font-bold px-4 py-2 rounded-xl shadow hover:bg-white transition z-50 flex items-center gap-2 border border-white/50">
-            <i class="fa-solid fa-flask"></i>Lab Book Plus
+        <a href="index.html"
+            class="absolute top-[1.5rem] right-[1.5rem] bg-[#10b981] hover:bg-[#059669] text-white font-bold px-[1.2rem] py-[0.6rem] text-[0.95rem] rounded-lg shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_10px_rgba(16,185,129,0.4)] transition-all hover:-translate-y-[1px] z-50 flex items-center gap-2 decoration-none">
+            <i class="fa-solid fa-book"></i> Lab Book Plus
         </a>
 
         <div
@@ -303,9 +306,12 @@
             <form id="loginForm" class="space-y-6 relative z-10">
                 <div>
                     <label class="block text-xs font-bold text-gray-500 mb-2 ml-1">Username</label>
-                    <input type="email" id="loginEmail" required value="admin@lab.com"
-                        placeholder="ชื่อผู้ใช้งาน @mitrphol.com"
-                        class="w-full px-5 py-4 rounded-2xl glass-input text-gray-800 placeholder-gray-400 focus:border-[#0ea5e9]">
+                    <div class="relative flex items-center">
+                        <input type="text" id="loginEmail" required placeholder="Username"
+                            class="w-full pl-5 pr-24 py-4 rounded-2xl glass-input text-gray-800 placeholder-gray-400 focus:border-[#0ea5e9]">
+                        <span
+                            class="absolute right-5 text-gray-500 font-medium pointer-events-none select-none">@lab.com</span>
+                    </div>
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-gray-500 mb-2 ml-1">Password</label>
@@ -347,7 +353,10 @@
                 </div>
 
                 <div class="flex items-center gap-3 md:gap-4">
-                    <a href="index.html" class="px-3 py-1.5 md:px-4 md:py-2 text-xs md:text-sm font-bold text-teal-700 bg-teal-50 border border-teal-200 rounded-lg hover:bg-teal-600 hover:text-white transition shadow-sm flex items-center gap-2 whitespace-nowrap"><i class="fa-solid fa-flask"></i>LB+</a>
+                    <a href="index.html"
+                        class="px-3 py-1.5 md:px-4 md:py-2 text-xs md:text-sm font-bold text-teal-700 bg-teal-50 border border-teal-200 rounded-lg hover:bg-teal-600 hover:text-white transition shadow-sm flex items-center gap-2 whitespace-nowrap">
+                        <i class="fa-solid fa-book"></i> LB+
+                    </a>
                     <div class="flex flex-col items-end mr-1 md:mr-2">
                         <span id="userDisplay" class="text-xs md:text-sm font-bold text-gray-800">User</span>
                         <span id="userRole"
@@ -729,7 +738,8 @@
                                 </select>
                             </div>
                             <div class="space-y-1 md:col-span-2">
-                                <label class="text-xs font-bold text-gray-500 uppercase ml-1">PO Documents (Up to 5 PDFs)</label>
+                                <label class="text-xs font-bold text-gray-500 uppercase ml-1">PO Documents (Up to 5
+                                    PDFs)</label>
                                 <div class="relative">
                                     <input type="file" id="poFileUpload" accept="application/pdf" multiple
                                         class="w-full glass-input px-4 py-3 rounded-xl text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
@@ -941,22 +951,26 @@
         </div>
     </div>
 
-    <div id="poViewerModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center p-4">
+    <div id="poViewerModal"
+        class="hidden fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl shadow-2xl w-[98%] max-w-6xl md:w-full h-[85vh] flex flex-col overflow-hidden">
             <div class="flex justify-between items-center px-6 py-4 border-b">
                 <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
                     <span class="bg-blue-100 text-blue-600 p-1.5 rounded-lg text-sm">📄</span>
                     Document Viewer
                 </h3>
-                <button onclick="closePOViewerModal()" class="text-gray-400 hover:text-red-500 text-2xl font-bold leading-none w-8 h-8 flex items-center justify-center rounded-full hover:bg-red-50 transition-colors">✕</button>
+                <button onclick="closePOViewerModal()"
+                    class="text-gray-400 hover:text-red-500 text-2xl font-bold leading-none w-8 h-8 flex items-center justify-center rounded-full hover:bg-red-50 transition-colors">✕</button>
             </div>
             <div class="flex flex-1 overflow-hidden">
                 <!-- Sidebar for file list -->
-                <div class="w-1/3 max-w-[280px] border-r border-gray-100 bg-gray-50/50 flex flex-col p-4 overflow-y-auto custom-scroll" id="poSidebar">
+                <div class="w-1/3 max-w-[280px] border-r border-gray-100 bg-gray-50/50 flex flex-col p-4 overflow-y-auto custom-scroll"
+                    id="poSidebar">
                 </div>
                 <!-- Main preview area -->
                 <div class="flex-1 bg-gray-100/50 p-3" id="poPdfPreviewArea">
-                    <div class="flex items-center justify-center h-full text-gray-400">Select a file from the list to view</div>
+                    <div class="flex items-center justify-center h-full text-gray-400">Select a file from the list to
+                        view</div>
                 </div>
             </div>
         </div>
@@ -1034,13 +1048,13 @@
                     const store = tx.objectStore(IDB_STORE);
                     const reqGetAll = store.getAll();
                     const reqKeys = store.getAllKeys();
-                    
+
                     reqGetAll.onsuccess = () => {
                         reqKeys.onsuccess = () => {
                             reqKeys.result.forEach((k, i) => {
                                 poFilesDb[k] = reqGetAll.result[i];
                             });
-                            
+
                             // Migrate from localStorage if exists
                             const savedState = localStorage.getItem('NoteLabState_Merged');
                             if (savedState) {
@@ -1060,7 +1074,7 @@
                                             localStorage.setItem('NoteLabState_Merged', JSON.stringify(state));
                                         }
                                     }
-                                } catch(err) { console.error("Migration error", err); }
+                                } catch (err) { console.error("Migration error", err); }
                             }
                             resolve();
                         };
@@ -1120,12 +1134,12 @@
                 if (state.reporters) reporters = state.reporters;
                 if (state.equipments) equipment = state.equipments;
                 if (state.buildings) buildings = state.buildings;
-                if (state.poFilesDb) { 
+                if (state.poFilesDb) {
                     poFilesDb = { ...poFilesDb, ...state.poFilesDb }; // Fallback
                 }
             }
         }
-        
+
         function saveCarePlusState() {
             const savedState = localStorage.getItem('NoteLabState_Merged');
             let state = savedState ? JSON.parse(savedState) : { users: [], equipments: [], buildings: [], bookings: [] };
@@ -1133,16 +1147,16 @@
             state.records = records;
             state.technicians = technicians;
             state.reporters = reporters;
-            state.equipments = equipment; 
+            state.equipments = equipment;
             state.buildings = buildings;
             delete state.poFilesDb; // Do not store massive PDFs in localStorage
             localStorage.setItem('NoteLabState_Merged', JSON.stringify(state));
         }
 
         window.addEventListener('DOMContentLoaded', async () => {
-            try { await initIndexedDB(); } catch(e) { console.error(e); }
+            try { await initIndexedDB(); } catch (e) { console.error(e); }
             loadCarePlusState();
-            
+
             // Listen for cross-tab updates from index.html
             window.addEventListener('storage', (e) => {
                 if (e.key === 'NoteLabState_Merged') {
@@ -1314,7 +1328,8 @@
         }
         function handleLogin(e) {
             e.preventDefault();
-            const email = document.getElementById('loginEmail').value;
+            let email = document.getElementById('loginEmail').value;
+            if (!email.includes('@lab.com')) email += '@lab.com';
             const pwd = document.getElementById('loginPassword').value;
             const userObj = users.find(u => u.username === email);
             if (userObj && userObj.password === pwd) {
@@ -1535,11 +1550,11 @@
         }
         function openCalendarDay(dateStr, items) {
             if (items.length === 0) {
-                 showPage('addRecord');
-                 setTimeout(() => {
-                      document.getElementById('serviceDate').value = dateStr;
-                 }, 50);
-                 return;
+                showPage('addRecord');
+                setTimeout(() => {
+                    document.getElementById('serviceDate').value = dateStr;
+                }, 50);
+                return;
             }
             const content = document.getElementById('calendarModalContent');
             const modalTitle = document.getElementById('modalDateTitle');
@@ -1582,7 +1597,7 @@
                 📄 View PO (${poFilesCount})
             </button>` :
                     `<span class="text-[10px] text-gray-400 italic flex items-center gap-1">🚫 No Doc</span>`;
-                
+
                 return `
         <div class="bg-white rounded-2xl p-0 shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-all relative group mb-3 last:mb-0">
             <div class="absolute left-0 top-0 bottom-0 w-1.5 ${statusColor}"></div>
@@ -1895,7 +1910,7 @@
                 } else {
                     poBtn = '<span class="text-gray-300 block mb-1">-</span>';
                 }
-                
+
                 let typeColor = 'bg-orange-400';
                 if (r.type === 'calibration') typeColor = 'bg-purple-400';
                 if (r.type === 'pm') typeColor = 'bg-teal-400';
@@ -2049,13 +2064,13 @@
             document.getElementById('btnCancelUser').classList.add('hidden');
         }
 
-        function adminDeleteUser(id) { 
+        function adminDeleteUser(id) {
             const u = users.find(x => x.id === id);
-            if (u && u.username !== 'admin@lab.com') { 
+            if (u && u.username !== 'admin@lab.com') {
                 users = users.filter(x => x.id !== id);
-                saveCarePlusState(); 
-                renderAdminUsers(); 
-            } 
+                saveCarePlusState();
+                renderAdminUsers();
+            }
         }
         // 2. Location
         function renderAdminLocations() {
@@ -2087,7 +2102,7 @@
                     if (b) b.name = name;
                 } else {
                     buildings.push({ id: Date.now(), name });
-                saveCarePlusState();
+                    saveCarePlusState();
                 }
                 renderAdminLocations();
                 adminCancelLocation();
@@ -2139,7 +2154,7 @@
                     });
                 } else {
                     technicians.push(name);
-                saveCarePlusState();
+                    saveCarePlusState();
                 }
                 renderAdminCompanies();
                 adminCancelCompany();
@@ -2182,7 +2197,7 @@
                     if (index !== -1) { equipment[index].name = name; equipment[index].building_id = bid; saveCarePlusState(); }
                 } else {
                     equipment.push({ id: Date.now(), name: name, building_id: bid });
-                saveCarePlusState();
+                    saveCarePlusState();
                 }
                 renderAdminEquipment(); renderAdminLocations(); adminCancelEquipment();
             }
@@ -2233,7 +2248,7 @@
                     records.forEach(r => { if (r.reporter === oldName) r.reporter = name; });
                 } else {
                     reporters.push(name);
-                saveCarePlusState();
+                    saveCarePlusState();
                 }
                 renderAdminReporters(); adminCancelReporter();
             }
@@ -2286,7 +2301,7 @@
                 document.getElementById('existingPoLabel').classList.add('hidden');
                 document.getElementById('existingPoLabel').innerHTML = '✓ Current file attached';
             }
-            
+
             tempPoFiles = poFilesDb[r.id] ? [...poFilesDb[r.id]] : [];
             renderPoFilesList();
         }
@@ -2362,11 +2377,11 @@
                     const index = records.findIndex(r => r.id == editId);
                     if (index !== -1) {
                         records[index] = { ...records[index], ...recordData };
-                        if (tempPoFiles.length > 0) { 
-                            records[index].po_files = tempPoFiles.map(f => f.name); 
+                        if (tempPoFiles.length > 0) {
+                            records[index].po_files = tempPoFiles.map(f => f.name);
                             records[index].po_file = ''; // Clear legacy field
                             if (typeof poFilesDb === 'undefined') window.poFilesDb = {};
-                            poFilesDb[editId] = [...tempPoFiles]; 
+                            poFilesDb[editId] = [...tempPoFiles];
                             savePoFileToIDB(editId, poFilesDb[editId]);
                         }
                         saveCarePlusState();
@@ -2391,14 +2406,14 @@
             const savedState = localStorage.getItem('NoteLabState_Merged');
             const state = savedState ? JSON.parse(savedState) : {};
             const bookings = state.bookings || [];
-            
+
             const eqObj = equipment.find(eq => eq.name === recordData.equipment_name);
             if (eqObj) {
                 const eqId = eqObj.id;
                 const svcDate = new Date(recordData.service_date);
-                const svcStart = new Date(svcDate.setHours(0,0,0,0)).getTime();
-                const svcEnd = new Date(svcDate.setHours(23,59,59,999)).getTime();
-                
+                const svcStart = new Date(svcDate.setHours(0, 0, 0, 0)).getTime();
+                const svcEnd = new Date(svcDate.setHours(23, 59, 59, 999)).getTime();
+
                 const overlappingBooking = bookings.find(b => {
                     if (b.deleted) return false;
                     if (b.eqId != eqId) return false;
@@ -2406,7 +2421,7 @@
                     const bEnd = new Date(b.end).getTime();
                     return svcStart < bEnd && svcEnd > bStart;
                 });
-                
+
                 if (overlappingBooking) {
                     Swal.fire({
                         title: 'Booking Conflict!',
@@ -2423,33 +2438,33 @@
                     return;
                 }
             }
-            
+
             proceedSave();
         }
         function deleteRecord(id) {
             Swal.fire({ title: 'Delete?', text: 'Cannot undo', icon: 'warning', showCancelButton: true, confirmButtonColor: '#ef4444' }).then(res => {
-                if (res.isConfirmed) { 
-                    records = records.filter(r => r.id !== id); 
+                if (res.isConfirmed) {
+                    records = records.filter(r => r.id !== id);
                     if (poFilesDb[id]) {
                         delete poFilesDb[id];
                         deletePoFileFromIDB(id);
                     }
-                    saveCarePlusState(); 
-                    loadRecords(); 
-                    updateDashboardCards(); 
+                    saveCarePlusState();
+                    loadRecords();
+                    updateDashboardCards();
                 }
             });
         }
         function viewPO(id) {
             const r = records.find(rec => rec.id == id);
             if (!r) return;
-            
+
             const sidebar = document.getElementById('poSidebar');
             const preview = document.getElementById('poPdfPreviewArea');
-            
+
             sidebar.innerHTML = '';
             preview.innerHTML = '<div class="flex items-center justify-center h-full text-gray-400">Select a file from the list to view</div>';
-            
+
             let filesList = [];
             if (r.po_files && r.po_files.length > 0) {
                 filesList = r.po_files.map((name, i) => ({ name, index: i }));
@@ -2459,7 +2474,7 @@
             } else if (poFilesDb[id] && poFilesDb[id].length > 0) {
                 filesList = poFilesDb[id].map((f, i) => ({ name: f.name, index: i }));
             }
-            
+
             if (filesList.length === 0) {
                 sidebar.innerHTML = '<div class="text-gray-500 text-sm italic p-4 text-center">No documents found.</div>';
             } else {
@@ -2472,7 +2487,7 @@
                 });
                 if (sidebar.firstChild) sidebar.firstChild.click();
             }
-            
+
             document.getElementById('poViewerModal').classList.remove('hidden');
         }
 
@@ -2503,8 +2518,8 @@
             }
         }
 
-        function closePOViewerModal() { 
-            document.getElementById('poViewerModal').classList.add('hidden'); 
+        function closePOViewerModal() {
+            document.getElementById('poViewerModal').classList.add('hidden');
             document.getElementById('poPdfPreviewArea').innerHTML = '';
         }
 
