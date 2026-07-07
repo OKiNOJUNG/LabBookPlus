@@ -1,0 +1,3447 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab Equipment LogBook (Booking System)</title>
+
+    <!-- Google Fonts: Inter (English UI) and Sarabun (Thai Support) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- QRCode.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <!-- FullCalendar -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Moment.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        :root {
+            --primary: #2563EB;
+            --primary-hover: #1D4ED8;
+            --secondary: #8B5CF6;
+            --bg-color: #F3F4F6;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --text-main: #1F2937;
+            --text-muted: #6B7280;
+            --border-color: #E5E7EB;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --info: #3B82F6;
+            --font-ui: 'Inter', sans-serif;
+            --font-data: 'Sarabun', 'Inter', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-ui);
+            background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        body.logged-in {
+            background: #f0f8ff;
+        }
+
+
+        /* Utilities */
+        .hidden {
+            display: none !important;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .flex {
+            display: flex;
+        }
+
+        .flex-col {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .items-center {
+            align-items: center;
+        }
+
+        .justify-between {
+            justify-content: space-between;
+        }
+
+        .justify-center {
+            justify-content: center;
+        }
+
+        .gap-2 {
+            gap: 0.5rem;
+        }
+
+        .gap-4 {
+            gap: 1rem;
+        }
+
+        .mt-4 {
+            margin-top: 1rem;
+        }
+
+        .mb-4 {
+            margin-bottom: 1rem;
+        }
+
+        .p-4 {
+            padding: 1rem;
+        }
+
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .btn:hover:not(:disabled) {
+            background-color: var(--primary-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+
+        .btn-outline:hover {
+            background-color: rgba(37, 99, 235, 0.05);
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+        }
+
+        .btn-danger:hover {
+            background-color: #DC2626;
+        }
+
+        .btn-success {
+            background-color: var(--success);
+        }
+
+        .btn-success:hover {
+            background-color: #059669;
+        }
+
+        .btn-icon-only {
+            padding: 0.4rem 0.6rem;
+            font-size: 0.9rem;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="number"],
+        input[type="date"],
+        input[type="datetime-local"],
+        input[type="time"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 0.6rem 0.8rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-family: var(--font-data);
+            transition: border-color 0.2s;
+            background-color: #f9fafb;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            background-color: #fff;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        input[readonly],
+        textarea[readonly] {
+            background-color: #E5E7EB;
+            cursor: not-allowed;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.3rem;
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: var(--text-main);
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        /* Radio button groups */
+        .radio-group {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            height: 100%;
+        }
+
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            margin-bottom: 0;
+            font-weight: normal;
+            cursor: pointer;
+        }
+
+        /* Badges */
+        .badge {
+            padding: 0.3rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-booked {
+            background-color: rgba(59, 130, 246, 0.1);
+            color: var(--info);
+            border: 1px solid var(--info);
+        }
+
+        .badge-inuse {
+            background-color: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+            border: 1px solid var(--warning);
+            animation: pulse 2s infinite;
+        }
+
+        .badge-finished {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            border: 1px solid var(--success);
+        }
+
+        .badge-deleted {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+            text-decoration: line-through;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 6px rgba(245, 158, 11, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(245, 158, 11, 0);
+            }
+        }
+
+        /* App Container */
+        #app {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navbar */
+        /* Glassmorphism Navigation */
+        .navbar-container {
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+            position: sticky;
+            top: 2px;
+            z-index: 100;
+            margin-left: 0.5rem;
+            margin-right: 0.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .navbar-container {
+                top: 16px;
+                margin-left: 1rem;
+                margin-right: 1rem;
+            }
+        }
+        @media (min-width: 1024px) {
+            .navbar-container {
+                margin-left: 2rem;
+                margin-right: 2rem;
+            }
+        }
+
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            border-radius: 1rem;
+            padding: 0.75rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        @media (min-width: 1024px) {
+            .glass-nav { padding: 0.75rem 1.5rem; }
+        }
+
+        .nav-brand-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .brand-icon {
+            width: 2rem;
+            height: 2rem;
+            background: linear-gradient(to bottom right, #3b82f6, #9333ea);
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.875rem;
+            font-weight: bold;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        @media (min-width: 768px) {
+            .brand-icon { width: 2.5rem; height: 2.5rem; font-size: 1rem; }
+        }
+
+        .brand-text {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #1f2937;
+            letter-spacing: -0.025em;
+            display: none;
+        }
+
+        @media (min-width: 640px) {
+            .brand-text { display: block; }
+        }
+        @media (min-width: 768px) {
+            .brand-text { font-size: 1.125rem; }
+        }
+
+        .nav-desktop-menu {
+            display: none;
+        }
+        @media (min-width: 768px) {
+            .nav-desktop-menu {
+                display: flex;
+                background: rgba(243, 244, 246, 0.5);
+                padding: 0.25rem;
+                border-radius: 0.75rem;
+                gap: 0.25rem;
+                margin-left: 1.5rem;
+            }
+        }
+
+        .nav-pill {
+            border: none;
+            background: transparent;
+            border-radius: 0.75rem;
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #6b7280;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-pill:hover {
+            background: rgba(255, 255, 255, 0.5);
+            color: #1f2937;
+        }
+
+        .nav-pill.active {
+            background: #ffffff;
+            color: #2563eb;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            font-weight: 600;
+        }
+
+        /* Mobile Nav Menu */
+        .nav-mobile-menu {
+            display: flex;
+            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 1rem;
+            padding: 0.375rem;
+            margin-top: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            overflow-x: auto;
+            gap: 0.25rem;
+        }
+        @media (min-width: 768px) {
+            .nav-mobile-menu {
+                display: none;
+            }
+        }
+
+        .nav-pill-mobile {
+            flex: 1;
+            border: none;
+            background: transparent;
+            border-radius: 0.75rem;
+            padding: 0.625rem 0.5rem;
+            font-size: 0.6875rem;
+            font-weight: 700;
+            color: #4b5563;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+            white-space: nowrap;
+        }
+        .nav-pill-mobile:hover {
+            background: #f3f4f6;
+        }
+        .nav-pill-mobile:active {
+            background: #eff6ff;
+            color: #2563eb;
+        }
+
+        .switch-app-btn {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #0f766e;
+            background: #f0fdfa;
+            border: 1px solid #ccfbf1;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+        @media (min-width: 768px) {
+            .switch-app-btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.875rem;
+            }
+        }
+        .switch-app-btn:hover {
+            background: #0d9488;
+            color: white;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            margin-right: 0.25rem;
+        }
+        @media (min-width: 768px) {
+            .user-info { margin-right: 0.5rem; }
+        }
+        #nav-user-name {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #1f2937;
+        }
+        @media (min-width: 768px) {
+            #nav-user-name { font-size: 0.875rem; }
+        }
+        .user-role {
+            font-size: 0.5625rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            color: #3b82f6;
+            text-transform: uppercase;
+        }
+        @media (min-width: 768px) {
+            .user-role { font-size: 0.625rem; }
+        }
+
+        .logout-btn {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 9999px;
+            background: #fef2f2;
+            color: #ef4444;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        @media (min-width: 768px) {
+            .logout-btn {
+                width: 2.5rem;
+                height: 2.5rem;
+            }
+        }
+        .logout-btn:hover {
+            background: #ef4444;
+            color: white;
+        }
+
+        .nav-notify-icon {
+            position: relative;
+            background: transparent;
+            border: none;
+            font-size: 1rem;
+            color: #6b7280;
+            cursor: pointer;
+            padding: 0.25rem;
+            border-radius: 50%;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        @media (min-width: 768px) {
+            .nav-notify-icon { font-size: 1.1rem; padding: 0.5rem; }
+        }
+        .nav-notify-icon:hover {
+            background: #f3f4f6;
+        }
+        #nav-notify-badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: #ef4444;
+            color: white;
+            border-radius: 9999px;
+            padding: 0.1rem 0.35rem;
+            font-size: 0.6rem;
+            font-weight: 700;
+        }
+
+        /* Main Content Area */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+            width: 100%;
+        }
+
+        /* Login View */
+        #login-view {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            padding: 1rem;
+            background: url('bg1.png') no-repeat center center fixed;
+            background-size: cover;
+            background-color: #e0f2fe;
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            padding: 3rem 2.5rem;
+            border-radius: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 420px;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            color: #333;
+        }
+
+        .login-card h2 {
+            text-align: center;
+            margin-bottom: 0.2rem;
+            color: #1a5c8b;
+            font-size: 2.5rem;
+            font-weight: 800;
+        }
+
+        .login-card p {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #374151;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+
+        .login-card .form-group label {
+            color: #6b7280;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .login-card .btn {
+            box-shadow: 0 4px 10px rgba(14, 165, 233, 0.4);
+            background-color: #0ea5e9;
+            padding: 1rem;
+            font-size: 1.1rem;
+            border-radius: 12px;
+        }
+
+        /* Calendar Styles */
+        .fc-event {
+            border-top: none !important;
+            border-right: none !important;
+            border-bottom: none !important;
+            border-left-width: 6px !important;
+            border-left-style: solid !important;
+            border-radius: 6px !important;
+            margin-bottom: 4px !important;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1) !important;
+            background-color: #f8fafc !important;
+            overflow: visible !important;
+        }
+
+        .fc-v-event {
+            min-height: 40px !important;
+            z-index: 5 !important;
+        }
+
+        .fc-event-main {
+            padding: 4px 6px !important;
+            font-weight: 700 !important;
+            color: #1f2937 !important;
+            font-size: 0.85rem;
+            text-shadow: none !important;
+            white-space: normal !important;
+            word-wrap: break-word !important;
+            overflow: visible !important;
+        }
+
+        .fc-event-title {
+            white-space: normal !important;
+            overflow: visible !important;
+        }
+
+        /* Dashboard (Charts + Calendar) */
+        .dashboard-charts {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .chart-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chart-card h3 {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            color: var(--text-main);
+            text-align: center;
+        }
+
+        .chart-container {
+            flex: 1;
+            position: relative;
+            width: 100%;
+            min-height: 250px;
+            overflow: hidden;
+        }
+
+        #calendar-container {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border-color);
+            min-height: 800px;
+        }
+
+        /* Luxury Calendar Customization */
+        .fc {
+            font-family: var(--font-ui);
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .fc-theme-standard .fc-scrollgrid {
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .fc-theme-standard th {
+            border: none;
+            padding: 10px 0;
+            background: #f8fafc;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+        }
+
+        .fc-theme-standard td {
+            border-color: #f1f5f9;
+        }
+
+        .fc-day-today {
+            background: #eff6ff !important;
+        }
+
+        .fc .fc-toolbar-title {
+            font-weight: 700;
+            color: #1e293b;
+            font-size: 1.5rem;
+        }
+
+        .fc .fc-button-primary {
+            background-color: var(--primary);
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            transition: all 0.3s;
+        }
+
+        .fc .fc-button-primary:not(:disabled):hover {
+            background-color: var(--primary-hover);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .fc .fc-button-primary:not(:disabled):active {
+            background-color: var(--primary-hover);
+            transform: translateY(0);
+        }
+
+        .fc-h-event {
+            border: none;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 3px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            height: auto !important;
+        }
+
+        .fc-h-event:hover {
+            transform: scale(1.02);
+        }
+
+        .fc-event-title {
+            font-family: var(--font-data);
+            font-weight: 700;
+            font-size: 0.85rem;
+            white-space: normal !important;
+            overflow: hidden;
+        }
+
+        .fc-daygrid-day-number {
+            color: #475569;
+            font-weight: 500;
+            padding: 8px !important;
+            text-decoration: none;
+        }
+
+        .fc-daygrid-day:hover {
+            background-color: #f8fafc;
+            transition: background-color 0.2s;
+            cursor: pointer;
+        }
+
+        /* Equipments View */
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .search-bar {
+            position: relative;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .search-bar i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .search-bar input {
+            padding-left: 2.5rem;
+            border-radius: 20px;
+        }
+
+        .location-group {
+            margin-bottom: 2.5rem;
+        }
+
+        .location-header {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-main);
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .equipment-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .eq-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            position: relative;
+        }
+
+        .eq-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary);
+        }
+
+        .btn-history {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(243, 244, 246, 0.8);
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-history:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .eq-qr-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1rem;
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            width: fit-content;
+            align-self: center;
+        }
+
+        .eq-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-main);
+            font-family: var(--font-data);
+            text-align: center;
+        }
+
+        .eq-detail {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 0.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-family: var(--font-data);
+        }
+
+        /* Form View */
+        .form-container {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .form-header {
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            align-items: start;
+        }
+
+        .full-width {
+            grid-column: span 2;
+        }
+
+        .repeat-section {
+            background: rgba(139, 92, 246, 0.05);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            margin-top: 1rem;
+        }
+
+        /* Admin Tabs & Tables */
+        .admin-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            overflow-x: auto;
+        }
+
+        .admin-tab {
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            font-weight: 500;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+
+        .admin-tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .admin-tab:hover:not(.active) {
+            color: var(--text-main);
+        }
+
+        .table-container {
+            overflow-x: auto;
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: var(--font-data);
+            min-width: 600px;
+        }
+
+        th,
+        td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.9rem;
+        }
+
+        th {
+            background-color: #F9FAFB;
+            font-weight: 600;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+
+        tr:hover {
+            background-color: #F9FAFB;
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 1rem;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        .modal-content.wide {
+            max-width: 800px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            align-items: center;
+        }
+
+        .history-list {
+            font-family: var(--font-data);
+            font-size: 0.85rem;
+            background: #F9FAFB;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .history-item {
+            border-bottom: 1px dashed #D1D5DB;
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .history-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .full-width {
+                grid-column: span 1;
+            }
+
+            .form-container {
+                padding: 1.5rem;
+            }
+
+            .header-actions {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .search-bar {
+                max-width: 100%;
+            }
+
+            /* Make calendar scrollable horizontally on mobile to show events completely */
+            #calendar-container {
+                padding: 0.75rem;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .fc {
+                min-width: 750px;
+            }
+        }
+
+        /* A4 Sticker Print Styles */
+        @media print {
+            @page {
+                size: A4;
+                margin: 10mm;
+            }
+
+            body {
+                background: white;
+                margin: 0;
+                padding: 0;
+            }
+
+            .navbar-container,
+            .btn,
+            .search-bar,
+            .header-actions,
+            .admin-tabs,
+            .btn-history,
+            .dashboard-charts,
+            #calendar-container {
+                display: none !important;
+            }
+
+            .form-container,
+            .table-container,
+            .container {
+                box-shadow: none;
+                border: none;
+                padding: 0;
+                max-width: 100%;
+                margin: 0;
+            }
+
+            #app {
+                font-family: var(--font-data);
+                display: block;
+            }
+
+            .location-group {
+                margin: 0;
+            }
+
+            .location-header {
+                display: none;
+            }
+
+            /* 3 columns x 4 rows per page */
+            .equipment-grid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 5mm;
+                width: 100%;
+            }
+
+            .eq-card {
+                page-break-inside: avoid;
+                border: 1px solid #333 !important;
+                box-shadow: none !important;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                height: 22vh;
+                /* Approximates 4 rows fitting comfortably within 100vh A4 */
+                padding: 10px;
+                border-radius: 8px;
+            }
+
+            .eq-card:hover {
+                transform: none;
+                box-shadow: none;
+                border-color: #333;
+            }
+
+            .eq-qr-container {
+                margin-bottom: 5px;
+                padding: 5px;
+                border: none;
+            }
+
+            .eq-title {
+                font-size: 1rem;
+                margin-bottom: 2px;
+                text-align: center;
+                font-weight: 700;
+                color: black;
+            }
+
+            .eq-detail {
+                font-size: 0.75rem;
+                margin-bottom: 2px;
+                color: #333;
+            }
+        }
+
+        /* --- Mobile Responsiveness --- */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-wrap: wrap;
+                padding: 10px;
+                gap: 10px;
+            }
+
+            .navbar .flex.items-center.gap-4 {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .admin-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .glass-card {
+                padding: 1rem;
+            }
+
+            .table-container {
+                width: 100%;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .glass-table,
+            table {
+                min-width: 600px;
+                /* Ensure tables don't squash too much */
+            }
+
+            .modal-content {
+                width: 95%;
+                margin: 10px auto;
+            }
+
+            /* Adjust equipment grid */
+            .equipment-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Datalists -->
+    <datalist id="list-names"></datalist>
+    <datalist id="list-locations"></datalist>
+    <datalist id="list-custodians"></datalist>
+
+    <div id="app">
+        <!-- Navbar -->
+        <!-- Navbar -->
+        <nav id="navbar" class="navbar-container hidden">
+            <div class="glass-nav">
+                <div class="nav-brand-group">
+                    <div class="brand-icon"><i class="fa-solid fa-flask"></i></div>
+                    <span class="brand-text">Lab Book+</span>
+                    
+                    <div class="nav-desktop-menu">
+                        <button class="nav-pill active" onclick="app.showView('dashboard-view')" id="tab-desktop-dashboard">Dashboard</button>
+                        <button class="nav-pill" onclick="app.showView('equipment-view')" id="tab-desktop-equipment">Equipments</button>
+                        <button class="nav-pill" onclick="app.showView('data-table-view')" id="tab-desktop-datatable">Data Table</button>
+                        <button class="nav-pill hidden" id="nav-admin-btn" onclick="app.showView('admin-view')">Admin</button>
+                    </div>
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <button class="nav-notify-icon" id="nav-notify-btn" onclick="app.showWarningsModal()">
+                        <i class="fa-solid fa-bell"></i>
+                        <span id="nav-notify-badge" class="hidden">0</span>
+                    </button>
+
+                    <a href="CarePlus.html" class="switch-app-btn">
+                        <i class="fa-solid fa-laptop-medical"></i> <span class="hidden sm:inline">CarePlus</span><span class="sm:hidden">LC+</span>
+                    </a>
+
+                    <div class="user-info">
+                        <span id="nav-user-name">User</span>
+                        <span id="nav-user-role" class="user-role">Role</span>
+                    </div>
+
+                    <button class="logout-btn" onclick="app.logout()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile Nav Menu -->
+            <div class="nav-mobile-menu">
+                <button class="nav-pill-mobile active-mobile" onclick="app.showView('dashboard-view')" id="tab-mobile-dashboard">📊 Dash</button>
+                <button class="nav-pill-mobile" onclick="app.showView('equipment-view')" id="tab-mobile-equipment">📦 Equip</button>
+                <button class="nav-pill-mobile" onclick="app.showView('data-table-view')" id="tab-mobile-datatable">📑 Data</button>
+                <button class="nav-pill-mobile hidden" id="nav-admin-btn-mobile" onclick="app.showView('admin-view')">⚙️ Admin</button>
+            </div>
+        </nav>
+
+        <!-- Login View -->
+        <div id="login-view">
+            <a href="CarePlus.html" class="btn"
+                style="position: absolute; top: 1.5rem; right: 1.5rem; background-color: #0ea5e9; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); font-weight: bold; z-index: 50;"><i
+                    class="fa-solid fa-laptop-medical"></i> CarePlus</a>
+            <div class="login-card">
+                <img src="logo.png" alt="Logo"
+                    style="width: 130px; height: 130px; object-fit: contain; margin: 0 auto 1rem auto; display: block; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+                <h2><span style="color: #1a7a7a;">MP</span><span style="color: #1742a6;">IR</span></h2>
+                <h3 style="color: #166565; text-align: center; margin-bottom: 1.5rem; font-weight: 700;">Lab Book Plus
+                </h3>
+                <div
+                    style="background-color: #f3f4f6; color: #374151; padding: 0.6rem 1rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600; text-align: center; margin-bottom: 2rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                    Please login to continue
+                </div>
+                <form id="login-form" onsubmit="app.login(event)">
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" id="login-user" required placeholder="admin@lab.com"
+                            style="background-color: white; border: none; border-radius: 12px; padding: 1rem; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);">
+                    </div>
+                    <div class="form-group" style="margin-top: 1.5rem;">
+                        <label>Password</label>
+                        <input type="password" id="login-pass" required placeholder="••••••••"
+                            style="background-color: white; border: none; border-radius: 12px; padding: 1rem; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);">
+                    </div>
+                    <button type="submit" class="btn"
+                        style="width: 100%; justify-content: center; margin-top: 2rem;">Login</button>
+                </form>
+                <div id="login-error" class="hidden text-danger text-center mt-4" style="font-size: 0.9rem;">Invalid
+                    credentials</div>
+            </div>
+        </div>
+
+        <!-- Dashboard & Calendar View -->
+        <div id="dashboard-view" class="container hidden">
+            <div class="header-actions">
+                <h2><i class="fa-solid fa-chart-line"></i> Dashboard & Calendar</h2>
+                <div class="flex gap-2 items-center" style="font-size: 0.85rem; color: var(--text-muted);">
+                    Legend:
+                    <span class="badge badge-booked">Advance (จองล่วงหน้า)</span>
+                    <span class="badge badge-inuse">In Use (กำลังใช้งาน)</span>
+                    <span class="badge badge-finished">Finished (เสร็จสิ้น)</span>
+                </div>
+            </div>
+
+            <!-- Calendar Filters -->
+            <div class="header-actions"
+                style="margin-top: -1rem; margin-bottom: 1rem; flex-wrap: nowrap; gap: 0.5rem; justify-content: flex-end;">
+                <select id="cal-filter-loc" onchange="app.updateCalendarFilters()" style="max-width: 200px;">
+                    <option value="">All Areas</option>
+                </select>
+                <select id="cal-filter-eq" onchange="app.updateCalendarFilters()" style="max-width: 200px;">
+                    <option value="">All Equipments</option>
+                </select>
+                <button class="btn btn-outline" onclick="app.clearCalendarFilters()"><i class="fa-solid fa-eraser"></i>
+                    Clear</button>
+            </div>
+
+            <div id="calendar-container" style="margin-bottom: 2.5rem;"></div>
+
+            <!-- Analytics Charts -->
+            <div class="dashboard-charts">
+                <div class="chart-card">
+                    <h3>Monthly Usage by Equipment</h3>
+                    <div class="chart-container"><canvas id="chart-monthly"></canvas></div>
+                </div>
+                <div class="chart-card">
+                    <h3>Top Users by Equipment</h3>
+                    <div class="chart-container"><canvas id="chart-users"></canvas></div>
+                </div>
+                <div class="chart-card">
+                    <h3>Usage by Area</h3>
+                    <div class="chart-container"><canvas id="chart-area"></canvas></div>
+                </div>
+                <div class="chart-card">
+                    <h3>Booking Types</h3>
+                    <div class="chart-container"><canvas id="chart-time"></canvas></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Equipments View -->
+        <div id="equipment-view" class="container hidden">
+            <div class="header-actions">
+                <h2><i class="fa-solid fa-cubes"></i> Equipments</h2>
+                <div class="flex gap-2" style="flex: 1; max-width: 600px; justify-content: flex-end;">
+                    <button class="btn btn-outline hidden" onclick="window.print()" title="Print Dashboard Cards"><i
+                            class="fa-solid fa-print"></i> Print A4 Stickers</button>
+                    <div class="search-bar" style="max-width: 100%;">
+                        <i class="fa-solid fa-search"></i>
+                        <input type="text" id="search-input" placeholder="Search name, serial, location, custodian..."
+                            oninput="app.filterEquipments()">
+                    </div>
+                </div>
+            </div>
+
+            <div id="equipment-content">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+
+        <!-- Data Table View -->
+        <div id="data-table-view" class="container hidden">
+            <div class="header-actions" style="margin-bottom: 1rem;">
+                <h2><i class="fa-solid fa-table"></i> All Data & Logs</h2>
+                <div class="flex gap-2" style="flex: 1; flex-wrap: wrap; justify-content: flex-end;">
+                    <select id="log-filter-status" onchange="app.renderDataTable()" style="max-width: 150px;">
+                        <option value="">All Status</option>
+                        <option value="booked">Advance (Booked)</option>
+                        <option value="inuse">In Use</option>
+                        <option value="finished">Finished</option>
+                    </select>
+                    <select id="log-filter-eq" onchange="app.renderDataTable()" style="max-width: 200px;">
+                        <option value="">All Equipments</option>
+                        <!-- Injected dynamically via JS in renderAdminData / updateUI -->
+                    </select>
+                    <div class="search-bar" style="max-width: 300px;">
+                        <i class="fa-solid fa-search"></i>
+                        <input type="text" id="log-search-input" placeholder="Search..."
+                            oninput="app.renderDataTable()">
+                    </div>
+                </div>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date/Time</th>
+                            <th>Equipment</th>
+                            <th>User</th>
+                            <th>Duration</th>
+                            <th>Project</th>
+                            <th>Status</th>
+                            <th>Details</th>
+                        </tr>
+                    </thead>
+                    <tbody id="data-table-tbody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Form View (Add Entry) -->
+        <div id="form-view" class="container hidden">
+            <button class="btn btn-outline mb-4" onclick="app.goBack()"><i class="fa-solid fa-arrow-left"></i>
+                Back</button>
+
+            <div class="form-container">
+                <div class="form-header">
+                    <h2><i class="fa-solid fa-book-open"></i> Add Entry</h2>
+                </div>
+
+                <form id="booking-form" onsubmit="app.submitBooking(event)">
+                    <input type="hidden" id="bk-edit-id">
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label>Project Code</label>
+                            <input type="text" id="bk-project" placeholder="e.g. PRJ-2026-001">
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Full description</label>
+                            <textarea id="bk-desc" rows="3" required></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Start Date & Time (เริ่ม)</label>
+                            <input type="datetime-local" id="bk-start" required onchange="app.validateDates()">
+                        </div>
+                        <div class="form-group">
+                            <label>End Date & Time (สิ้นสุด)</label>
+                            <input type="datetime-local" id="bk-end" required onchange="app.validateDates()">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Area</label>
+                            <select id="bk-area" required onchange="app.populateEquipmentSelect()">
+                                <option value="">Select Area</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Equipment</label>
+                            <select id="bk-equipment" required>
+                                <option value="">Select Equipment</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Type</label>
+                            <select id="bk-type">
+                                <option value="Internal">Internal</option>
+                                <option value="External">External</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Confirmation status</label>
+                            <div class="radio-group">
+                                <label><input type="radio" name="bk_confirm" value="Tentative"> Tentative</label>
+                                <label><input type="radio" name="bk_confirm" value="Confirmed" checked>
+                                    Confirmed</label>
+                            </div>
+                        </div>
+
+                        <!-- Repeat Section -->
+                        <div class="form-group full-width repeat-section" id="bk-repeat-section">
+                            <label style="color: var(--secondary);"><i class="fa-solid fa-repeat"></i> Recurring
+                                Booking</label>
+                            <div class="form-group mt-4">
+                                <label>Repeat type</label>
+                                <div class="radio-group" style="flex-wrap: wrap;">
+                                    <label><input type="radio" name="bk_repeat" value="None" checked
+                                            onchange="app.toggleRepeatEnd()"> None</label>
+                                    <label><input type="radio" name="bk_repeat" value="Daily"
+                                            onchange="app.toggleRepeatEnd()"> Daily</label>
+                                    <label><input type="radio" name="bk_repeat" value="Weekly"
+                                            onchange="app.toggleRepeatEnd()"> Weekly</label>
+                                    <label><input type="radio" name="bk_repeat" value="Monthly"
+                                            onchange="app.toggleRepeatEnd()"> Monthly</label>
+                                    <label><input type="radio" name="bk_repeat" value="Yearly"
+                                            onchange="app.toggleRepeatEnd()"> Yearly</label>
+                                </div>
+                            </div>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Repeat end date</label>
+                                    <input type="date" id="bk-repeat-end" disabled>
+                                </div>
+                                <div class="form-group flex items-center" style="margin-top: 1.5rem;">
+                                    <label style="display:flex; align-items:center; gap: 0.5rem; cursor: pointer;">
+                                        <input type="checkbox" id="bk-skip-conflicts" style="width: auto;"> Skip past
+                                        conflicts
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-4 mt-4 justify-center">
+                        <button type="submit" class="btn"><i class="fa-solid fa-save"></i> Save Booking</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Admin View -->
+        <div id="admin-view" class="container hidden">
+            <h2><i class="fa-solid fa-shield-halved"></i> Admin Control Panel</h2>
+
+            <div class="admin-tabs mt-4">
+                <div class="admin-tab active" onclick="app.switchAdminTab('equipments')">Equipments</div>
+                <div class="admin-tab" onclick="app.switchAdminTab('locations')">Locations</div>
+                <div class="admin-tab" onclick="app.switchAdminTab('users')">Users</div>
+                <div class="admin-tab" onclick="app.switchAdminTab('bookings')">All Bookings (Audit Log)</div>
+                <div class="admin-tab" onclick="app.switchAdminTab('system')">System Data</div>
+            </div>
+
+            <div id="admin-tab-equipments" class="admin-tab-content">
+                <div class="header-actions">
+                    <h3>Manage Equipments</h3>
+                </div>
+                <div class="glass-card mt-4" style="padding: 1rem; margin-bottom: 1rem;">
+                    <div class="flex gap-2 items-end flex-wrap">
+                        <input type="hidden" id="adminEqId">
+                        <div style="flex: 1; min-width: 150px;">
+                            <label style="font-size: 0.8rem; color: var(--text-muted);">Name</label>
+                            <input type="text" id="adminEqName" style="width: 100%; padding: 0.5rem; border-radius: 8px; border: 1px solid var(--border-color);">
+                        </div>
+                        <div style="flex: 1; min-width: 150px;">
+                            <label style="font-size: 0.8rem; color: var(--text-muted);">Location</label>
+                            <select id="adminEqLoc" style="width: 100%; padding: 0.5rem; border-radius: 8px; border: 1px solid var(--border-color);"></select>
+                        </div>
+                        <div style="flex: 1; min-width: 150px;">
+                            <label style="font-size: 0.8rem; color: var(--text-muted);">Serial Number</label>
+                            <input type="text" id="adminEqSerial" style="width: 100%; padding: 0.5rem; border-radius: 8px; border: 1px solid var(--border-color);">
+                        </div>
+                        <div style="flex: 1; min-width: 150px;">
+                            <label style="font-size: 0.8rem; color: var(--text-muted);">Custodian</label>
+                            <input type="text" id="adminEqCustodian" style="width: 100%; padding: 0.5rem; border-radius: 8px; border: 1px solid var(--border-color);">
+                        </div>
+                        <button class="btn" id="btnSaveEq" onclick="app.adminSaveEquipment()">Add</button>
+                        <button class="btn btn-outline hidden" id="btnCancelEq" onclick="app.adminCancelEquipment()">Cancel</button>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name (ชื่อเครื่องมือ)</th>
+                                <th>Serial Num</th>
+                                <th>Location</th>
+                                <th>Custodian</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-eq-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="admin-tab-locations" class="admin-tab-content hidden">
+                <div class="header-actions">
+                    <h3>Manage Locations</h3>
+                </div>
+                <div class="glass-card mt-4" style="padding: 1rem; margin-bottom: 1rem;">
+                    <div class="flex gap-2 items-end">
+                        <input type="hidden" id="adminLocId">
+                        <div style="flex: 1;">
+                            <label style="font-size: 0.8rem; color: var(--text-muted);">Location Name</label>
+                            <input type="text" id="adminLocName" placeholder="New Location Name" style="width: 100%; padding: 0.5rem; border-radius: 8px; border: 1px solid var(--border-color);">
+                        </div>
+                        <button class="btn" id="btnSaveLoc" onclick="app.adminSaveLocation()">Add</button>
+                        <button class="btn btn-outline hidden" id="btnCancelLoc" onclick="app.adminCancelLocation()">Cancel</button>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th style="text-align: right;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-locations-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="admin-tab-users" class="admin-tab-content hidden">
+                <div class="header-actions">
+                    <h3>Manage Users</h3>
+                </div>
+                <div class="glass-card mt-4" style="padding: 1rem; margin-bottom: 1rem;">
+                    <div class="flex gap-2 items-end flex-wrap">
+                        <input type="hidden" id="adminUserId">
+                        <div style="flex: 1; min-width: 150px;">
+                            <label style="font-size: 0.8rem; color: var(--text-muted);">Email / Username</label>
+                            <input type="text" id="adminUserEmail" style="width: 100%; padding: 0.5rem; border-radius: 8px; border: 1px solid var(--border-color);">
+                        </div>
+                        <div style="flex: 1; min-width: 150px;">
+                            <label style="font-size: 0.8rem; color: var(--text-muted);">Full Name</label>
+                            <input type="text" id="adminUserName" style="width: 100%; padding: 0.5rem; border-radius: 8px; border: 1px solid var(--border-color);">
+                        </div>
+                        <div style="flex: 1; min-width: 150px;">
+                            <label style="font-size: 0.8rem; color: var(--text-muted);">Password</label>
+                            <input type="text" id="adminUserPass" style="width: 100%; padding: 0.5rem; border-radius: 8px; border: 1px solid var(--border-color);">
+                        </div>
+                        <div style="width: 100px;">
+                            <label style="font-size: 0.8rem; color: var(--text-muted);">Role</label>
+                            <select id="adminUserRole" style="width: 100%; padding: 0.5rem; border-radius: 8px; border: 1px solid var(--border-color);">
+                                <option value="user">User</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                        </div>
+                        <button class="btn" id="btnSaveUser" onclick="app.adminSaveUser()">Add</button>
+                        <button class="btn btn-outline hidden" id="btnCancelUser" onclick="app.adminCancelUser()">Cancel</button>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Username</th>
+                                <th>Full Name</th>
+                                <th>Role</th>
+                                <th>Warnings</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-users-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="admin-tab-bookings" class="admin-tab-content hidden">
+                <div class="header-actions">
+                    <h3>Manage All Bookings (Including Deleted)</h3>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Date</th>
+                                <th>Equipment</th>
+                                <th>User</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-bookings-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="admin-tab-system" class="admin-tab-content hidden">
+                <div class="header-actions">
+                    <h3>System Data Management</h3>
+                </div>
+                <div class="glass-card mt-4">
+                    <p style="margin-bottom: 1rem; color: var(--text-muted);">
+                        Backup your current system data (users, equipments, bookings) to a JSON file, or import an
+                        existing backup.
+                    </p>
+                    <div class="flex gap-4">
+                        <button class="btn" style="background-color: var(--success);" onclick="app.backupData()">
+                            <i class="fa-solid fa-download"></i> Backup Data
+                        </button>
+                        <div>
+                            <input type="file" id="import-json" accept=".json" class="hidden"
+                                onchange="app.importData(event)">
+                            <button class="btn" style="background-color: var(--warning);"
+                                onclick="document.getElementById('import-json').click()">
+                                <i class="fa-solid fa-upload"></i> Import JSON
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+
+    <!-- Equipment Modal -->
+    <div id="modal-eq" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-eq-title">Add Equipment</h3>
+                <button class="btn-outline btn-icon-only" style="border:none;" onclick="app.closeModal('eq')"><i
+                        class="fa-solid fa-times"></i></button>
+            </div>
+            <form onsubmit="app.saveEquipment(event)">
+                <input type="hidden" id="admin-eq-id">
+                <div class="form-group"><label>Instrument Name (ชื่อเครื่องมือ)</label><input type="text"
+                        id="admin-eq-name" list="list-names" required autocomplete="off"></div>
+                <div class="form-group"><label>Serial Number (ซีเรียล)</label><input type="text" id="admin-eq-serial"
+                        required></div>
+                <div class="form-group"><label>Location (สถานที่)</label><input type="text" id="admin-eq-location"
+                        list="list-locations" required autocomplete="off"></div>
+                <div class="form-group"><label>Custodian (ผู้ดูแล)</label><input type="text" id="admin-eq-custodian"
+                        list="list-custodians" required autocomplete="off"></div>
+                <div class="flex justify-between mt-4">
+                    <button type="button" class="btn btn-danger hidden" id="admin-eq-delete"
+                        onclick="app.deleteEquipment()">Delete</button>
+                    <div class="flex gap-2" style="margin-left: auto;">
+                        <button type="button" class="btn btn-outline" onclick="app.closeModal('eq')">Cancel</button>
+                        <button type="submit" class="btn">Save</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- User Modal -->
+    <div id="modal-user" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-user-title">Add User</h3>
+                <button class="btn-outline btn-icon-only" style="border:none;" onclick="app.closeModal('user')"><i
+                        class="fa-solid fa-times"></i></button>
+            </div>
+            <form onsubmit="app.saveUser(event)">
+                <input type="hidden" id="admin-user-id">
+                <div class="form-group"><label>Username (Login ID)</label><input type="text" id="admin-user-username"
+                        required></div>
+                <div class="form-group"><label>Password</label><input type="text" id="admin-user-password" required>
+                </div>
+                <div class="form-group"><label>Full Name (ชื่อ-สกุลที่ปรากฏในฟอร์ม)</label><input type="text"
+                        id="admin-user-fullname" required></div>
+                <div class="form-group">
+                    <label>Role</label>
+                    <select id="admin-user-role" required>
+                        <option value="user">User</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                <div class="flex justify-between mt-4">
+                    <button type="button" class="btn btn-danger hidden" id="admin-user-delete"
+                        onclick="app.deleteUser()">Delete</button>
+                    <div class="flex gap-2" style="margin-left: auto;">
+                        <button type="button" class="btn btn-outline" onclick="app.closeModal('user')">Cancel</button>
+                        <button type="submit" class="btn">Save</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Booking Details Modal -->
+    <div id="modal-booking" class="modal hidden">
+        <div class="modal-content wide">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-calendar-check"></i> Booking Details</h3>
+                <button class="btn-outline btn-icon-only" style="border:none;" onclick="app.closeModal('booking')"><i
+                        class="fa-solid fa-times"></i></button>
+            </div>
+            <div id="booking-detail-content" style="font-family: var(--font-data);">
+                <!-- Rendered via JS -->
+            </div>
+
+            <div class="mt-4">
+                <h4 style="font-size: 0.9rem; margin-bottom: 0.5rem; color: var(--text-muted);"><i
+                        class="fa-solid fa-clock-rotate-left"></i> Audit & Edit History</h4>
+                <div class="history-list" id="booking-history-list"></div>
+            </div>
+
+            <div class="flex justify-between mt-4" id="booking-actions">
+                <!-- Buttons rendered via JS based on state and permissions -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Finish Usage Modal -->
+    <div id="modal-finish" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-flag-checkered"></i> Finish Usage</h3>
+                <button class="btn-outline btn-icon-only" style="border:none;" onclick="app.closeModal('finish')"><i
+                        class="fa-solid fa-times"></i></button>
+            </div>
+            <form onsubmit="app.submitFinish(event)">
+                <input type="hidden" id="finish-bk-id">
+
+                <div id="finish-dynamic-fields" class="form-grid"
+                    style="background: rgba(37, 99, 235, 0.05); padding: 1rem; border-radius: 8px; border: 1px dashed var(--primary); margin-bottom: 1rem;">
+                    <!-- Equipment Specific Parameters injected here -->
+                </div>
+
+                <div class="form-group">
+                    <label>Usage Details (รายละเอียดการใช้งาน)</label>
+                    <textarea id="finish-details" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Remarks (หมายเหตุ)</label>
+                    <textarea id="finish-remarks" rows="2"></textarea>
+                </div>
+
+                <div class="flex justify-end gap-2 mt-4">
+                    <button type="button" class="btn btn-outline" onclick="app.closeModal('finish')">Cancel</button>
+                    <button type="submit" class="btn btn-success"><i class="fa-solid fa-check"></i> Complete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Equipment History Modal (From clock icon) -->
+    <div id="modal-history" class="modal hidden">
+        <div class="modal-content wide">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-clock-rotate-left"></i> Equipment History: <span id="history-eq-name"></span>
+                </h3>
+                <button class="btn-outline btn-icon-only" style="border:none;" onclick="app.closeModal('history')"><i
+                        class="fa-solid fa-times"></i></button>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>User</th>
+                            <th>Start</th>
+                            <th>End</th>
+                            <th>Duration</th>
+                            <th>Status</th>
+                            <th>Details</th>
+                        </tr>
+                    </thead>
+                    <tbody id="history-logs-tbody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Warning History Modal (For Admin) -->
+    <div id="modal-admin-history" class="modal hidden">
+        <div class="modal-content wide">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-history"></i> Warning History: <span id="admin-history-username"></span></h3>
+                <button class="btn-outline btn-icon-only" style="border:none;"
+                    onclick="app.closeModal('admin-history')"><i class="fa-solid fa-times"></i></button>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date Warned</th>
+                            <th>Equipment</th>
+                            <th>Booking ID</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-history-tbody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Active Warnings Modal (From Bell Icon) -->
+    <div id="modal-user-warnings" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-bell" style="color:red;"></i> Action Required</h3>
+                <button class="btn-outline btn-icon-only" style="border:none;"
+                    onclick="app.closeModal('user-warnings')"><i class="fa-solid fa-times"></i></button>
+            </div>
+            <p class="mb-4">The following bookings are overdue and have not been finished. Users with overdue bookings
+                cannot book new equipment.</p>
+            <ul id="user-warnings-list"
+                style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 0.5rem; max-height: 300px; overflow-y: auto;">
+            </ul>
+            <div class="flex justify-end mt-4">
+                <button class="btn btn-outline" onclick="app.closeModal('user-warnings')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const app = {
+            state: { user: null, equipments: [], bookings: [], users: [], buildings: [] },
+            calendar: null,
+            charts: {},
+            previousView: 'dashboard-view',
+            qrTimeout: null,
+
+            getLocName(id, buildings) {
+                const b = buildings.find(x => x.id == id);
+                return b ? b.name : 'Unknown';
+            },
+            
+            // --- Initialization ---
+            init() {
+                this.loadState();
+
+                // 1. Sync Default Data from CarePlus if not exists OR if old mock data is present OR if user username is missing @
+                const hasMockEq = this.state.equipments && this.state.equipments.some(eq => eq.id.startsWith('BSC-') || eq.id.startsWith('CEN-'));
+                const hasOldUsername = this.state.users && this.state.users.some(u => u.username === 'admin');
+
+                if (hasMockEq || hasOldUsername || (!this.state.users || this.state.users.length === 0) || (!this.state.equipments || this.state.equipments.length === 0)) {
+                    // Force complete reset from CarePlus _backupData
+                    this.state.bookings = [];
+                    this.state.users = [];
+                    this.state.equipments = [];
+                    this.state.buildings = [];
+                    const _backupData = { "users": { "admin@lab.com": { "password": "admin321", "role": "admin", "name": "Administrator" }, "user@lab.com": { "password": "user123", "role": "user", "name": "Standard User" }, "Saranyap@mitrphol.com": { "password": "user123", "role": "user", "name": "Saranya phaengthai" }, "Waranyan@mitrphol.com": { "password": "user123", "role": "user", "name": "Waranya Natesuntorn" }, "Ratchaniwanj@mitrphol.com": { "password": "user123", "role": "user", "name": "Ratchaniwan Jaemsaeng" }, "Prayooths@mitrphol.com": { "password": "user123", "role": "user", "name": "Prayooth Saothong" }, "Chokchais@mitrphol.com": { "password": "user123", "role": "user", "name": "Chokchai Sompugdee" }, "Atiyat@mitrphol.com": { "password": "user123", "role": "user", "name": "Atiya Techaparin" }, "Kridsanak@mitrphol.com": { "password": "user123", "role": "user", "name": "Kridsana Krisomdee" }, "Jirachayak@mitrphol.com": { "password": "user123", "role": "user", "name": "Jirachaya klinsumalee" } }, "buildings": [{ "id": 5, "name": "Fermentation unit" }, { "id": 6, "name": "Production Trial Unit" }, { "id": 7, "name": "Analytical Lab" }, { "id": 8, "name": "General Micro Lab" }, { "id": 9, "name": "Preparation room" }, { "id": 10, "name": "Utility" }, { "id": 11, "name": "Washing room" }, { "id": 12, "name": "Biosafety Level 2 (BSL2)" }, { "id": 1770461142946, "name": "Micro Lab" }], "equipment": [{ "id": 1, "name": "Autoclave", "building_id": 5 }, { "id": 2, "name": "50L Fermenter", "building_id": 5 }, { "id": 3, "name": "500L Fermenter", "building_id": 5 }, { "id": 4, "name": "750L Hot Air Oven", "building_id": 5 }, { "id": 5, "name": "500L Mixing tank", "building_id": 6 }, { "id": 6, "name": "500L Pretreatment tank", "building_id": 6 }, { "id": 7, "name": "20L Rotary evaporator", "building_id": 6 }, { "id": 8, "name": "Falling Film Evaporator (10L/h)", "building_id": 6 }, { "id": 9, "name": "Mini Spray Dry (Buchi-B290)", "building_id": 6 }, { "id": 10, "name": "Pilot Spray Dry", "building_id": 6 }, { "id": 11, "name": "Separator (Alfa Laval)", "building_id": 6 }, { "id": 12, "name": "Tubular centrifuge", "building_id": 6 }, { "id": 13, "name": "Sequential Simulated Moving Bed (SMB)", "building_id": 6 }, { "id": 14, "name": "Autoclave, Hirayama", "building_id": 6 }, { "id": 15, "name": "Multi-function automatic filling machine", "building_id": 6 }, { "id": 16, "name": "Vacuum packager", "building_id": 6 }, { "id": 17, "name": "Packing machine", "building_id": 6 }, { "id": 18, "name": "Filter press", "building_id": 6 }, { "id": 19, "name": "HPLC (Waters)", "building_id": 7 }, { "id": 20, "name": "Incubator Shaker (Innova)", "building_id": 7 }, { "id": 21, "name": "Tangential Flow Fitration (Merck)", "building_id": 7 }, { "id": 22, "name": "Centrifuge Floor Type (Lynx4000))", "building_id": 8 }, { "id": 23, "name": "Incubator Shaker (InfrosTH))", "building_id": 8 }, { "id": 24, "name": "Incubator (Memmert) No.1", "building_id": 8 }, { "id": 25, "name": "Incubator (Memmert) No.2", "building_id": 8 }, { "id": 26, "name": "Moisture analyzer", "building_id": 8 }, { "id": 27, "name": "Biosafety Cabinet", "building_id": 8 }, { "id": 28, "name": "Spectrophotometer", "building_id": 8 }, { "id": 29, "name": "Fume hood", "building_id": 9 }, { "id": 30, "name": "Thermomixer", "building_id": 9 }, { "id": 31, "name": "UV Auto Dry Desiccator", "building_id": 9 }, { "id": 32, "name": "Boiler", "building_id": 10 }, { "id": 33, "name": "RO Water Unit", "building_id": 10 }, { "id": 34, "name": "Air Supply Unit", "building_id": 10 }, { "id": 35, "name": "Hot Air Oven (Memmert UF260))", "building_id": 11 }, { "id": 36, "name": "Water Purifier (Arioso UP900))", "building_id": 11 }, { "id": 37, "name": "ICE Maker", "building_id": 11 }, { "id": 38, "name": "Freezer -80 C (Eppendorf)", "building_id": 12 }, { "id": 39, "name": "Freezer -20 C (Panasonic)", "building_id": 12 }, { "id": 40, "name": "Autoclave HVA110 (Hirayama)", "building_id": 12 }, { "id": 41, "name": "Refridgerator centrifuge", "building_id": 12 }, { "id": 42, "name": "Spectrophotometer (Jenway)", "building_id": 12 }, { "id": 43, "name": "Incubator shaker (Biosan)", "building_id": 12 }, { "id": 44, "name": "YSI 2900D", "building_id": 12 }, { "id": 45, "name": "Waterless bead bath", "building_id": 12 }, { "id": 46, "name": "BSC (ESCO)", "building_id": 12 }, { "id": 47, "name": "42 L fermenter Techfros", "building_id": 12 }, { "id": 48, "name": "Chiller for techfors", "building_id": 12 }, { "id": 49, "name": "Steam generator", "building_id": 12 }, { "id": 50, "name": "1L Multifros fermenter #1", "building_id": 12 }, { "id": 51, "name": "1L Multifros fermenter #2", "building_id": 12 }, { "id": 52, "name": "1L Multifros fermenter #3", "building_id": 12 }, { "id": 53, "name": "1L Multifros fermenter #4", "building_id": 12 }, { "id": 54, "name": "1L Multifros fermenter #5", "building_id": 12 }, { "id": 55, "name": "1L Multifros fermenter #6", "building_id": 12 }, { "id": 56, "name": "5L Minifros #1", "building_id": 12 }, { "id": 57, "name": "5L Minifros #2", "building_id": 12 }, { "id": 58, "name": "Refrigerator (MITSUBISHI)", "building_id": 7 }, { "id": 59, "name": "Microplate Reader", "building_id": 7 }, { "id": 60, "name": "Gel Doc (BioRad)", "building_id": 7 }, { "id": 61, "name": "Sonicator", "building_id": 7 }, { "id": 62, "name": "Water bath (Lauda)", "building_id": 8 }, { "id": 63, "name": "Water bath (Thermo scientific)", "building_id": 8 }, { "id": 64, "name": "Microwave 1100W", "building_id": 8 }, { "id": 65, "name": "Microcentrifuge (Beckman coulter)", "building_id": 8 }, { "id": 66, "name": "3-Door Refrigerator (4C), Natural (no.1)", "building_id": 6 }, { "id": 67, "name": "3-Door Refrigerator (4C), Natural (no.2)", "building_id": 6 }, { "id": 68, "name": "Refrigerator (-20C), Haier", "building_id": 6 }, { "id": 69, "name": "2-Door Refrigerator (4C), POL-EKO", "building_id": 6 }, { "id": 70, "name": "Water bath, Memmert", "building_id": 6 }, { "id": 71, "name": "Water bath, Memmert from DC", "building_id": 6 }, { "id": 72, "name": "Analytical Balance 60 kg, Mettler-toledo", "building_id": 6 }, { "id": 73, "name": "Centrifuge  from New business, Hermle", "building_id": 6 }, { "id": 74, "name": "Overhead stirrer, IKA Eurostar 200", "building_id": 6 }, { "id": 75, "name": "Air Conditioner, Carrier 60,000 BTU no.1", "building_id": 6 }, { "id": 76, "name": "Air Conditioner, Carrier 60,000 BTU no.2", "building_id": 6 }, { "id": 77, "name": "Air Conditioner, Carrier 60,000 BTU no.3", "building_id": 6 }, { "id": 78, "name": "Peristaltic pump (Lab F6), Shenchen no.1", "building_id": 6 }, { "id": 79, "name": "Peristaltic pump (Lab F6), Shenchen no.2", "building_id": 6 }, { "id": 80, "name": "Peristaltic pump (Lab F6), Shenchen no.3", "building_id": 6 }, { "id": 81, "name": "Peristaltic pump (Lab F6), Shenchen no.4", "building_id": 6 }, { "id": 82, "name": "Peristaltic pump (Lab F6), Shenchen no.5", "building_id": 6 }, { "id": 83, "name": "Peristaltic pump (Lab N3), Shenchen no.1", "building_id": 6 }, { "id": 84, "name": "Peristaltic pump (Lab N3), Shenchen no.2", "building_id": 6 }, { "id": 85, "name": "Peristaltic pump (Lab N3), Shenchen no.3", "building_id": 6 }, { "id": 86, "name": "Peristaltic pump (BT101F) from N'Ae", "building_id": 6 }, { "id": 1770461244134, "name": "Spray dry (ฺB-290)", "building_id": 1770461142946 }, { "id": 1770461661504, "name": "Refrigerator, Panasonic", "building_id": 1770461142946 }, { "id": 1770462688377, "name": "Rotary evaporator, Eyela", "building_id": 1770461142946 }, { "id": 1770463495602, "name": "pH & CD meter", "building_id": 6 }] };
+
+                    if (!this.state.users || this.state.users.length === 0) {
+                        this.state.users = Object.entries(_backupData.users).map(([k, v], i) => ({
+                            id: 'U-' + String(i + 1).padStart(3, '0'),
+                            username: k,
+                            password: v.password,
+                            name: v.name,
+                            role: v.role
+                        }));
+                    }
+
+                    if (!this.state.buildings || this.state.buildings.length === 0) {
+                        this.state.buildings = _backupData.buildings.map(b => ({
+                            id: b.id,
+                            name: b.name
+                        }));
+                    }
+
+                    if (!this.state.equipments || this.state.equipments.length === 0) {
+                        this.state.equipments = _backupData.equipment.map((e, i) => {
+                            return {
+                                id: 'EQ-' + String(i + 1).padStart(3, '0'),
+                                name: e.name,
+                                serial: 'N/A',
+                                building_id: e.building_id,
+                                custodian: 'Admin'
+                            };
+                        });
+                    }
+                }
+
+                this.saveState();
+                window.addEventListener('hashchange', () => this.handleRouting());
+                window.addEventListener('storage', (e) => {
+                    if (e.key === 'NoteLabState_Merged') {
+                        this.loadState();
+                        this.updateUI();
+                    }
+                });
+                this.updateUI();
+                this.handleRouting();
+            },
+
+            loadState() {
+                const savedState = localStorage.getItem('NoteLabState_Merged');
+                if (savedState) this.state = JSON.parse(savedState);
+                if (!this.state.bookings) this.state.bookings = [];
+                if (!this.state.buildings) this.state.buildings = [];
+                this.sessionToken = localStorage.getItem('NoteLab_SessionToken');
+            },
+            saveState() {
+                localStorage.setItem('NoteLabState_Merged', JSON.stringify(this.state));
+            },
+
+
+
+            // --- Routing & UI ---
+            handleRouting() {
+                const hash = window.location.hash;
+                if (!this.state.user) return this.showView('login-view');
+
+                if (hash === '#admin' && this.state.user.role === 'admin') {
+                    this.showView('admin-view');
+                } else if (hash === '#equipment') {
+                    this.showView('equipment-view');
+                } else if (hash === '#datatable') {
+                    this.showView('data-table-view');
+                } else if (hash.startsWith('#add')) {
+                    const params = new URLSearchParams(hash.split('?')[1]);
+                    const eqId = params.get('eq');
+                    const date = params.get('date');
+                    this.openAddEntry(eqId, date);
+                } else {
+                    this.showView('dashboard-view');
+                }
+            },
+
+            showView(viewId) {
+                const currentActive = document.querySelector('#app > div:not(.hidden):not(.modal)');
+                if (currentActive && currentActive.id !== 'form-view' && currentActive.id !== 'login-view') {
+                    this.previousView = currentActive.id;
+                }
+
+                document.querySelectorAll('#app > div:not(.modal)').forEach(el => el.classList.add('hidden'));
+                const nav = document.getElementById('navbar');
+
+                if (viewId === 'login-view') {
+                    nav.classList.add('hidden');
+                } else {
+                    nav.classList.remove('hidden');
+                    document.getElementById('nav-user-name').innerHTML = `${this.state.user.name}`;
+                    document.getElementById('nav-user-role').innerHTML = `${this.state.user.role}`;
+                    
+                    const isAdmin = this.state.user.role === 'admin';
+                    document.getElementById('nav-admin-btn')?.classList.toggle('hidden', !isAdmin);
+                    document.getElementById('nav-admin-btn-mobile')?.classList.toggle('hidden', !isAdmin);
+                    
+                    // Reset all nav tabs active state
+                    document.querySelectorAll('.nav-pill').forEach(el => el.classList.remove('active'));
+                    document.querySelectorAll('.nav-pill-mobile').forEach(el => {
+                        el.style.backgroundColor = 'transparent';
+                        el.style.color = '#4b5563';
+                    });
+                    
+                    // Set active tab based on view
+                    let dtId = '';
+                    let mtId = '';
+                    if (viewId === 'dashboard-view') { dtId = 'tab-desktop-dashboard'; mtId = 'tab-mobile-dashboard'; }
+                    else if (viewId === 'equipment-view') { dtId = 'tab-desktop-equipment'; mtId = 'tab-mobile-equipment'; }
+                    else if (viewId === 'data-table-view') { dtId = 'tab-desktop-datatable'; mtId = 'tab-mobile-datatable'; }
+                    else if (viewId === 'admin-view') { dtId = 'nav-admin-btn'; mtId = 'nav-admin-btn-mobile'; }
+                    
+                    const desktopEl = document.getElementById(dtId);
+                    if (desktopEl) desktopEl.classList.add('active');
+                    
+                    const mobileEl = document.getElementById(mtId);
+                    if (mobileEl) {
+                        mobileEl.style.backgroundColor = '#eff6ff';
+                        mobileEl.style.color = '#2563eb';
+                    }
+                }
+
+                const targetView = document.getElementById(viewId);
+                if (targetView) targetView.classList.remove('hidden');
+
+                // View Specific Triggers
+                if (viewId === 'dashboard-view') {
+                    window.location.hash = '';
+                    this.populateCalendarDropdowns();
+                    this.renderCharts();
+                    setTimeout(() => this.initCalendar(), 100);
+                }
+                if (viewId === 'equipment-view') {
+                    window.location.hash = 'equipment';
+                    this.renderEquipmentGrid();
+                }
+                if (viewId === 'data-table-view') {
+                    window.location.hash = 'datatable';
+
+                    // Populate equipment filter dropdown dynamically
+                    const eqSelect = document.getElementById('log-filter-eq');
+                    if (eqSelect.options.length <= 1) {
+                        this.state.equipments.forEach(e => {
+                            eqSelect.add(new Option(e.name, e.id));
+                        });
+                    }
+
+                    this.renderDataTable();
+                }
+                if (viewId === 'admin-view') {
+                    this.renderAdminData();
+                }
+            },
+
+            goBack() {
+                if (this.previousView) {
+                    this.showView(this.previousView);
+                } else {
+                    this.showView('dashboard-view');
+                }
+            },
+
+            updateUI() {
+                if (this.state.user) {
+                    const dbUser = this.state.users.find(u => u.username === this.state.user.username);
+                    if (dbUser && dbUser.activeSession && dbUser.activeSession !== this.sessionToken) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Logged out',
+                            text: 'บัญชีนี้มีการเข้าสู่ระบบจากอุปกรณ์อื่น (This account logged in from another device).'
+                        });
+                        this.state.user = null;
+                        this.sessionToken = null;
+                        localStorage.removeItem('NoteLab_SessionToken');
+                        this.saveState();
+                        this.showView('login-view');
+                        document.body.classList.remove('logged-in');
+                        return;
+                    }
+                    document.body.classList.add('logged-in');
+                    this.handleRouting();
+                    this.checkWarnings();
+                } else {
+                    document.body.classList.remove('logged-in');
+                    this.showView('login-view');
+                }
+            },
+
+            checkWarnings() {
+                if (!this.state.user) return { userWarnings: [], globalWarnings: [] };
+                const now = new Date();
+
+                // Find ALL overdue bookings in the system for public shaming in the bell
+                const globalWarnings = this.state.bookings.filter(b => {
+                    return !b.deleted && !b.finishDetails && now > new Date(b.end);
+                });
+
+                // Log these warnings into their respective users' history if not already logged
+                let stateChanged = false;
+                globalWarnings.forEach(wBooking => {
+                    let userIdx = this.state.users.findIndex(u => u.username === wBooking.creatorUsername);
+                    if (userIdx !== -1) {
+                        if (!this.state.users[userIdx].warnings) this.state.users[userIdx].warnings = [];
+                        const alreadyLogged = this.state.users[userIdx].warnings.some(w => w.bookingId === wBooking.id);
+                        if (!alreadyLogged) {
+                            const eq = this.state.equipments.find(e => e.id === wBooking.eqId);
+                            this.state.users[userIdx].warnings.push({
+                                bookingId: wBooking.id,
+                                eqName: eq ? eq.name : 'Unknown Equipment',
+                                warnedAt: new Date().toISOString()
+                            });
+                            stateChanged = true;
+                        }
+                    }
+                });
+                if (stateChanged) this.saveState();
+
+                // Update Bell UI globally
+                const badge = document.getElementById('nav-notify-badge');
+                if (globalWarnings.length > 0) {
+                    badge.innerText = globalWarnings.length;
+                    badge.classList.remove('hidden');
+                    document.getElementById('nav-notify-btn').style.borderColor = 'red';
+                    document.getElementById('nav-notify-btn').style.color = 'red';
+                } else {
+                    badge.classList.add('hidden');
+                    document.getElementById('nav-notify-btn').style.borderColor = '';
+                    document.getElementById('nav-notify-btn').style.color = '';
+                }
+
+                const userWarnings = globalWarnings.filter(b => b.creatorUsername === this.state.user.username);
+                return { userWarnings, globalWarnings };
+            },
+
+            showWarningsModal() {
+                const warnings = this.checkWarnings();
+                if (warnings.globalWarnings.length === 0) {
+                    return Swal.fire('All Clear', 'There are no overdue bookings in the system!', 'success');
+                }
+                const list = document.getElementById('user-warnings-list');
+                list.innerHTML = warnings.globalWarnings.map(b => {
+                    const eq = this.state.equipments.find(e => e.id === b.eqId);
+                    const eqName = eq ? eq.name : 'Unknown';
+                    const isMe = b.creatorUsername === this.state.user.username;
+                    const borderCol = isMe ? 'red' : 'orange';
+                    return `<li onclick="app.closeModal('user-warnings'); app.showBookingDetails('${b.id}')" style="background: #FEF2F2; padding: 10px; border-radius: 8px; border-left: 4px solid ${borderCol}; margin-bottom: 0.5rem; cursor: pointer; transition: all 0.2s;">
+                    <strong>${eqName}</strong> - Booked by <strong>${b.user}</strong><br>
+                    <small class="text-muted">Ended at: ${moment(b.end).format('DD/MM/YYYY HH:mm')}</small><br>
+                    <small class="text-danger" style="font-size: 0.75rem;">${isMe ? 'Action Required by YOU' : 'Pending user action'}</small>
+                </li>`;
+                }).join('');
+                this.openModal('user-warnings');
+            },
+
+            // --- New Inline Admin Logic ---
+            renderAdminLocations() {
+                document.getElementById('admin-locations-tbody').innerHTML = this.state.buildings.map(b => `
+                <tr style="border-bottom: 1px solid var(--border-color);">
+                    <td style="padding: 1rem;">${b.name}</td>
+                    <td style="padding: 1rem; text-align: right; white-space: nowrap;">
+                        <button onclick="app.adminEditLocation(${b.id})" class="btn btn-outline btn-icon-only" style="margin-right: 0.5rem;"><i class="fa-solid fa-edit"></i></button>
+                        <button onclick="app.adminDeleteLocation(${b.id})" class="btn btn-outline btn-icon-only text-danger"><i class="fa-solid fa-times"></i></button>
+                    </td>
+                </tr>`).join('');
+            },
+            adminEditLocation(id) {
+                const b = this.state.buildings.find(x => x.id == id);
+                document.getElementById('adminLocName').value = b.name;
+                document.getElementById('adminLocId').value = b.id;
+                document.getElementById('btnSaveLoc').textContent = 'Update';
+                document.getElementById('btnCancelLoc').classList.remove('hidden');
+            },
+            adminSaveLocation() {
+                const name = document.getElementById('adminLocName').value;
+                const id = document.getElementById('adminLocId').value;
+                if (name) {
+                    if (id) {
+                        const b = this.state.buildings.find(x => x.id == id);
+                        if (b) b.name = name;
+                    } else {
+                        this.state.buildings.push({ id: Date.now(), name });
+                    }
+                    this.saveState();
+                    this.renderAdminLocations();
+                    this.adminCancelLocation();
+                }
+            },
+            adminCancelLocation() {
+                document.getElementById('adminLocName').value = '';
+                document.getElementById('adminLocId').value = '';
+                document.getElementById('btnSaveLoc').textContent = 'Add';
+                document.getElementById('btnCancelLoc').classList.add('hidden');
+            },
+            adminDeleteLocation(id) {
+                this.state.buildings = this.state.buildings.filter(b => b.id != id);
+                this.saveState();
+                this.renderAdminLocations();
+            },
+
+            renderAdminEquipments() {
+                const locSelect = document.getElementById('adminEqLoc');
+                locSelect.innerHTML = '<option value="">--Select--</option>' + this.state.buildings.map(b => `<option value="${b.id}">${b.name}</option>`).join('');
+
+                document.getElementById('admin-eq-tbody').innerHTML = this.state.equipments.map(eq => `
+                <tr style="border-bottom: 1px solid var(--border-color);">
+                    <td>${eq.id}</td><td>${eq.name}</td><td>${eq.serial}</td><td>${this.getLocName(eq.building_id, this.state.buildings)}</td><td>${eq.custodian}</td>
+                    <td style="text-align: right; white-space: nowrap;">
+                        <button class="btn btn-outline btn-icon-only" onclick="app.adminEditEquipment('${eq.id}')" style="margin-right: 0.5rem;"><i class="fa-solid fa-edit"></i></button>
+                        <button class="btn btn-outline btn-icon-only text-danger" onclick="app.adminDeleteEquipment('${eq.id}')"><i class="fa-solid fa-times"></i></button>
+                    </td>
+                </tr>`).join('');
+            },
+            adminEditEquipment(id) {
+                const e = this.state.equipments.find(x => x.id === id);
+                document.getElementById('adminEqId').value = e.id;
+                document.getElementById('adminEqName').value = e.name;
+                document.getElementById('adminEqLoc').value = e.building_id;
+                document.getElementById('adminEqSerial').value = e.serial || '';
+                document.getElementById('adminEqCustodian').value = e.custodian || '';
+                document.getElementById('btnSaveEq').textContent = 'Update';
+                document.getElementById('btnCancelEq').classList.remove('hidden');
+            },
+            adminSaveEquipment() {
+                const id = document.getElementById('adminEqId').value;
+                const name = document.getElementById('adminEqName').value;
+                const bid = parseInt(document.getElementById('adminEqLoc').value);
+                const serial = document.getElementById('adminEqSerial').value;
+                const custodian = document.getElementById('adminEqCustodian').value;
+                
+                if (name && bid) {
+                    if (id) {
+                        const e = this.state.equipments.find(x => x.id === id);
+                        if (e) {
+                            e.name = name; e.building_id = bid; e.serial = serial; e.custodian = custodian;
+                        }
+                    } else {
+                        const newId = 'EQ-' + String(this.state.equipments.length + 1).padStart(3, '0');
+                        this.state.equipments.push({ id: newId, name, building_id: bid, serial, custodian });
+                    }
+                    this.saveState();
+                    this.renderAdminEquipments();
+                    this.adminCancelEquipment();
+                }
+            },
+            adminCancelEquipment() {
+                document.getElementById('adminEqId').value = '';
+                document.getElementById('adminEqName').value = '';
+                document.getElementById('adminEqLoc').value = '';
+                document.getElementById('adminEqSerial').value = '';
+                document.getElementById('adminEqCustodian').value = '';
+                document.getElementById('btnSaveEq').textContent = 'Add';
+                document.getElementById('btnCancelEq').classList.add('hidden');
+            },
+            adminDeleteEquipment(id) {
+                this.state.equipments = this.state.equipments.filter(e => e.id !== id);
+                this.saveState();
+                this.renderAdminEquipments();
+            },
+
+            renderAdminUsers() {
+                document.getElementById('admin-users-tbody').innerHTML = this.state.users.map(u => {
+                    const wCount = u.warnings ? u.warnings.length : 0;
+                    const wBadge = wCount > 0 ? `<span class="badge badge-deleted">${wCount} Warnings</span>` : '<span class="text-muted">0</span>';
+                    return `
+                <tr style="border-bottom: 1px solid var(--border-color);">
+                    <td>${u.username}</td><td>${u.name}</td><td>${u.role}</td><td>${wBadge}</td>
+                    <td style="text-align: right; white-space: nowrap;">
+                        <button class="btn btn-outline btn-icon-only text-danger" onclick="app.showAdminHistory('${u.username}')" title="Warning History" style="margin-right: 0.5rem;"><i class="fa-solid fa-history"></i></button>
+                        <button class="btn btn-outline btn-icon-only" onclick="app.adminEditUser('${u.id}')" style="margin-right: 0.5rem;"><i class="fa-solid fa-edit"></i></button>
+                        <button class="btn btn-outline btn-icon-only text-danger" onclick="app.adminDeleteUser('${u.id}')"><i class="fa-solid fa-times"></i></button>
+                    </td>
+                </tr>`;
+                }).join('');
+            },
+            adminEditUser(id) {
+                const u = this.state.users.find(x => x.id === id);
+                document.getElementById('adminUserId').value = u.id;
+                document.getElementById('adminUserEmail').value = u.username;
+                document.getElementById('adminUserName').value = u.name;
+                document.getElementById('adminUserPass').value = u.password;
+                document.getElementById('adminUserRole').value = u.role;
+                
+                const emailInput = document.getElementById('adminUserEmail');
+                emailInput.disabled = true;
+                emailInput.style.opacity = '0.5';
+
+                document.getElementById('btnSaveUser').textContent = 'Update';
+                document.getElementById('btnCancelUser').classList.remove('hidden');
+            },
+            adminSaveUser() {
+                const id = document.getElementById('adminUserId').value;
+                const username = document.getElementById('adminUserEmail').value;
+                const name = document.getElementById('adminUserName').value;
+                const password = document.getElementById('adminUserPass').value;
+                const role = document.getElementById('adminUserRole').value;
+
+                if (username && name && password) {
+                    if (id) {
+                        const u = this.state.users.find(x => x.id === id);
+                        if (u) { u.name = name; u.password = password; u.role = role; }
+                    } else {
+                        const newId = 'U-' + String(this.state.users.length + 1).padStart(3, '0');
+                        this.state.users.push({ id: newId, username, password, name, role });
+                    }
+                    this.saveState();
+                    this.renderAdminUsers();
+                    this.adminCancelUser();
+                }
+            },
+            adminCancelUser() {
+                document.getElementById('adminUserId').value = '';
+                document.getElementById('adminUserEmail').value = '';
+                document.getElementById('adminUserName').value = '';
+                document.getElementById('adminUserPass').value = '';
+                document.getElementById('adminUserRole').value = 'user';
+                
+                const emailInput = document.getElementById('adminUserEmail');
+                emailInput.disabled = false;
+                emailInput.style.opacity = '1';
+
+                document.getElementById('btnSaveUser').textContent = 'Add';
+                document.getElementById('btnCancelUser').classList.add('hidden');
+            },
+            adminDeleteUser(id) {
+                const u = this.state.users.find(x => x.id === id);
+                if (u && u.username !== 'admin@lab.com') {
+                    this.state.users = this.state.users.filter(x => x.id !== id);
+                    this.saveState();
+                    this.renderAdminUsers();
+                }
+            },
+
+            // --- Auth ---
+            login(e) {
+                e.preventDefault();
+                const u = document.getElementById('login-user').value;
+                const p = document.getElementById('login-pass').value;
+                const err = document.getElementById('login-error');
+                const foundUser = this.state.users.find(user => user.username === u && user.password === p);
+
+                if (foundUser) {
+                    const token = Math.random().toString(36).substring(2);
+                    this.sessionToken = token;
+                    localStorage.setItem('NoteLab_SessionToken', token);
+
+                    const userIdx = this.state.users.findIndex(user => user.username === u);
+                    if (userIdx !== -1) {
+                        this.state.users[userIdx].activeSession = token;
+                    }
+
+                    this.state.user = this.state.users[userIdx];
+                    err.classList.add('hidden');
+                    this.saveState();
+
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'success',
+                        title: `Welcome back, ${foundUser.name}`,
+                        showConfirmButton: false,
+                        timer: 2000,
+                        timerProgressBar: true
+                    });
+
+                    this.updateUI();
+                } else {
+                    err.classList.remove('hidden');
+                }
+            },
+            logout() {
+                if (this.state.user) {
+                    const userIdx = this.state.users.findIndex(u => u.username === this.state.user.username);
+                    if (userIdx !== -1) {
+                        this.state.users[userIdx].activeSession = null;
+                    }
+                }
+                this.state.user = null;
+                this.sessionToken = null;
+                localStorage.removeItem('NoteLab_SessionToken');
+                this.saveState();
+                window.location.hash = '';
+                document.body.classList.remove('logged-in');
+                this.updateUI();
+            },
+
+            // --- Status Helpers ---
+            getBookingStatus(b) {
+                if (b.deleted) return 'Deleted';
+                if (b.finishDetails) return 'Finished';
+                const now = new Date();
+                const start = new Date(b.start);
+                if (now < start) return 'Booked';
+                return 'InUse';
+            },
+            getBadgeHTML(status) {
+                if (status === 'Booked') return `<span class="badge badge-booked">Advance (จองล่วงหน้า)</span>`;
+                if (status === 'InUse') return `<span class="badge badge-inuse">In Use (กำลังใช้งาน)</span>`;
+                if (status === 'Deleted') return `<span class="badge badge-deleted">Deleted (ยกเลิก)</span>`;
+                return `<span class="badge badge-finished">Finished (เสร็จสิ้น)</span>`;
+            },
+            getEventColor(status) {
+                if (status === 'Booked') return '#3B82F6';
+                if (status === 'InUse') return '#F59E0B';
+                return '#10B981';
+            },
+
+            // --- View: Dashboard (Charts + Calendar) ---
+            populateCalendarDropdowns() {
+                const locSelect = document.getElementById('cal-filter-loc');
+                const eqSelect = document.getElementById('cal-filter-eq');
+
+                if (locSelect.options.length <= 1) {
+                    const areas = this.state.buildings;
+                    areas.forEach(a => locSelect.add(new Option(a, a)));
+                }
+                if (eqSelect.options.length <= 1) {
+                    this.state.equipments.forEach(e => eqSelect.add(new Option(e.name, e.id)));
+                }
+            },
+            updateCalendarFilters() {
+                this.initCalendar();
+            },
+            clearCalendarFilters() {
+                document.getElementById('cal-filter-loc').value = '';
+                document.getElementById('cal-filter-eq').value = '';
+                this.initCalendar();
+            },
+
+            initCalendar() {
+                const calendarEl = document.getElementById('calendar-container');
+                if (this.calendar) {
+                    this.calendar.destroy();
+                }
+
+                const locFilter = document.getElementById('cal-filter-loc')?.value;
+                const eqFilter = document.getElementById('cal-filter-eq')?.value;
+
+                const events = this.state.bookings.filter(b => !b.deleted).filter(b => {
+                    const eq = this.state.equipments.find(e => e.id === b.eqId);
+                    if (!eq) return false;
+                    if (locFilter && eq.building_id != locFilter) return false;
+                    if (eqFilter && eq.id !== eqFilter) return false;
+                    return true;
+                }).map(b => {
+                    const eq = this.state.equipments.find(e => e.id === b.eqId);
+                    const eqName = eq ? eq.name : 'Unknown';
+                    const status = this.getBookingStatus(b);
+                    return {
+                        id: b.id,
+                        title: `${eqName} (${b.user})`,
+                        start: b.start,
+                        end: b.end,
+                        borderColor: this.getEventColor(status)
+                    };
+                });
+
+                this.calendar = new FullCalendar.Calendar(calendarEl, {
+                    initialView: window.innerWidth < 768 ? 'listMonth' : 'dayGridMonth',
+                    contentHeight: 'auto',
+                    headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek,listMonth' },
+                    events: events,
+                    eventClick: (info) => this.showBookingDetails(info.event.id),
+                    dateClick: (info) => {
+                        let t = info.dateStr;
+                        if (t.length === 10) t += "T08:00"; // Default 8am if month view
+                        window.location.hash = `#add?date=${t}`;
+                    }
+                });
+                this.calendar.render();
+            },
+
+            renderCharts() {
+                const resetCanvas = (id) => {
+                    if (this.charts[id]) this.charts[id].destroy();
+                    const canvas = document.getElementById(id);
+                    return canvas.getContext('2d');
+                };
+
+                const allBookings = this.state.bookings.filter(b => !b.deleted);
+
+                // Monthly Usage by Equipment (Current Month)
+                const currentMonth = moment().format('YYYY-MM');
+                const eqUsage = {};
+                allBookings.forEach(b => {
+                    if (moment(b.start).format('YYYY-MM') === currentMonth) {
+                        const eq = this.state.equipments.find(e => e.id === b.eqId);
+                        const name = eq ? eq.name : 'Unknown';
+                        eqUsage[name] = (eqUsage[name] || 0) + (b.durationMins || 0);
+                    }
+                });
+                const sortedEq = Object.entries(eqUsage).sort((a, b) => b[1] - a[1]).slice(0, 10);
+
+                this.charts['chart-monthly'] = new Chart(resetCanvas('chart-monthly'), {
+                    type: 'bar',
+                    data: {
+                        labels: sortedEq.map(x => x[0]),
+                        datasets: [{ label: 'Usage Minutes (This Month)', data: sortedEq.map(x => x[1]), backgroundColor: '#3B82F6' }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false }
+                });
+
+                // Users
+                const userCounts = {};
+                allBookings.forEach(b => { userCounts[b.user] = (userCounts[b.user] || 0) + 1; });
+                const sortedUsers = Object.entries(userCounts).sort((a, b) => b[1] - a[1]).slice(0, 3);
+                this.charts['chart-users'] = new Chart(resetCanvas('chart-users'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: sortedUsers.map(x => x[0]),
+                        datasets: [{ data: sortedUsers.map(x => x[1]), backgroundColor: ['#8B5CF6', '#10B981', '#F59E0B'] }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false }
+                });
+
+                // Area
+                const areaCounts = {};
+                allBookings.forEach(b => {
+                    const eq = this.state.equipments.find(e => e.id === b.eqId);
+                    if (eq) areaCounts[this.getLocName(eq.building_id, this.state.buildings)] = (areaCounts[this.getLocName(eq.building_id, this.state.buildings)] || 0) + 1;
+                });
+                this.charts['chart-area'] = new Chart(resetCanvas('chart-area'), {
+                    type: 'pie',
+                    data: {
+                        labels: Object.keys(areaCounts),
+                        datasets: [{ data: Object.values(areaCounts), backgroundColor: ['#EF4444', '#3B82F6', '#10B981', '#F59E0B'] }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false }
+                });
+
+                // Type
+                const typeCounts = { 'Internal': 0, 'External': 0 };
+                allBookings.forEach(b => { if (b.type) typeCounts[b.type]++; });
+                this.charts['chart-time'] = new Chart(resetCanvas('chart-time'), {
+                    type: 'polarArea',
+                    data: {
+                        labels: ['Internal', 'External'],
+                        datasets: [{ data: [typeCounts['Internal'], typeCounts['External']], backgroundColor: ['rgba(59, 130, 246, 0.5)', 'rgba(245, 158, 11, 0.5)'] }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false }
+                });
+            },
+
+            // --- View: Equipments ---
+            renderEquipmentGrid(searchTerm = '') {
+                // Fix QR Bug: Clear any pending QR generation timeouts before modifying DOM
+                if (this.qrTimeout) clearTimeout(this.qrTimeout);
+
+                const container = document.getElementById('equipment-content');
+                container.innerHTML = '';
+
+                let filtered = this.state.equipments.filter(eq =>
+                    eq.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    eq.serial.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    this.getLocName(eq.building_id, this.state.buildings).toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    eq.custodian.toLowerCase().includes(searchTerm.toLowerCase())
+                );
+
+                const grouped = {};
+                filtered.forEach(eq => {
+                    const locName = this.getLocName(eq.building_id, this.state.buildings);
+                    if (!grouped[locName]) grouped[locName] = [];
+                    grouped[locName].push(eq);
+                });
+
+                const qrPromises = [];
+
+                Object.keys(grouped).sort().forEach(loc => {
+                    const groupDiv = document.createElement('div');
+                    groupDiv.className = 'location-group';
+
+                    const header = document.createElement('div');
+                    header.className = 'location-header';
+                    header.innerHTML = `<i class="fa-solid fa-building"></i> ${loc}`;
+                    groupDiv.appendChild(header);
+
+                    const grid = document.createElement('div');
+                    grid.className = 'equipment-grid';
+
+                    grouped[loc].forEach(eq => {
+                        const card = document.createElement('div');
+                        card.className = 'eq-card';
+                        card.onclick = () => { window.location.hash = `#add?eq=${eq.id}`; };
+
+                        card.innerHTML = `
+                        <button class="btn-history" onclick="event.stopPropagation(); app.showEqHistoryModal('${eq.id}')" title="View History"><i class="fa-solid fa-clock-rotate-left"></i></button>
+                        <div id="qr-${eq.id}" class="eq-qr-container"></div>
+                        <div class="eq-title">${eq.name}</div>
+                        <div class="eq-detail"><i class="fa-solid fa-barcode"></i> SN: ${eq.serial}</div>
+                        <div class="eq-detail"><i class="fa-solid fa-user-shield"></i> ${eq.custodian}</div>
+                        <div class="eq-detail" style="font-size: 0.8rem;"><i class="fa-solid fa-map-pin"></i> ${this.getLocName(eq.building_id, this.state.buildings)}</div>
+                    `;
+                        grid.appendChild(card);
+
+                        qrPromises.push(() => {
+                            const qrDiv = document.getElementById(`qr-${eq.id}`);
+                            if (qrDiv) {
+                                qrDiv.innerHTML = ''; // Ensure it's totally empty
+                                const targetUrl = `${window.location.origin}${window.location.pathname}#add?eq=${eq.id}`;
+                                new QRCode(qrDiv, {
+                                    text: targetUrl, width: 80, height: 80,
+                                    colorDark: "#1F2937", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.L
+                                });
+                            }
+                        });
+                    });
+
+                    groupDiv.appendChild(grid);
+                    container.appendChild(groupDiv);
+                });
+
+                // Delay rendering QRs slightly to let DOM mount, keeping reference to timeout
+                this.qrTimeout = setTimeout(() => { qrPromises.forEach(fn => fn()); }, 50);
+            },
+            filterEquipments() { this.renderEquipmentGrid(document.getElementById('search-input').value); },
+
+            // --- View: Data Table ---
+            renderDataTable() {
+                const filterText = document.getElementById('log-search-input').value.toLowerCase();
+                const statusFilter = document.getElementById('log-filter-status').value;
+                const eqFilter = document.getElementById('log-filter-eq').value;
+
+                const tbody = document.getElementById('data-table-tbody');
+                tbody.innerHTML = '';
+
+                // Exclude deleted bookings from normal view
+                const sorted = [...this.state.bookings].filter(b => !b.deleted).sort((a, b) => new Date(b.start) - new Date(a.start));
+
+                sorted.forEach(b => {
+                    const eq = this.state.equipments.find(e => e.id === b.eqId);
+                    const eqName = eq ? eq.name : 'Unknown';
+                    const status = this.getBookingStatus(b);
+
+                    // Dropdown Filters
+                    if (statusFilter && status.toLowerCase() !== statusFilter) return;
+                    if (eqFilter && b.eqId !== eqFilter) return;
+
+                    // Text Search Filter
+                    const searchString = `${moment(b.start).format('DD MMM YYYY HH:mm')} ${eqName} ${b.user} ${b.project} ${status}`.toLowerCase();
+                    if (filterText && !searchString.includes(filterText)) return;
+
+                    const badge = this.getBadgeHTML(status);
+                    const durStr = `${Math.floor(b.durationMins / 60)}h ${b.durationMins % 60}m`;
+
+                    tbody.innerHTML += `
+                    <tr>
+                        <td style="white-space:nowrap;">${moment(b.start).format('DD MMM YYYY HH:mm')}</td>
+                        <td>${eqName}</td>
+                        <td>${b.user}</td>
+                        <td>${durStr}</td>
+                        <td>${b.project || '-'}</td>
+                        <td>${badge}</td>
+                        <td><button class="btn btn-outline btn-icon-only" onclick="app.showBookingDetails('${b.id}')"><i class="fa-solid fa-eye"></i> View</button></td>
+                    </tr>
+                `;
+                });
+            },
+
+            // --- Modals ---
+            // --- Modals ---
+            openModal(id) {
+                const modal = document.getElementById('modal-' + id);
+                if (modal) {
+                    modal.classList.remove('hidden');
+                    if (!modal.dataset.backdropListener) {
+                        modal.addEventListener('click', (e) => {
+                            if (e.target.classList.contains('modal')) {
+                                app.closeModal(id);
+                            }
+                        });
+                        modal.dataset.backdropListener = 'true';
+                    }
+                }
+            },
+            closeModal(id) { document.getElementById('modal-' + id).classList.add('hidden'); },
+
+            // --- Equipment History Modal ---
+            showEqHistoryModal(eqId) {
+                const eq = this.state.equipments.find(e => e.id === eqId);
+                if (!eq) return;
+
+                document.getElementById('history-eq-name').innerText = eq.name;
+                const tbody = document.getElementById('history-logs-tbody');
+                tbody.innerHTML = '';
+
+                const eqLogs = this.state.bookings.filter(b => b.eqId === eqId && !b.deleted).sort((a, b) => new Date(b.start) - new Date(a.start));
+                if (eqLogs.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="7" class="text-center text-muted">No logs yet.</td></tr>`;
+                } else {
+                    eqLogs.forEach(log => {
+                        const status = this.getBookingStatus(log);
+                        const durStr = `${Math.floor(log.durationMins / 60)}h ${log.durationMins % 60}m`;
+                        let dyn = Object.entries(log.finishDetails?.dynamicData || {}).map(([k, v]) => `<br><small class="text-muted">${k}: ${v}</small>`).join('');
+                        tbody.innerHTML += `
+                        <tr>
+                            <td>${moment(log.start).format('DD MMM YYYY')}</td>
+                            <td>${log.user}</td><td>${moment(log.start).format('HH:mm')}</td><td>${moment(log.end).format('HH:mm')}</td>
+                            <td>${durStr}</td><td>${this.getBadgeHTML(status)}</td>
+                            <td>${log.desc} ${dyn}</td>
+                        </tr>`;
+                    });
+                }
+                this.openModal('history');
+            },
+
+            // --- Booking Form (Add Entry) ---
+            openAddEntry(eqId = null, dateStr = null) {
+                document.getElementById('booking-form').reset();
+                document.getElementById('bk-edit-id').value = '';
+                document.getElementById('bk-repeat-section').classList.remove('hidden');
+
+                // Populate Areas
+                const areaSelect = document.getElementById('bk-area');
+                const areas = this.state.buildings;
+                areaSelect.innerHTML = '<option value="">Select Area</option>' + areas.map(a => `<option value="${a.id}">${a.name}</option>`).join('');
+
+                if (eqId) {
+                    const eq = this.state.equipments.find(e => e.id === eqId);
+                    if (eq) {
+                        areaSelect.value = eq.building_id;
+                        this.populateEquipmentSelect(eqId);
+                    }
+                } else {
+                    this.populateEquipmentSelect();
+                }
+
+                if (dateStr) {
+                    document.getElementById('bk-start').value = dateStr;
+                    document.getElementById('bk-end').value = moment(dateStr).add(1, 'hours').format('YYYY-MM-DDTHH:mm');
+                } else {
+                    const now = moment().format('YYYY-MM-DDTHH:mm');
+                    document.getElementById('bk-start').value = now;
+                    document.getElementById('bk-end').value = moment().add(1, 'hours').format('YYYY-MM-DDTHH:mm');
+                }
+
+                this.showView('form-view');
+            },
+
+            populateEquipmentSelect(selectEqId = null) {
+                const area = document.getElementById('bk-area').value;
+                const eqSelect = document.getElementById('bk-equipment');
+                eqSelect.innerHTML = '<option value="">Select Equipment</option>';
+                const eqs = area ? this.state.equipments.filter(e => e.building_id == area) : this.state.equipments;
+                eqSelect.innerHTML += eqs.map(e => `<option value="${e.id}">${e.name}</option>`).join('');
+                if (selectEqId) eqSelect.value = selectEqId;
+            },
+
+            validateDates() {
+                const start = document.getElementById('bk-start').value;
+                const end = document.getElementById('bk-end').value;
+                if (start && end && new Date(start) >= new Date(end)) {
+                    Swal.fire('Invalid Date', 'End date/time must be after start date/time', 'error');
+                    document.getElementById('bk-end').value = '';
+                }
+            },
+
+            toggleRepeatEnd() {
+                const repeatType = document.querySelector('input[name="bk_repeat"]:checked').value;
+                const repeatEnd = document.getElementById('bk-repeat-end');
+                if (repeatType === 'None') {
+                    repeatEnd.disabled = true;
+                    repeatEnd.value = '';
+                    repeatEnd.required = false;
+                } else {
+                    repeatEnd.disabled = false;
+                    repeatEnd.required = true;
+                }
+            },
+
+            submitBooking(e) {
+                e.preventDefault();
+
+                // Block if user has active warnings
+                const warnings = this.checkWarnings();
+                if (warnings.userWarnings.length > 0) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Action Blocked',
+                        text: 'You have overdue bookings. You cannot book new equipments until you Finish Usage for the overdue ones.'
+                    });
+                    return;
+                }
+
+                const editId = document.getElementById('bk-edit-id').value;
+                const startStr = document.getElementById('bk-start').value;
+                const endStr = document.getElementById('bk-end').value;
+                const eqId = document.getElementById('bk-equipment').value;
+
+                if (!startStr || !endStr || !eqId) {
+                    return Swal.fire('Missing Details', 'Please fill required fields', 'warning');
+                }
+
+                const repeatType = document.querySelector('input[name="bk_repeat"]:checked').value;
+                const repeatEndStr = document.getElementById('bk-repeat-end').value;
+                const skipConflicts = document.getElementById('bk-skip-conflicts').checked;
+
+                const baseBooking = {
+                    project: document.getElementById('bk-project').value,
+                    desc: document.getElementById('bk-desc').value,
+                    eqId: eqId,
+                    type: document.getElementById('bk-type').value,
+                    confirmStatus: document.querySelector('input[name="bk_confirm"]:checked').value,
+                    user: this.state.user.name,
+                    creatorUsername: this.state.user.username,
+                    history: []
+                };
+
+                const generateSeries = () => {
+                    let currentStart = moment(startStr);
+                    let currentEnd = moment(endStr);
+                    const endLimit = repeatType !== 'None' ? moment(repeatEndStr).endOf('day') : moment(startStr).endOf('day');
+                    const newBookings = [];
+
+                    // Track diffs for audit log
+                    let oldBookingForDiff = null;
+                    if (editId) {
+                        oldBookingForDiff = this.state.bookings.find(b => b.id === editId);
+                    }
+
+                    while (currentStart.isSameOrBefore(endLimit)) {
+                        const eq = this.state.equipments.find(e => e.id === eqId);
+                        const eqName = eq ? eq.name : '';
+                        
+                        // Check Maintenance conflicts (CarePlus)
+                        const maintenanceRecords = this.state.records || [];
+                        const conflictingMaintenance = maintenanceRecords.find(r => {
+                            if (r.equipment_name !== eqName) return false;
+                            const svcDate = moment(r.service_date, 'YYYY-MM-DD');
+                            const svcStart = svcDate.clone().startOf('day');
+                            const svcEnd = svcDate.clone().endOf('day');
+                            return currentStart.isBefore(svcEnd) && currentEnd.isAfter(svcStart);
+                        });
+
+                        if (conflictingMaintenance) {
+                            Swal.fire({
+                                title: 'Maintenance Conflict!',
+                                html: `This equipment is scheduled for <strong>${conflictingMaintenance.type.toUpperCase()}</strong> on ${conflictingMaintenance.service_date}.<br>Please select another date.`,
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
+                            return null;
+                        }
+
+                        // Check conflicts (ignore deleted ones)
+                        const conflictingBooking = this.state.bookings.find(b => {
+                            if (editId && b.id === editId) return false;
+                            if (b.deleted) return false;
+                            if (b.eqId !== eqId) return false;
+                            const bStart = moment(b.start);
+                            const bEnd = moment(b.end);
+                            return currentStart.isBefore(bEnd) && currentEnd.isAfter(bStart);
+                        });
+
+                        if (conflictingBooking) {
+                            const cbStart = moment(conflictingBooking.start).format('DD/MM/YYYY HH:mm');
+                            const cbEnd = moment(conflictingBooking.end).format('DD/MM/YYYY HH:mm');
+                            const cbBookedAt = moment(conflictingBooking.history[0]?.timestamp || conflictingBooking.start).format('DD/MM/YYYY HH:mm');
+
+                            if (!skipConflicts && repeatType === 'None') {
+                                Swal.fire({
+                                    title: 'Time Conflict!',
+                                    html: `This equipment is already booked by <strong>${conflictingBooking.user}</strong><br>From: ${cbStart}<br>To: ${cbEnd}<br>Booked on: ${cbBookedAt}`,
+                                    icon: 'error',
+                                    showCancelButton: true,
+                                    confirmButtonText: 'View Details',
+                                    cancelButtonText: 'Close'
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        app.showBookingDetails(conflictingBooking.id);
+                                    }
+                                });
+                                return null;
+                            } else if (!skipConflicts) {
+                                Swal.fire('Conflict', `Conflict detected on ${currentStart.format('DD/MM/YYYY')} with ${conflictingBooking.user}. Check "Skip past conflicts" to ignore.`, 'error');
+                                return null;
+                            }
+                        } else {
+                            const dur = moment.duration(currentEnd.diff(currentStart)).asMinutes();
+
+                            let historyEntry = [];
+                            let finishDetailsData = undefined;
+
+                            if (oldBookingForDiff) {
+                                // Generating detailed edit diff
+                                const diffs = [];
+                                if (oldBookingForDiff.start !== currentStart.format('YYYY-MM-DDTHH:mm')) {
+                                    diffs.push(`Start (${moment(oldBookingForDiff.start).format('DD/MM HH:mm')} -> ${currentStart.format('DD/MM HH:mm')})`);
+                                }
+                                if (oldBookingForDiff.end !== currentEnd.format('YYYY-MM-DDTHH:mm')) {
+                                    diffs.push(`End (${moment(oldBookingForDiff.end).format('DD/MM HH:mm')} -> ${currentEnd.format('DD/MM HH:mm')})`);
+                                }
+                                if (oldBookingForDiff.eqId !== baseBooking.eqId) {
+                                    const oldEq = this.state.equipments.find(e => e.id === oldBookingForDiff.eqId)?.name || 'Unknown';
+                                    const newEq = this.state.equipments.find(e => e.id === baseBooking.eqId)?.name || 'Unknown';
+                                    diffs.push(`Eq (${oldEq} -> ${newEq})`);
+                                }
+                                if (oldBookingForDiff.project !== baseBooking.project) {
+                                    diffs.push(`Proj (${oldBookingForDiff.project} -> ${baseBooking.project})`);
+                                }
+                                if (oldBookingForDiff.desc !== baseBooking.desc) {
+                                    diffs.push(`Desc (${oldBookingForDiff.desc} -> ${baseBooking.desc})`);
+                                }
+
+                                const diffString = diffs.length > 0 ? diffs.join(', ') : 'No changes made';
+
+                                historyEntry = [...oldBookingForDiff.history, {
+                                    action: `Edited: ${diffString}`,
+                                    by: this.state.user.name,
+                                    timestamp: new Date().toISOString()
+                                }];
+
+                                finishDetailsData = oldBookingForDiff.finishDetails; // Preserve finished data
+                            } else {
+                                historyEntry = [{
+                                    action: 'Created Booking',
+                                    by: this.state.user.name,
+                                    timestamp: new Date().toISOString()
+                                }];
+                            }
+
+                            newBookings.push({
+                                ...baseBooking,
+                                id: editId || 'BK-' + Date.now() + Math.floor(Math.random() * 1000),
+                                start: currentStart.format('YYYY-MM-DDTHH:mm'),
+                                end: currentEnd.format('YYYY-MM-DDTHH:mm'),
+                                durationMins: dur,
+                                finishDetails: finishDetailsData,
+                                history: historyEntry
+                            });
+                        }
+
+                        if (repeatType === 'None') break;
+                        if (repeatType === 'Daily') { currentStart.add(1, 'd'); currentEnd.add(1, 'd'); }
+                        if (repeatType === 'Weekly') { currentStart.add(1, 'w'); currentEnd.add(1, 'w'); }
+                        if (repeatType === 'Monthly') { currentStart.add(1, 'M'); currentEnd.add(1, 'M'); }
+                        if (repeatType === 'Yearly') { currentStart.add(1, 'y'); currentEnd.add(1, 'y'); }
+                    }
+                    return newBookings;
+                };
+
+                const series = generateSeries();
+                if (!series) return; // Conflict stopped it
+
+                if (editId) {
+                    // We don't remove, we can actually just replace it since it's an edit and the history logs what changed.
+                    this.state.bookings = this.state.bookings.filter(b => b.id !== editId);
+                    this.state.bookings.push(series[0]);
+                } else {
+                    this.state.bookings.push(...series);
+                }
+
+                this.saveState();
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Saved!',
+                    text: `Successfully saved ${series.length} booking(s).`,
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+
+                this.goBack();
+            },
+
+            // --- Booking Details & Finish Usage ---
+            showBookingDetails(bkId) {
+                const b = this.state.bookings.find(x => x.id === bkId);
+                if (!b) return;
+
+                const eq = this.state.equipments.find(e => e.id === b.eqId);
+                const status = this.getBookingStatus(b);
+                const content = document.getElementById('booking-detail-content');
+
+                let html = `
+                <div style="display:flex; justify-content:space-between; margin-bottom:1rem; align-items:center;">
+                    <h4 style="font-size: 1.1rem; color: var(--primary);">${eq ? eq.name : 'Unknown Equipment'}</h4>
+                    ${this.getBadgeHTML(status)}
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; font-size:0.9rem;">
+                    <div><strong>Project:</strong> ${b.project || '-'}</div>
+                    <div><strong>User:</strong> ${b.user}</div>
+                    <div><strong>Start:</strong> ${moment(b.start).format('DD MMM YYYY, HH:mm')}</div>
+                    <div><strong>End:</strong> ${moment(b.end).format('DD MMM YYYY, HH:mm')}</div>
+                    <div><strong>Type:</strong> ${b.type}</div>
+                    <div><strong>Confirm:</strong> ${b.confirmStatus}</div>
+                    <div style="grid-column:span 2;"><strong>Description:</strong> ${b.desc}</div>
+                </div>
+            `;
+
+                if (b.finishDetails) {
+                    html += `<hr style="margin:1rem 0; border:0; border-top:1px solid var(--border-color);">
+                <h5 style="color:var(--success); margin-bottom:0.5rem;"><i class="fa-solid fa-flag-checkered"></i> Finished Details</h5>
+                <div style="font-size:0.9rem;">
+                    <div><strong>Usage Details:</strong> ${b.finishDetails.details}</div>
+                    <div><strong>Remarks:</strong> ${b.finishDetails.remarks || '-'}</div>
+                </div>`;
+                    if (b.finishDetails.dynamicData) {
+                        html += `<div style="background:#f9fafb; padding:0.5rem; margin-top:0.5rem; border-radius:4px; font-size:0.85rem;">`;
+                        for (const [k, v] of Object.entries(b.finishDetails.dynamicData)) {
+                            html += `<div><strong>${k}:</strong> ${v}</div>`;
+                        }
+                        html += `</div>`;
+                    }
+                }
+
+                content.innerHTML = html;
+
+                // Render History
+                const histList = document.getElementById('booking-history-list');
+                histList.innerHTML = b.history.map(h => `
+                <div class="history-item">
+                    <span style="font-weight:600;">${h.action}</span> 
+                    <br><small style="color:var(--text-muted);">by <span style="color:var(--primary);">${h.by}</span> &bull; <i class="fa-solid fa-clock"></i> ${moment(h.timestamp).format('DD MMM YYYY HH:mm:ss')}</small>
+                </div>
+            `).join('');
+
+                // Render Actions
+                const actions = document.getElementById('booking-actions');
+                actions.innerHTML = '';
+
+                const isOwnerOrAdmin = (this.state.user.role === 'admin' || this.state.user.username === b.creatorUsername);
+
+                if (isOwnerOrAdmin && status !== 'Deleted') {
+                    const btnDelete = `<button class="btn btn-danger" onclick="app.deleteBooking('${b.id}')"><i class="fa-solid fa-trash"></i> Cancel/Delete</button>`;
+                    const btnEdit = `<button class="btn btn-outline" onclick="app.editBooking('${b.id}')"><i class="fa-solid fa-edit"></i> Edit</button>`;
+                    const btnFinish = `<button class="btn btn-success" onclick="app.openFinishModal('${b.id}')"><i class="fa-solid fa-flag-checkered"></i> Finish Usage</button>`;
+
+                    const now = new Date();
+                    const startTime = new Date(b.start);
+                    const hasStarted = now >= startTime;
+
+                    if (status === 'Booked') {
+                        if (!hasStarted) {
+                            actions.innerHTML = `
+                            ${btnDelete}
+                            <div style="margin-left:auto; display:flex; gap:0.5rem;">
+                                ${btnEdit}
+                            </div>
+                        `;
+                        }
+                    } else if (status === 'InUse') {
+                        if (!hasStarted) {
+                            actions.innerHTML = `
+                            ${btnDelete}
+                            <div style="margin-left:auto; display:flex; gap:0.5rem;">
+                                ${btnEdit}
+                                ${btnFinish}
+                            </div>
+                        `;
+                        } else {
+                            // Past usage date, cannot edit/delete, only finish
+                            actions.innerHTML = `
+                            <div style="margin-left:auto; display:flex; gap:0.5rem;">
+                                ${btnFinish}
+                            </div>
+                        `;
+                        }
+                    } else if (status === 'Finished') {
+                        // Cannot delete or edit if finished
+                    }
+                }
+
+                this.openModal('booking');
+            },
+
+            editBooking(bkId) {
+                this.closeModal('booking');
+                const b = this.state.bookings.find(x => x.id === bkId);
+                this.openAddEntry(b.eqId, b.start);
+                document.getElementById('bk-edit-id').value = b.id;
+                document.getElementById('bk-project').value = b.project;
+                document.getElementById('bk-desc').value = b.desc;
+                document.getElementById('bk-end').value = b.end;
+                document.getElementById('bk-type').value = b.type;
+                document.querySelector(`input[name="bk_confirm"][value="${b.confirmStatus}"]`).checked = true;
+                document.getElementById('bk-repeat-section').classList.add('hidden'); // disable repeat on edit
+            },
+
+            deleteBooking(bkId) {
+                Swal.fire({
+                    title: 'Cancel / Delete Booking?',
+                    text: "The booking will be removed from the calendar but retained in the Audit Log.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#EF4444',
+                    cancelButtonColor: '#6B7280',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const b = this.state.bookings.find(x => x.id === bkId);
+                        if (b) {
+                            b.deleted = true;
+                            b.history.push({
+                                action: 'Deleted Booking',
+                                by: this.state.user.name,
+                                timestamp: new Date().toISOString()
+                            });
+                            this.saveState();
+                            this.closeModal('booking');
+
+                            Swal.fire('Deleted!', 'Booking has been cancelled.', 'success');
+
+                            if (window.location.hash === '#calendar') this.initCalendar();
+                            if (window.location.hash === '#datatable') this.renderDataTable();
+                            if (window.location.hash === '#admin') this.renderAdminData();
+                            if (window.location.hash === '') { this.renderCharts(); this.initCalendar(); }
+                        }
+                    }
+                });
+            },
+
+            openFinishModal(bkId) {
+                this.closeModal('booking');
+                const b = this.state.bookings.find(x => x.id === bkId);
+                const eq = this.state.equipments.find(e => e.id === b.eqId);
+                document.getElementById('finish-bk-id').value = bkId;
+                document.getElementById('finish-details').value = '';
+                document.getElementById('finish-remarks').value = '';
+
+                const dynSection = document.getElementById('finish-dynamic-fields');
+                dynSection.innerHTML = '';
+                if (eq.fields && eq.fields.length > 0) {
+                    dynSection.innerHTML = `<div class="full-width" style="font-weight:600; margin-bottom:0.5rem; color:var(--primary);"><i class="fa-solid fa-sliders"></i> Equipment Specific Parameters</div>`;
+                    eq.fields.forEach(f => {
+                        dynSection.innerHTML += `
+                        <div class="form-group">
+                            <label>${f.label}</label>
+                            <input type="${f.type}" id="finish_dyn_${f.id}" required>
+                        </div>`;
+                    });
+                } else {
+                    dynSection.innerHTML = `<div class="full-width text-muted">No specific parameters required.</div>`;
+                }
+
+                this.openModal('finish');
+            },
+
+            submitFinish(e) {
+                e.preventDefault();
+                const bkId = document.getElementById('finish-bk-id').value;
+                const b = this.state.bookings.find(x => x.id === bkId);
+                const eq = this.state.equipments.find(e => e.id === b.eqId);
+
+                const dynData = {};
+                if (eq.fields) {
+                    eq.fields.forEach(f => {
+                        dynData[f.label] = document.getElementById(`finish_dyn_${f.id}`).value;
+                    });
+                }
+
+                b.finishDetails = {
+                    details: document.getElementById('finish-details').value,
+                    remarks: document.getElementById('finish-remarks').value,
+                    dynamicData: dynData
+                };
+                b.history.push({
+                    action: 'Finished Usage',
+                    by: this.state.user.name,
+                    timestamp: new Date().toISOString()
+                });
+
+                this.saveState();
+                this.closeModal('finish');
+
+                Swal.fire('Complete!', 'Usage marked as finished.', 'success');
+
+                if (window.location.hash === '#calendar') this.initCalendar();
+                if (window.location.hash === '#datatable') this.renderDataTable();
+                if (window.location.hash === '') { this.renderCharts(); this.initCalendar(); }
+            },
+
+            // --- Admin Logic ---
+            backupData() {
+                const dataStr = JSON.stringify(this.state, null, 2);
+                const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+                const exportFileDefaultName = `NoteLab_Backup_${new Date().toISOString().slice(0, 10)}.json`;
+                const linkElement = document.createElement('a');
+                linkElement.setAttribute('href', dataUri);
+                linkElement.setAttribute('download', exportFileDefaultName);
+                linkElement.click();
+            },
+
+            importData(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const importedState = JSON.parse(e.target.result);
+                        if (!importedState.users || !importedState.equipments) {
+                            throw new Error("Invalid format");
+                        }
+                        this.state = importedState;
+                        this.saveState();
+                        Swal.fire({ icon: 'success', title: 'Imported', text: 'Data imported successfully!' }).then(() => {
+                            location.reload();
+                        });
+                    } catch (error) {
+                        Swal.fire({ icon: 'error', title: 'Error', text: 'Invalid JSON file format!' });
+                    }
+                };
+                reader.readAsText(file);
+                event.target.value = ''; // reset
+            },
+
+            switchAdminTab(tabId) {
+                document.querySelectorAll('.admin-tab').forEach(el => el.classList.remove('active'));
+                document.querySelector(`.admin-tab[onclick="app.switchAdminTab('${tabId}')"]`).classList.add('active');
+                document.querySelectorAll('.admin-tab-content').forEach(el => el.classList.add('hidden'));
+                document.getElementById(`admin-tab-${tabId}`).classList.remove('hidden');
+            },
+
+            renderAdminData() {
+                this.renderAdminLocations();
+                this.renderAdminEquipments();
+                this.renderAdminUsers();
+
+                // Datalists
+                document.getElementById('list-names').innerHTML = [...new Set(this.state.equipments.map(e => e.name))].map(n => `<option value="${n}">`).join('');
+                document.getElementById('list-locations').innerHTML = this.state.buildings.map(b => `<li style="padding:0.5rem;border-bottom:1px solid #eee;">${b.name}</li>`).join('');
+                document.getElementById('list-custodians').innerHTML = [...new Set(this.state.equipments.map(e => e.custodian))].map(n => `<option value="${n}">`).join('');
+
+                // Bookings (Logs) - Shows ALL including deleted
+                const bkTbody = document.getElementById('admin-bookings-tbody');
+                bkTbody.innerHTML = [...this.state.bookings].sort((a, b) => new Date(b.start) - new Date(a.start)).map(b => {
+                    const eq = this.state.equipments.find(e => e.id === b.eqId);
+                    const status = this.getBookingStatus(b);
+                    const btnAction = b.deleted ?
+                        `<button class="btn btn-outline btn-icon-only" onclick="app.showBookingDetails('${b.id}')" title="View Audit"><i class="fa-solid fa-eye"></i></button>` :
+                        `<button class="btn btn-outline btn-icon-only" onclick="app.showBookingDetails('${b.id}')"><i class="fa-solid fa-eye"></i></button>
+                     <button class="btn btn-outline btn-icon-only text-danger" onclick="app.deleteBooking('${b.id}')"><i class="fa-solid fa-trash"></i></button>`;
+
+                    return `<tr>
+                    <td>${b.id}</td><td>${moment(b.start).format('DD/MM/YYYY')}</td>
+                    <td>${eq ? eq.name : 'Unknown'}</td><td>${b.user}</td><td>${this.getBadgeHTML(status)}</td>
+                    <td class="flex gap-2">${btnAction}</td>
+                </tr>`;
+                }).join('');
+            },
+
+            editEquipment(id) {
+                const eq = this.state.equipments.find(e => e.id === id);
+                document.getElementById('modal-eq-title').innerText = 'Edit Equipment';
+                document.getElementById('admin-eq-id').value = eq.id;
+                document.getElementById('admin-eq-name').value = eq.name;
+                document.getElementById('admin-eq-serial').value = eq.serial;
+                document.getElementById('admin-eq-location').value = eq.location;
+                document.getElementById('admin-eq-custodian').value = eq.custodian;
+                document.getElementById('admin-eq-delete').classList.remove('hidden');
+                this.openModal('eq');
+            },
+
+            saveEquipment(e) {
+                e.preventDefault();
+                const id = document.getElementById('admin-eq-id').value;
+                const eq = {
+                    id: id || 'EQ-' + Date.now(),
+                    name: document.getElementById('admin-eq-name').value,
+                    serial: document.getElementById('admin-eq-serial').value,
+                    location: document.getElementById('admin-eq-location').value,
+                    custodian: document.getElementById('admin-eq-custodian').value,
+                    fields: [] // For simplicity, new eqs don't have custom fields unless coded
+                };
+                if (id) {
+                    const idx = this.state.equipments.findIndex(e => e.id === id);
+                    eq.fields = this.state.equipments[idx].fields; // Preserve fields
+                    this.state.equipments[idx] = eq;
+                } else {
+                    this.state.equipments.push(eq);
+                }
+                this.saveState();
+                this.closeModal('eq');
+
+                Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Equipment Saved', showConfirmButton: false, timer: 1500 });
+                this.renderAdminData();
+            },
+
+            deleteEquipment() {
+                Swal.fire({
+                    title: 'Delete Equipment?',
+                    text: "This action cannot be undone.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#EF4444',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const id = document.getElementById('admin-eq-id').value;
+                        this.state.equipments = this.state.equipments.filter(e => e.id !== id);
+                        this.saveState();
+                        this.closeModal('eq');
+                        this.renderAdminData();
+                        Swal.fire('Deleted!', 'Equipment has been deleted.', 'success');
+                    }
+                });
+            },
+
+            showAdminHistory(username) {
+                const user = this.state.users.find(u => u.username === username);
+                if (!user) return;
+                document.getElementById('admin-history-username').innerText = user.name;
+                const tbody = document.getElementById('admin-history-tbody');
+                if (user.warnings && user.warnings.length > 0) {
+                    tbody.innerHTML = user.warnings.map(w => {
+                        return `<tr>
+                        <td>${moment(w.warnedAt).format('DD/MM/YYYY HH:mm')}</td>
+                        <td>${w.eqName}</td>
+                        <td>${w.bookingId}</td>
+                    </tr>`;
+                    }).join('');
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="3" class="text-center text-muted">No warnings on record.</td></tr>';
+                }
+                this.openModal('admin-history');
+            },
+
+            editUser(id) {
+                const u = this.state.users.find(x => x.id === id);
+                document.getElementById('modal-user-title').innerText = 'Edit User';
+                document.getElementById('admin-user-id').value = u.id;
+                document.getElementById('admin-user-username').value = u.username;
+                document.getElementById('admin-user-password').value = u.password;
+                document.getElementById('admin-user-fullname').value = u.name;
+                document.getElementById('admin-user-role').value = u.role;
+                document.getElementById('admin-user-delete').classList.remove('hidden');
+                this.openModal('user');
+            },
+
+            saveUser(e) {
+                e.preventDefault();
+                const id = document.getElementById('admin-user-id').value;
+                const u = {
+                    id: id || 'U-' + Date.now(),
+                    username: document.getElementById('admin-user-username').value,
+                    password: document.getElementById('admin-user-password').value,
+                    name: document.getElementById('admin-user-fullname').value,
+                    role: document.getElementById('admin-user-role').value
+                };
+                if (id) {
+                    const idx = this.state.users.findIndex(x => x.id === id);
+                    this.state.users[idx] = u;
+                } else {
+                    this.state.users.push(u);
+                }
+                this.saveState();
+                this.closeModal('user');
+
+                Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'User Saved', showConfirmButton: false, timer: 1500 });
+                this.renderAdminData();
+            },
+
+            deleteUser() {
+                const id = document.getElementById('admin-user-id').value;
+                if (id === this.state.user.id) {
+                    return Swal.fire('Action Denied', 'You cannot delete yourself!', 'error');
+                }
+
+                Swal.fire({
+                    title: 'Delete User?',
+                    text: "This action cannot be undone.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#EF4444',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        this.state.users = this.state.users.filter(x => x.id !== id);
+                        this.saveState();
+                        this.closeModal('user');
+                        this.renderAdminData();
+                        Swal.fire('Deleted!', 'User has been deleted.', 'success');
+                    }
+                });
+            }
+        };
+
+        window.onload = () => app.init();
+    </script>
+</body>
+
+</html>

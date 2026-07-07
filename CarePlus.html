@@ -1,0 +1,2634 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPIR Lab Care+</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="THSarabunNew.js"></script>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Prompt:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* --- Base & Typography --- */
+        body {
+            font-family: 'Inter', 'Prompt', sans-serif;
+            background-color: #f0f8ff;
+            /* Alice Blue - Mitr Phol tone */
+            overflow-x: hidden;
+        }
+
+        /* --- Login Background & Clear Glass --- */
+        .login-bg {
+            background: url('bg.png') center/cover no-repeat;
+        }
+
+        .login-bg::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at center, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.0) 100%);
+            pointer-events: none;
+        }
+
+        .login-glass {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2), 0 0 20px rgba(255, 255, 255, 0.2);
+        }
+
+        /* --- Glassmorphism Core --- */
+        .glass {
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+        }
+
+        .glass-dark {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .glass-input {
+            background: rgba(255, 255, 255, 0.85);
+            border: 1px solid #bfdbfe;
+            backdrop-filter: blur(4px);
+            transition: all 0.3s ease;
+        }
+
+        .glass-input:focus {
+            background: #ffffff;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.2);
+            outline: none;
+        }
+
+        /* --- iOS Elements & Interactions --- */
+        .ios-card {
+            border-radius: 24px;
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+        }
+
+        .ios-card:hover {
+            transform: translateY(-5px) scale(1.01);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+            z-index: 10;
+        }
+
+        .ios-btn {
+            border-radius: 14px;
+            font-weight: 600;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ios-btn:active {
+            transform: scale(0.94);
+        }
+
+        .ios-btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .ios-btn:hover::after {
+            opacity: 1;
+        }
+
+        /* Nav Tab */
+        .nav-pill {
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            color: #6b7280;
+        }
+
+        .nav-pill:hover {
+            background: rgba(255, 255, 255, 0.5);
+            color: #1f2937;
+        }
+
+        .nav-pill.active {
+            background: #ffffff;
+            color: #2563eb;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            font-weight: 600;
+        }
+
+        /* Table Styles */
+        .glass-table th {
+            background: rgba(249, 250, 251, 0.6);
+            color: #4b5563;
+        }
+
+        .glass-table tr {
+            transition: background 0.2s;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .glass-table tr:hover {
+            background: rgba(255, 255, 255, 0.8) !important;
+        }
+
+        .glass-table td {
+            border: none;
+        }
+
+        /* Calendar Responsive */
+        .calendar-day {
+            min-height: 80px;
+            /* ลดความสูงขั้นต่ำสำหรับมือถือ */
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.4);
+            border: 1px solid transparent;
+            transition: all 0.2s ease;
+            padding: 4px;
+        }
+
+        @media (min-width: 768px) {
+            .calendar-day {
+                min-height: 120px;
+                border-radius: 16px;
+                padding: 8px;
+            }
+        }
+
+        .calendar-day:hover {
+            background: rgba(255, 255, 255, 0.9);
+            transform: scale(1.02);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .calendar-day.today {
+            background: rgba(255, 255, 255, 0.8);
+            border: 2px solid #3b82f6;
+        }
+
+        /* ปรับแต่งตารางสำหรับมือถือ */
+        @media (max-width: 640px) {
+
+            .glass-table th,
+            .glass-table td {
+                padding: 12px 8px !important;
+                font-size: 0.75rem !important;
+            }
+
+            .ios-card {
+                padding: 16px !important;
+            }
+
+            /* ลด Padding ของการ์ดลง */
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(156, 163, 175, 0.5);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(107, 114, 128, 0.8);
+        }
+
+        .custom-scroll {
+            scrollbar-width: thin;
+        }
+
+        /* Utilities */
+        .hidden {
+            display: none;
+        }
+
+        .page-transition {
+            animation: slideUpFade 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes slideUpFade {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .cal-event-chip {
+            font-size: 0.65rem;
+            padding: 3px 8px;
+            border-radius: 20px;
+            margin-bottom: 3px;
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .bg-repair {
+            background: linear-gradient(135deg, #f97316, #fb923c);
+        }
+
+        .bg-calib {
+            background: linear-gradient(135deg, #9333ea, #c084fc);
+        }
+
+        .bg-pm {
+            background: linear-gradient(135deg, #0d9488, #2dd4bf);
+        }
+
+        /* Teal for PM */
+    </style>
+</head>
+
+<body class="text-gray-800 antialiased selection:bg-blue-500 selection:text-white">
+
+    <div id="loginPage" class="min-h-screen flex items-center justify-center px-4 relative login-bg">
+        <a href="index.html" class="absolute top-6 right-6 bg-white/80 backdrop-blur text-teal-800 font-bold px-4 py-2 rounded-xl shadow hover:bg-white transition z-50 flex items-center gap-2 border border-white/50">
+            <i class="fa-solid fa-flask"></i> Lab Book+
+        </a>
+
+        <div
+            class="login-glass p-10 rounded-[32px] w-full max-w-md page-transition relative overflow-hidden shadow-2xl">
+
+            <div class="text-center mb-8 relative z-10 flex flex-col items-center">
+                <!-- Highlight Glow Behind Logo -->
+                <div
+                    class="absolute top-1/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-white/60 blur-3xl rounded-full -z-10">
+                </div>
+
+                <div class="w-48 h-48 mb-4 relative">
+                    <img src="logo.png" alt="MPIR Logo" class="w-full h-full object-contain drop-shadow-xl">
+                </div>
+                <h1
+                    class="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-teal-700 to-blue-700 tracking-tight leading-none mt-2 drop-shadow-sm">
+                    MPIR</h1>
+                <h2 class="text-xl font-bold text-teal-800 tracking-widest mt-2 drop-shadow-sm">Lab Care Plus</h2>
+                <p
+                    class="text-gray-700 mt-5 text-sm font-bold bg-white/60 px-5 py-2 rounded-full inline-block backdrop-blur-sm shadow-sm border border-white/50">
+                    Please login to continue</p>
+            </div>
+
+            <form id="loginForm" class="space-y-6 relative z-10">
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 mb-2 ml-1">Username</label>
+                    <input type="email" id="loginEmail" required value="admin@lab.com"
+                        placeholder="ชื่อผู้ใช้งาน @mitrphol.com"
+                        class="w-full px-5 py-4 rounded-2xl glass-input text-gray-800 placeholder-gray-400 focus:border-[#0ea5e9]">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 mb-2 ml-1">Password</label>
+                    <input type="password" id="loginPassword" required value="admin321" placeholder="••••••••"
+                        class="w-full px-5 py-4 rounded-2xl glass-input text-gray-800 placeholder-gray-400 focus:border-[#0ea5e9]">
+                </div>
+                <button type="submit"
+                    class="w-full bg-[#0ea5e9] hover:bg-[#0284c7] text-white py-4 rounded-2xl font-bold shadow-lg shadow-sky-500/30 ios-btn text-lg mt-4 transition-colors">
+                    Login
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div id="mainApp" class="hidden min-h-screen flex flex-col page-transition">
+
+        <nav class="sticky top-2 md:top-4 z-40 mx-2 md:mx-4 lg:mx-8">
+            <div
+                class="glass glass-dark rounded-2xl shadow-sm px-4 lg:px-6 py-3 flex items-center justify-between backdrop-blur-xl">
+                <div class="flex items-center gap-4 md:gap-6">
+                    <div class="flex items-center gap-2">
+                        <div
+                            class="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center text-white text-sm md:text-base font-bold shadow-md">
+                            LC+</div>
+                        <span class="text-base md:text-lg font-bold text-gray-800 tracking-tight hidden sm:block">MPIR
+                            Lab Care+</span>
+                    </div>
+
+                    <div class="hidden md:flex bg-gray-100/50 p-1 rounded-xl gap-1">
+                        <button onclick="showPage('dashboard')" class="nav-pill px-4 py-2 text-sm"
+                            id="tabDashboard">Dashboard</button>
+                        <button onclick="showPage('records')" class="nav-pill px-4 py-2 text-sm"
+                            id="tabRecords">Records</button>
+                        <button onclick="showPage('addRecord')" class="nav-pill px-4 py-2 text-sm" id="tabAddRecord">Add
+                            / Edit</button>
+                        <button id="settingsBtn" onclick="showPage('settings')"
+                            class="nav-pill px-4 py-2 text-sm hidden">Admin</button>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3 md:gap-4">
+                    <a href="index.html" class="px-3 py-1.5 md:px-4 md:py-2 text-xs md:text-sm font-bold text-teal-700 bg-teal-50 border border-teal-200 rounded-lg hover:bg-teal-600 hover:text-white transition shadow-sm flex items-center gap-2 whitespace-nowrap"><i class="fa-solid fa-flask"></i> Lab Book+</a>
+                    <div class="flex flex-col items-end mr-1 md:mr-2">
+                        <span id="userDisplay" class="text-xs md:text-sm font-bold text-gray-800">User</span>
+                        <span id="userRole"
+                            class="text-[9px] md:text-[10px] font-bold tracking-widest text-blue-500 uppercase">Role</span>
+                    </div>
+                    <button onclick="logout()"
+                        class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-red-50 text-red-500 flex items-center justify-center hover:bg-red-500 hover:text-white transition-all shadow-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div
+                class="md:hidden mt-2 flex justify-between bg-white/90 backdrop-blur-xl rounded-2xl p-1.5 shadow-md overflow-x-auto gap-1 border border-white/50">
+                <button onclick="showPage('dashboard')"
+                    class="flex-1 px-2 py-2.5 text-[11px] font-bold rounded-xl text-gray-600 hover:bg-gray-100 transition shadow-sm active:bg-blue-50 active:text-blue-600">📊
+                    Dash</button>
+                <button onclick="showPage('records')"
+                    class="flex-1 px-2 py-2.5 text-[11px] font-bold rounded-xl text-gray-600 hover:bg-gray-100 transition active:bg-blue-50 active:text-blue-600">📑
+                    Recs</button>
+                <button onclick="showPage('addRecord')"
+                    class="flex-1 px-2 py-2.5 text-[11px] font-bold rounded-xl text-gray-600 hover:bg-gray-100 transition active:bg-blue-50 active:text-blue-600">✏️
+                    Add</button>
+                <button onclick="showPage('settings')"
+                    class="flex-1 px-2 py-2.5 text-[11px] font-bold rounded-xl text-gray-600 hover:bg-gray-100 transition active:bg-blue-50 active:text-blue-600">⚙️
+                    Set</button>
+            </div>
+        </nav>
+
+        <div class="flex-1 w-full max-w-[98%] 2xl:max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+            <div id="dashboardPage" class="page space-y-8">
+                <div class="glass p-5 rounded-2xl mb-6 flex flex-col gap-4">
+                    <div class="flex justify-between items-center border-b border-gray-200/50 pb-2 mb-2">
+                        <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider flex items-center gap-2">
+                            <span class="text-lg">🔍</span> Dashboard Filters
+                        </h3>
+                        <button onclick="clearDashboardFilters()"
+                            class="text-xs font-bold text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg transition-colors">
+                            ✕ Clear Filters
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+                        <div>
+                            <label class="text-[10px] font-bold text-gray-400 uppercase ml-1">Year</label>
+                            <select id="dashFilterYear" onchange="updateDashboard()"
+                                class="w-full glass-input px-3 py-2 rounded-xl text-xs font-medium">
+                                <option value="">All Years</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold text-gray-400 uppercase ml-1">Location</label>
+                            <select id="dashFilterLoc" onchange="updateDashboard()"
+                                class="w-full glass-input px-3 py-2 rounded-xl text-xs font-medium">
+                                <option value="">All Locations</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="text-[10px] font-bold text-gray-400 uppercase ml-1">Equipment</label>
+                            <select id="dashFilterEquip" onchange="updateDashboard()"
+                                class="w-full glass-input px-3 py-2 rounded-xl text-xs font-medium">
+                                <option value="">All Equipment</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="text-[10px] font-bold text-gray-400 uppercase ml-1">Type</label>
+                            <select id="dashFilterType" onchange="updateDashboard()"
+                                class="w-full glass-input px-3 py-2 rounded-xl text-xs font-medium">
+                                <option value="">All Types</option>
+                                <option value="repair">Repair</option>
+                                <option value="calibration">Calibration</option>
+                                <option value="pm">PM</option>
+                                <option value="spare_parts">Spare parts</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="text-[10px] font-bold text-gray-400 uppercase ml-1">Provider</label>
+                            <select id="dashFilterProv" onchange="updateDashboard()"
+                                class="w-full glass-input px-3 py-2 rounded-xl text-xs font-medium">
+                                <option value="">All Providers</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="text-[10px] font-bold text-gray-400 uppercase ml-1">Reporter</label>
+                            <select id="dashFilterRep" onchange="updateDashboard()"
+                                class="w-full glass-input px-3 py-2 rounded-xl text-xs font-medium">
+                                <option value="">All Reporters</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+                    <div class="glass ios-card p-6 flex justify-between items-center relative overflow-hidden">
+                        <div class="absolute right-0 top-0 w-24 h-24 bg-blue-400/20 rounded-bl-full -mr-4 -mt-4"></div>
+                        <div>
+                            <p class="text-gray-500 text-xs font-bold uppercase tracking-wider mb-1">Total Records</p>
+                            <h2 class="text-4xl font-bold text-gray-800" id="cardTotalRecords">0</h2>
+                        </div>
+                        <div
+                            class="w-12 h-12 bg-blue-100/80 rounded-2xl flex items-center justify-center text-2xl shadow-sm">
+                            📄</div>
+                    </div>
+                    <div class="glass ios-card p-6 flex justify-between items-center relative overflow-hidden">
+                        <div class="absolute right-0 top-0 w-24 h-24 bg-orange-400/20 rounded-bl-full -mr-4 -mt-4">
+                        </div>
+                        <div>
+                            <p class="text-gray-500 text-xs font-bold uppercase tracking-wider mb-1">Repairs</p>
+                            <h2 class="text-4xl font-bold text-orange-600" id="cardRepairs">0</h2>
+                        </div>
+                        <div
+                            class="w-12 h-12 bg-orange-100/80 rounded-2xl flex items-center justify-center text-2xl shadow-sm">
+                            🔧</div>
+                    </div>
+                    <div class="glass ios-card p-6 flex justify-between items-center relative overflow-hidden">
+                        <div class="absolute right-0 top-0 w-24 h-24 bg-purple-400/20 rounded-bl-full -mr-4 -mt-4">
+                        </div>
+                        <div>
+                            <p class="text-gray-500 text-xs font-bold uppercase tracking-wider mb-1">Calibrations</p>
+                            <h2 class="text-4xl font-bold text-purple-600" id="cardCalibrations">0</h2>
+                        </div>
+                        <div
+                            class="w-12 h-12 bg-purple-100/80 rounded-2xl flex items-center justify-center text-2xl shadow-sm">
+                            ⚖️</div>
+                    </div>
+                    <div class="glass ios-card p-6 flex justify-between items-center relative overflow-hidden">
+                        <div class="absolute right-0 top-0 w-24 h-24 bg-pink-400/20 rounded-bl-full -mr-4 -mt-4">
+                        </div>
+                        <div>
+                            <p class="text-gray-500 text-xs font-bold uppercase tracking-wider mb-1">Spare parts</p>
+                            <h2 class="text-4xl font-bold text-pink-600" id="cardSpareParts">0</h2>
+                        </div>
+                        <div
+                            class="w-12 h-12 bg-pink-100/80 rounded-2xl flex items-center justify-center text-2xl shadow-sm">
+                            ⚙️</div>
+                    </div>
+                    <div class="glass ios-card p-6 flex justify-between items-center relative overflow-hidden cursor-pointer hover:bg-red-50/50 transition-colors"
+                        onclick="openUpcomingModal()">
+                        <div class="absolute right-0 top-0 w-24 h-24 bg-red-400/20 rounded-bl-full -mr-4 -mt-4"></div>
+                        <div>
+                            <p class="text-gray-500 text-xs font-bold uppercase tracking-wider mb-1">Next 90 Days</p>
+                            <h2 class="text-4xl font-bold text-red-500" id="cardUpcoming">0</h2>
+                        </div>
+                        <div
+                            class="w-12 h-12 bg-red-100/80 rounded-2xl flex items-center justify-center text-2xl shadow-sm">
+                            ⏰</div>
+                    </div>
+                </div>
+
+                <div class="glass ios-card p-8">
+                    <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+                        <h3 class="text-xl font-bold text-gray-800 flex items-center gap-2"><span
+                                class="bg-blue-500 w-2 h-6 rounded-full inline-block"></span> Schedule</h3>
+
+                        <div class="flex items-center gap-4 w-full md:w-auto justify-between md:justify-end">
+                            <div class="flex bg-gray-200/50 p-1 rounded-xl">
+                                <button onclick="toggleScheduleView('calendar')" id="btnViewCalendar"
+                                    class="px-3 py-1.5 rounded-lg text-xs font-bold bg-white text-blue-600 shadow-sm transition">📅
+                                    Calendar</button>
+                                <button onclick="toggleScheduleView('list')" id="btnViewList"
+                                    class="px-3 py-1.5 rounded-lg text-xs font-bold text-gray-500 hover:text-gray-800 transition">📋
+                                    List</button>
+                            </div>
+
+                            <div class="flex items-center gap-2 bg-gray-100/50 p-1 rounded-xl backdrop-blur-sm">
+                                <button onclick="previousMonth()"
+                                    class="w-8 h-8 flex items-center justify-center hover:bg-white hover:shadow rounded-lg transition text-gray-600">❮</button>
+                                <span id="currentMonthYear"
+                                    class="text-base font-bold min-w-[140px] text-center text-gray-800"></span>
+                                <button onclick="nextMonth()"
+                                    class="w-8 h-8 flex items-center justify-center hover:bg-white hover:shadow rounded-lg transition text-gray-600">❯</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="calendarContainer">
+                        <div
+                            class="grid grid-cols-7 gap-4 mb-2 text-center text-gray-400 font-bold text-xs uppercase tracking-widest">
+                            <div>Sun</div>
+                            <div>Mon</div>
+                            <div>Tue</div>
+                            <div>Wed</div>
+                            <div>Thu</div>
+                            <div>Fri</div>
+                            <div>Sat</div>
+                        </div>
+                        <div id="calendar" class="grid grid-cols-7 gap-3"></div>
+                    </div>
+
+                    <div id="listContainer" class="hidden max-h-[500px] overflow-y-auto custom-scroll pr-2 space-y-3">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="glass ios-card p-6 lg:col-span-2">
+                        <h3 class="text-lg font-bold text-gray-800 mb-6">Monthly Activity</h3>
+                        <div class="h-72"><canvas id="monthlyChart"></canvas></div>
+                    </div>
+                    <div class="glass ios-card p-6">
+                        <h3 class="text-lg font-bold text-gray-800 mb-6">Type Split</h3>
+                        <div class="h-72 flex justify-center"><canvas id="typeChart"></canvas></div>
+                    </div>
+                </div>
+                <div class="glass ios-card p-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-6">Location Distribution</h3>
+                    <div class="h-64"><canvas id="locationChart"></canvas></div>
+                </div>
+
+                <div class="glass ios-card p-6 mt-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-6">Maintenance Cost by Equipment</h3>
+                    <div class="h-80"><canvas id="costChart"></canvas></div>
+                </div>
+            </div>
+
+            <div id="recordsPage" class="page hidden space-y-6">
+                <div
+                    class="flex flex-col md:flex-row justify-between items-center gap-4 bg-white/40 backdrop-blur-md p-4 rounded-2xl shadow-sm border border-white/40">
+                    <h2 class="text-2xl font-bold text-gray-800 pl-2">Data Records</h2>
+                    <div class="flex gap-3">
+                        <button onclick="exportToPDF()"
+                            class="ios-btn bg-gradient-to-r from-red-500 to-pink-500 text-white px-5 py-2.5 shadow-lg shadow-red-500/20 flex items-center gap-2 text-sm">
+                            <span>📄</span> PDF
+                        </button>
+                        <button onclick="exportToExcel()"
+                            class="ios-btn bg-gradient-to-r from-emerald-500 to-green-500 text-white px-5 py-2.5 shadow-lg shadow-green-500/20 flex items-center gap-2 text-sm">
+                            <span>📊</span> Excel
+                        </button>
+                    </div>
+                </div>
+
+                <div class="glass p-5 rounded-2xl flex flex-wrap gap-3 items-center">
+                    <div class="flex-grow relative">
+                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">🔍</span>
+                        <input type="text" id="filterSearch" placeholder="Search Equipment..." onkeyup="applyFilters()"
+                            class="w-full glass-input pl-10 pr-4 py-2.5 rounded-xl text-sm">
+                    </div>
+                    <select id="filterType" onchange="applyFilters()"
+                        class="glass-input px-4 py-2.5 rounded-xl text-sm min-w-[140px]">
+                        <option value="">All Types</option>
+                        <option value="repair">Repair</option>
+                        <option value="calibration">Calibration</option>
+                        <option value="pm">PM</option>
+                    </select>
+                    <div class="flex gap-2">
+                        <select id="filterMonth" onchange="applyFilters()"
+                            class="glass-input px-4 py-2.5 rounded-xl text-sm">
+                            <option value="">Month</option>
+                            <option value="1">Jan</option>
+                            <option value="2">Feb</option>
+                            <option value="3">Mar</option>
+                            <option value="4">Apr</option>
+                            <option value="5">May</option>
+                            <option value="6">Jun</option>
+                            <option value="7">Jul</option>
+                            <option value="8">Aug</option>
+                            <option value="9">Sep</option>
+                            <option value="10">Oct</option>
+                            <option value="11">Nov</option>
+                            <option value="12">Dec</option>
+                        </select>
+                        <select id="filterYear" onchange="applyFilters()"
+                            class="glass-input px-4 py-2.5 rounded-xl text-sm">
+                            <option value="">Year</option>
+                            <option value="2023">2023</option>
+                            <option value="2024">2024</option>
+                            <option value="2025">2025</option>
+                            <option value="2026">2026</option>
+                        </select>
+                    </div>
+                    <button onclick="clearFilters()"
+                        class="px-4 py-2.5 rounded-xl text-sm font-medium text-gray-500 hover:bg-gray-200/50 transition">Reset</button>
+                </div>
+
+                <div class="glass rounded-3xl overflow-hidden shadow-sm">
+                    <div class="overflow-x-auto">
+                        <table class="w-full glass-table text-left border-collapse">
+                            <thead>
+                                <tr class="text-xs font-bold tracking-wider uppercase border-b border-gray-200/50">
+                                    <th class="px-6 py-4">Equipment / Loc</th>
+                                    <th class="px-6 py-4">Type</th>
+                                    <th class="px-6 py-4">Date</th>
+                                    <th class="px-6 py-4 text-right">Cost</th>
+                                    <th class="px-6 py-4">Provider</th>
+                                    <th class="px-6 py-4">Reporter</th>
+                                    <th class="px-6 py-4 text-center">PO</th>
+                                    <th class="px-6 py-4 text-center">Status</th>
+                                    <th class="px-6 py-4 text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recordsTableBody" class="text-sm"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center px-4">
+                    <div class="text-sm text-gray-500 font-medium">Showing <span id="startRow">0</span>-<span
+                            id="endRow">0</span> of <span id="totalRows">0</span></div>
+                    <div class="flex gap-2">
+                        <button onclick="prevPage()"
+                            class="glass-input px-4 py-2 rounded-xl text-sm hover:bg-white">Previous</button>
+                        <button onclick="nextPage()"
+                            class="glass-input px-4 py-2 rounded-xl text-sm hover:bg-white">Next</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="addRecordPage" class="page hidden flex justify-center">
+                <div class="w-full max-w-3xl glass ios-card p-8 md:p-10">
+                    <div class="flex items-center gap-3 mb-8">
+                        <h2 class="text-2xl font-bold text-gray-800" id="formTitle">New Record</h2>
+                    </div>
+
+                    <form id="addRecordForm" class="space-y-6">
+                        <input type="hidden" id="editRecordId">
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-1 md:col-span-2">
+                                <label class="text-xs font-bold text-gray-500 uppercase ml-1">Location</label>
+                                <select id="buildingSelect" required onchange="updateEquipmentOptions()"
+                                    class="w-full glass-input px-4 py-3 rounded-xl">
+                                    <option value="">Select location</option>
+                                </select>
+                            </div>
+                            <div class="space-y-1 md:col-span-2">
+                                <label class="text-xs font-bold text-gray-500 uppercase ml-1">Equipment</label>
+                                <select id="equipmentSelect" required class="w-full glass-input px-4 py-3 rounded-xl">
+                                    <option value="">Select location first</option>
+                                </select>
+                            </div>
+                            <div class="space-y-1">
+                                <label class="text-xs font-bold text-gray-500 uppercase ml-1">Service Type</label>
+                                <select id="serviceType" required onchange="toggleServiceFields()"
+                                    class="w-full glass-input px-4 py-3 rounded-xl">
+                                    <option value="repair">Repair</option>
+                                    <option value="calibration">Calibration</option>
+                                    <option value="pm">PM</option>
+                                    <option value="spare_parts">Spare parts</option>
+                                </select>
+                            </div>
+                            <div class="space-y-1">
+                                <label class="text-xs font-bold text-gray-500 uppercase ml-1">Date</label>
+                                <input type="date" id="serviceDate" required
+                                    class="w-full glass-input px-4 py-3 rounded-xl">
+                            </div>
+                            <div id="nextServiceDateContainer" class="hidden space-y-1">
+                                <label class="text-xs font-bold text-blue-500 uppercase ml-1">Next Calibration
+                                    Due</label>
+                                <input type="date" id="nextServiceDate"
+                                    class="w-full glass-input px-4 py-3 rounded-xl border-blue-200 bg-blue-50/30">
+                            </div>
+                            <div class="space-y-1">
+                                <label class="text-xs font-bold text-gray-500 uppercase ml-1">Cost (THB)</label>
+                                <input type="number" step="any" id="maintenanceCost"
+                                    class="w-full glass-input px-4 py-3 rounded-xl" placeholder="0.00">
+                            </div>
+                            <div class="space-y-1">
+                                <label class="text-xs font-bold text-gray-500 uppercase ml-1">Provider</label>
+                                <select id="technicianSelect" class="w-full glass-input px-4 py-3 rounded-xl"></select>
+                            </div>
+                            <div class="space-y-1">
+                                <label class="text-xs font-bold text-gray-500 uppercase ml-1">Reporter</label>
+                                <select id="reporterSelect" required
+                                    class="w-full glass-input px-4 py-3 rounded-xl"></select>
+                            </div>
+                            <div class="space-y-1">
+                                <label class="text-xs font-bold text-gray-500 uppercase ml-1">Status</label>
+                                <select id="recordStatus" class="w-full glass-input px-4 py-3 rounded-xl">
+                                    <option value="pending">Pending</option>
+                                    <option value="complete">Complete</option>
+                                </select>
+                            </div>
+                            <div class="space-y-1 md:col-span-2">
+                                <label class="text-xs font-bold text-gray-500 uppercase ml-1">PO Documents (Up to 5 PDFs)</label>
+                                <div class="relative">
+                                    <input type="file" id="poFileUpload" accept="application/pdf" multiple
+                                        class="w-full glass-input px-4 py-3 rounded-xl text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
+                                </div>
+                                <div id="poFilesList" class="text-xs font-medium mt-2 ml-2 space-y-1"></div>
+                                <div id="existingPoLabel" class="text-xs font-medium mt-2 ml-2 hidden"></div>
+                            </div>
+                        </div>
+
+                        <div class="pt-6 flex justify-end gap-4">
+                            <button type="button" onclick="showPage('records')"
+                                class="px-6 py-3 rounded-xl text-gray-500 font-medium hover:bg-gray-200/50 transition">Cancel</button>
+                            <button type="submit"
+                                class="ios-btn bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-3 shadow-lg shadow-blue-500/30"
+                                id="saveBtn">Save Record</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div id="settingsPage" class="page hidden space-y-8 pb-10">
+                <div class="flex items-center gap-3 pl-2">
+                    <h2 class="text-3xl font-bold text-gray-800">Administration</h2>
+                </div>
+
+                <div class="glass ios-card p-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-blue-500"></span> User Management
+                    </h3>
+                    <div class="bg-white/50 p-4 rounded-xl mb-4 flex gap-3 flex-wrap items-end border border-white/60">
+                        <div class="flex-1 min-w-[200px]">
+                            <label class="text-[10px] font-bold text-gray-400 uppercase">Email</label>
+                            <input type="email" id="adminUserEmail"
+                                class="glass-input w-full p-2 rounded-lg text-sm mt-1">
+                        </div>
+                        <div class="flex-1 min-w-[150px]">
+                            <label class="text-[10px] font-bold text-gray-400 uppercase">Name</label>
+                            <input type="text" id="adminUserName"
+                                class="glass-input w-full p-2 rounded-lg text-sm mt-1">
+                        </div>
+                        <div class="flex-1 min-w-[120px]">
+                            <label class="text-[10px] font-bold text-gray-400 uppercase">Password</label>
+                            <input type="text" id="adminUserPass"
+                                class="glass-input w-full p-2 rounded-lg text-sm mt-1">
+                        </div>
+                        <div class="w-[100px]">
+                            <label class="text-[10px] font-bold text-gray-400 uppercase">Role</label>
+                            <select id="adminUserRole" class="glass-input w-full p-2 rounded-lg text-sm mt-1">
+                                <option value="user">User</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                        </div>
+                        <button onclick="adminSaveUser()" id="btnSaveUser"
+                            class="ios-btn bg-blue-600 text-white px-5 py-2 text-sm shadow-lg shadow-blue-500/30">Add</button>
+                        <button onclick="adminCancelUser()" id="btnCancelUser"
+                            class="hidden px-4 py-2 text-sm text-gray-500 hover:bg-gray-200 rounded-lg">Cancel</button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left glass-table rounded-lg overflow-hidden"
+                            id="adminUserTable">
+                            <thead class="bg-gray-100/50 text-gray-500 uppercase text-xs">
+                                <tr>
+                                    <th class="p-3">Email</th>
+                                    <th class="p-3">Name</th>
+                                    <th class="p-3">Role</th>
+                                    <th class="p-3 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="glass ios-card p-6">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-green-500"></span> Locations
+                        </h3>
+                        <div class="flex gap-2 mb-4">
+                            <input type="hidden" id="adminLocId">
+                            <input type="text" id="adminLocName" placeholder="New Location Name"
+                                class="glass-input w-full p-2 rounded-lg text-sm">
+                            <button onclick="adminSaveLocation()" id="btnSaveLoc"
+                                class="ios-btn bg-blue-600 text-white px-4 py-2 text-sm shadow-md">Add</button>
+                            <button onclick="adminCancelLocation()" id="btnCancelLoc"
+                                class="hidden text-gray-500 px-2 text-sm font-bold">✕</button>
+                        </div>
+                        <div class="max-h-60 overflow-y-auto pr-1 custom-scroll">
+                            <table class="w-full text-sm glass-table" id="adminLocationTable">
+                                <tbody class="text-sm"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="glass ios-card p-6">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-orange-500"></span> Providers
+                        </h3>
+                        <div class="flex gap-2 mb-4">
+                            <input type="hidden" id="adminCompOldName">
+                            <input type="text" id="adminCompName" placeholder="New Provider Name"
+                                class="glass-input w-full p-2 rounded-lg text-sm">
+                            <button onclick="adminSaveCompany()" id="btnSaveComp"
+                                class="ios-btn bg-blue-600 text-white px-4 py-2 text-sm shadow-md">Add</button>
+                            <button onclick="adminCancelCompany()" id="btnCancelComp"
+                                class="hidden text-gray-500 px-2 text-sm font-bold">✕</button>
+                        </div>
+                        <div class="max-h-60 overflow-y-auto pr-1 custom-scroll">
+                            <table class="w-full text-sm glass-table" id="adminCompanyTable">
+                                <tbody class="text-sm"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass ios-card p-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-pink-500"></span> Equipment Inventory
+                    </h3>
+                    <div class="bg-white/50 p-4 rounded-xl mb-4 flex gap-3 flex-wrap items-end border border-white/60">
+                        <input type="hidden" id="adminEquipId">
+                        <div class="flex-1 min-w-[200px]">
+                            <label class="text-[10px] font-bold text-gray-400 uppercase">Equipment Name</label>
+                            <input type="text" id="adminEquipName" placeholder="e.g. Spectrophotometer"
+                                class="glass-input w-full p-2 rounded-lg text-sm mt-1">
+                        </div>
+                        <div class="flex-1 min-w-[200px]">
+                            <label class="text-[10px] font-bold text-gray-400 uppercase">Location</label>
+                            <select id="adminEquipLoc" class="glass-input w-full p-2 rounded-lg text-sm mt-1"></select>
+                        </div>
+                        <button onclick="adminSaveEquipment()" id="btnSaveEquip"
+                            class="ios-btn bg-blue-600 text-white px-5 py-2 text-sm shadow-lg shadow-blue-500/30">Add
+                            Item</button>
+                        <button onclick="adminCancelEquipment()" id="btnCancelEquip"
+                            class="hidden px-4 py-2 text-sm text-gray-500 hover:bg-gray-200 rounded-lg">Cancel</button>
+                    </div>
+                    <div class="max-h-80 overflow-y-auto custom-scroll">
+                        <table class="w-full text-sm text-left glass-table" id="adminEquipmentTable">
+                            <thead class="bg-gray-100/50 text-gray-500 uppercase text-xs sticky top-0 backdrop-blur-md">
+                                <tr>
+                                    <th class="p-3">Equipment Name</th>
+                                    <th class="p-3">Location</th>
+                                    <th class="p-3 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="glass ios-card p-6">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-teal-500"></span> Reporters
+                    </h3>
+                    <div class="flex gap-2 mb-4 items-end">
+                        <div class="flex-1">
+                            <input type="hidden" id="adminReporterOldName">
+                            <label class="text-[10px] font-bold text-gray-400 uppercase ml-1">Reporter Name</label>
+                            <input type="text" id="adminReporterName" placeholder="Dr. Somchai..."
+                                class="glass-input w-full p-2 rounded-lg text-sm mt-1">
+                        </div>
+                        <button onclick="adminSaveReporter()" id="btnSaveReporter"
+                            class="ios-btn bg-blue-600 text-white px-6 py-2 text-sm shadow-md h-[38px]">Add</button>
+                        <button onclick="adminCancelReporter()" id="btnCancelReporter"
+                            class="hidden text-gray-500 px-4 py-2 text-sm hover:bg-gray-200 rounded-lg h-[38px]">Cancel</button>
+                    </div>
+                    <div class="max-h-60 overflow-y-auto custom-scroll">
+                        <table class="w-full text-sm glass-table" id="adminReporterTable">
+                            <thead class="bg-gray-100/50 text-gray-500 uppercase text-xs sticky top-0 backdrop-blur-md">
+                                <tr>
+                                    <th class="p-3">Reporter Name</th>
+                                    <th class="p-3 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-sm"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="glass ios-card p-6 flex items-center justify-between mt-8">
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800">System Data</h3>
+                        <p class="text-xs text-gray-500">Backup or restore your database JSON.</p>
+                    </div>
+                    <div class="flex gap-3">
+                        <button onclick="backupData()"
+                            class="ios-btn bg-green-500 text-white px-4 py-2 text-sm shadow-lg shadow-green-500/20">Backup
+                            Data</button>
+                        <button onclick="document.getElementById('importFile').click()"
+                            class="ios-btn bg-blue-500 text-white px-4 py-2 text-sm shadow-lg shadow-blue-500/20">Import
+                            JSON</button>
+                        <input type="file" id="importFile" class="hidden" accept=".json" onchange="importData(this)">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="calendarModal"
+        class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div
+            class="glass glass-dark rounded-3xl shadow-2xl w-[95%] max-w-3xl md:w-full h-[75vh] flex flex-col overflow-hidden">
+            <div class="p-5 border-b border-gray-100 flex justify-between items-center bg-white/40">
+                <h3 id="modalDateTitle" class="text-lg font-bold text-gray-800">Tasks</h3>
+                <button onclick="closeCalendarModal()"
+                    class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 text-gray-500">✕</button>
+            </div>
+            <div id="calendarModalContent" class="p-5 max-h-[60vh] overflow-y-auto space-y-4"></div>
+        </div>
+    </div>
+
+    <div id="poViewerModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl w-[98%] max-w-6xl md:w-full h-[85vh] flex flex-col overflow-hidden">
+            <div class="flex justify-between items-center px-6 py-4 border-b">
+                <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
+                    <span class="bg-blue-100 text-blue-600 p-1.5 rounded-lg text-sm">📄</span>
+                    Document Viewer
+                </h3>
+                <button onclick="closePOViewerModal()" class="text-gray-400 hover:text-red-500 text-2xl font-bold leading-none w-8 h-8 flex items-center justify-center rounded-full hover:bg-red-50 transition-colors">✕</button>
+            </div>
+            <div class="flex flex-1 overflow-hidden">
+                <!-- Sidebar for file list -->
+                <div class="w-1/3 max-w-[280px] border-r border-gray-100 bg-gray-50/50 flex flex-col p-4 overflow-y-auto custom-scroll" id="poSidebar">
+                </div>
+                <!-- Main preview area -->
+                <div class="flex-1 bg-gray-100/50 p-3" id="poPdfPreviewArea">
+                    <div class="flex items-center justify-center h-full text-gray-400">Select a file from the list to view</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="historyModal"
+        class="hidden fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center p-4">
+        <div
+            class="glass glass-dark rounded-3xl shadow-2xl w-[95%] max-w-md md:w-full overflow-hidden transform scale-100 transition-all">
+            <div class="p-5 border-b border-gray-100 flex justify-between items-center bg-white/40">
+                <h3 id="historyModalTitle" class="text-xl font-bold text-gray-800">Equipment History</h3>
+                <button onclick="closeHistoryModal()"
+                    class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 text-gray-500 font-bold transition">✕</button>
+            </div>
+
+            <div class="flex gap-2 p-4 bg-white/50 border-b border-gray-100">
+                <button onclick="switchHistoryTab('repair')" id="tabHistRepair"
+                    class="hist-tab flex-1 px-4 py-2.5 rounded-xl text-sm font-bold bg-orange-100 text-orange-700 transition shadow-sm">🔧
+                    Repairs</button>
+                <button onclick="switchHistoryTab('calibration')" id="tabHistCalib"
+                    class="hist-tab flex-1 px-4 py-2.5 rounded-xl text-sm font-bold bg-gray-100 text-gray-500 hover:bg-purple-100 hover:text-purple-700 transition">⚖️
+                    Calibration</button>
+                <button onclick="switchHistoryTab('pm')" id="tabHistPM"
+                    class="hist-tab flex-1 px-4 py-2.5 rounded-xl text-sm font-bold bg-gray-100 text-gray-500 hover:bg-teal-100 hover:text-teal-700 transition">🛡️
+                    PM</button>
+                <button onclick="switchHistoryTab('spare_parts')" id="tabHistSpare"
+                    class="hist-tab flex-1 px-4 py-2.5 rounded-xl text-sm font-bold bg-gray-100 text-gray-500 hover:bg-pink-100 hover:text-pink-700 transition">⚙️
+                    Spare parts</button>
+            </div>
+
+            <div id="historyModalContent" class="p-5 flex-1 overflow-y-auto bg-gray-50/50 custom-scroll space-y-3">
+            </div>
+        </div>
+    </div>
+    <div id="calendarTooltip"
+        class="cal-tooltip fixed bg-black/80 text-white text-xs p-2 rounded-lg z-[100] hidden pointer-events-none backdrop-blur-md">
+    </div>
+
+    <script>
+        // --- Data Stores ---
+        let _backupData = { "users": { "admin@lab.com": { "password": "admin321", "role": "admin", "name": "Administrator" }, "user@lab.com": { "password": "user123", "role": "user", "name": "Standard User" }, "Saranyap@mitrphol.com": { "password": "user123", "role": "user", "name": "Saranya phaengthai" }, "Waranyan@mitrphol.com": { "password": "user123", "role": "user", "name": "Waranya Natesuntorn" }, "Ratchaniwanj@mitrphol.com": { "password": "user123", "role": "user", "name": "Ratchaniwan Jaemsaeng" }, "Prayooths@mitrphol.com": { "password": "user123", "role": "user", "name": "Prayooth Saothong" }, "Chokchais@mitrphol.com": { "password": "user123", "role": "user", "name": "Chokchai Sompugdee" }, "Atiyat@mitrphol.com": { "password": "user123", "role": "user", "name": "Atiya Techaparin" }, "Kridsanak@mitrphol.com": { "password": "user123", "role": "user", "name": "Kridsana Krisomdee" }, "Jirachayak@mitrphol.com": { "password": "user123", "role": "user", "name": "Jirachaya klinsumalee" } }, "records": [{ "id": 1770458821533, "equipment_name": "Pilot Spray Dry", "building": "Production Trial Unit", "type": "calibration", "service_date": "2024-07-16", "next_service_date": "2026-07-16", "maintenance_cost": "8000", "technicians": ["บริษัท เกรทเทค ไซเบอร์เนติกส์ จำกัด"], "reporter": "Kridsana Krisomdee", "calendar_status": "complete", "po_file": "", "additional_files": ["Demo_Manual_v1.pdf", "Calibration_Cert.pdf"] }, { "id": 1770459393734, "equipment_name": "Water Purifier (Arioso UP900))", "building": "Washing room", "type": "repair", "service_date": "2024-07-24", "next_service_date": "2025-08-07", "maintenance_cost": "15300", "technicians": ["บริษัท เน็กซ์ไบโอ (ประเทศไทย) จำกัด"], "reporter": "Kridsana Krisomdee", "calendar_status": "complete", "po_file": "" }, { "id": 1770459648390, "equipment_name": "Water Purifier (Arioso UP900))", "building": "Washing room", "type": "repair", "service_date": "2025-08-07", "next_service_date": "", "maintenance_cost": "29200", "technicians": ["บริษัท เน็กซ์ไบโอ (ประเทศไทย) จำกัด"], "reporter": "Kridsana Krisomdee", "calendar_status": "complete", "po_file": "" }, { "id": 1770459871942, "equipment_name": "Water Purifier (Arioso UP900))", "building": "Washing room", "type": "repair", "service_date": "2025-03-31", "next_service_date": "", "maintenance_cost": "51100", "technicians": ["บริษัท เน็กซ์ไบโอ (ประเทศไทย) จำกัด"], "reporter": "Kridsana Krisomdee", "calendar_status": "complete", "po_file": "" }, { "id": 1770460540632, "equipment_name": "Water Purifier (Arioso UP900))", "building": "Washing room", "type": "repair", "service_date": "2025-11-17", "next_service_date": "", "maintenance_cost": "6650", "technicians": ["บริษัท เน็กซ์ไบโอ (ประเทศไทย) จำกัด"], "reporter": "Kridsana Krisomdee", "calendar_status": "complete", "po_file": "" }, { "id": 1770460788184, "equipment_name": "Separator (Alfa Laval)", "building": "Production Trial Unit", "type": "calibration", "service_date": "2024-06-18", "next_service_date": "2026-06-18", "maintenance_cost": "93000", "technicians": ["บริษัท อัลฟา ลาวาล (ไทยแลนด์) จำกัด"], "reporter": "Kridsana Krisomdee", "calendar_status": "complete", "po_file": "" }, { "id": 1770461421061, "equipment_name": "Spray dry (ฺB-290)", "building": "Micro Lab", "type": "repair", "service_date": "2025-07-09", "next_service_date": "", "maintenance_cost": "5200", "technicians": ["บริษัท บูชิ (ไทยแลนด์) จำกัด"], "reporter": "Kridsana Krisomdee", "calendar_status": "complete", "po_file": "" }, { "id": 1770461915055, "equipment_name": "Refrigerator, Panasonic", "building": "Micro Lab", "type": "repair", "service_date": "2025-04-03", "next_service_date": "", "maintenance_cost": "3400", "technicians": ["นายปรีชา ภูวโชติธนากุล"], "reporter": "Kridsana Krisomdee", "calendar_status": "complete", "po_file": "" }, { "id": 1770462031456, "equipment_name": "3-Door Refrigerator (4C), Natural (no.2)", "building": "Production Trial Unit", "type": "repair", "service_date": "2025-03-13", "next_service_date": "", "maintenance_cost": "9000", "technicians": ["นายปรีชา ภูวโชติธนากุล"], "reporter": "Kridsana Krisomdee", "calendar_status": "complete", "po_file": "" }, { "id": 1770462398376, "equipment_name": "Centrifuge Floor Type (Lynx4000))", "building": "General Micro Lab", "type": "repair", "service_date": "2024-08-07", "next_service_date": "", "maintenance_cost": "290000", "technicians": ["ห้างหุ้นส่วนจำกัด เอ็น.วาย.อาร์ "], "reporter": "Kridsana Krisomdee", "calendar_status": "complete", "po_file": "" }, { "id": 1770462497841, "equipment_name": "Centrifuge Floor Type (Lynx4000))", "building": "General Micro Lab", "type": "repair", "service_date": "2024-08-09", "next_service_date": "", "maintenance_cost": "349245", "technicians": ["บริษัท เอ็นวิชั่น แล็บซิสเต็ม จำกัด"], "reporter": "Kridsana Krisomdee", "calendar_status": "complete", "po_file": "" }, { "id": 1770462803655, "equipment_name": "Rotary evaporator, Eyela", "building": "Micro Lab", "type": "repair", "service_date": "2024-12-12", "next_service_date": "", "maintenance_cost": "28000", "technicians": ["บริษัท เอส.เอ.(ขอนแก่น) จำกัด"], "reporter": "Kridsana Krisomdee", "calendar_status": "complete", "po_file": "" }, { "id": 1770462917214, "equipment_name": "Rotary evaporator, Eyela", "building": "Micro Lab", "type": "repair", "service_date": "2025-06-19", "next_service_date": "", "maintenance_cost": "14800", "technicians": ["บริษัท เอส.เอ.(ขอนแก่น) จำกัด"], "reporter": "Kridsana Krisomdee", "calendar_status": "complete", "po_file": "" }, { "id": 1770463587072, "equipment_name": "pH & CD meter", "building": "Production Trial Unit", "type": "repair", "service_date": "2025-01-31", "next_service_date": "", "maintenance_cost": "1475", "technicians": ["บริษัท เมทเล่อร์-โทเลโด (ประเทศไทย) จำกัด"], "reporter": "Kridsana Krisomdee", "calendar_status": "complete", "po_file": "" }, { "id": 1770464269413, "equipment_name": "Moisture analyzer", "building": "General Micro Lab", "type": "calibration", "service_date": "2025-10-16", "next_service_date": "2026-10-16", "maintenance_cost": "14590", "technicians": ["บริษัท เมทเล่อร์-โทเลโด (ประเทศไทย) จำกัด"], "reporter": "Kridsana Krisomdee", "calendar_status": "complete", "po_file": "" }, { "id": 1770464690031, "equipment_name": "Pilot Spray Dry", "building": "Production Trial Unit", "type": "calibration", "service_date": "2023-07-06", "next_service_date": "2024-07-06", "maintenance_cost": "16500", "technicians": ["บริษัท เกรทเทค ไซเบอร์เนติกส์ จำกัด"], "reporter": "Kridsana Krisomdee", "calendar_status": "complete", "po_file": "" }, { "id": 1770465149396, "equipment_name": "Separator (Alfa Laval)", "building": "Production Trial Unit", "type": "calibration", "service_date": "2023-02-16", "next_service_date": "2024-02-16", "maintenance_cost": "99278", "technicians": ["บริษัท อัลฟา ลาวาล (ไทยแลนด์) จำกัด"], "reporter": "Kridsana Krisomdee", "calendar_status": "complete", "po_file": "" }], "technicians": ["บริษัท เกรทเทค ไซเบอร์เนติกส์ จำกัด", "บริษัท เน็กซ์ไบโอ (ประเทศไทย) จำกัด", "บริษัท อัลฟา ลาวาล (ไทยแลนด์) จำกัด", "บริษัท บูชิ (ไทยแลนด์) จำกัด", "นายปรีชา ภูวโชติธนากุล", "ห้างหุ้นส่วนจำกัด เอ็น.วาย.อาร์ ", "บริษัท เอ็นวิชั่น แล็บซิสเต็ม จำกัด", "บริษัท เอส.เอ.(ขอนแก่น) จำกัด", "บริษัท เมทเล่อร์-โทเลโด (ประเทศไทย) จำกัด"], "reporters": ["Laboratory Technician", "Administrative Staff", "Saranya Phaengthai", "Waranya Natesuntorn", "Ratchaniwan Jaemsaeng", "Prayooth Saothong", "Chokchai Sompugdee", "Atiya Techaparin", "Kridsana Krisomdee", "Jirachaya Klinsumalee"], "buildings": [{ "id": 5, "name": "Fermentation unit" }, { "id": 6, "name": "Production Trial Unit" }, { "id": 7, "name": "Analytical Lab" }, { "id": 8, "name": "General Micro Lab" }, { "id": 9, "name": "Preparation room" }, { "id": 10, "name": "Utility" }, { "id": 11, "name": "Washing room" }, { "id": 12, "name": "Biosafety Level 2 (BSL2)" }, { "id": 1770461142946, "name": "Micro Lab" }], "equipment": [{ "id": 1, "name": "Autoclave", "building_id": 5 }, { "id": 2, "name": "50L Fermenter", "building_id": 5 }, { "id": 3, "name": "500L Fermenter", "building_id": 5 }, { "id": 4, "name": "750L Hot Air Oven", "building_id": 5 }, { "id": 5, "name": "500L Mixing tank", "building_id": 6 }, { "id": 6, "name": "500L Pretreatment tank", "building_id": 6 }, { "id": 7, "name": "20L Rotary evaporator", "building_id": 6 }, { "id": 8, "name": "Falling Film Evaporator (10L/h)", "building_id": 6 }, { "id": 9, "name": "Mini Spray Dry (Buchi-B290)", "building_id": 6 }, { "id": 10, "name": "Pilot Spray Dry", "building_id": 6 }, { "id": 11, "name": "Separator (Alfa Laval)", "building_id": 6 }, { "id": 12, "name": "Tubular centrifuge", "building_id": 6 }, { "id": 13, "name": "Sequential Simulated Moving Bed (SMB)", "building_id": 6 }, { "id": 14, "name": "Autoclave, Hirayama", "building_id": 6 }, { "id": 15, "name": "Multi-function automatic filling machine", "building_id": 6 }, { "id": 16, "name": "Vacuum packager", "building_id": 6 }, { "id": 17, "name": "Packing machine", "building_id": 6 }, { "id": 18, "name": "Filter press", "building_id": 6 }, { "id": 19, "name": "HPLC (Waters)", "building_id": 7 }, { "id": 20, "name": "Incubator Shaker (Innova)", "building_id": 7 }, { "id": 21, "name": "Tangential Flow Fitration (Merck)", "building_id": 7 }, { "id": 22, "name": "Centrifuge Floor Type (Lynx4000))", "building_id": 8 }, { "id": 23, "name": "Incubator Shaker (InfrosTH))", "building_id": 8 }, { "id": 24, "name": "Incubator (Memmert) No.1", "building_id": 8 }, { "id": 25, "name": "Incubator (Memmert) No.2", "building_id": 8 }, { "id": 26, "name": "Moisture analyzer", "building_id": 8 }, { "id": 27, "name": "Biosafety Cabinet", "building_id": 8 }, { "id": 28, "name": "Spectrophotometer", "building_id": 8 }, { "id": 29, "name": "Fume hood", "building_id": 9 }, { "id": 30, "name": "Thermomixer", "building_id": 9 }, { "id": 31, "name": "UV Auto Dry Desiccator", "building_id": 9 }, { "id": 32, "name": "Boiler", "building_id": 10 }, { "id": 33, "name": "RO Water Unit", "building_id": 10 }, { "id": 34, "name": "Air Supply Unit", "building_id": 10 }, { "id": 35, "name": "Hot Air Oven (Memmert UF260))", "building_id": 11 }, { "id": 36, "name": "Water Purifier (Arioso UP900))", "building_id": 11 }, { "id": 37, "name": "ICE Maker", "building_id": 11 }, { "id": 38, "name": "Freezer -80 C (Eppendorf)", "building_id": 12 }, { "id": 39, "name": "Freezer -20 C (Panasonic)", "building_id": 12 }, { "id": 40, "name": "Autoclave HVA110 (Hirayama)", "building_id": 12 }, { "id": 41, "name": "Refridgerator centrifuge", "building_id": 12 }, { "id": 42, "name": "Spectrophotometer (Jenway)", "building_id": 12 }, { "id": 43, "name": "Incubator shaker (Biosan)", "building_id": 12 }, { "id": 44, "name": "YSI 2900D", "building_id": 12 }, { "id": 45, "name": "Waterless bead bath", "building_id": 12 }, { "id": 46, "name": "BSC (ESCO)", "building_id": 12 }, { "id": 47, "name": "42 L fermenter Techfros", "building_id": 12 }, { "id": 48, "name": "Chiller for techfors", "building_id": 12 }, { "id": 49, "name": "Steam generator", "building_id": 12 }, { "id": 50, "name": "1L Multifros fermenter #1", "building_id": 12 }, { "id": 51, "name": "1L Multifros fermenter #2", "building_id": 12 }, { "id": 52, "name": "1L Multifros fermenter #3", "building_id": 12 }, { "id": 53, "name": "1L Multifros fermenter #4", "building_id": 12 }, { "id": 54, "name": "1L Multifros fermenter #5", "building_id": 12 }, { "id": 55, "name": "1L Multifros fermenter #6", "building_id": 12 }, { "id": 56, "name": "5L Minifros #1", "building_id": 12 }, { "id": 57, "name": "5L Minifros #2", "building_id": 12 }, { "id": 58, "name": "Refrigerator (MITSUBISHI)", "building_id": 7 }, { "id": 59, "name": "Microplate Reader", "building_id": 7 }, { "id": 60, "name": "Gel Doc (BioRad)", "building_id": 7 }, { "id": 61, "name": "Sonicator", "building_id": 7 }, { "id": 62, "name": "Water bath (Lauda)", "building_id": 8 }, { "id": 63, "name": "Water bath (Thermo scientific)", "building_id": 8 }, { "id": 64, "name": "Microwave 1100W", "building_id": 8 }, { "id": 65, "name": "Microcentrifuge (Beckman coulter)", "building_id": 8 }, { "id": 66, "name": "3-Door Refrigerator (4C), Natural (no.1)", "building_id": 6 }, { "id": 67, "name": "3-Door Refrigerator (4C), Natural (no.2)", "building_id": 6 }, { "id": 68, "name": "Refrigerator (-20C), Haier", "building_id": 6 }, { "id": 69, "name": "2-Door Refrigerator (4C), POL-EKO", "building_id": 6 }, { "id": 70, "name": "Water bath, Memmert", "building_id": 6 }, { "id": 71, "name": "Water bath, Memmert from DC", "building_id": 6 }, { "id": 72, "name": "Analytical Balance 60 kg, Mettler-toledo", "building_id": 6 }, { "id": 73, "name": "Centrifuge  from New business, Hermle", "building_id": 6 }, { "id": 74, "name": "Overhead stirrer, IKA Eurostar 200", "building_id": 6 }, { "id": 75, "name": "Air Conditioner, Carrier 60,000 BTU no.1", "building_id": 6 }, { "id": 76, "name": "Air Conditioner, Carrier 60,000 BTU no.2", "building_id": 6 }, { "id": 77, "name": "Air Conditioner, Carrier 60,000 BTU no.3", "building_id": 6 }, { "id": 78, "name": "Peristaltic pump (Lab F6), Shenchen no.1", "building_id": 6 }, { "id": 79, "name": "Peristaltic pump (Lab F6), Shenchen no.2", "building_id": 6 }, { "id": 80, "name": "Peristaltic pump (Lab F6), Shenchen no.3", "building_id": 6 }, { "id": 81, "name": "Peristaltic pump (Lab F6), Shenchen no.4", "building_id": 6 }, { "id": 82, "name": "Peristaltic pump (Lab F6), Shenchen no.5", "building_id": 6 }, { "id": 83, "name": "Peristaltic pump (Lab N3), Shenchen no.1", "building_id": 6 }, { "id": 84, "name": "Peristaltic pump (Lab N3), Shenchen no.2", "building_id": 6 }, { "id": 85, "name": "Peristaltic pump (Lab N3), Shenchen no.3", "building_id": 6 }, { "id": 86, "name": "Peristaltic pump (BT101F) from N'Ae", "building_id": 6 }, { "id": 1770461244134, "name": "Spray dry (ฺB-290)", "building_id": 1770461142946 }, { "id": 1770461661504, "name": "Refrigerator, Panasonic", "building_id": 1770461142946 }, { "id": 1770462688377, "name": "Rotary evaporator, Eyela", "building_id": 1770461142946 }, { "id": 1770463495602, "name": "pH & CD meter", "building_id": 6 }] };
+        let users = _backupData.users ? Object.entries(_backupData.users).map(([k, v], i) => ({
+            id: 'U-' + String(i + 1).padStart(3, '0'),
+            username: k,
+            password: v.password,
+            name: v.name,
+            role: v.role
+        })) : [];
+        let currentUser = null;
+        let records = _backupData.records || [];
+
+        let technicians = _backupData.technicians || [];
+        let reporters = _backupData.reporters || [];
+        let buildings = _backupData.buildings || [];
+        let equipment = _backupData.equipment || [];
+        let poFilesDb = {};
+
+        // IndexedDB Configuration for PO Files
+        const IDB_NAME = 'CarePlusStorage';
+        const IDB_STORE = 'poFiles';
+        let idbInst = null;
+
+        function initIndexedDB() {
+            return new Promise((resolve, reject) => {
+                const req = indexedDB.open(IDB_NAME, 1);
+                req.onupgradeneeded = (e) => {
+                    idbInst = e.target.result;
+                    if (!idbInst.objectStoreNames.contains(IDB_STORE)) {
+                        idbInst.createObjectStore(IDB_STORE);
+                    }
+                };
+                req.onsuccess = (e) => {
+                    idbInst = e.target.result;
+                    const tx = idbInst.transaction(IDB_STORE, 'readonly');
+                    const store = tx.objectStore(IDB_STORE);
+                    const reqGetAll = store.getAll();
+                    const reqKeys = store.getAllKeys();
+                    
+                    reqGetAll.onsuccess = () => {
+                        reqKeys.onsuccess = () => {
+                            reqKeys.result.forEach((k, i) => {
+                                poFilesDb[k] = reqGetAll.result[i];
+                            });
+                            
+                            // Migrate from localStorage if exists
+                            const savedState = localStorage.getItem('NoteLabState_Merged');
+                            if (savedState) {
+                                try {
+                                    const state = JSON.parse(savedState);
+                                    if (state.poFilesDb && Object.keys(state.poFilesDb).length > 0) {
+                                        let migrated = false;
+                                        for (const [id, files] of Object.entries(state.poFilesDb)) {
+                                            if (!poFilesDb[id]) {
+                                                poFilesDb[id] = files;
+                                                savePoFileToIDB(id, files);
+                                                migrated = true;
+                                            }
+                                        }
+                                        if (migrated) {
+                                            delete state.poFilesDb;
+                                            localStorage.setItem('NoteLabState_Merged', JSON.stringify(state));
+                                        }
+                                    }
+                                } catch(err) { console.error("Migration error", err); }
+                            }
+                            resolve();
+                        };
+                    };
+                };
+                req.onerror = (e) => { console.error("IDB Init error", e); resolve(); }; // Resolve anyway to continue
+            });
+        }
+
+        function savePoFileToIDB(id, files) {
+            if (!idbInst) return;
+            const tx = idbInst.transaction(IDB_STORE, 'readwrite');
+            tx.objectStore(IDB_STORE).put(files, id);
+        }
+
+        function deletePoFileFromIDB(id) {
+            if (!idbInst) return;
+            const tx = idbInst.transaction(IDB_STORE, 'readwrite');
+            tx.objectStore(IDB_STORE).delete(id);
+        }
+
+        function getAllPoFilesFromIDB() {
+            return new Promise((resolve) => {
+                if (!idbInst) { resolve(poFilesDb); return; }
+                const tx = idbInst.transaction(IDB_STORE, 'readonly');
+                const store = tx.objectStore(IDB_STORE);
+                const reqGetAll = store.getAll();
+                const reqKeys = store.getAllKeys();
+                reqGetAll.onsuccess = () => {
+                    reqKeys.onsuccess = () => {
+                        const res = {};
+                        reqKeys.result.forEach((k, i) => { res[k] = reqGetAll.result[i]; });
+                        resolve(res);
+                    };
+                };
+                reqGetAll.onerror = () => resolve(poFilesDb);
+            });
+        }
+
+        let currentCalendarMonth = new Date();
+        let charts = {};
+        let tempPoFiles = [];
+
+        // Pagination Vars
+        let currentPage = 1;
+        const rowsPerPage = 15;
+        let filteredRecords = [];
+
+        // --- Initialization ---
+        function loadCarePlusState() {
+            const savedState = localStorage.getItem('NoteLabState_Merged');
+            if (savedState) {
+                const state = JSON.parse(savedState);
+                if (state.users) users = state.users;
+                if (state.records) records = state.records;
+                if (state.technicians) technicians = state.technicians;
+                if (state.reporters) reporters = state.reporters;
+                if (state.equipments) equipment = state.equipments;
+                if (state.buildings) buildings = state.buildings;
+                if (state.poFilesDb) { 
+                    poFilesDb = { ...poFilesDb, ...state.poFilesDb }; // Fallback
+                }
+            }
+        }
+        
+        function saveCarePlusState() {
+            const savedState = localStorage.getItem('NoteLabState_Merged');
+            let state = savedState ? JSON.parse(savedState) : { users: [], equipments: [], buildings: [], bookings: [] };
+            state.users = users;
+            state.records = records;
+            state.technicians = technicians;
+            state.reporters = reporters;
+            state.equipments = equipment; 
+            state.buildings = buildings;
+            delete state.poFilesDb; // Do not store massive PDFs in localStorage
+            localStorage.setItem('NoteLabState_Merged', JSON.stringify(state));
+        }
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            try { await initIndexedDB(); } catch(e) { console.error(e); }
+            loadCarePlusState();
+            
+            // Listen for cross-tab updates from index.html
+            window.addEventListener('storage', (e) => {
+                if (e.key === 'NoteLabState_Merged') {
+                    loadCarePlusState();
+                    if (typeof currentUser !== 'undefined' && currentUser) {
+                        loadSettings(); // Updates all admin tables
+                        loadRecords(); // Updates main table
+                    }
+                }
+            });
+
+            document.getElementById('loginForm').addEventListener('submit', handleLogin);
+
+            // ตรวจสอบ Session คงค้าง
+            const savedEmail = localStorage.getItem('labUserSession');
+            const foundUser = users.find(u => u.username === savedEmail);
+            if (savedEmail && foundUser) {
+                currentUser = { ...foundUser, email: savedEmail };
+                initApp();
+            } else {
+                // ถ้าไม่มี Session ค่อยแสดงหน้า Login
+                document.getElementById('loginPage').classList.remove('hidden');
+                document.getElementById('mainApp').classList.add('hidden');
+            }
+        });
+        function initApp() {
+            document.getElementById('loginPage').classList.add('hidden');
+            document.getElementById('mainApp').classList.remove('hidden');
+            document.getElementById('userDisplay').textContent = currentUser.name;
+            document.getElementById('userRole').textContent = currentUser.role.toUpperCase();
+            if (currentUser.role === 'admin') document.getElementById('settingsBtn').classList.remove('hidden');
+            showPage('dashboard');
+
+            document.getElementById('addRecordForm').addEventListener('submit', handleSaveRecord);
+            document.getElementById('poFileUpload').addEventListener('change', handleFileSelect);
+
+            // Global Funcs
+            window.fullEditRecord = loadEditForm;
+            window.deleteRecord = deleteRecord;
+            window.viewPO = viewPO;
+        }
+
+        function handleFileSelect(e) {
+            const files = Array.from(e.target.files);
+            if (files.length > 5) {
+                Swal.fire('Error', 'Maximum 5 files allowed.', 'error');
+                e.target.value = '';
+                return;
+            }
+            let valid = true;
+            tempPoFiles = [];
+            let loaded = 0;
+            files.forEach(file => {
+                if (file.type !== "application/pdf") {
+                    valid = false;
+                }
+            });
+            if (!valid) {
+                Swal.fire('Error', 'Only PDF files are allowed.', 'error');
+                e.target.value = '';
+                return;
+            }
+
+            if (files.length === 0) return;
+
+            files.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function (evt) {
+                    tempPoFiles.push({ name: file.name, data: evt.target.result });
+                    loaded++;
+                    if (loaded === files.length) {
+                        renderPoFilesList();
+                    }
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function renderPoFilesList() {
+            const list = document.getElementById('poFilesList');
+            list.innerHTML = '';
+            tempPoFiles.forEach((file, index) => {
+                list.innerHTML += `<div class="flex justify-between items-center px-2 py-1 bg-blue-50 rounded">
+                     <span class="text-blue-700 truncate mr-2">${file.name}</span>
+                     <button type="button" onclick="removeTempPoFile(${index})" class="text-red-500 hover:text-red-700 font-bold">✕</button>
+                 </div>`;
+            });
+        }
+
+        function removeTempPoFile(index) {
+            tempPoFiles.splice(index, 1);
+            renderPoFilesList();
+        }
+
+        function formatCurrency(num) {
+            if (!num) return '-';
+            return parseFloat(num).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+        }
+
+
+        function openUpcomingModal() {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const next90 = new Date(today);
+            next90.setDate(today.getDate() + 90);
+
+            // แก้ไขจุดนี้: นำเงื่อนไขการกรองสถานะ complete ออก เพื่อให้ข้อมูลดึงมาแสดงผลตรงตามยอดบนการ์ดหน้า Dashboard
+            let upcomingRecords = records.filter(r => {
+                let checkDate = null;
+                if (r.type === 'calibration' && r.next_service_date) checkDate = new Date(r.next_service_date);
+                else if ((r.type === 'repair' || r.type === 'pm') && r.service_date) checkDate = new Date(r.service_date);
+
+                if (checkDate) {
+                    checkDate.setHours(0, 0, 0, 0);
+                    return checkDate >= today && checkDate <= next90;
+                }
+                return false;
+            });
+
+            // เรียงลำดับจากวันที่จะมาถึงก่อน (Ascending)
+            upcomingRecords.sort((a, b) => {
+                const dateA = new Date(a.type === 'calibration' ? a.next_service_date : a.service_date);
+                const dateB = new Date(b.type === 'calibration' ? b.next_service_date : b.service_date);
+                return dateA - dateB;
+            });
+
+            const content = document.getElementById('upcomingModalContent');
+            if (upcomingRecords.length === 0) {
+                content.innerHTML = `<div class="text-center text-gray-400 py-10 font-bold">No upcoming tasks in the next 90 days.</div>`;
+            } else {
+                content.innerHTML = upcomingRecords.map(r => {
+                    const d = new Date(r.type === 'calibration' ? r.next_service_date : r.service_date);
+                    const dateStr = d.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
+
+                    let typeIcon = '🔧'; let typeColor = 'text-orange-600 bg-orange-50 border-orange-200';
+                    if (r.type === 'calibration') { typeIcon = '⚖️'; typeColor = 'text-purple-600 bg-purple-50 border-purple-200'; }
+                    else if (r.type === 'pm') { typeIcon = '🛡️'; typeColor = 'text-teal-600 bg-teal-50 border-teal-200'; }
+
+                    // เพิ่มสไตล์และสถานะความคืบหน้าของงาน (Status Badge) เพื่อให้ตรวจสอบได้ว่างานไหนเสร็จหรือยังค้างอยู่
+                    const isComplete = r.calendar_status === 'complete';
+                    const statusBadgeClass = isComplete ? 'text-green-700 bg-green-50 border-green-200' : 'text-yellow-700 bg-yellow-50 border-yellow-200';
+                    const opacityClass = isComplete ? 'opacity-60' : 'opacity-100';
+
+                    return `
+            <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition ${opacityClass}">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <div class="text-xs font-bold text-red-500 mb-1 flex items-center gap-1">🗓️ ${dateStr}</div>
+                        <h4 class="font-bold text-gray-800 text-base">${r.equipment_name}</h4>
+                        <div class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mt-1">📍 ${r.building || 'N/A'}</div>
+                    </div>
+                    <div class="flex flex-col items-end gap-1.5">
+                        <span class="px-2 py-1 rounded border ${typeColor} text-[10px] font-bold uppercase shadow-sm">
+                            ${typeIcon} ${r.type}
+                        </span>
+                        <span class="px-2 py-0.5 rounded border ${statusBadgeClass} text-[9px] font-bold uppercase tracking-wide shadow-sm">
+                            ${r.calendar_status}
+                        </span>
+                    </div>
+                </div>
+            </div>`;
+                }).join('');
+            }
+
+            document.getElementById('upcomingModal').classList.remove('hidden');
+        }
+        function closeUpcomingModal() {
+            document.getElementById('upcomingModal').classList.add('hidden');
+        }
+        function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const pwd = document.getElementById('loginPassword').value;
+            const userObj = users.find(u => u.username === email);
+            if (userObj && userObj.password === pwd) {
+                currentUser = { ...userObj, email };
+                localStorage.setItem('labUserSession', email); // บันทึก Session
+                initApp();
+            } else {
+                Swal.fire({ title: 'Error', text: 'Invalid credentials', icon: 'error', confirmButtonColor: '#3b82f6' });
+            }
+        }
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('labUserSession'); // ล้าง Session
+            location.reload();
+        }
+        function showPage(page) {
+            document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+            document.getElementById(page + 'Page').classList.remove('hidden');
+            document.querySelectorAll('.nav-pill').forEach(b => b.classList.remove('active'));
+            document.getElementById('tab' + page.charAt(0).toUpperCase() + page.slice(1))?.classList.add('active');
+
+            if (page === 'dashboard') loadDashboard();
+            if (page === 'records') loadRecords();
+            if (page === 'addRecord') loadAddRecordForm();
+            if (page === 'settings') loadSettings();
+        }
+
+        // --- Dashboard ---
+
+        function loadDashboard() {
+            initDashboardFilters();
+            updateDashboard();
+        }
+
+        function initDashboardFilters() {
+            const populate = (id, list) => {
+                const el = document.getElementById(id);
+                const currentVal = el.value;
+                el.innerHTML = el.firstElementChild.outerHTML;
+                const uniqueItems = [...new Set(list)].sort();
+                uniqueItems.forEach(item => {
+                    if (item) el.innerHTML += `<option value="${item}">${item}</option>`;
+                });
+                el.value = currentVal;
+            };
+
+            populate('dashFilterLoc', buildings.map(b => b.name));
+            populate('dashFilterEquip', equipment.map(e => e.name));
+            populate('dashFilterProv', technicians);
+            populate('dashFilterRep', reporters);
+
+            // Populate years from records
+            const years = records.map(r => new Date(r.service_date).getFullYear()).filter(y => !isNaN(y));
+            populate('dashFilterYear', years);
+        }
+
+        function updateDashboard() {
+            const fYear = document.getElementById('dashFilterYear').value;
+            const fLoc = document.getElementById('dashFilterLoc').value;
+            const fEquip = document.getElementById('dashFilterEquip').value;
+            const fType = document.getElementById('dashFilterType').value;
+            const fProv = document.getElementById('dashFilterProv').value;
+            const fRep = document.getElementById('dashFilterRep').value;
+
+            const filteredData = records.filter(r => {
+                const rYear = new Date(r.service_date).getFullYear().toString();
+                const matchYear = !fYear || rYear === fYear;
+                const matchLoc = !fLoc || r.building === fLoc;
+                const matchEquip = !fEquip || r.equipment_name === fEquip;
+                const matchType = !fType || r.type === fType;
+                const matchProv = !fProv || (r.technicians && r.technicians.includes(fProv));
+                const matchRep = !fRep || r.reporter === fRep;
+
+                return matchYear && matchLoc && matchEquip && matchType && matchProv && matchRep;
+            });
+
+            renderCalendar();
+            renderCharts(filteredData);
+            updateDashboardCards(filteredData);
+        }
+
+        function clearDashboardFilters() {
+            document.getElementById('dashFilterYear').value = "";
+            document.getElementById('dashFilterLoc').value = "";
+            document.getElementById('dashFilterEquip').value = "";
+            document.getElementById('dashFilterType').value = "";
+            document.getElementById('dashFilterProv').value = "";
+            document.getElementById('dashFilterRep').value = "";
+            updateDashboard();
+        }
+
+        function updateDashboardCards(data) {
+            const sourceData = data || records;
+
+            document.getElementById('cardTotalRecords').innerText = sourceData.length;
+            document.getElementById('cardRepairs').innerText = sourceData.filter(r => r.type === 'repair').length;
+            document.getElementById('cardCalibrations').innerText = sourceData.filter(r => r.type === 'calibration').length;
+            document.getElementById('cardSpareParts').innerText = sourceData.filter(r => r.type === 'spare_parts').length;
+
+            const today = new Date();
+            const next90 = new Date(); next90.setDate(today.getDate() + 90);
+            const upcoming = sourceData.filter(r => {
+                let checkDate = null;
+                if (r.type === 'calibration' && r.next_service_date) checkDate = new Date(r.next_service_date);
+                else if ((r.type === 'repair' || r.type === 'pm') && r.service_date) checkDate = new Date(r.service_date);
+                if (checkDate) return checkDate >= today && checkDate <= next90;
+                return false;
+            }).length;
+            document.getElementById('cardUpcoming').innerText = upcoming;
+        }
+
+        function renderCalendar() {
+            const year = currentCalendarMonth.getFullYear();
+            const month = currentCalendarMonth.getMonth();
+            document.getElementById('currentMonthYear').textContent = new Date(year, month).toLocaleString('en-US', { month: 'long', year: 'numeric' });
+
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            const calendar = document.getElementById('calendar');
+            const listContainer = document.getElementById('listContainer');
+
+            calendar.innerHTML = '';
+            listContainer.innerHTML = '';
+
+            let monthRecords = [];
+
+            for (let i = 0; i < firstDay; i++) calendar.innerHTML += `<div></div>`;
+
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const items = records.filter(r => (r.type !== 'calibration' && r.service_date === dateStr) || (r.type === 'calibration' && r.next_service_date === dateStr));
+
+                if (items.length > 0) {
+                    monthRecords.push({ date: dateStr, items: items });
+                }
+
+                const isToday = new Date().toISOString().split('T')[0] === dateStr;
+
+                let html = `<div class="text-right text-xs font-bold ${isToday ? 'text-blue-600' : 'text-gray-400'} mb-1">${day}</div>`;
+
+                // จุดที่แก้ไข: ลบลูป forEach ที่ซ้อนกันซ้ำซากออก
+                items.slice(0, 3).forEach(i => {
+                    const bgClass = i.type === 'repair' ? 'bg-repair' : (i.type === 'pm' ? 'bg-pm' : 'bg-calib');
+                    const opacity = i.calendar_status === 'complete' ? 'opacity-50' : 'opacity-100';
+
+                    html += `<div class="cal-event-chip ${bgClass} ${opacity} whitespace-normal break-words leading-tight py-1.5 px-2 mb-1 border border-black/5">
+                        <span class="block">${i.equipment_name}</span>
+                        <span class="block text-[8.5px] opacity-90 mt-0.5 border-t border-white/20 pt-0.5">📍 ${i.building || 'N/A'}</span>
+                     </div>`;
+                });
+
+                const div = document.createElement('div');
+                div.className = `calendar-day ${isToday ? 'today' : ''}`;
+                div.innerHTML = html;
+                div.onclick = () => openCalendarDay(dateStr, items);
+                calendar.appendChild(div);
+            }
+
+            if (monthRecords.length === 0) {
+                listContainer.innerHTML = `<div class="text-center text-gray-400 py-10 font-bold">No tasks scheduled for this month.</div>`;
+            } else {
+                monthRecords.forEach(group => {
+                    const dateObj = new Date(group.date);
+                    const dateDisplay = dateObj.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short' });
+
+                    let listHtml = `<div class="mb-4">
+                <div class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 border-b border-gray-100 pb-1">${dateDisplay}</div>
+                <div class="space-y-2">`;
+
+                    group.items.forEach(i => {
+                        const isComplete = i.calendar_status === 'complete';
+                        const statusColor = isComplete ? 'text-green-600 bg-green-50 border-green-200' : 'text-yellow-600 bg-yellow-50 border-yellow-200';
+
+                        let typeIcon = '🔧'; let typeText = 'text-orange-600';
+                        if (i.type === 'calibration') { typeIcon = '⚖️'; typeText = 'text-purple-600'; }
+                        else if (i.type === 'pm') { typeIcon = '🛡️'; typeText = 'text-teal-600'; }
+
+                        listHtml += `
+                    <div class="bg-white border border-gray-100 rounded-xl p-3 flex justify-between items-center hover:shadow-md transition cursor-pointer" onclick="openCalendarDay('${group.date}', ${JSON.stringify(group.items).replace(/"/g, '&quot;')})">
+                        <div class="flex items-center gap-3 overflow-hidden">
+                            <div class="text-xl ${typeText} opacity-80">${typeIcon}</div>
+                            <div>
+                                <div class="font-bold text-gray-800 text-sm truncate">${i.equipment_name}</div>
+                                <div class="text-[10px] text-gray-500 font-medium">📍 ${i.building || 'N/A'} | 🏢 ${i.technicians[0] || '-'}</div>
+                            </div>
+                        </div>
+                        <div class="text-[10px] font-bold uppercase tracking-wide border px-2 py-1 rounded-md ${statusColor}">
+                            ${i.calendar_status}
+                        </div>
+                    </div>
+                `;
+                    });
+
+                    listHtml += `</div></div>`;
+                    listContainer.innerHTML += listHtml;
+                });
+            }
+        }
+        // ฟังก์ชันสลับมุมมอง
+        function toggleScheduleView(viewType) {
+            const calContainer = document.getElementById('calendarContainer');
+            const listContainer = document.getElementById('listContainer');
+            const btnCal = document.getElementById('btnViewCalendar');
+            const btnList = document.getElementById('btnViewList');
+
+            if (viewType === 'calendar') {
+                calContainer.classList.remove('hidden');
+                listContainer.classList.add('hidden');
+                btnCal.className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-white text-blue-600 shadow-sm transition';
+                btnList.className = 'px-3 py-1.5 rounded-lg text-xs font-bold text-gray-500 hover:text-gray-800 transition';
+            } else {
+                calContainer.classList.add('hidden');
+                listContainer.classList.remove('hidden');
+                btnList.className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-white text-blue-600 shadow-sm transition';
+                btnCal.className = 'px-3 py-1.5 rounded-lg text-xs font-bold text-gray-500 hover:text-gray-800 transition';
+            }
+        }
+        function openCalendarDay(dateStr, items) {
+            if (items.length === 0) {
+                 showPage('addRecord');
+                 setTimeout(() => {
+                      document.getElementById('serviceDate').value = dateStr;
+                 }, 50);
+                 return;
+            }
+            const content = document.getElementById('calendarModalContent');
+            const modalTitle = document.getElementById('modalDateTitle');
+
+            const dateObj = new Date(dateStr);
+            modalTitle.innerHTML = `
+        <div class="flex flex-col">
+            <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Schedule for</span>
+            <span class="text-xl font-bold text-gray-800 flex items-center gap-2">
+                🗓️ ${dateObj.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}
+            </span>
+        </div>
+    `;
+
+            content.innerHTML = items.map(i => {
+                const isComplete = i.calendar_status === 'complete';
+
+                let statusColor = 'bg-yellow-500'; // Default Pending
+                let statusBadgeClass = 'text-yellow-700 bg-yellow-50 border-yellow-200';
+
+                if (isComplete) {
+                    statusColor = 'bg-green-500';
+                    statusBadgeClass = 'text-green-700 bg-green-50 border-green-200';
+                }
+
+                let typeIcon = '🔧';
+                let typeStyle = 'text-orange-600 bg-orange-50';
+
+                if (i.type === 'calibration') {
+                    typeIcon = '⚖️';
+                    typeStyle = 'text-purple-600 bg-purple-50';
+                } else if (i.type === 'pm') {
+                    typeIcon = '🛡️';
+                    typeStyle = 'text-teal-600 bg-teal-50';
+                }
+
+                const poFilesCount = (i.po_files && i.po_files.length) || (i.po_file ? 1 : 0) || (poFilesDb[i.id] && poFilesDb[i.id].length) || 0;
+                const poBtn = poFilesCount > 0 ?
+                    `<button onclick="viewPO(${i.id})" class="text-[10px] font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 px-2 py-1 rounded border border-blue-200 flex items-center gap-1 transition shadow-sm w-full truncate">
+                📄 View PO (${poFilesCount})
+            </button>` :
+                    `<span class="text-[10px] text-gray-400 italic flex items-center gap-1">🚫 No Doc</span>`;
+                
+                return `
+        <div class="bg-white rounded-2xl p-0 shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-all relative group mb-3 last:mb-0">
+            <div class="absolute left-0 top-0 bottom-0 w-1.5 ${statusColor}"></div>
+            
+            <div class="p-4 pl-5">
+                <div class="flex justify-between items-start mb-3">
+                    <div class="pr-2">
+                        <h4 class="font-bold text-gray-800 text-base leading-tight">${i.equipment_name}</h4>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-gray-500 flex items-center gap-1 bg-gray-50 px-1.5 py-0.5 rounded">
+                                📍 ${i.building || 'N/A'}
+                            </span>
+                        </div>
+                    </div>
+                    <span class="px-2 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wide border ${statusBadgeClass} shadow-sm whitespace-nowrap">
+                        ${i.calendar_status}
+                    </span>
+                </div>
+
+                <div class="grid grid-cols-2 gap-y-3 gap-x-4 text-sm bg-gray-50/80 p-3 rounded-xl border border-gray-100">
+                    
+                    <div class="col-span-2 sm:col-span-1">
+                        <label class="text-[9px] font-bold text-gray-400 uppercase tracking-wider block mb-0.5">Job Type</label>
+                        <div class="inline-flex items-center gap-1.5 px-2 py-1 rounded-md ${typeStyle} text-xs font-bold capitalize border border-black/5">
+                            ${typeIcon} ${i.type}
+                        </div>
+                    </div>
+                    
+                    <div class="col-span-2 sm:col-span-1">
+                        <label class="text-[9px] font-bold text-gray-400 uppercase tracking-wider block mb-0.5">Est. Cost</label>
+                        <span class="font-mono text-gray-700 font-bold text-xs">฿${formatCurrency(i.maintenance_cost)}</span>
+                    </div>
+
+                    <div class="col-span-2">
+                        <label class="text-[9px] font-bold text-gray-400 uppercase tracking-wider block mb-0.5">Service Provider</label>
+                        <div class="flex items-center gap-1">
+                            <span class="text-xs text-gray-700 font-medium truncate w-full" title="${i.technicians[0]}">🏢 ${i.technicians[0] || '-'}</span>
+                        </div>
+                    </div>
+
+                    <div class="col-span-2 sm:col-span-1">
+                        <label class="text-[9px] font-bold text-gray-400 uppercase tracking-wider block mb-0.5">Reporter</label>
+                        <span class="text-xs text-gray-600 block truncate" title="${i.reporter}">👤 ${i.reporter || '-'}</span>
+                    </div>
+
+                    <div class="col-span-2 sm:col-span-1">
+                         <label class="text-[9px] font-bold text-gray-400 uppercase tracking-wider block mb-0.5">Reference</label>
+                         ${poBtn}
+                    </div>
+                </div>
+
+                <div class="mt-4 flex gap-2">
+                    <button onclick="updateCalStatus(${i.id}, 'complete')" class="flex-1 py-2 rounded-xl text-xs font-bold transition-all border ${isComplete ? 'bg-green-600 text-white border-green-600 shadow-md shadow-green-200' : 'bg-white text-gray-600 border-gray-200 hover:border-green-500 hover:text-green-600'}">
+                        ${isComplete ? '✓ Completed' : 'Mark Complete'}
+                    </button>
+                    
+                    <button onclick="updateCalStatus(${i.id}, 'pending')" class="flex-1 py-2 rounded-xl text-xs font-bold transition-all border ${!isComplete ? 'bg-yellow-500 text-white border-yellow-500 shadow-md shadow-yellow-200' : 'bg-white text-gray-600 border-gray-200 hover:border-yellow-500 hover:text-yellow-600'}">
+                        Pending
+                    </button>
+                </div>
+            </div>
+        </div>
+        `;
+            }).join('');
+
+            document.getElementById('calendarModal').classList.remove('hidden');
+        }
+
+        function closeCalendarModal() { document.getElementById('calendarModal').classList.add('hidden'); renderCalendar(); }
+        function updateCalStatus(id, status) {
+            const r = records.find(r => r.id === id);
+            if (r) r.calendar_status = status;
+            closeCalendarModal();
+            loadRecords();
+        }
+        function previousMonth() { currentCalendarMonth.setMonth(currentCalendarMonth.getMonth() - 1); renderCalendar(); }
+        function nextMonth() { currentCalendarMonth.setMonth(currentCalendarMonth.getMonth() + 1); renderCalendar(); }
+
+        // --- Charts ---
+
+        function renderCharts(data) {
+            const sourceData = data || records;
+
+            if (charts.monthly) charts.monthly.destroy();
+            if (charts.type) charts.type.destroy();
+            if (charts.loc) charts.loc.destroy();
+
+            // Register DataLabels Plugin globally for these charts
+            Chart.register(ChartDataLabels);
+            Chart.defaults.font.family = "'Inter', sans-serif";
+            Chart.defaults.color = '#6b7280';
+
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const repairData = new Array(12).fill(0);
+            const calibData = new Array(12).fill(0);
+            const pmData = new Array(12).fill(0);
+            const spareData = new Array(12).fill(0);
+
+            sourceData.forEach(r => {
+                const d = new Date(r.service_date);
+                // ยกเลิกการกรองปี เพื่อให้กราฟแสดงข้อมูลรวมทุกปี จะได้เห็นความเคลื่อนไหวตลอด
+                if (r.type === 'repair') repairData[d.getMonth()]++;
+                else if (r.type === 'pm') pmData[d.getMonth()]++;
+                else if (r.type === 'spare_parts') spareData[d.getMonth()]++;
+                else calibData[d.getMonth()]++;
+            });
+
+            const commonLabelOptions = {
+                color: '#4b5563',
+                font: { weight: 'bold', size: 10 },
+                formatter: (value) => value > 0 ? value : '', // ซ่อนค่าที่เป็น 0
+                anchor: 'end',
+                align: 'top',
+                offset: 2
+            };
+
+            // เปลี่ยนจาก Line เป็น Bar Chart เพื่อให้อ่านง่ายขึ้น
+            charts.monthly = new Chart(document.getElementById('monthlyChart'), {
+                type: 'bar',
+                data: {
+                    labels: months, datasets: [
+                        { label: 'Repairs', data: repairData, backgroundColor: 'rgba(251, 146, 60, 0.85)', borderRadius: 4 },
+                        { label: 'Calibrations', data: calibData, backgroundColor: 'rgba(192, 132, 252, 0.85)', borderRadius: 4 },
+                        { label: 'PM', data: pmData, backgroundColor: 'rgba(20, 184, 166, 0.85)', borderRadius: 4 },
+                        { label: 'Spare parts', data: spareData, backgroundColor: 'rgba(236, 72, 153, 0.85)', borderRadius: 4 }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    scales: {
+                        y: { stacked: true, beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
+                        x: { stacked: true, grid: { display: false } }
+                    },
+                    animation: { duration: 500 },
+                    plugins: {
+                        datalabels: {
+                            ...commonLabelOptions,
+                            color: '#ffffff',
+                            anchor: 'center',
+                            align: 'center',
+                            offset: 0,
+                            font: { weight: 'bold', size: 10 },
+                            textShadowColor: 'rgba(0, 0, 0, 0.4)',
+                            textShadowBlur: 2
+                        }
+                    }
+                }
+            });
+
+            // ... (ส่วนของ charts.type doughnut คงไว้เหมือนเดิม) ...
+            const totalRepairs = sourceData.filter(r => r.type === 'repair').length;
+            const totalCalibs = sourceData.filter(r => r.type === 'calibration').length;
+            const totalPM = sourceData.filter(r => r.type === 'pm').length;
+            const totalSpare = sourceData.filter(r => r.type === 'spare_parts').length;
+            const totalAll = totalRepairs + totalCalibs + totalPM + totalSpare;
+
+            charts.type = new Chart(document.getElementById('typeChart'), {
+                type: 'doughnut',
+                data: { labels: ['Repair', 'Calibration', 'PM', 'Spare parts'], datasets: [{ data: [totalRepairs, totalCalibs, totalPM, totalSpare], backgroundColor: ['#fb923c', '#c084fc', '#14b8a6', '#ec4899'], borderWidth: 0 }] },
+                options: {
+                    responsive: true, maintainAspectRatio: false, cutout: '60%', animation: { duration: 500 },
+                    plugins: {
+                        datalabels: {
+                            color: '#ffffff', font: { weight: 'bold', size: 12 },
+                            formatter: (value) => value === 0 ? '' : ((value / totalAll) * 100).toFixed(1) + '%'
+                        }
+                    }
+                }
+            });
+
+            // ปรับ Data ของกราฟ Location ให้หั่นชื่ออาคารด้วยช่องว่าง (Split by Space) เพื่อ Wrap Text
+            const locLabels = buildings.map(b => b.name.split(' ')); // <-- จุดที่แก้ไข
+            const locData = locLabels.map((nameArr, index) => sourceData.filter(r => r.building === buildings[index].name).length);
+
+            charts.loc = new Chart(document.getElementById('locationChart'), {
+                type: 'bar',
+                data: { labels: locLabels, datasets: [{ label: 'Items', data: locData, backgroundColor: '#60a5fa', borderRadius: 6 }] },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    scales: {
+                        x: { grid: { display: false }, ticks: { font: { size: 10 } } }, // ย่อขนาดฟอนต์แกน X เล็กน้อยเพื่อไม่ให้เบียดกัน
+                        y: { grid: { color: 'rgba(0,0,0,0.05)' } }
+                    },
+                    animation: { duration: 500 },
+                    plugins: { datalabels: commonLabelOptions }
+                }
+            });
+            if (charts.cost) charts.cost.destroy();
+
+            // 1. ดึงรายชื่ออุปกรณ์ที่ไม่ซ้ำกัน
+            const equipLabels = [...new Set(sourceData.map(r => r.equipment_name))];
+
+            // 2. คำนวณค่าใช้จ่ายแต่ละประเภทของอุปกรณ์แต่ละตัว
+            const costRepair = equipLabels.map(eq => {
+                return sourceData.filter(r => r.equipment_name === eq && r.type === 'repair')
+                    .reduce((sum, r) => sum + (parseFloat(r.maintenance_cost) || 0), 0);
+            });
+            const costCalib = equipLabels.map(eq => {
+                return sourceData.filter(r => r.equipment_name === eq && r.type === 'calibration')
+                    .reduce((sum, r) => sum + (parseFloat(r.maintenance_cost) || 0), 0);
+            });
+            const costPM = equipLabels.map(eq => {
+                return sourceData.filter(r => r.equipment_name === eq && r.type === 'pm')
+                    .reduce((sum, r) => sum + (parseFloat(r.maintenance_cost) || 0), 0);
+            });
+            const costSpare = equipLabels.map(eq => {
+                return sourceData.filter(r => r.equipment_name === eq && r.type === 'spare_parts')
+                    .reduce((sum, r) => sum + (parseFloat(r.maintenance_cost) || 0), 0);
+            });
+
+            // 3. หั่นชื่ออุปกรณ์ด้วยช่องว่างเพื่อให้ข้อความขึ้นบรรทัดใหม่ได้สวยงาม
+            const wrapEquipLabels = equipLabels.map(name => name.split(' '));
+
+            charts.cost = new Chart(document.getElementById('costChart'), {
+                type: 'bar',
+                data: {
+                    labels: wrapEquipLabels,
+                    datasets: [
+                        { label: 'Repair', data: costRepair, backgroundColor: '#fb923c', borderRadius: { topLeft: 0, topRight: 0, bottomLeft: 4, bottomRight: 4 } },
+                        { label: 'Calibration', data: costCalib, backgroundColor: '#c084fc', borderRadius: 0 },
+                        { label: 'PM', data: costPM, backgroundColor: '#14b8a6', borderRadius: 0 },
+                        { label: 'Spare parts', data: costSpare, backgroundColor: '#ec4899', borderRadius: { topLeft: 4, topRight: 4, bottomLeft: 0, bottomRight: 0 } }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            stacked: true, // ทำให้กราฟซ้อนกันในแกน X
+                            grid: { display: false },
+                            ticks: { font: { size: 10 } }
+                        },
+                        y: {
+                            stacked: true, // ทำให้กราฟซ้อนกันในแกน Y
+                            beginAtZero: true,
+                            grid: { color: 'rgba(0,0,0,0.05)' },
+                            ticks: { callback: (value) => '฿' + value.toLocaleString() } // ใส่เครื่องหมายบาท
+                        }
+                    },
+                    animation: { duration: 500 },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) label += ': ';
+                                    if (context.parsed.y !== null) {
+                                        label += '฿' + context.parsed.y.toLocaleString();
+                                    }
+                                    return label;
+                                }
+                            }
+                        },
+                        datalabels: {
+                            color: '#1f2937', // ปรับให้สีอักษรเข้มขึ้น
+                            textStrokeColor: '#ffffff', // ขอบสีขาวช่วยให้ตัวเลขชัดเจน
+                            textStrokeWidth: 3,
+                            font: { weight: 'bold', size: 10 },
+                            formatter: (value) => {
+                                if (value === 0) return '';
+                                return value >= 1000 ? (value / 1000).toFixed(1).replace(/\.0$/, '') + 'k' : value;
+                            },
+                            anchor: 'center',
+                            align: 'center'
+                        }
+                    }
+                }
+            });
+        }
+        // --- Records Table ---
+        function loadRecords() { applyFilters(); }
+        function applyFilters() {
+            const s = document.getElementById('filterSearch').value.toLowerCase();
+            const t = document.getElementById('filterType').value;
+            const m = document.getElementById('filterMonth').value;
+            const y = document.getElementById('filterYear').value;
+
+            filteredRecords = records.filter(r => {
+                const d = new Date(r.service_date);
+                const matchMonth = m ? (d.getMonth() + 1) == m : true;
+                const matchYear = y ? d.getFullYear() == y : true;
+                return r.equipment_name.toLowerCase().includes(s) && (!t || r.type === t) && matchMonth && matchYear;
+            });
+            filteredRecords.sort((a, b) => b.id - a.id);
+            currentPage = 1;
+            renderRecordsTable();
+        }
+
+        function renderRecordsTable() {
+            const tbody = document.getElementById('recordsTableBody');
+            tbody.innerHTML = '';
+            const start = (currentPage - 1) * rowsPerPage;
+            const end = start + rowsPerPage;
+            const pageData = filteredRecords.slice(start, end);
+
+            document.getElementById('startRow').innerText = pageData.length > 0 ? start + 1 : 0;
+            document.getElementById('endRow').innerText = Math.min(end, filteredRecords.length);
+            document.getElementById('totalRows').innerText = filteredRecords.length;
+
+            pageData.forEach((r, i) => {
+                let statusBadge = r.calendar_status === 'complete' ?
+                    '<span class="bg-green-100 text-green-700 text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wide">Complete</span>' :
+                    '<span class="bg-yellow-100 text-yellow-700 text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wide">Pending</span>';
+
+                let poBtn = '';
+                const poFilesCount = (r.po_files && r.po_files.length) || (r.po_file ? 1 : 0) || (poFilesDb[r.id] && poFilesDb[r.id].length) || 0;
+                if (poFilesCount > 0) {
+                    poBtn = `<button onclick="viewPO(${r.id})" class="text-blue-600 hover:text-blue-800 text-xs font-bold bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg shadow-sm border border-blue-100 transition whitespace-nowrap w-full mb-1">📄 VIEW PO (${poFilesCount})</button>`;
+                } else {
+                    poBtn = '<span class="text-gray-300 block mb-1">-</span>';
+                }
+                
+                let typeColor = 'bg-orange-400';
+                if (r.type === 'calibration') typeColor = 'bg-purple-400';
+                if (r.type === 'pm') typeColor = 'bg-teal-400';
+                if (r.type === 'spare_parts') typeColor = 'bg-pink-400';
+
+                // เช็คสิทธิ์: อนุญาตถ้าเป็น admin หรือ เป็นคนสร้าง Record นี้เอง
+                const canEdit = currentUser.role === 'admin' || r.created_by === currentUser.email;
+
+                let actionButtons = `<span class="text-xs text-gray-400 italic">View Only</span>`;
+                if (canEdit) {
+                    actionButtons = `
+                <div class="flex items-center justify-center gap-2 opacity-50 group-hover:opacity-100 transition-opacity">
+                    <button onclick="fullEditRecord(${r.id})" class="w-8 h-8 rounded-full bg-blue-50 hover:bg-blue-500 hover:text-white text-blue-500 flex items-center justify-center transition shadow-sm">✏️</button>
+                    <button onclick="deleteRecord(${r.id})" class="w-8 h-8 rounded-full bg-red-50 hover:bg-red-500 hover:text-white text-red-500 flex items-center justify-center transition shadow-sm">✕</button>
+                </div>
+            `;
+                }
+
+                const tr = document.createElement('tr');
+                tr.className = "group";
+                tr.innerHTML = `
+            <td class="px-4 py-4 min-w-[220px] break-words whitespace-normal"><div class="font-semibold text-gray-800">${r.equipment_name}</div><div class="text-[10px] text-gray-400 font-bold uppercase tracking-wide">${r.building || 'N/A'}</div></td>
+            <td class="px-4 py-4 min-w-[120px]"><span class="w-2 h-2 rounded-full inline-block mr-2 ${typeColor}"></span><span class="text-sm text-gray-600 capitalize">${r.type}</span></td>
+            <td class="px-4 py-4 min-w-[110px] text-gray-500 font-mono text-xs">${r.service_date}</td>
+            <td class="px-4 py-4 min-w-[120px] text-right font-medium text-gray-700">฿${formatCurrency(r.maintenance_cost)}</td>
+            <td class="px-4 py-4 min-w-[180px] break-words whitespace-normal text-gray-600 text-xs">${r.technicians[0] || '-'}</td>
+            <td class="px-4 py-4 min-w-[150px] break-words whitespace-normal text-gray-600 text-xs">${r.reporter || '-'}</td>
+            <td class="px-4 py-4 min-w-[120px] align-middle">
+                <div class="flex flex-col items-center w-full max-w-[140px] mx-auto">
+                    ${poBtn}
+                </div>
+            </td>
+            <td class="px-4 py-4 min-w-[100px] text-center">${statusBadge}</td>
+            <td class="px-4 py-4 min-w-[100px] text-center">${actionButtons}</td>
+        `;
+                tbody.appendChild(tr);
+            });
+        }
+        // --- Import / Backup ---
+        async function backupData() {
+            // Include poFilesDb from IndexedDB
+            const allFiles = await getAllPoFilesFromIDB();
+            const data = JSON.stringify({ users, records, technicians, reporters, buildings, equipment, poFilesDb: allFiles });
+            const blob = new Blob([data], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `lab_backup_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+        }
+
+        function importData(input) {
+            const reader = new FileReader();
+            reader.onload = e => {
+                try {
+                    const d = JSON.parse(e.target.result);
+                    if (d.records) { records = d.records; saveCarePlusState(); }
+                    if (d.users) users = d.users;
+                    if (d.buildings) buildings = d.buildings;
+                    if (d.equipment) equipment = d.equipment;
+                    if (d.technicians) technicians = d.technicians;
+                    if (d.reporters) reporters = d.reporters;
+                    if (d.poFiles) poFilesDb = d.poFiles; // Fallback for old backups
+                    if (d.poFilesDb) poFilesDb = d.poFilesDb;
+                    for (const [k, v] of Object.entries(poFilesDb)) { savePoFileToIDB(k, v); }
+
+                    Swal.fire({ title: 'Success', text: 'Data Imported', icon: 'success', timer: 1500, showConfirmButton: false }).then(() => {
+                        loadSettings(); loadDashboard(); loadRecords();
+                    });
+                } catch (err) {
+                    Swal.fire('Error', 'Invalid JSON File', 'error');
+                }
+            };
+            reader.readAsText(input.files[0]);
+            input.value = '';
+        }
+        // --- Admin Funcs ---
+
+        function loadSettings() {
+            renderAdminUsers();
+            renderAdminLocations();
+            renderAdminCompanies();
+            renderAdminEquipment();
+            renderAdminReporters();
+        }
+
+        // 1. User
+        function renderAdminUsers() {
+            document.querySelector('#adminUserTable tbody').innerHTML = users.map(u => `
+        <tr class="border-b border-gray-100 hover:bg-gray-50"><td class="p-3 font-medium text-gray-700">${u.username}</td>
+        <td class="p-3 text-gray-500">${u.name}</td><td class="p-3 text-gray-500 uppercase text-xs font-bold">${u.role}</td>
+        <td class="p-3 text-right whitespace-nowrap">
+            <button onclick="adminEditUser('${u.id}')" class="text-blue-500 hover:text-blue-700 mr-3 font-bold">Edit</button>
+            <button onclick="adminDeleteUser('${u.id}')" class="text-red-400 hover:text-red-600 font-bold">✕</button>
+        </td></tr>`).join('');
+        }
+
+        function adminEditUser(id) {
+            const u = users.find(x => x.id === id);
+            if (!u) return;
+            const emailInput = document.getElementById('adminUserEmail');
+            emailInput.value = u.username;
+            emailInput.disabled = true; // ล็อกไม่ให้แก้ Email
+            emailInput.classList.add('opacity-50', 'cursor-not-allowed');
+            emailInput.dataset.editId = u.id;
+
+            document.getElementById('adminUserName').value = u.name;
+            document.getElementById('adminUserPass').value = u.password;
+            document.getElementById('adminUserRole').value = u.role;
+
+            const btn = document.getElementById('btnSaveUser');
+            btn.textContent = 'Update';
+            btn.classList.replace('bg-blue-600', 'bg-orange-500');
+            document.getElementById('btnCancelUser').classList.remove('hidden');
+        }
+
+        function adminSaveUser() {
+            const emailInput = document.getElementById('adminUserEmail');
+            const e = emailInput.value;
+            const id = emailInput.dataset.editId;
+            const n = document.getElementById('adminUserName').value;
+            const p = document.getElementById('adminUserPass').value;
+            const r = document.getElementById('adminUserRole').value;
+            if (e && n && p) {
+                if (id) {
+                    const u = users.find(x => x.id === id);
+                    if (u) { u.name = n; u.password = p; u.role = r; }
+                } else {
+                    const newId = 'U-' + String(users.length + 1).padStart(3, '0');
+                    users.push({ id: newId, username: e, name: n, password: p, role: r });
+                }
+                saveCarePlusState();
+                renderAdminUsers();
+                adminCancelUser();
+            }
+        }
+
+        function adminCancelUser() {
+            const emailInput = document.getElementById('adminUserEmail');
+            emailInput.value = '';
+            emailInput.disabled = false;
+            emailInput.classList.remove('opacity-50', 'cursor-not-allowed');
+            delete emailInput.dataset.editId;
+
+            document.getElementById('adminUserName').value = '';
+            document.getElementById('adminUserPass').value = '';
+
+            const btn = document.getElementById('btnSaveUser');
+            btn.textContent = 'Add';
+            btn.classList.replace('bg-orange-500', 'bg-blue-600');
+            document.getElementById('btnCancelUser').classList.add('hidden');
+        }
+
+        function adminDeleteUser(id) { 
+            const u = users.find(x => x.id === id);
+            if (u && u.username !== 'admin@lab.com') { 
+                users = users.filter(x => x.id !== id);
+                saveCarePlusState(); 
+                renderAdminUsers(); 
+            } 
+        }
+        // 2. Location
+        function renderAdminLocations() {
+            document.querySelector('#adminLocationTable tbody').innerHTML = buildings.map(b => `
+        <tr class="border-b border-gray-100 hover:bg-gray-50"><td class="p-3 text-gray-700 font-medium">${b.name}</td>
+        <td class="p-3 text-right whitespace-nowrap">
+            <button onclick="adminEditLocation('${b.id}')" class="text-blue-500 hover:text-blue-700 mr-3 font-bold">Edit</button>
+            <button onclick="adminDeleteLocation('${b.id}')" class="text-red-400 font-bold">✕</button>
+        </td></tr>`).join('');
+        }
+
+        function adminEditLocation(id) {
+            const b = buildings.find(x => x.id == id);
+            document.getElementById('adminLocName').value = b.name;
+            document.getElementById('adminLocId').value = b.id;
+
+            const btn = document.getElementById('btnSaveLoc');
+            btn.textContent = 'Update';
+            btn.classList.replace('bg-blue-600', 'bg-orange-500');
+            document.getElementById('btnCancelLoc').classList.remove('hidden');
+        }
+
+        function adminSaveLocation() {
+            const name = document.getElementById('adminLocName').value;
+            const id = document.getElementById('adminLocId').value;
+            if (name) {
+                if (id) {
+                    const b = buildings.find(x => x.id == id);
+                    if (b) b.name = name;
+                } else {
+                    buildings.push({ id: Date.now(), name });
+                saveCarePlusState();
+                }
+                renderAdminLocations();
+                adminCancelLocation();
+            }
+        }
+
+        function adminCancelLocation() {
+            document.getElementById('adminLocName').value = '';
+            document.getElementById('adminLocId').value = '';
+            const btn = document.getElementById('btnSaveLoc');
+            btn.textContent = 'Add';
+            btn.classList.replace('bg-orange-500', 'bg-blue-600');
+            document.getElementById('btnCancelLoc').classList.add('hidden');
+        }
+
+        function adminDeleteLocation(id) { buildings = buildings.filter(b => b.id != id); renderAdminLocations(); }
+        // 3. Provider (Formerly Company)
+        function renderAdminCompanies() {
+            document.querySelector('#adminCompanyTable tbody').innerHTML = technicians.map(t => `
+        <tr class="border-b border-gray-100 hover:bg-gray-50"><td class="p-3 text-gray-700 font-medium">${t}</td>
+        <td class="p-3 text-right whitespace-nowrap">
+            <button onclick="adminEditCompany('${t}')" class="text-blue-500 hover:text-blue-700 mr-3 font-bold">Edit</button>
+            <button onclick="adminDeleteCompany('${t}')" class="text-red-400 font-bold">✕</button>
+        </td></tr>`).join('');
+        }
+
+        function adminEditCompany(name) {
+            document.getElementById('adminCompName').value = name;
+            document.getElementById('adminCompOldName').value = name;
+
+            const btn = document.getElementById('btnSaveComp');
+            btn.textContent = 'Update';
+            btn.classList.replace('bg-blue-600', 'bg-orange-500');
+            document.getElementById('btnCancelComp').classList.remove('hidden');
+        }
+
+        function adminSaveCompany() {
+            const name = document.getElementById('adminCompName').value;
+            const oldName = document.getElementById('adminCompOldName').value;
+            if (name) {
+                if (oldName) {
+                    const index = technicians.indexOf(oldName);
+                    if (index !== -1) { technicians[index] = name; saveCarePlusState(); }
+                    // สั่งให้อัปเดตชื่อ Provider ในประวัติเก่าทั้งหมดให้อัตโนมัติ เพื่อความสม่ำเสมอของข้อมูล
+                    records.forEach(r => {
+                        if (r.technicians.includes(oldName)) {
+                            r.technicians = [name];
+                        }
+                    });
+                } else {
+                    technicians.push(name);
+                saveCarePlusState();
+                }
+                renderAdminCompanies();
+                adminCancelCompany();
+            }
+        }
+
+        function adminCancelCompany() {
+            document.getElementById('adminCompName').value = '';
+            document.getElementById('adminCompOldName').value = '';
+            const btn = document.getElementById('btnSaveComp');
+            btn.textContent = 'Add';
+            btn.classList.replace('bg-orange-500', 'bg-blue-600');
+            document.getElementById('btnCancelComp').classList.add('hidden');
+        }
+
+        function adminDeleteCompany(name) { technicians = technicians.filter(t => t !== name); renderAdminCompanies(); }
+        // 4. Equipment Inventory
+        function renderAdminEquipment() {
+            const locSelect = document.getElementById('adminEquipLoc');
+            locSelect.innerHTML = buildings.map(b => `<option value="${b.id}">${b.name}</option>`).join('');
+
+            document.querySelector('#adminEquipmentTable tbody').innerHTML = equipment.map(e => `
+        <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+            <td class="p-3 font-medium text-gray-700">${e.name}</td>
+            <td class="p-3 text-gray-500 text-xs uppercase tracking-wide">${buildings.find(b => b.id == e.building_id)?.name || '-'}</td>
+            <td class="p-3 text-right whitespace-nowrap">
+                <button onclick="viewEquipmentHistory('${e.name}')" class="text-teal-600 hover:text-teal-800 mr-3 font-bold bg-teal-50 px-2 py-1 rounded text-xs">History</button>
+                <button onclick="adminEditEquipment('${e.id}')" class="text-blue-500 hover:text-blue-700 mr-3 font-bold">Edit</button>
+                <button onclick="adminDeleteEquipment('${e.id}')" class="text-red-400 hover:text-red-600 font-bold">✕</button>
+            </td>
+        </tr>`).join('');
+        }
+        function adminSaveEquipment() {
+            const name = document.getElementById('adminEquipName').value;
+            const bid = parseInt(document.getElementById('adminEquipLoc').value);
+            const id = document.getElementById('adminEquipId').value;
+            if (name && bid) {
+                if (id) {
+                    const index = equipment.findIndex(x => x.id == id);
+                    if (index !== -1) { equipment[index].name = name; equipment[index].building_id = bid; saveCarePlusState(); }
+                } else {
+                    equipment.push({ id: Date.now(), name: name, building_id: bid });
+                saveCarePlusState();
+                }
+                renderAdminEquipment(); renderAdminLocations(); adminCancelEquipment();
+            }
+        }
+        function adminEditEquipment(id) {
+            const e = equipment.find(x => x.id == id);
+            document.getElementById('adminEquipName').value = e.name;
+            document.getElementById('adminEquipLoc').value = e.building_id;
+            document.getElementById('adminEquipId').value = e.id;
+
+            const btn = document.getElementById('btnSaveEquip');
+            btn.textContent = 'Update';
+            btn.classList.replace('bg-blue-600', 'bg-orange-500');
+            document.getElementById('btnCancelEquip').classList.remove('hidden');
+        }
+        function adminCancelEquipment() {
+            document.getElementById('adminEquipName').value = '';
+            document.getElementById('adminEquipId').value = '';
+            const btn = document.getElementById('btnSaveEquip');
+            btn.textContent = 'Add Item';
+            btn.classList.replace('bg-orange-500', 'bg-blue-600');
+            document.getElementById('btnCancelEquip').classList.add('hidden');
+        }
+        function adminDeleteEquipment(id) {
+            Swal.fire({ title: 'Delete Item?', text: 'Cannot undo', icon: 'warning', showCancelButton: true, confirmButtonColor: '#ef4444' }).then(res => {
+                if (res.isConfirmed) { equipment = equipment.filter(e => e.id != id); saveCarePlusState(); renderAdminEquipment(); renderAdminLocations(); }
+            });
+        }
+
+        // 5. Reporters Management
+        function renderAdminReporters() {
+            document.querySelector('#adminReporterTable tbody').innerHTML = reporters.map(r => `
+        <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+            <td class="p-3 text-gray-700 font-medium">${r}</td>
+            <td class="p-3 text-right">
+                <button onclick="adminEditReporter('${r}')" class="text-blue-500 hover:text-blue-700 mr-3 font-bold">Edit</button>
+                <button onclick="adminDeleteReporter('${r}')" class="text-red-400 hover:text-red-600 font-bold">✕</button>
+            </td>
+        </tr>`).join('');
+        }
+        function adminSaveReporter() {
+            const name = document.getElementById('adminReporterName').value;
+            const oldName = document.getElementById('adminReporterOldName').value;
+            if (name) {
+                if (oldName) {
+                    const index = reporters.indexOf(oldName);
+                    if (index !== -1) { reporters[index] = name; saveCarePlusState(); }
+                    records.forEach(r => { if (r.reporter === oldName) r.reporter = name; });
+                } else {
+                    reporters.push(name);
+                saveCarePlusState();
+                }
+                renderAdminReporters(); adminCancelReporter();
+            }
+        }
+        function adminEditReporter(name) {
+            document.getElementById('adminReporterName').value = name;
+            document.getElementById('adminReporterOldName').value = name;
+            const btn = document.getElementById('btnSaveReporter');
+            btn.textContent = 'Update';
+            btn.classList.replace('bg-blue-600', 'bg-orange-500');
+            document.getElementById('btnCancelReporter').classList.remove('hidden');
+        }
+        function adminCancelReporter() {
+            document.getElementById('adminReporterName').value = '';
+            document.getElementById('adminReporterOldName').value = '';
+            const btn = document.getElementById('btnSaveReporter');
+            btn.textContent = 'Add';
+            btn.classList.replace('bg-orange-500', 'bg-blue-600');
+            document.getElementById('btnCancelReporter').classList.add('hidden');
+        }
+        function adminDeleteReporter(name) { reporters = reporters.filter(r => r !== name); renderAdminReporters(); }
+
+
+        // --- Forms ---
+        function loadEditForm(id) {
+            const r = records.find(x => x.id === id);
+            if (!r) return;
+            loadAddRecordForm(); showPage('addRecord');
+            document.getElementById('formTitle').innerText = 'Edit Record';
+            document.getElementById('editRecordId').value = r.id;
+            document.getElementById('saveBtn').innerText = 'Update';
+
+            const bObj = buildings.find(b => b.name === r.building);
+            if (bObj) { document.getElementById('buildingSelect').value = bObj.id; updateEquipmentOptions(); document.getElementById('equipmentSelect').value = r.equipment_name; }
+            document.getElementById('serviceType').value = r.type; toggleServiceFields();
+            document.getElementById('serviceDate').value = r.service_date;
+            if (r.next_service_date) document.getElementById('nextServiceDate').value = r.next_service_date;
+            document.getElementById('maintenanceCost').value = r.maintenance_cost;
+            document.getElementById('technicianSelect').value = r.technicians[0] || '';
+            document.getElementById('reporterSelect').value = r.reporter || '';
+            document.getElementById('recordStatus').value = r.calendar_status || 'pending';
+
+            if (r.po_files && r.po_files.length > 0) {
+                document.getElementById('existingPoLabel').classList.remove('hidden');
+                document.getElementById('existingPoLabel').innerHTML = `✓ แนบไฟล์แล้ว: <span class="text-gray-600">${r.po_files.length} file(s)</span> <button type="button" onclick="deleteAttachedPO(${r.id})" class="ml-3 px-2 py-0.5 bg-red-100 text-red-600 rounded hover:bg-red-200 transition text-[10px] uppercase font-bold tracking-wider">ลบ</button>`;
+            } else if (r.po_file) {
+                document.getElementById('existingPoLabel').classList.remove('hidden');
+                document.getElementById('existingPoLabel').innerHTML = `✓ แนบไฟล์แล้ว: <span class="text-gray-600">1 file(s)</span> <button type="button" onclick="deleteAttachedPO(${r.id})" class="ml-3 px-2 py-0.5 bg-red-100 text-red-600 rounded hover:bg-red-200 transition text-[10px] uppercase font-bold tracking-wider">ลบ</button>`;
+            } else {
+                document.getElementById('existingPoLabel').classList.add('hidden');
+                document.getElementById('existingPoLabel').innerHTML = '✓ Current file attached';
+            }
+            
+            tempPoFiles = poFilesDb[r.id] ? [...poFilesDb[r.id]] : [];
+            renderPoFilesList();
+        }
+
+        function deleteAttachedPO(recordId) {
+            Swal.fire({
+                title: 'Delete PO File?',
+                text: 'การลบไฟล์จะลบออกจากระบบทันที คุณแน่ใจหรือไม่?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444'
+            }).then(res => {
+                if (res.isConfirmed) {
+                    const r = records.find(x => x.id === recordId);
+                    if (r) {
+                        r.po_file = '';
+                        r.po_files = [];
+                        delete poFilesDb[recordId];
+                        deletePoFileFromIDB(recordId);
+                        saveCarePlusState();
+                        loadEditForm(recordId);
+                    }
+                }
+            });
+        }
+        function loadAddRecordForm() {
+            document.getElementById('addRecordForm').reset();
+            document.getElementById('editRecordId').value = '';
+            tempPoFiles = [];
+            document.getElementById('poFilesList').innerHTML = '';
+            document.getElementById('existingPoLabel').classList.add('hidden');
+            document.getElementById('formTitle').innerText = 'New Record';
+            document.getElementById('saveBtn').innerText = 'Save Record';
+
+            const bSel = document.getElementById('buildingSelect');
+            bSel.innerHTML = '<option value="">Select location</option>' + buildings.map(b => `<option value="${b.id}">${b.name}</option>`).join('');
+            const tSel = document.getElementById('technicianSelect');
+            tSel.innerHTML = '<option value="">Select Provider</option>' + technicians.map(t => `<option value="${t}">${t}</option>`).join('');
+            const rSel = document.getElementById('reporterSelect');
+            rSel.innerHTML = '<option value="">Select Reporter</option>' + reporters.map(r => `<option value="${r}">${r}</option>`).join('');
+        }
+
+        function updateEquipmentOptions() {
+            const bid = parseInt(document.getElementById('buildingSelect').value);
+            const eqSel = document.getElementById('equipmentSelect');
+            eqSel.innerHTML = '<option value="">Select equipment</option>';
+            if (bid) equipment.filter(e => e.building_id === bid).forEach(e => { eqSel.innerHTML += `<option value="${e.name}">${e.name}</option>`; });
+        }
+        function toggleServiceFields() {
+            const t = document.getElementById('serviceType').value;
+            document.getElementById('nextServiceDateContainer').classList.toggle('hidden', t !== 'calibration');
+        }
+        // อัปเดตฟังก์ชันตอนบันทึก (ให้แนบ Email คนสร้างไปด้วย)
+        function handleSaveRecord(e) {
+            e.preventDefault();
+            const editId = document.getElementById('editRecordId').value;
+            const bSel = document.getElementById('buildingSelect');
+            const buildingName = bSel.options[bSel.selectedIndex].text;
+            const recordData = {
+                equipment_name: document.getElementById('equipmentSelect').value,
+                building: buildingName,
+                type: document.getElementById('serviceType').value,
+                service_date: document.getElementById('serviceDate').value,
+                next_service_date: document.getElementById('nextServiceDate').value,
+                maintenance_cost: document.getElementById('maintenanceCost').value,
+                technicians: [document.getElementById('technicianSelect').value],
+                reporter: document.getElementById('reporterSelect').value,
+                calendar_status: document.getElementById('recordStatus').value
+            };
+
+            const proceedSave = () => {
+                if (editId) {
+                    const index = records.findIndex(r => r.id == editId);
+                    if (index !== -1) {
+                        records[index] = { ...records[index], ...recordData };
+                        if (tempPoFiles.length > 0) { 
+                            records[index].po_files = tempPoFiles.map(f => f.name); 
+                            records[index].po_file = ''; // Clear legacy field
+                            if (typeof poFilesDb === 'undefined') window.poFilesDb = {};
+                            poFilesDb[editId] = [...tempPoFiles]; 
+                            savePoFileToIDB(editId, poFilesDb[editId]);
+                        }
+                        saveCarePlusState();
+                        Swal.fire({ title: 'Updated', icon: 'success', confirmButtonColor: '#3b82f6' });
+                    }
+                } else {
+                    const newId = Date.now();
+                    const newRec = { id: newId, ...recordData, po_file: '', po_files: tempPoFiles.map(f => f.name), created_by: currentUser.email };
+                    if (tempPoFiles.length > 0) {
+                        if (typeof poFilesDb === 'undefined') window.poFilesDb = {};
+                        poFilesDb[newId] = [...tempPoFiles];
+                        savePoFileToIDB(newId, poFilesDb[newId]);
+                    }
+                    records.push(newRec);
+                    saveCarePlusState();
+                    Swal.fire({ title: 'Saved', icon: 'success', confirmButtonColor: '#3b82f6' });
+                }
+                showPage('records');
+            };
+
+            // Check Booking conflicts (NoteLab)
+            const savedState = localStorage.getItem('NoteLabState_Merged');
+            const state = savedState ? JSON.parse(savedState) : {};
+            const bookings = state.bookings || [];
+            
+            const eqObj = equipment.find(eq => eq.name === recordData.equipment_name);
+            if (eqObj) {
+                const eqId = eqObj.id;
+                const svcDate = new Date(recordData.service_date);
+                const svcStart = new Date(svcDate.setHours(0,0,0,0)).getTime();
+                const svcEnd = new Date(svcDate.setHours(23,59,59,999)).getTime();
+                
+                const overlappingBooking = bookings.find(b => {
+                    if (b.deleted) return false;
+                    if (b.eqId != eqId) return false;
+                    const bStart = new Date(b.start).getTime();
+                    const bEnd = new Date(b.end).getTime();
+                    return svcStart < bEnd && svcEnd > bStart;
+                });
+                
+                if (overlappingBooking) {
+                    Swal.fire({
+                        title: 'Booking Conflict!',
+                        html: `There is an active booking by <strong>${overlappingBooking.user}</strong> on this date.<br>From: ${overlappingBooking.start.replace('T', ' ')}<br>To: ${overlappingBooking.end.replace('T', ' ')}`,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Save anyway',
+                        cancelButtonText: 'Cancel'
+                    }).then(res => {
+                        if (res.isConfirmed) {
+                            proceedSave();
+                        }
+                    });
+                    return;
+                }
+            }
+            
+            proceedSave();
+        }
+        function deleteRecord(id) {
+            Swal.fire({ title: 'Delete?', text: 'Cannot undo', icon: 'warning', showCancelButton: true, confirmButtonColor: '#ef4444' }).then(res => {
+                if (res.isConfirmed) { 
+                    records = records.filter(r => r.id !== id); 
+                    if (poFilesDb[id]) {
+                        delete poFilesDb[id];
+                        deletePoFileFromIDB(id);
+                    }
+                    saveCarePlusState(); 
+                    loadRecords(); 
+                    updateDashboardCards(); 
+                }
+            });
+        }
+        function viewPO(id) {
+            const r = records.find(rec => rec.id == id);
+            if (!r) return;
+            
+            const sidebar = document.getElementById('poSidebar');
+            const preview = document.getElementById('poPdfPreviewArea');
+            
+            sidebar.innerHTML = '';
+            preview.innerHTML = '<div class="flex items-center justify-center h-full text-gray-400">Select a file from the list to view</div>';
+            
+            let filesList = [];
+            if (r.po_files && r.po_files.length > 0) {
+                filesList = r.po_files.map((name, i) => ({ name, index: i }));
+            } else if (r.po_file) {
+                // Legacy data compatibility
+                filesList = [{ name: r.po_file, index: 0 }];
+            } else if (poFilesDb[id] && poFilesDb[id].length > 0) {
+                filesList = poFilesDb[id].map((f, i) => ({ name: f.name, index: i }));
+            }
+            
+            if (filesList.length === 0) {
+                sidebar.innerHTML = '<div class="text-gray-500 text-sm italic p-4 text-center">No documents found.</div>';
+            } else {
+                filesList.forEach(file => {
+                    const btn = document.createElement('button');
+                    btn.className = "w-full text-left px-4 py-3 mb-2 rounded-xl bg-white border border-gray-200 hover:border-blue-400 hover:shadow-md transition-all flex items-center gap-3";
+                    btn.innerHTML = `<span class="text-xl">📄</span><span class="text-sm font-bold text-gray-700 truncate w-full" title="${file.name}">${file.name}</span>`;
+                    btn.onclick = () => previewPOFile(id, file.index, btn, file.name);
+                    sidebar.appendChild(btn);
+                });
+                if (sidebar.firstChild) sidebar.firstChild.click();
+            }
+            
+            document.getElementById('poViewerModal').classList.remove('hidden');
+        }
+
+        function previewPOFile(id, index, btnEl, fileName) {
+            const sidebar = document.getElementById('poSidebar');
+            Array.from(sidebar.children).forEach(child => {
+                child.classList.remove('border-blue-500', 'bg-blue-50', 'ring-2', 'ring-blue-200');
+                child.classList.add('border-gray-200', 'bg-white');
+            });
+            if (btnEl) {
+                btnEl.classList.remove('border-gray-200', 'bg-white');
+                btnEl.classList.add('border-blue-500', 'bg-blue-50', 'ring-2', 'ring-blue-200');
+            }
+
+            const files = poFilesDb[id];
+            const preview = document.getElementById('poPdfPreviewArea');
+            if (files && files[index] && files[index].data) {
+                preview.innerHTML = `<iframe src="${files[index].data}" width="100%" height="100%" style="border:none;border-radius:12px;"></iframe>`;
+            } else {
+                preview.innerHTML = `
+                    <div style="display:flex; justify-content:center; align-items:center; height:100%; font-family:sans-serif; color:#666; background:#f9fafb; flex-direction:column; border-radius:12px; border:2px dashed #d1d5db;">
+                        <svg style="width:48px;height:48px;margin-bottom:16px;color:#9ca3af;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <h2 style="margin:0 0 8px;font-size:20px;color:#374151;">File Preview Not Available</h2>
+                        <p style="margin:0;font-size:14px;">The actual file data for <strong>${fileName}</strong> was not found in the local database.</p>
+                        <p style="margin:8px 0 0;font-size:12px;color:#9ca3af;">(This happens with demo data or if local storage was cleared)</p>
+                    </div>
+                `;
+            }
+        }
+
+        function closePOViewerModal() { 
+            document.getElementById('poViewerModal').classList.add('hidden'); 
+            document.getElementById('poPdfPreviewArea').innerHTML = '';
+        }
+
+        function exportToPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('l');
+
+            // Add font if base64 is available
+            if (window.THSarabunNew_base64) {
+                doc.addFileToVFS("THSarabunNew.ttf", window.THSarabunNew_base64);
+                doc.addFont("THSarabunNew.ttf", "THSarabunNew", "normal");
+                doc.setFont("THSarabunNew");
+            }
+
+            doc.setFontSize(22); doc.setTextColor(40); doc.text('รายงานการซ่อมบำรุง (Lab Maintenance Report)', 14, 20);
+            doc.setFontSize(14); doc.text(`วันที่ออกรายงาน: ${new Date().toLocaleString('th-TH')}`, 14, 28);
+
+            // UPDATED: Added 'Reporter' column
+            const tableColumn = ["ชื่อเครื่องมือ (Equipment)", "ประเภท (Type)", "วันที่ (Date)", "ราคา (Cost)", "ผู้ให้บริการ (Provider)", "ผู้แจ้ง (Reporter)", "สถานะ (Status)"];
+
+            const tableRows = filteredRecords.map(r => [
+                r.equipment_name,
+                r.type === 'repair' ? 'ซ่อมแซม' : (r.type === 'calibration' ? 'สอบเทียบ' : 'บำรุงรักษา (PM)'),
+                r.service_date,
+                r.maintenance_cost ? parseFloat(r.maintenance_cost).toLocaleString() : '-',
+                r.technicians[0] || '',
+                r.reporter || '',
+                r.calendar_status === 'complete' ? 'เสร็จสิ้น' : 'รอดำเนินการ'
+            ]);
+
+            doc.autoTable({
+                head: [tableColumn], body: tableRows, startY: 35, theme: 'grid',
+                headStyles: { fillColor: [14, 165, 233], fontSize: 14, font: "THSarabunNew" },
+                styles: { font: "THSarabunNew", fontSize: 13, cellPadding: 4 }
+            });
+            doc.save('report.pdf');
+        }
+
+        function exportToExcel() {
+            // UPDATED: Added all columns
+            const ws = XLSX.utils.json_to_sheet(filteredRecords.map(r => ({
+                "Equipment Name": r.equipment_name,
+                "Location": r.building,
+                "Type": r.type,
+                "Date": r.service_date,
+                "Next Due": r.next_service_date || '-',
+                "Cost": parseFloat(r.maintenance_cost || 0),
+                "Provider": r.technicians[0] || '',
+                "Reporter": r.reporter || '',
+                "Status": r.calendar_status,
+                "PO File": r.po_file || ''
+            })));
+
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Records");
+            XLSX.writeFile(wb, "lab_records.xlsx");
+        }
+        // --- Equipment History Logic ---
+        let currentHistoryEquip = '';
+
+        function viewEquipmentHistory(equipName) {
+            currentHistoryEquip = equipName;
+            document.getElementById('historyModalTitle').innerText = `History: ${equipName}`;
+            document.getElementById('historyModal').classList.remove('hidden');
+            switchHistoryTab('repair'); // Default tab
+        }
+
+        function closeHistoryModal() {
+            document.getElementById('historyModal').classList.add('hidden');
+        }
+
+        function switchHistoryTab(type) {
+            // Reset tabs
+            document.querySelectorAll('.hist-tab').forEach(t => {
+                t.className = 'hist-tab flex-1 px-4 py-2.5 rounded-xl text-sm font-bold bg-gray-100 text-gray-500 transition hover:bg-gray-200';
+            });
+
+            // Active tab styling
+            if (type === 'repair') document.getElementById('tabHistRepair').className = 'hist-tab flex-1 px-4 py-2.5 rounded-xl text-sm font-bold bg-orange-100 text-orange-700 transition shadow-sm';
+            if (type === 'calibration') document.getElementById('tabHistCalib').className = 'hist-tab flex-1 px-4 py-2.5 rounded-xl text-sm font-bold bg-purple-100 text-purple-700 transition shadow-sm';
+            if (type === 'pm') document.getElementById('tabHistPM').className = 'hist-tab flex-1 px-4 py-2.5 rounded-xl text-sm font-bold bg-teal-100 text-teal-700 transition shadow-sm';
+
+            // Filter and sort records
+            const histRecords = records.filter(r => r.equipment_name === currentHistoryEquip && r.type === type)
+                .sort((a, b) => new Date(b.service_date) - new Date(a.service_date));
+
+            const content = document.getElementById('historyModalContent');
+            if (histRecords.length === 0) {
+                content.innerHTML = `<div class="text-center text-gray-400 mt-10 font-medium flex flex-col items-center"><span class="text-3xl mb-2">📄</span>ไม่มีประวัติ ${type} สำหรับเครื่องมือนี้</div>`;
+                return;
+            }
+
+            content.innerHTML = histRecords.map(r => {
+                const statusColor = r.calendar_status === 'complete' ? 'text-green-600 bg-green-50' : 'text-yellow-600 bg-yellow-50';
+                return `
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex justify-between items-center hover:shadow-md transition">
+            <div>
+                <div class="font-bold text-gray-800 text-base">${r.service_date}</div>
+                <div class="text-xs text-gray-500 mt-1 font-medium">Provider: <span class="text-gray-700">${r.technicians[0] || '-'}</span></div>
+                <div class="text-xs text-gray-500 font-medium">Reporter: <span class="text-gray-700">${r.reporter || '-'}</span></div>
+            </div>
+            <div class="text-right flex flex-col items-end">
+                <div class="font-mono font-bold text-gray-800 bg-gray-50 px-2 py-1 rounded-lg">฿${formatCurrency(r.maintenance_cost)}</div>
+                <div class="text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-md mt-2 ${statusColor}">${r.calendar_status}</div>
+            </div>
+        </div>
+        `;
+            }).join('');
+        }
+    </script>
+    <div id="upcomingModal"
+        class="hidden fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center p-4">
+        <div
+            class="glass glass-dark rounded-3xl shadow-2xl w-[95%] max-w-2xl md:w-full h-[75vh] flex flex-col overflow-hidden page-transition">
+            <div class="p-5 border-b border-gray-100 flex justify-between items-center bg-white/40">
+                <h3 class="text-xl font-bold text-gray-800 flex items-center gap-2"><span class="text-red-500">⏰</span>
+                    Next 90 Days Schedule</h3>
+                <button onclick="closeUpcomingModal()"
+                    class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 text-gray-500">✕</button>
+            </div>
+            <div id="upcomingModalContent" class="p-5 flex-1 overflow-y-auto custom-scroll space-y-3 bg-gray-50/50">
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
