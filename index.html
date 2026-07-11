@@ -620,22 +620,70 @@
             justify-content: center;
             flex: 1;
             padding: 1rem;
-            background: url('bg1.png') no-repeat center center fixed;
+            background: #0f172a url('bg1.png') no-repeat center center fixed;
             background-size: cover;
-            background-color: #e0f2fe;
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        #login-view::before {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.8), rgba(16, 185, 129, 0.8));
+            border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+            filter: blur(70px);
+            top: -15%;
+            left: -10%;
+            animation: liquidFloat 15s infinite ease-in-out alternate;
+            z-index: -1;
+        }
+
+        #login-view::after {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.8), rgba(239, 68, 68, 0.8));
+            border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+            filter: blur(70px);
+            bottom: -15%;
+            right: -10%;
+            animation: liquidFloat 12s infinite ease-in-out alternate-reverse;
+            z-index: -1;
+        }
+
+        @keyframes liquidFloat {
+            0% { transform: translate(0, 0) rotate(0deg) scale(1); }
+            50% { transform: translate(50px, 50px) rotate(180deg) scale(1.1); }
+            100% { transform: translate(-30px, 80px) rotate(360deg) scale(0.9); }
         }
 
         .login-card {
-            background: rgba(255, 255, 255, 0.4);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(35px);
+            -webkit-backdrop-filter: blur(35px);
             padding: 3rem 2.5rem;
-            border-radius: 30px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            border-radius: 40px;
+            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.4), inset 0 0 20px rgba(255, 255, 255, 0.4);
             width: 100%;
             max-width: 420px;
-            border: 1px solid rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-top: 1px solid rgba(255, 255, 255, 0.8);
+            border-left: 1px solid rgba(255, 255, 255, 0.8);
             color: #333;
+            position: relative;
+        }
+
+        .login-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 50%;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0) 100%);
+            border-radius: 40px 40px 0 0;
+            pointer-events: none;
         }
 
         .login-card h2 {
@@ -2063,9 +2111,10 @@
                 this.saveState();
                 window.addEventListener('hashchange', () => this.handleRouting());
                 window.addEventListener('storage', (e) => {
-                    if (e.key === 'NoteLabState_Merged') {
+                    if (e.key === 'NoteLabState_Merged' || e.key === 'labUserSession') {
                         this.loadState();
                         this.updateUI();
+                        this.handleRouting();
                     }
                 });
                 this.updateUI();
@@ -2077,7 +2126,22 @@
                 if (savedState) this.state = JSON.parse(savedState);
                 if (!this.state.bookings) this.state.bookings = [];
                 if (!this.state.buildings) this.state.buildings = [];
-                this.sessionToken = localStorage.getItem('NoteLab_SessionToken');
+                
+                // Sync session from CarePlus
+                const labSession = localStorage.getItem('labUserSession');
+                if (labSession && this.state.users) {
+                    const u = this.state.users.find(x => x.username === labSession);
+                    if (u) {
+                        this.state.user = u;
+                        this.sessionToken = localStorage.getItem('NoteLab_SessionToken') || Math.random().toString(36).substring(2);
+                    } else {
+                        this.state.user = null;
+                        this.sessionToken = null;
+                    }
+                } else {
+                    this.state.user = null;
+                    this.sessionToken = null;
+                }
             },
             saveState() {
                 localStorage.setItem('NoteLabState_Merged', JSON.stringify(this.state));
@@ -2474,6 +2538,7 @@
                     const token = Math.random().toString(36).substring(2);
                     this.sessionToken = token;
                     localStorage.setItem('NoteLab_SessionToken', token);
+                    localStorage.setItem('labUserSession', u);
 
                     const userIdx = this.state.users.findIndex(user => user.username === u);
                     if (userIdx !== -1) {
@@ -2509,6 +2574,7 @@
                 this.state.user = null;
                 this.sessionToken = null;
                 localStorage.removeItem('NoteLab_SessionToken');
+                localStorage.removeItem('labUserSession');
                 this.saveState();
                 window.location.hash = '';
                 document.body.classList.remove('logged-in');
