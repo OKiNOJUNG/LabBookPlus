@@ -1,0 +1,1020 @@
+/* ==========================================================================
+   MPIR Lab Ecosystem - Shared Design System & Theme Engine (shared-theme.css)
+   Color Theory 60-30-10 | Dark Mode | Typography | Micro-Animations
+   ========================================================================== */
+
+/* --- 1. CSS Custom Properties & 60-30-10 Color Tokens --- */
+:root {
+    /* 60% Dominant (Surfaces, Canvas, Backgrounds) */
+    --color-bg-base: #F8FAFC;          /* Slate 50 */
+    --color-bg-subtle: #F1F5F9;        /* Slate 100 */
+    --color-surface-card: #FFFFFF;
+    --color-surface-glass: rgba(255, 255, 255, 0.82);
+    --color-surface-glass-heavy: rgba(255, 255, 255, 0.94);
+    --color-border-subtle: #E2E8F0;     /* Slate 200 */
+    --color-border-strong: #CBD5E1;     /* Slate 300 */
+    --color-text-main: #0F172A;         /* Slate 900 */
+    --color-text-secondary: #475569;    /* Slate 600 */
+    --color-text-muted: #94A3B8;        /* Slate 400 */
+
+    /* 30% Secondary (Brand, Structure, Cards, Primary Elements) */
+    --color-brand-primary: #0F766E;     /* Mitr Phol Deep Teal */
+    --color-brand-hover: #115E59;       /* Teal 800 */
+    --color-brand-subtle: #CCFBF1;      /* Teal 100 */
+    --color-brand-border: #99F6E4;      /* Teal 200 */
+    --color-brand-secondary: #0284C7;   /* Sky Blue */
+    --color-brand-secondary-hover: #0369A1;
+
+    /* 10% Accent (Focal Points, CTAs, Highlights, Active Status) */
+    --color-accent-cta: #F59E0B;        /* Vibrant Amber */
+    --color-accent-cta-hover: #D97706;  /* Amber 600 */
+    --color-accent-subtle: #FEF3C7;     /* Amber 100 */
+    --color-accent-emerald: #10B981;    /* Emerald 500 */
+    --color-accent-emerald-subtle: #D1FAE5;
+    --color-accent-rose: #F43F5E;       /* Rose 500 */
+    --color-accent-rose-subtle: #FFE4E6;
+    --color-accent-indigo: #6366F1;     /* Indigo 500 */
+    --color-accent-indigo-subtle: #E0E7FF;
+
+    /* Elevation & Shadows */
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.08), 0 2px 4px -2px rgba(15, 23, 42, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.1), 0 4px 6px -4px rgba(15, 23, 42, 0.06);
+    --shadow-xl: 0 20px 25px -5px rgba(15, 23, 42, 0.12), 0 8px 10px -6px rgba(15, 23, 42, 0.06);
+    --shadow-glow: 0 0 20px -3px rgba(15, 118, 110, 0.25);
+    --shadow-accent-glow: 0 0 20px -3px rgba(245, 158, 11, 0.35);
+
+    /* Radii System */
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-xl: 12px;                  /* Standard Controls */
+    --radius-2xl: 16px;                 /* Standard Containers & Cards */
+    --radius-3xl: 24px;                 /* Modals & Hero Blocks */
+    --radius-full: 9999px;              /* Badges & Pills */
+
+    /* Typography & Leading */
+    --font-sans: 'Inter', 'Prompt', 'Sarabun', -apple-system, BlinkMacSystemFont, sans-serif;
+    --leading-normal: 1.5;
+    --leading-relaxed: 1.625;
+    --leading-loose: 1.75;
+}
+
+/* --- 2. Dark Mode Overrides (Automatic & Class-based) --- */
+html.dark, body.dark {
+    /* 60% Dominant (Dark Canvas & Surfaces) */
+    --color-bg-base: #0B1120;          /* Deep Midnight Slate */
+    --color-bg-subtle: #0F172A;        /* Slate 900 */
+    --color-surface-card: #1E293B;      /* Slate 800 */
+    --color-surface-glass: rgba(30, 41, 59, 0.85);
+    --color-surface-glass-heavy: rgba(30, 41, 59, 0.96);
+    --color-border-subtle: #334155;     /* Slate 700 */
+    --color-border-strong: #475569;     /* Slate 600 */
+    --color-text-main: #F8FAFC;         /* Slate 50 */
+    --color-text-secondary: #CBD5E1;    /* Slate 300 */
+    --color-text-muted: #64748B;        /* Slate 500 */
+
+    /* 30% Secondary (Teal / Sky adjusted for Dark Canvas) */
+    --color-brand-primary: #14B8A6;     /* Teal 500 */
+    --color-brand-hover: #2DD4BF;       /* Teal 400 */
+    --color-brand-subtle: rgba(20, 184, 166, 0.16);
+    --color-brand-border: rgba(20, 184, 166, 0.35);
+    --color-brand-secondary: #38BDF8;   /* Sky 400 */
+    --color-brand-secondary-hover: #7DD3FC;
+
+    /* 10% Accent (Vibrant on Dark) */
+    --color-accent-cta: #FBBF24;        /* Amber 400 */
+    --color-accent-cta-hover: #F59E0B;
+    --color-accent-subtle: rgba(251, 191, 36, 0.16);
+    --color-accent-emerald: #34D399;    /* Emerald 400 */
+    --color-accent-emerald-subtle: rgba(52, 211, 153, 0.16);
+    --color-accent-rose: #FB7185;       /* Rose 400 */
+    --color-accent-rose-subtle: rgba(251, 113, 133, 0.16);
+    --color-accent-indigo: #818CF8;     /* Indigo 400 */
+    --color-accent-indigo-subtle: rgba(129, 140, 248, 0.16);
+
+    /* Dark Shadows */
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.4);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+    --shadow-glow: 0 0 25px -3px rgba(20, 184, 166, 0.3);
+    --shadow-accent-glow: 0 0 25px -3px rgba(251, 191, 36, 0.35);
+}
+
+/* --- Universal Dark Mode Element Overrides --- */
+html.dark, body.dark, [data-theme="dark"] {
+    --bg-color: #0B1120 !important;
+    --card-bg: #1E293B !important;
+    --text-main: #F8FAFC !important;
+    --text-muted: #94A3B8 !important;
+    --border-color: #334155 !important;
+    --primary: #14B8A6 !important;
+    --primary-hover: #2DD4BF !important;
+}
+
+html.dark body, body.dark, html.dark body.logged-in, body.dark.logged-in {
+    background: #0B1120 !important;
+    background-color: #0B1120 !important;
+    color: #F8FAFC !important;
+}
+
+/* Glass, Navigation & Cards */
+html.dark .glass-nav,
+html.dark .nav-mobile-menu,
+html.dark .navbar-container .glass-nav {
+    background: rgba(15, 23, 42, 0.9) !important;
+    border-color: rgba(51, 65, 85, 0.7) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
+}
+
+html.dark .nav-pill {
+    color: #94a3b8 !important;
+}
+html.dark .nav-pill:hover {
+    color: #f8fafc !important;
+    background: rgba(255, 255, 255, 0.06) !important;
+}
+html.dark .nav-pill.active {
+    background: #1e293b !important;
+    color: #14b8a6 !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4) !important;
+}
+
+html.dark .glass-card,
+html.dark .chart-card,
+html.dark #calendar-container,
+html.dark .form-container,
+html.dark .table-container,
+html.dark .modal-content,
+html.dark .equipment-card,
+html.dark .eq-card {
+    background: #1E293B !important;
+    border-color: #334155 !important;
+    color: #F8FAFC !important;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4) !important;
+}
+
+html.dark .search-bar,
+html.dark .search-bar input {
+    background: #0F172A !important;
+    border-color: #334155 !important;
+    color: #F8FAFC !important;
+}
+
+/* Form Controls & Dropdowns */
+html.dark input[type="text"],
+html.dark input[type="password"],
+html.dark input[type="number"],
+html.dark input[type="date"],
+html.dark input[type="datetime-local"],
+html.dark input[type="time"],
+html.dark select,
+html.dark textarea,
+html.dark .glass-input {
+    background-color: #0F172A !important;
+    border-color: #334155 !important;
+    color: #F8FAFC !important;
+}
+
+html.dark input:focus,
+html.dark select:focus,
+html.dark textarea:focus {
+    background-color: #0F172A !important;
+    border-color: #14B8A6 !important;
+    box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.2) !important;
+}
+
+html.dark input[readonly],
+html.dark textarea[readonly] {
+    background-color: #1E293B !important;
+    color: #64748B !important;
+}
+
+/* Tables & Data */
+html.dark table {
+    color: #F8FAFC !important;
+}
+html.dark th,
+html.dark .glass-table th {
+    background-color: #0F172A !important;
+    color: #94A3B8 !important;
+    border-color: #334155 !important;
+}
+html.dark td,
+html.dark .glass-table td {
+    border-color: #334155 !important;
+    color: #F8FAFC !important;
+}
+html.dark tr:hover td,
+html.dark tr:hover {
+    background-color: rgba(255, 255, 255, 0.03) !important;
+}
+
+/* FullCalendar in Dark Mode */
+html.dark .fc {
+    background: #1E293B !important;
+    color: #F8FAFC !important;
+}
+html.dark .fc-theme-standard .fc-scrollgrid {
+    border-color: #334155 !important;
+}
+html.dark .fc-theme-standard th {
+    background: #0F172A !important;
+    color: #94A3B8 !important;
+    border-color: #334155 !important;
+}
+html.dark .fc-theme-standard td {
+    border-color: #334155 !important;
+}
+html.dark .fc .fc-toolbar-title {
+    color: #F8FAFC !important;
+}
+html.dark .fc-daygrid-day-number {
+    color: #CBD5E1 !important;
+}
+html.dark .fc-day-today {
+    background: rgba(20, 184, 166, 0.12) !important;
+}
+html.dark .fc-daygrid-day:hover {
+    background-color: rgba(255, 255, 255, 0.04) !important;
+}
+html.dark .fc .fc-button {
+    background-color: #0F766E !important;
+    border-color: #14B8A6 !important;
+    color: #FFFFFF !important;
+}
+html.dark .fc .fc-button:hover {
+    background-color: #115E59 !important;
+}
+
+/* Admin Tabs */
+html.dark .admin-tab {
+    color: #94A3B8 !important;
+}
+html.dark .admin-tab:hover:not(.active) {
+    color: #F8FAFC !important;
+}
+html.dark .admin-tab.active {
+    color: #14B8A6 !important;
+    border-bottom-color: #14B8A6 !important;
+}
+
+/* Badges & QR */
+html.dark .eq-qr-container {
+    background: #FFFFFF !important;
+    border-color: #334155 !important;
+}
+html.dark .badge-booked {
+    background-color: rgba(56, 189, 248, 0.15) !important;
+    color: #38BDF8 !important;
+    border-color: #38BDF8 !important;
+}
+html.dark .badge-inuse {
+    background-color: rgba(251, 191, 36, 0.15) !important;
+    color: #FBBF24 !important;
+    border-color: #FBBF24 !important;
+}
+html.dark .badge-finished {
+    background-color: rgba(52, 211, 153, 0.15) !important;
+    color: #34D399 !important;
+    border-color: #34D399 !important;
+}
+
+/* CarePlus Specific Dark Rules */
+html.dark .glass,
+html.dark .ios-card,
+html.dark .login-glass {
+    background: rgba(30, 41, 59, 0.9) !important;
+    border-color: #334155 !important;
+    color: #F8FAFC !important;
+}
+html.dark .bg-white\/50,
+html.dark .bg-white\/60,
+html.dark .bg-white,
+html.dark .bg-gray-50,
+html.dark .bg-gray-100 {
+    background-color: #1E293B !important;
+}
+html.dark .text-gray-800,
+html.dark .text-gray-700,
+html.dark .text-gray-900 {
+    color: #F8FAFC !important;
+}
+html.dark .text-gray-600,
+html.dark .text-gray-500,
+html.dark .text-gray-400 {
+    color: #94A3B8 !important;
+}
+html.dark .border-gray-100,
+html.dark .border-gray-200,
+html.dark .border-gray-300,
+html.dark [class*="border-gray-"],
+html.dark [class*="border-white"] {
+    border-color: #334155 !important;
+}
+html.dark [class*="bg-white"] {
+    background-color: #1E293B !important;
+}
+html.dark [class*="bg-gray-50"],
+html.dark [class*="bg-gray-100"],
+html.dark [class*="bg-gray-200"] {
+    background-color: #0F172A !important;
+}
+html.dark [class*="text-gray-900"],
+html.dark [class*="text-gray-800"],
+html.dark [class*="text-gray-700"] {
+    color: #F8FAFC !important;
+}
+html.dark [class*="text-gray-600"],
+html.dark [class*="text-gray-500"] {
+    color: #94A3B8 !important;
+}
+
+/* Universal Headings & Elements */
+html.dark h1, html.dark h2, html.dark h3, html.dark h4, html.dark h5, html.dark h6 {
+    color: #F8FAFC !important;
+}
+html.dark label,
+html.dark .form-group label {
+    color: #CBD5E1 !important;
+}
+html.dark select option,
+body.dark select option {
+    background-color: #0F172A !important;
+    color: #F8FAFC !important;
+}
+html.dark .btn-outline {
+    background-color: transparent !important;
+    border-color: #475569 !important;
+    color: #E2E8F0 !important;
+}
+html.dark .btn-outline:hover {
+    background-color: rgba(255, 255, 255, 0.08) !important;
+    border-color: #94A3B8 !important;
+    color: #FFFFFF !important;
+}
+html.dark .nav-action-btn {
+    background: rgba(30, 41, 59, 0.8) !important;
+    border-color: #334155 !important;
+    color: #94A3B8 !important;
+}
+html.dark .nav-action-btn:hover {
+    background: rgba(51, 65, 85, 0.8) !important;
+    color: #F8FAFC !important;
+}
+html.dark .app-switch-btn {
+    background: rgba(30, 41, 59, 0.8) !important;
+    border-color: #334155 !important;
+    color: #38BDF8 !important;
+}
+html.dark #list-locations li {
+    border-bottom-color: #334155 !important;
+    color: #F8FAFC !important;
+}
+html.dark .stat-kpi-value {
+    color: #F8FAFC !important;
+}
+html.dark .stat-kpi-label,
+html.dark .eq-detail {
+    color: #94A3B8 !important;
+}
+html.dark .eq-title {
+    color: #F8FAFC !important;
+}
+html.dark .modal-header,
+html.dark .modal-footer {
+    border-color: #334155 !important;
+}
+html.dark .swal2-popup {
+    background-color: #1E293B !important;
+    color: #F8FAFC !important;
+    border: 1px solid #334155 !important;
+}
+html.dark .swal2-title,
+html.dark .swal2-html-container {
+    color: #F8FAFC !important;
+}
+
+/* --- 3. Base Styles & Reset Helpers --- */
+body {
+    font-family: var(--font-sans);
+    background-color: var(--color-bg-base);
+    color: var(--color-text-main);
+    line-height: var(--leading-relaxed);
+    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Numbers & Data Alignments */
+.tabular-data, .font-mono, time, .cost-figure, .id-badge {
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+}
+
+/* --- 4. Premium Cards & Containers --- */
+.lab-card {
+    background-color: var(--color-surface-card);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-md);
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), 
+                box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+                border-color 0.25s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.lab-card:hover {
+    box-shadow: var(--shadow-lg);
+    border-color: var(--color-brand-border);
+}
+
+.lab-card-interactive:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-xl), var(--shadow-glow);
+}
+
+.lab-glass {
+    background: var(--color-surface-glass);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-2xl);
+}
+
+.lab-glass-heavy {
+    background: var(--color-surface-glass-heavy);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-2xl);
+}
+
+/* --- 5. Navigation Bar & App Switcher --- */
+.lab-navbar {
+    background: var(--color-surface-glass-heavy);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-md);
+    padding: 0.65rem 1.25rem;
+    position: sticky;
+    top: 1rem;
+    z-index: 1000;
+    margin: 0.75rem auto 1.5rem auto;
+    max-width: 1400px;
+    width: calc(100% - 2rem);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.25s ease;
+}
+
+.lab-brand-pill {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-decoration: none;
+    color: var(--color-text-main);
+    font-weight: 700;
+}
+
+.lab-brand-badge {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: var(--radius-xl);
+    background: linear-gradient(135deg, var(--color-brand-primary), var(--color-brand-secondary));
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.95rem;
+    font-weight: 800;
+    box-shadow: 0 4px 10px rgba(15, 118, 110, 0.35);
+}
+
+/* Top Switcher Button (Between Book and Care+) */
+.app-switch-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.45rem 0.9rem;
+    border-radius: var(--radius-full);
+    font-size: 0.825rem;
+    font-weight: 700;
+    text-decoration: none;
+    border: 1px solid var(--color-brand-border);
+    background: var(--color-brand-subtle);
+    color: var(--color-brand-primary);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.app-switch-btn:hover {
+    background: var(--color-brand-primary);
+    color: #FFFFFF;
+    box-shadow: var(--shadow-glow);
+    transform: translateY(-1px);
+}
+
+/* Navigation Pills */
+.lab-nav-pills {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: var(--color-bg-subtle);
+    padding: 0.25rem;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--color-border-subtle);
+}
+
+.lab-nav-pill {
+    padding: 0.45rem 1rem;
+    border-radius: var(--radius-full);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.lab-nav-pill:hover {
+    color: var(--color-brand-primary);
+    background: rgba(15, 118, 110, 0.08);
+}
+
+.lab-nav-pill.active {
+    background: var(--color-surface-card);
+    color: var(--color-brand-primary);
+    box-shadow: var(--shadow-sm);
+    font-weight: 700;
+}
+
+/* Utilities on Navbar: Dark Mode, Audio, User */
+.nav-action-btn {
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--color-border-subtle);
+    background: var(--color-surface-card);
+    color: var(--color-text-secondary);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.nav-action-btn:hover {
+    color: var(--color-brand-primary);
+    border-color: var(--color-brand-primary);
+    transform: scale(1.05);
+}
+
+/* --- 6. Buttons System (Rounded-xl) --- */
+.lab-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.25rem;
+    border-radius: var(--radius-xl);
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+    user-select: none;
+    line-height: 1.25;
+}
+
+.lab-btn:active {
+    transform: scale(0.98);
+}
+
+.lab-btn-primary {
+    background: var(--color-brand-primary);
+    color: #FFFFFF;
+    box-shadow: 0 4px 12px rgba(15, 118, 110, 0.25);
+}
+
+.lab-btn-primary:hover {
+    background: var(--color-brand-hover);
+    box-shadow: 0 6px 16px rgba(15, 118, 110, 0.35);
+    transform: translateY(-1px);
+}
+
+.lab-btn-accent {
+    background: var(--color-accent-cta);
+    color: #FFFFFF;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+}
+
+.lab-btn-accent:hover {
+    background: var(--color-accent-cta-hover);
+    box-shadow: 0 6px 18px rgba(245, 158, 11, 0.4);
+    transform: translateY(-1px);
+}
+
+.lab-btn-outline {
+    background: transparent;
+    border-color: var(--color-border-strong);
+    color: var(--color-text-main);
+}
+
+.lab-btn-outline:hover {
+    background: var(--color-bg-subtle);
+    border-color: var(--color-brand-primary);
+    color: var(--color-brand-primary);
+}
+
+.lab-btn-danger {
+    background: var(--color-accent-rose-subtle);
+    color: var(--color-accent-rose);
+    border-color: rgba(244, 63, 94, 0.3);
+}
+
+.lab-btn-danger:hover {
+    background: var(--color-accent-rose);
+    color: #FFFFFF;
+    box-shadow: 0 4px 12px rgba(244, 63, 94, 0.3);
+}
+
+.lab-btn-sm {
+    padding: 0.35rem 0.75rem;
+    font-size: 0.8rem;
+    border-radius: var(--radius-md);
+}
+
+/* --- 7. Form Controls & Smart Inputs --- */
+.lab-input, .lab-select, .lab-textarea {
+    width: 100%;
+    padding: 0.65rem 0.95rem;
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--color-border-strong);
+    background-color: var(--color-surface-card);
+    color: var(--color-text-main);
+    font-size: 0.9rem;
+    font-family: inherit;
+    transition: all 0.2s ease;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+.lab-input:focus, .lab-select:focus, .lab-textarea:focus {
+    outline: none;
+    border-color: var(--color-brand-primary);
+    box-shadow: 0 0 0 3px var(--color-brand-subtle);
+}
+
+/* Inline Validation States */
+.lab-input-error {
+    border-color: var(--color-accent-rose) !important;
+    box-shadow: 0 0 0 3px var(--color-accent-rose-subtle) !important;
+    animation: shake 0.35s ease;
+}
+
+.lab-inline-error-msg {
+    color: var(--color-accent-rose);
+    font-size: 0.78rem;
+    font-weight: 600;
+    margin-top: 0.35rem;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-4px); }
+    40%, 80% { transform: translateX(4px); }
+}
+
+/* --- 8. Semantic Status Badges --- */
+.lab-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.25rem 0.7rem;
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    border: 1px solid transparent;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.lab-badge::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+}
+
+.lab-badge-available, .lab-badge-complete {
+    background: var(--color-accent-emerald-subtle);
+    color: #065F46;
+    border-color: rgba(16, 185, 129, 0.4);
+}
+.lab-badge-available::before, .lab-badge-complete::before {
+    background: #10B981;
+}
+
+.lab-badge-inuse, .lab-badge-progress {
+    background: var(--color-accent-subtle);
+    color: #92400E;
+    border-color: rgba(245, 158, 11, 0.4);
+}
+.lab-badge-inuse::before, .lab-badge-progress::before {
+    background: #F59E0B;
+    box-shadow: 0 0 6px #F59E0B;
+    animation: pulse 1.8s infinite;
+}
+
+.lab-badge-repair, .lab-badge-danger {
+    background: var(--color-accent-rose-subtle);
+    color: #9F1239;
+    border-color: rgba(244, 63, 94, 0.4);
+}
+.lab-badge-repair::before, .lab-badge-danger::before {
+    background: #F43F5E;
+}
+
+.lab-badge-calibration, .lab-badge-info {
+    background: var(--color-brand-subtle);
+    color: #0F766E;
+    border-color: rgba(15, 118, 110, 0.4);
+}
+.lab-badge-calibration::before, .lab-badge-info::before {
+    background: #0EA5E9;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.85); }
+}
+
+/* --- 9. Stat KPI Cards --- */
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.stat-kpi-card {
+    background: var(--color-surface-card);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-2xl);
+    padding: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.25s ease;
+}
+
+.stat-kpi-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--color-brand-border);
+}
+
+.stat-kpi-icon {
+    width: 3.25rem;
+    height: 3.25rem;
+    border-radius: var(--radius-xl);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    flex-shrink: 0;
+}
+
+.stat-kpi-value {
+    font-size: 1.75rem;
+    font-weight: 800;
+    line-height: 1.1;
+    color: var(--color-text-main);
+}
+
+.stat-kpi-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+/* --- 10. Tables & Lists with Leading 1.6 --- */
+.lab-table-container {
+    background: var(--color-surface-card);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-2xl);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+
+.lab-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 0.875rem;
+}
+
+.lab-table th {
+    background: var(--color-bg-subtle);
+    color: var(--color-text-secondary);
+    font-weight: 700;
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid var(--color-border-subtle);
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+}
+
+.lab-table td {
+    padding: 0.95rem 1rem;
+    border-bottom: 1px solid var(--color-border-subtle);
+    color: var(--color-text-main);
+    line-height: var(--leading-relaxed);
+}
+
+.lab-table tr:last-child td {
+    border-bottom: none;
+}
+
+.lab-table tr:hover td {
+    background: rgba(15, 118, 110, 0.025);
+}
+
+/* --- 11. Modal System (Centered Glass with 24px Radius) --- */
+.lab-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    z-index: 2000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+}
+
+.lab-modal-backdrop.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.lab-modal-dialog {
+    background: var(--color-surface-card);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-3xl);
+    box-shadow: var(--shadow-xl);
+    width: 100%;
+    max-width: 650px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transform: scale(0.95) translateY(10px);
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.lab-modal-backdrop.active .lab-modal-dialog {
+    transform: scale(1) translateY(0);
+}
+
+.lab-modal-header {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--color-border-subtle);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.lab-modal-title {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: var(--color-text-main);
+}
+
+.lab-modal-body {
+    padding: 1.5rem;
+    overflow-y: auto;
+}
+
+.lab-modal-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--color-border-subtle);
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    background: var(--color-bg-subtle);
+}
+
+/* --- 12. Mobile Bottom Bar (< 768px) --- */
+.lab-mobile-nav {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--color-surface-glass-heavy);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid var(--color-border-subtle);
+    padding: 0.4rem 0.75rem calc(0.4rem + env(safe-area-inset-bottom));
+    z-index: 999;
+    justify-content: space-around;
+    align-items: center;
+}
+
+@media (max-width: 768px) {
+    .lab-mobile-nav {
+        display: flex;
+    }
+
+    .lab-navbar {
+        width: 100%;
+        margin-top: 0;
+        border-radius: 0;
+        border-left: none;
+        border-right: none;
+        top: 0;
+        padding: 0.6rem 0.9rem;
+    }
+
+    .desktop-nav-pills {
+        display: none !important;
+    }
+
+    body {
+        padding-bottom: 4.5rem;
+    }
+
+    .stat-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.mobile-tab-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.2rem;
+    background: transparent;
+    border: none;
+    color: var(--color-text-muted);
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.35rem;
+    cursor: pointer;
+    min-width: 3.5rem;
+    min-height: 44px; /* Touch Target standard */
+}
+
+.mobile-tab-btn i {
+    font-size: 1.15rem;
+    transition: transform 0.2s ease;
+}
+
+.mobile-tab-btn.active {
+    color: var(--color-brand-primary);
+}
+
+.mobile-tab-btn.active i {
+    transform: translateY(-2px);
+}
+
+/* ==========================================================================
+   Single Sign-On (SSO) & Instant Seamless App Switching (Zero-Flash)
+   ========================================================================== */
+html.has-active-session #login-view,
+html.has-active-session #loginPage {
+    display: none !important;
+}
+
+html.has-active-session #mainApp {
+    display: flex !important;
+}
+
+html.has-active-session #navbar {
+    display: block !important;
+}
+
+html.has-active-session body.logged-in {
+    background: #f0f8ff;
+}

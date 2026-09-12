@@ -1,0 +1,1803 @@
+﻿<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPIR Lab Suite - Documentation & User Manual</title>
+
+    <!-- Google Fonts: Inter & Sarabun & Prompt -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Prompt:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Mermaid.js for Architecture & ER Diagrams -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+
+    <!-- Shared Design System & Core Bridge -->
+    <link rel="stylesheet" href="shared-theme.css">
+    <script src="shared-core.js"></script>
+
+    <style>
+        :root {
+            --font-sans: 'Inter', 'Prompt', 'Sarabun', -apple-system, BlinkMacSystemFont, sans-serif;
+            --doc-sidebar-width: 290px;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--color-bg-base);
+            color: var(--color-text-main);
+            margin: 0;
+            padding: 0;
+            line-height: var(--leading-relaxed);
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* --- Header Navigation Bar --- */
+        .docs-navbar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: var(--color-surface-glass-heavy);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--color-border-subtle);
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .docs-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            text-decoration: none;
+            color: var(--color-text-main);
+        }
+
+        .docs-brand img {
+            height: 38px;
+            width: auto;
+            border-radius: 8px;
+            object-fit: contain;
+        }
+
+        .docs-brand-title {
+            font-size: 1.15rem;
+            font-weight: 800;
+            letter-spacing: -0.01em;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .docs-badge-version {
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.2rem 0.6rem;
+            background: var(--color-brand-subtle);
+            color: var(--color-brand-primary);
+            border: 1px solid var(--color-brand-border);
+            border-radius: 9999px;
+            text-transform: uppercase;
+        }
+
+        .docs-tab-nav {
+            display: flex;
+            background: var(--color-bg-subtle);
+            padding: 0.3rem;
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--color-border-subtle);
+            gap: 0.3rem;
+        }
+
+        .docs-tab-btn {
+            border: none;
+            background: transparent;
+            color: var(--color-text-secondary);
+            padding: 0.45rem 1.1rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .docs-tab-btn:hover {
+            color: var(--color-text-main);
+        }
+
+        .docs-tab-btn.active {
+            background: var(--color-surface-card);
+            color: var(--color-brand-primary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .docs-nav-tools {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .docs-app-link {
+            padding: 0.45rem 0.9rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border-radius: var(--radius-md);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: all 0.2s ease;
+        }
+
+        .docs-app-link-book {
+            background: rgba(15, 118, 110, 0.1);
+            color: #0f766e;
+            border: 1px solid rgba(15, 118, 110, 0.25);
+        }
+
+        .docs-app-link-book:hover {
+            background: #0f766e;
+            color: #ffffff;
+        }
+
+        .docs-app-link-care {
+            background: rgba(2, 132, 199, 0.1);
+            color: #0284c7;
+            border: 1px solid rgba(2, 132, 199, 0.25);
+        }
+
+        .docs-app-link-care:hover {
+            background: #0284c7;
+            color: #ffffff;
+        }
+
+        /* --- Main Layout Grid --- */
+        .docs-layout {
+            display: flex;
+            max-width: 1600px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        /* --- Sidebar Navigation --- */
+        .docs-sidebar {
+            width: var(--doc-sidebar-width);
+            flex-shrink: 0;
+            position: sticky;
+            top: 65px;
+            height: calc(100vh - 65px);
+            overflow-y: auto;
+            padding: 1.5rem 1rem 3rem 1.5rem;
+            border-right: 1px solid var(--color-border-subtle);
+            box-sizing: border-box;
+            background: var(--color-bg-base);
+        }
+
+        .docs-search-box {
+            position: relative;
+            margin-bottom: 1.25rem;
+        }
+
+        .docs-search-input {
+            width: 100%;
+            padding: 0.55rem 0.75rem 0.55rem 2.2rem;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--color-border-subtle);
+            background: var(--color-surface-card);
+            color: var(--color-text-main);
+            font-size: 0.85rem;
+            box-sizing: border-box;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .docs-search-input:focus {
+            border-color: var(--color-brand-primary);
+            box-shadow: 0 0 0 3px var(--color-brand-subtle);
+        }
+
+        .docs-search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--color-text-muted);
+            font-size: 0.85rem;
+            pointer-events: none;
+        }
+
+        .docs-toc-heading {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--color-text-muted);
+            margin: 1.25rem 0 0.5rem 0.5rem;
+        }
+
+        .docs-toc-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+
+        .docs-toc-link {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.45rem 0.75rem;
+            border-radius: var(--radius-sm);
+            color: var(--color-text-secondary);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.15s ease;
+            line-height: 1.4;
+        }
+
+        .docs-toc-link:hover {
+            background: var(--color-bg-subtle);
+            color: var(--color-text-main);
+        }
+
+        .docs-toc-link.active {
+            background: var(--color-brand-subtle);
+            color: var(--color-brand-primary);
+            font-weight: 700;
+        }
+
+        .docs-toc-sublist {
+            list-style: none;
+            padding-left: 1.25rem;
+            margin: 0.15rem 0 0.35rem 0;
+            border-left: 1px dashed var(--color-border-subtle);
+        }
+
+        .docs-toc-sublink {
+            display: block;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+            text-decoration: none;
+            transition: color 0.15s;
+        }
+
+        .docs-toc-sublink:hover,
+        .docs-toc-sublink.active {
+            color: var(--color-brand-primary);
+            font-weight: 600;
+        }
+
+        /* --- Content Body --- */
+        .docs-content {
+            flex: 1;
+            min-width: 0;
+            padding: 2.5rem 3.5rem 6rem;
+            max-width: 1050px;
+        }
+
+        .docs-section {
+            scroll-margin-top: 90px;
+            margin-bottom: 3.5rem;
+        }
+
+        .docs-section h1 {
+            font-size: 2.25rem;
+            font-weight: 800;
+            color: var(--color-text-main);
+            margin-top: 0;
+            margin-bottom: 0.75rem;
+            line-height: 1.25;
+            letter-spacing: -0.02em;
+        }
+
+        .docs-section h2 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--color-text-main);
+            border-bottom: 2px solid var(--color-border-subtle);
+            padding-bottom: 0.6rem;
+            margin-top: 2.5rem;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+        }
+
+        .docs-section h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--color-text-main);
+            margin-top: 1.8rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .docs-lead-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            padding: 1rem 1.25rem;
+            border-radius: var(--radius-xl);
+            background: var(--color-surface-glass);
+            border: 1px solid var(--color-border-subtle);
+            margin-bottom: 2rem;
+            font-size: 0.875rem;
+            color: var(--color-text-secondary);
+        }
+
+        .docs-meta-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .docs-meta-item strong {
+            color: var(--color-text-main);
+        }
+
+        /* --- UI Components for Documentation --- */
+        .docs-kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .docs-kpi-card {
+            background: var(--color-surface-card);
+            border: 1px solid var(--color-border-subtle);
+            border-radius: var(--radius-xl);
+            padding: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s ease;
+        }
+
+        .docs-kpi-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--color-brand-border);
+            box-shadow: var(--shadow-md);
+        }
+
+        .docs-kpi-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-lg, 10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        .docs-kpi-title {
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .docs-kpi-value {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--color-text-main);
+        }
+
+        /* --- Tables --- */
+        .docs-table-wrapper {
+            background: var(--color-surface-card);
+            border: 1px solid var(--color-border-subtle);
+            border-radius: var(--radius-xl);
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .docs-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        .docs-table th {
+            background: var(--color-bg-subtle);
+            color: var(--color-text-secondary);
+            font-weight: 700;
+            padding: 0.85rem 1.1rem;
+            border-bottom: 1px solid var(--color-border-subtle);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+        }
+
+        .docs-table td {
+            padding: 0.85rem 1.1rem;
+            border-bottom: 1px solid var(--color-border-subtle);
+            color: var(--color-text-main);
+            vertical-align: top;
+        }
+
+        .docs-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .docs-table tr:hover td {
+            background: rgba(15, 118, 110, 0.02);
+        }
+
+        /* --- Code Blocks --- */
+        .docs-code-container {
+            position: relative;
+            margin: 1.25rem 0;
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            border: 1px solid var(--color-border-strong);
+            background: #0f172a;
+            color: #f8fafc;
+        }
+
+        .docs-code-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.5rem 1rem;
+            background: #1e293b;
+            border-bottom: 1px solid #334155;
+            font-size: 0.75rem;
+            font-family: monospace;
+            color: #94a3b8;
+        }
+
+        .docs-copy-btn {
+            background: transparent;
+            border: 1px solid #475569;
+            color: #cbd5e1;
+            padding: 0.25rem 0.65rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .docs-copy-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            border-color: #94a3b8;
+        }
+
+        .docs-code-block {
+            margin: 0;
+            padding: 1.25rem;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.875rem;
+            line-height: 1.6;
+        }
+
+        /* --- Callout & Cards --- */
+        .docs-callout {
+            border-left: 4px solid var(--color-brand-primary);
+            background: var(--color-brand-subtle);
+            padding: 1rem 1.25rem;
+            border-radius: 0 var(--radius-md) var(--radius-md) 0;
+            margin: 1.5rem 0;
+            color: var(--color-text-main);
+        }
+
+        .docs-callout-warning {
+            border-left-color: var(--color-accent-cta);
+            background: var(--color-accent-subtle);
+        }
+
+        .docs-callout-danger {
+            border-left-color: var(--color-accent-rose);
+            background: var(--color-accent-rose-subtle);
+        }
+
+        .docs-callout strong {
+            display: block;
+            margin-bottom: 0.25rem;
+            font-size: 0.95rem;
+        }
+
+        /* --- Accordion FAQ --- */
+        .docs-accordion {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin: 1.5rem 0;
+        }
+
+        .docs-accordion-item {
+            border: 1px solid var(--color-border-subtle);
+            background: var(--color-surface-card);
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: border-color 0.2s;
+        }
+
+        .docs-accordion-item:hover {
+            border-color: var(--color-brand-border);
+        }
+
+        .docs-accordion-btn {
+            width: 100%;
+            text-align: left;
+            background: transparent;
+            border: none;
+            padding: 1.1rem 1.25rem;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--color-text-main);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .docs-accordion-btn i {
+            transition: transform 0.25s ease;
+            color: var(--color-brand-primary);
+        }
+
+        .docs-accordion-btn.open i {
+            transform: rotate(180deg);
+        }
+
+        .docs-accordion-content {
+            display: none;
+            padding: 0 1.25rem 1.25rem;
+            color: var(--color-text-secondary);
+            font-size: 0.9rem;
+            border-top: 1px solid var(--color-border-subtle);
+            margin-top: -0.25rem;
+            padding-top: 1rem;
+        }
+
+        .docs-accordion-content.show {
+            display: block;
+        }
+
+        /* --- Mermaid Diagrams Box --- */
+        .docs-mermaid-card {
+            background: var(--color-surface-card);
+            border: 1px solid var(--color-border-subtle);
+            border-radius: var(--radius-2xl);
+            padding: 1.75rem;
+            margin: 1.5rem 0;
+            display: flex;
+            justify-content: center;
+            box-shadow: var(--shadow-sm);
+            overflow-x: auto;
+        }
+
+        /* --- Visual Illustration Figure --- */
+        .docs-diagram-figure {
+            margin: 1.75rem 0;
+            background: var(--color-surface-card);
+            border: 1px solid var(--color-border-subtle);
+            border-radius: var(--radius-2xl);
+            padding: 1.25rem;
+            box-shadow: var(--shadow-md);
+            text-align: center;
+        }
+
+        .docs-diagram-figure img {
+            max-width: 100%;
+            height: auto;
+            border-radius: var(--radius-xl);
+            display: block;
+            margin: 0 auto;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .docs-diagram-caption {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--color-text-secondary);
+            margin-top: 0.85rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        /* --- Swatch Pill --- */
+        .color-swatch-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 9999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border: 1px solid var(--color-border-subtle);
+        }
+
+        .swatch-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        /* --- Print Optimizations --- */
+        @media print {
+            .docs-navbar, .docs-sidebar, .docs-nav-tools {
+                display: none !important;
+            }
+            .docs-content {
+                padding: 0 !important;
+                max-width: 100% !important;
+            }
+            .docs-section {
+                page-break-after: always;
+            }
+            body {
+                background: #ffffff !important;
+                color: #000000 !important;
+            }
+        }
+
+        /* --- Responsive Media Queries --- */
+        @media (max-width: 1024px) {
+            .docs-sidebar {
+                display: none;
+            }
+            .docs-content {
+                padding: 1.5rem 1.25rem 5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header Navbar -->
+    <header class="docs-navbar">
+        <div class="flex items-center gap-3">
+            <a href="#" class="docs-brand">
+                <img src="logo.png" alt="MPIR Logo" onerror="this.style.display='none'">
+                <div class="docs-brand-title">
+                    <span>MPIR Lab Suite</span>
+                    <span class="docs-badge-version">v2.2 Production</span>
+                </div>
+            </a>
+
+            <!-- Tab Segment Switcher -->
+            <div class="docs-tab-nav">
+                <button class="docs-tab-btn active" id="tabBtnManual" onclick="switchDocTab('manual')">
+                    <i class="fa-solid fa-book-open"></i> <span>คู่มือการใช้งาน (Manual)</span>
+                </button>
+                <button class="docs-tab-btn" id="tabBtnDesign" onclick="switchDocTab('design')">
+                    <i class="fa-solid fa-layer-group"></i> <span>สถาปัตยกรรม (System Design)</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="docs-nav-tools">
+            <a href="index.html" class="docs-app-link docs-app-link-book" title="เปิดระบบ Lab Book+ (Lab Equipment LogBook)">
+                <i class="fa-solid fa-flask"></i> <span>Lab Book+</span>
+            </a>
+            <a href="CarePlus.html" class="docs-app-link docs-app-link-care" title="เปิดระบบ MPIR Lab Care+">
+                <i class="fa-solid fa-laptop-medical"></i> <span>Lab Care+</span>
+            </a>
+
+            <button class="nav-action-btn" onclick="window.print()" title="พิมพ์หรือบันทึกเป็น PDF (Print Document)">
+                <i class="fa-solid fa-print"></i>
+            </button>
+
+            <button class="nav-action-btn" onclick="LabTheme.toggle()" title="สลับโหมดมืด/สว่าง (Dark/Light Mode)">
+                <i class="fa-solid fa-circle-half-stroke"></i>
+            </button>
+
+            <button class="nav-action-btn" id="btnAudioToggle" onclick="LabAudio.toggleMute()" title="เปิด/ปิดเสียงตอบสนอง">
+                <i class="fa-solid fa-volume-high"></i>
+            </button>
+        </div>
+    </header>
+
+    <div class="docs-layout">
+        <!-- Sidebar Navigation (TOC) -->
+        <aside class="docs-sidebar">
+            <div class="docs-search-box">
+                <i class="fa-solid fa-magnifying-glass docs-search-icon"></i>
+                <input type="text" id="docsSearchInput" class="docs-search-input" placeholder="ค้นหาหัวข้อคู่มือ / สถาปัตยกรรม..." oninput="handleDocsSearch()">
+            </div>
+
+            <!-- TOC for User Manual -->
+            <div id="tocManual">
+                <div class="docs-toc-heading">สารบัญคู่มือผู้ใช้งาน</div>
+                <ul class="docs-toc-list">
+                    <li><a href="#man-intro" class="docs-toc-link"><i class="fa-solid fa-circle-info"></i> 1. บทนำและภาพรวม</a></li>
+                    <li>
+                        <a href="#man-getting-started" class="docs-toc-link"><i class="fa-solid fa-power-off"></i> 2. การเริ่มต้นใช้งาน</a>
+                        <ul class="docs-toc-sublist">
+                            <li><a href="#man-accounts" class="docs-toc-sublink">2.1 บัญชีผู้ใช้งานเริ่มต้น</a></li>
+                            <li><a href="#man-login" class="docs-toc-sublink">2.2 การเข้าสู่ระบบแบบ SSO</a></li>
+                            <li><a href="#man-switcher" class="docs-toc-sublink">2.3 การสลับระบบ (Quick Switcher)</a></li>
+                            <li><a href="#man-theme-sound" class="docs-toc-sublink">2.4 โหมดมืดและเสียงเอฟเฟกต์</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#man-notelab" class="docs-toc-link"><i class="fa-solid fa-calendar-check"></i> 3. การใช้งาน Lab Book+</a>
+                        <ul class="docs-toc-sublist">
+                            <li><a href="#man-calendar" class="docs-toc-sublink">3.1 หน้าปฏิทินและคิวเครื่องมือ</a></li>
+                            <li><a href="#man-booking" class="docs-toc-sublink">3.2 ฟอร์มจองเครื่องมือ (Exhaustive Fields)</a></li>
+                            <li><a href="#man-recurring" class="docs-toc-sublink">3.3 จองวนซ้ำ & ข้ามช่วงเวลาชน (Skip Conflicts)</a></li>
+                            <li><a href="#man-actual-usage" class="docs-toc-sublink">3.4 ฟอร์มบันทึกเวลาจริง & ส่งคืน (Dynamic Checklist)</a></li>
+                            <li><a href="#man-qr" class="docs-toc-sublink">3.5 การสแกน QR Code หน้าเครื่อง</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#man-careplus" class="docs-toc-link"><i class="fa-solid fa-wrench"></i> 4. การใช้งาน Lab Care+</a>
+                        <ul class="docs-toc-sublist">
+                            <li><a href="#man-care-dash" class="docs-toc-sublink">4.1 แดชบอร์ด & ปฏิทิน Responsive</a></li>
+                            <li><a href="#man-care-filters" class="docs-toc-sublink">4.2 ตัวกรองโต้ตอบทันที (Instant Filters)</a></li>
+                            <li><a href="#man-care-records" class="docs-toc-sublink">4.3 ฟอร์มบันทึกซ่อม/สอบเทียบ (Exhaustive Fields)</a></li>
+                            <li><a href="#man-care-po" class="docs-toc-sublink">4.4 แนบไฟล์ใบสั่งซื้อ (PO/Cert IndexedDB)</a></li>
+                            <li><a href="#man-care-conflict" class="docs-toc-sublink">4.5 การเตือนคิวจองชนซ้อน</a></li>
+                            <li><a href="#man-care-export" class="docs-toc-sublink">4.6 ส่งออกรายงาน PDF/Excel</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#man-admin" class="docs-toc-link"><i class="fa-solid fa-shield-halved"></i> 5. คู่มือผู้ดูแลระบบ</a>
+                        <ul class="docs-toc-sublist">
+                            <li><a href="#man-admin-eq" class="docs-toc-sublink">5.1 การจัดการเครื่องมือวิทยาศาสตร์</a></li>
+                            <li><a href="#man-admin-loc" class="docs-toc-sublink">5.2 จัดการอาคารและห้องแล็บ</a></li>
+                            <li><a href="#man-admin-users" class="docs-toc-sublink">5.3 จัดการผู้ใช้และรหัสผ่าน</a></li>
+                            <li><a href="#man-admin-backup" class="docs-toc-sublink">5.4 สำรอง/กู้คืนข้อมูลรวม 2 ระบบ (Unified JSON)</a></li>
+                            <li><a href="#man-admin-purge" class="docs-toc-sublink">5.5 เครื่องมือเคลียร์ข้อมูลคืนพื้นที่ (Storage Purge Tool)</a></li>
+                            <li><a href="#man-admin-firebase" class="docs-toc-sublink">5.6 เชื่อมต่อ Cloud Firebase (Spark Plan)</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#man-faq" class="docs-toc-link"><i class="fa-solid fa-circle-question"></i> 6. คำถามที่พบบ่อย (FAQ)</a></li>
+                </ul>
+            </div>
+
+            <!-- TOC for System Design -->
+            <div id="tocDesign" style="display: none;">
+                <div class="docs-toc-heading">สารบัญสถาปัตยกรรมระบบ</div>
+                <ul class="docs-toc-list">
+                    <li><a href="#des-exec" class="docs-toc-link"><i class="fa-solid fa-compass"></i> 1. Executive Summary</a></li>
+                    <li><a href="#des-arch" class="docs-toc-link"><i class="fa-solid fa-network-wired"></i> 2. Topology & Diagram</a></li>
+                    <li><a href="#des-color" class="docs-toc-link"><i class="fa-solid fa-palette"></i> 3. 60-30-10 Design System</a></li>
+                    <li><a href="#des-schema" class="docs-toc-link"><i class="fa-solid fa-database"></i> 4. Data Schema & ER Diagram</a></li>
+                    <li><a href="#des-sync" class="docs-toc-link"><i class="fa-solid fa-rotate"></i> 5. State Synchronization</a></li>
+                    <li><a href="#des-feedback" class="docs-toc-link"><i class="fa-solid fa-volume-high"></i> 6. Multimodal Feedback</a></li>
+                    <li><a href="#des-storage" class="docs-toc-link"><i class="fa-solid fa-box-archive"></i> 7. Storage (IndexedDB)</a></li>
+                    <li><a href="#des-smart" class="docs-toc-link"><i class="fa-solid fa-bolt"></i> 8. Smart Defaults & Logic</a></li>
+                    <li><a href="#des-rbac" class="docs-toc-link"><i class="fa-solid fa-user-lock"></i> 9. Security & Access Control</a></li>
+                    <li><a href="#des-qa" class="docs-toc-link"><i class="fa-solid fa-clipboard-check"></i> 10. QA & Verification</a></li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="docs-content">
+
+            <!-- ========================================================================= -->
+            <!-- TAB 1: USER MANUAL (คู่มือการใช้งาน) -->
+            <!-- ========================================================================= -->
+            <div id="sectionManual">
+                <div class="docs-section">
+                    <h1>คู่มือการใช้งานระบบ MPIR Lab Suite</h1>
+                    <p style="font-size: 1.1rem; color: var(--color-text-secondary); margin-bottom: 1.5rem;">
+                        ระบบสารสนเทศห้องปฏิบัติการวิจัยและทดลองแบบครบวงจร ครอบคลุมระบบ <strong>Lab Book+ (Lab Equipment LogBook)</strong> และ <strong>MPIR Lab Care+</strong>
+                    </p>
+
+                    <div class="docs-lead-meta">
+                        <div class="docs-meta-item"><i class="fa-solid fa-code-branch text-teal-600"></i> <strong>เวอร์ชัน:</strong> 2.2 Enterprise Production</div>
+                        <div class="docs-meta-item"><i class="fa-solid fa-building text-sky-600"></i> <strong>หน่วยงาน:</strong> ฝ่ายวิจัยและนวัตกรรม กลุ่มมิตรผล (MPIR)</div>
+                        <div class="docs-meta-item"><i class="fa-solid fa-shield-check text-emerald-600"></i> <strong>สถานะระบบ:</strong> Unified & Ready to Deploy</div>
+                    </div>
+
+                    <div class="docs-kpi-grid">
+                        <div class="docs-kpi-card">
+                            <div class="docs-kpi-icon" style="background: rgba(15, 118, 110, 0.12); color: #0f766e;">
+                                <i class="fa-solid fa-calendar-check"></i>
+                            </div>
+                            <div>
+                                <div class="docs-kpi-title">ระบบจองเครื่องมือ</div>
+                                <div class="docs-kpi-value">Lab Book+</div>
+                            </div>
+                        </div>
+                        <div class="docs-kpi-card">
+                            <div class="docs-kpi-icon" style="background: rgba(2, 132, 199, 0.12); color: #0284c7;">
+                                <i class="fa-solid fa-laptop-medical"></i>
+                            </div>
+                            <div>
+                                <div class="docs-kpi-title">ระบบบำรุงรักษา</div>
+                                <div class="docs-kpi-value">Lab Care+</div>
+                            </div>
+                        </div>
+                        <div class="docs-kpi-card">
+                            <div class="docs-kpi-icon" style="background: rgba(245, 158, 11, 0.12); color: #d97706;">
+                                <i class="fa-solid fa-database"></i>
+                            </div>
+                            <div>
+                                <div class="docs-kpi-title">ฐานข้อมูลซิงก์</div>
+                                <div class="docs-kpi-value">Shared Bridge</div>
+                            </div>
+                        </div>
+                        <div class="docs-kpi-card">
+                            <div class="docs-kpi-icon" style="background: rgba(16, 185, 129, 0.12); color: #10b981;">
+                                <i class="fa-solid fa-users"></i>
+                            </div>
+                            <div>
+                                <div class="docs-kpi-title">บัญชีมาตรฐาน</div>
+                                <div class="docs-kpi-value">10 นักวิจัย</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 1. บทนำและภาพรวม -->
+                <section id="man-intro" class="docs-section">
+                    <h2><span style="color: var(--color-brand-primary);">1.</span> บทนำและภาพรวมระบบ</h2>
+                    <p>
+                        <strong>MPIR Lab Suite</strong> ถูกพัฒนาขึ้นเพื่อยกระดับการบริหารจัดการห้องปฏิบัติการวิทยาศาสตร์ของฝ่ายวิจัยและนวัตกรรม โดยแบ่งเป็น 2 ระบบที่ทำงานเชื่อมโยงฐานข้อมูลเดียวกัน:
+                    </p>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.25rem; margin-top: 1rem;">
+                        <div style="background: var(--color-surface-card); border: 1px solid var(--color-brand-border); padding: 1.5rem; border-radius: var(--radius-xl);">
+                            <h4 style="margin: 0 0 0.5rem; color: #0f766e; display: flex; align-items: center; gap: 0.5rem;">
+                                <i class="fa-solid fa-flask"></i> Lab Book+ (Lab Equipment LogBook)
+                            </h4>
+                            <p style="margin: 0; font-size: 0.875rem; color: var(--color-text-secondary);">
+                                เน้นการจองเครื่องมือวิทยาศาสตร์ การบันทึกเวลาใช้งานจริง (Actual Usage Tracking) การจัดการคิวไม่ให้ทับซ้อน และการสแกน QR Code หน้าเครื่อง
+                            </p>
+                        </div>
+                        <div style="background: var(--color-surface-card); border: 1px solid rgba(2, 132, 199, 0.3); padding: 1.5rem; border-radius: var(--radius-xl);">
+                            <h4 style="margin: 0 0 0.5rem; color: #0284c7; display: flex; align-items: center; gap: 0.5rem;">
+                                <i class="fa-solid fa-laptop-medical"></i> MPIR Lab Care+
+                            </h4>
+                            <p style="margin: 0; font-size: 0.875rem; color: var(--color-text-secondary);">
+                                เน้นการดูแลรักษาเครื่องมือ วางแผนสอบเทียบ (Calibration Plan) บันทึกประวัติซ่อม วิเคราะห์งบประมาณ และจัดเก็บเอกสารใบสั่งซื้อ (PO/Cert) เข้าสู่ IndexedDB
+                            </p>
+                        </div>
+                    </div>
+                    <div class="docs-callout" style="margin-top: 1.25rem;">
+                        <strong><i class="fa-solid fa-rotate"></i> Real-time Cross-Tab Synchronization:</strong>
+                        ทั้งสองระบบสามารถเปิดทำงานพร้อมกันคนละแท็บบนบราวเซอร์ และข้อมูลจะซิงค์หากันอัตโนมัติแบบเรียลไทม์ผ่าน <code>Window Storage Event Bus</code>
+                    </div>
+                </section>
+
+                <!-- 2. การเริ่มต้นใช้งาน -->
+                <section id="man-getting-started" class="docs-section">
+                    <h2><span style="color: var(--color-brand-primary);">2.</span> การเริ่มต้นใช้งานและการตั้งค่าส่วนบุคคล</h2>
+                    
+                    <h3 id="man-accounts">2.1 บัญชีผู้ใช้งานเริ่มต้น</h3>
+                    <p>ระบบมีชุดข้อมูลจำลองตั้งต้น (Seed Data) พร้อมบัญชีผู้ใช้งานที่สามารถทดลองใช้งานได้ทันที:</p>
+                    
+                    <div class="docs-table-wrapper">
+                        <table class="docs-table">
+                            <thead>
+                                <tr>
+                                    <th>อีเมล / ชื่อผู้ใช้</th>
+                                    <th>รหัสผ่านเริ่มต้น</th>
+                                    <th>บทบาท (Role)</th>
+                                    <th>คำอธิบายสิทธิ์การใช้งาน</th>
+                                    <th style="text-align: right;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>admin@lab.com</code> (หรือ <code>admin</code>)</td>
+                                    <td><span class="color-swatch-pill"><code>admin321</code></span></td>
+                                    <td><span class="badge badge-danger">Administrator</span></td>
+                                    <td>สิทธิ์สูงสุด จัดการเครื่องมือ ผู้ใช้งาน และสำรองกู้คืนระบบ</td>
+                                    <td style="text-align: right;">
+                                        <button class="docs-copy-btn" onclick="copyText('admin', 'admin321')"><i class="fa-regular fa-copy"></i> คัดลอก</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><code>user@lab.com</code> (หรือ <code>user</code>)</td>
+                                    <td><span class="color-swatch-pill"><code>user123</code></span></td>
+                                    <td><span class="badge badge-booked">Standard User</span></td>
+                                    <td>จองเครื่องมือ บันทึกการใช้งานจริง บันทึกงานซ่อมบำรุง</td>
+                                    <td style="text-align: right;">
+                                        <button class="docs-copy-btn" onclick="copyText('user', 'user123')"><i class="fa-regular fa-copy"></i> คัดลอก</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><code>Saranyap@mitrphol.com</code></td>
+                                    <td><span class="color-swatch-pill"><code>user123</code></span></td>
+                                    <td><span class="badge badge-booked">Standard User</span></td>
+                                    <td>นักวิจัย / เจ้าหน้าที่กลุ่มมิตรผล (สามารถกรอกเฉพาะ <code>Saranyap</code> ได้)</td>
+                                    <td style="text-align: right;">
+                                        <button class="docs-copy-btn" onclick="copyText('Saranyap', 'user123')"><i class="fa-regular fa-copy"></i> คัดลอก</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><code>Kridsanak@mitrphol.com</code></td>
+                                    <td><span class="color-swatch-pill"><code>user123</code></span></td>
+                                    <td><span class="badge badge-booked">Standard User</span></td>
+                                    <td>นักวิจัย / เจ้าหน้าที่กลุ่มมิตรผล (สามารถกรอกเฉพาะ <code>Kridsanak</code> ได้)</td>
+                                    <td style="text-align: right;">
+                                        <button class="docs-copy-btn" onclick="copyText('Kridsanak', 'user123')"><i class="fa-regular fa-copy"></i> คัดลอก</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3 id="man-login">2.2 การเข้าสู่ระบบ</h3>
+                    <ol style="padding-left: 1.25rem; color: var(--color-text-secondary); line-height: 1.8;">
+                        <li>เปิดไฟล์ <code>index.html</code> หรือ <code>CarePlus.html</code> ผ่านเว็บเบราว์เซอร์</li>
+                        <li>กรอก <strong>Username</strong> โดยไม่ต้องพิมพ์ <code>@lab.com</code> (ระบบมีป้ายกำกับอัตโนมัติ) หรือพิมพ์อีเมลเต็มรูปแบบ</li>
+                        <li>กรอก <strong>Password</strong> แล้วกดปุ่ม <strong>Login</strong></li>
+                        <li>ระบบจะส่งเสียงสังเคราะห์ตอบรับ (Success Chime) และพานำเข้าสู่หน้าแดชบอร์ดหลักทันที</li>
+                    </ol>
+
+                    <h3 id="man-switcher">2.3 การสลับระบบ (Quick Switcher)</h3>
+                    <p>บนแถบเมนูด้านบน (Navbar) มีปุ่มลัดสำหรับสลับระหว่างสองระบบได้ในคลิกเดียว:</p>
+                    <ul>
+                        <li>ในหน้า <strong>Lab Book+</strong>: คลิกปุ่ม <span class="docs-app-link docs-app-link-care" style="padding: 0.2rem 0.5rem;"><i class="fa-solid fa-laptop-medical"></i> Lab Care+</span> เพื่อเปิดระบบบำรุงรักษา</li>
+                        <li>ในหน้า <strong>Lab Care+</strong>: คลิกปุ่ม <span class="docs-app-link docs-app-link-book" style="padding: 0.2rem 0.5rem;"><i class="fa-solid fa-flask"></i> Lab Book+</span> เพื่อกลับสู่ระบบจองเครื่องมือ</li>
+                    </ul>
+
+                    <h3 id="man-theme-sound">2.4 การปรับโหมดมืด/สว่าง และเปิด-ปิดเสียงแจ้งเตือน</h3>
+                    <ul>
+                        <li><strong>ปุ่มสลับโหมดมืด (Dark / Light Theme)</strong>: ไอคอน <i class="fa-solid fa-circle-half-stroke"></i> สลับธีมหน้าจออย่างถนอมสายตา สีจะซิงค์กันข้ามทุกหน้าจอ</li>
+                        <li><strong>ปุ่มควบคุมเสียง (Audio Mute Toggle)</strong>: ไอคอน <i class="fa-solid fa-volume-high"></i> เปิด-ปิดเสียงเอฟเฟกต์การกดปุ่มและการแจ้งเตือน เพื่อความเงียบสงบในห้องปฏิบัติการ</li>
+                    </ul>
+                </section>
+
+                <!-- 3. การใช้งาน Lab Book+ -->
+                <section id="man-notelab" class="docs-section">
+                    <h2><span style="color: var(--color-brand-primary);">3.</span> คู่มือการใช้งาน Lab Book+ (Lab Equipment LogBook)</h2>
+                    
+                    <h3 id="man-calendar">3.1 หน้าปฏิทินและการตรวจเช็กคิวเครื่องมือ</h3>
+                    <p>หน้าแรกของ Lab Book+ รวบรวมปฏิทินแบบโต้ตอบ (Interactive FullCalendar) แสดงมุมมอง เดือน, สัปดาห์ และวัน โดยมีสีแสดงสถานะการใช้งานอย่างชัดเจน:</p>
+                    <ul>
+                        <li><span class="badge badge-booked">Booked (สีน้ำเงิน)</span>: รายการจองที่รอการใช้งานตามกำหนด</li>
+                        <li><span class="badge badge-inuse">In Use (สีเหลืองกระพริบ)</span>: เครื่องมือที่กำลังเปิดใช้งานจริงอยู่ขณะนี้</li>
+                        <li><span class="badge badge-finished">Finished (สีเขียว)</span>: ใช้งานเสร็จสิ้นและส่งคืนเรียบร้อยแล้ว</li>
+                    </ul>
+                    
+                    <h3 id="man-booking">3.2 รายละเอียดฟอร์มการจองเครื่องมือวิทยาศาสตร์ (Exhaustive Booking Form Guide)</h3>
+                    <p>เมื่อคลิกปุ่ม <strong>"+ Book Equipment"</strong> หรือคลิกบนช่องว่างในตารางปฏิทิน ระบบจะเปิดหน้าจอแบบฟอร์มการจอง ซึ่งประกอบด้วยฟิลด์และตัวเลือกดังนี้:</p>
+
+                    <div class="docs-table-wrapper">
+                        <table class="docs-table">
+                            <thead>
+                                <tr>
+                                    <th>ฟิลด์ / ปุ่มควบคุม</th>
+                                    <th>ประเภทข้อมูล</th>
+                                    <th>รายละเอียดและการทำงาน</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Area / Building</strong></td>
+                                    <td>Dropdown</td>
+                                    <td>เลือกอาคารหรือห้องปฏิบัติการที่เครื่องมือตั้งอยู่ ระบบจะกรองรายชื่อเครื่องมือในช่องถัดไปให้ตรงกับห้องทันที</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Equipment</strong></td>
+                                    <td>Dropdown</td>
+                                    <td>เลือกเครื่องมือวิทยาศาสตร์ที่ต้องการจอง พร้อมมีป้ายแสดงสถานะความพร้อม เช่น <code>Ready</code> หรือ <code>Maintenance</code></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Start Time</strong></td>
+                                    <td><code>datetime-local</code></td>
+                                    <td><strong>Smart Default</strong>: ระบบจะปัดเศษเวลาขึ้นเป็นต้นชั่วโมงถัดไปให้อัตโนมัติ (เช่น 10:15 น. ปรับเป็น 11:00 น.)</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>End Time</strong></td>
+                                    <td><code>datetime-local</code></td>
+                                    <td><strong>Smart Default</strong>: ระบบตั้งค่าเริ่มต้นเป็น 2 ชั่วโมงถัดไปจากเวลาเริ่มต้นโดยอัตโนมัติ</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Project Code</strong></td>
+                                    <td><code>text</code></td>
+                                    <td>รหัสโครงการวิจัยหรืองานทดลอง (เช่น <code>RD-2026-MP01</code>) เพื่อจัดกลุ่มงบประมาณและตรวจสอบย้อนกลับ</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Full Description / Objectives</strong></td>
+                                    <td><code>textarea</code></td>
+                                    <td>วัตถุประสงค์การใช้งาน รายละเอียดการทดลอง สารเคมีที่ใช้ และข้อควรระวังในการเดินเครื่อง</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Usage Type</strong></td>
+                                    <td>Radio Buttons</td>
+                                    <td>เลือกประเภทงาน: <strong>Internal Project</strong> (โครงการวิจัยภายใน) หรือ <strong>External Commercial</strong> (งานบริการภายนอก)</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Confirmation Status</strong></td>
+                                    <td>Select</td>
+                                    <td>เลือกความแน่นอน: <strong>Confirmed</strong> (ยืนยันแน่นอน) หรือ <strong>Tentative</strong> (จองไว้ก่อนเบื้องต้น - แสดงแถบโปร่งแสงในปฏิทิน)</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Repeat / Recurring</strong></td>
+                                    <td>Select</td>
+                                    <td>การทำซ้ำ: <strong>None</strong>, <strong>Daily</strong> (ทุกวัน), <strong>Weekly</strong> (ทุกสัปดาห์), <strong>Monthly</strong> (ทุกเดือน), <strong>Yearly</strong> (ทุกปี)</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Repeat End Date</strong></td>
+                                    <td><code>date</code></td>
+                                    <td>วันสิ้นสุดรอบการทำซ้ำ (จะแสดงขึ้นมาเมื่อเลือก Repeat ที่ไม่ใช่ None)</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Skip Past Conflicts</strong></td>
+                                    <td>Checkbox</td>
+                                    <td><strong>ข้ามช่วงเวลาที่มีการจองซ้อน</strong>: หากเลือกระบบจะข้ามรอบวันที่ชนกับคิวผู้อื่น และจองรอบที่ว่างให้อัตโนมัติโดยไม่ล้มเหลว</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Check Availability</strong></td>
+                                    <td>Button</td>
+                                    <td>ตรวจสอบความว่างของเครื่องมือแบบเรียลไทม์ ตรวจจับทั้งคิวจองและตารางซ่อมบำรุงใน Lab Care+</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Save Booking</strong></td>
+                                    <td>Button</td>
+                                    <td>ยืนยันการจอง ระบบจะเล่นเสียง Success Chime บันทึกข้อมูล และส่งแจ้งเตือนเข้าสู่ระบบกระดิ่ง</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3 id="man-recurring">3.3 การจองแบบวนซ้ำ (Recurring Bookings) และการข้ามช่วงเวลาที่ชน</h3>
+                    <p>สำหรับงานวิจัยที่ต้องเก็บข้อมูลต่อเนื่องทุกสัปดาห์:</p>
+                    <ol style="padding-left: 1.25rem; line-height: 1.7;">
+                        <li>เลือกช่อง <strong>Repeat</strong> เป็น <code>Weekly</code> และกำหนด <strong>Repeat End Date</strong></li>
+                        <li>ทำเครื่องหมายถูกที่ช่อง <strong>"Skip Past Conflicts"</strong></li>
+                        <li>หากมีสัปดาห์ใดที่มีผู้อื่นจองเครื่องไว้ก่อนแล้ว ระบบจะแจ้งเตือนว่า <em>"ข้ามรอบวันที่ XX/XX/XXXX เนื่องจากมีคิวจองซ้อน"</em> และสร้างรายการจองในสัปดาห์อื่นๆ ที่ว่างให้ครบถ้วน</li>
+                    </ol>
+
+                    <h3 id="man-actual-usage">3.4 ฟอร์มบันทึกเวลาใช้งานจริงและส่งคืน (Finish Usage & Dynamic Checklist)</h3>
+                    <p>เมื่อผู้ใช้งานเดินไปยังเครื่องมือจริง:</p>
+                    <ol style="padding-left: 1.25rem; line-height: 1.7;">
+                        <li>กดปุ่ม <strong>"Check In"</strong> เมื่อเริ่มเปิดเครื่องเพื่อบันทึกเวลาจริง (Actual Start)</li>
+                        <li>เมื่อเสร็จสิ้นการทดลอง คลิกปุ่ม <strong>"Finish Usage"</strong> หน้าต่างโมดอลจะเปิดขึ้น:
+                            <ul>
+                                <li><strong>Dynamic Parameters</strong>: พารามิเตอร์เฉพาะที่ผู้ดูแลกำหนดไว้สำหรับเครื่องมือนั้น (เช่น อุณหภูมิ, ความเร็วรอบ, หลอด UV)</li>
+                                <li><strong>Actual End Time</strong>: เวลาปิดเครื่องจริง</li>
+                                <li><strong>Usage Details & Remarks</strong>: ข้อสังเกต สภาพความสะอาด และบันทึกข้อผิดพลาดระหว่างเดินเครื่อง</li>
+                            </ul>
+                        </li>
+                        <li>คลิกปุ่ม <strong>"Complete & Return"</strong> สถานะเครื่องจะปรับกลับเป็น Ready พร้อมใช้งานทันที</li>
+                    </ol>
+
+                    <h3 id="man-qr">3.5 การสแกน QR Code หน้าเครื่องมือ</h3>
+                    <p>
+                        ผู้ใช้งานสามารถใช้สมาร์ทโฟนหรือแท็บเล็ตกดปุ่ม <strong>QR Scan</strong> ที่มุมบนขวา เพื่อสแกนคิวอาร์โค้ดประจำเครื่อง ระบบจะเปิดฟอร์มจองหรือเช็กอินของเครื่องมือนั้นให้ทันทีโดยไม่ต้องค้นหารายชื่อ
+                    </p>
+                </section>
+
+                <!-- 4. การใช้งาน Lab Care+ -->
+                <section id="man-careplus" class="docs-section">
+                    <h2><span style="color: var(--color-brand-primary);">4.</span> คู่มือการใช้งาน MPIR Lab Care+</h2>
+                    
+                    <h3 id="man-care-dash">4.1 แดชบอร์ดภาพรวมและปฏิทินงานแบบ Responsive (Mobile/Tablet/Desktop)</h3>
+                    <p>รวบรวมสรุปสถานะการซ่อมบำรุง, เครื่องมือที่ใกล้ถึงกำหนดสอบเทียบ (Calibration Due ใน 30-60 วัน), กราฟแจกแจงค่าใช้จ่ายประจำปี และปฏิทินกำหนดการงานบำรุงรักษาแบบ Responsive:</p>
+                    <ul>
+                        <li><strong>Mobile (< 640px)</strong>: ตารางปฏิทินปรับความสูงเป็น 54px ชิปแสดงผลกะทัดรัด ตัวย่อวัน <code>S M T W T F S</code> พร้อมปุ่ม <code>+N more</code> เพื่อเปิดดูรายการทั้งหมดในวันนั้นในรูปแบบหน้าต่างโมดอล</li>
+                        <li><strong>Desktop / Tablet (> 640px)</strong>: แสดงตารางปฏิทินขนาดเต็ม พร้อมชื่อเครื่องมือและประเภทงาน</li>
+                        <li><strong>ปุ่ม "Today"</strong>: คลิกเพื่อเลื่อนหน้าปฏิทินกลับมายังเดือนและวันที่ปัจจุบันได้ทันทีในคลิกเดียว</li>
+                    </ul>
+
+                    <h3 id="man-care-filters">4.2 ระบบตัวกรองข้อมูลแบบโต้ตอบทันที (Instant Reactive Filters & Visual Cards)</h3>
+                    <p>แถบตัวกรอง Status, Service Type, Equipment, และ Location ด้านบนปฏิทิน ตอบสนองแบบทันที (0ms):</p>
+                    <ul>
+                        <li>เมื่อคลิกเปลี่ยนตัวเลือกในดรอปดาวน์ ทั้งปฏิทินและกราฟสรุปด้านบนจะคำนวณและอัปเดตใหม่ทันที</li>
+                        <li>ระบบจะแสดง <strong>Smart Recommendation Card</strong> แนะนำรายการเครื่องมือที่ควรจัดลำดับความสำคัญตามเงื่อนไขตัวกรอง</li>
+                    </ul>
+
+                    <h3 id="man-care-records">4.3 รายละเอียดฟอร์มบันทึกงานซ่อมและงานสอบเทียบ (Exhaustive Maintenance Record Form)</h3>
+                    <p>เมื่อคลิกปุ่ม <strong>"+ New Record"</strong> แบบฟอร์มบันทึกงานซ่อมบำรุงจะเปิดขึ้น:</p>
+
+                    <div class="docs-table-wrapper">
+                        <table class="docs-table">
+                            <thead>
+                                <tr>
+                                    <th>ฟิลด์ / ปุ่มควบคุม</th>
+                                    <th>คำอธิบายและการใช้งาน</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Location / Building</strong></td>
+                                    <td>เลือกอาคารหรือห้องปฏิบัติการที่เครื่องมือตั้งอยู่</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Equipment</strong></td>
+                                    <td>เลือกเครื่องมือวิทยาศาสตร์ที่ต้องการบันทึกประวัติ</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Service Type</strong></td>
+                                    <td>เลือกประเภทงาน: <strong>Repair</strong> (งานซ่อม), <strong>Calibration</strong> (งานสอบเทียบ), <strong>PM</strong> (บำรุงรักษาเชิงป้องกัน), หรือ <strong>Spare parts</strong> (เปลี่ยนอะไหล่)</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Service Date</strong></td>
+                                    <td>วันที่เข้าดำเนินการซ่อมหรือสอบเทียบ</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Next Due Date</strong></td>
+                                    <td>วันครบกำหนดสอบเทียบรอบถัดไป (สำคัญมากสำหรับประเภท Calibration เพื่อใช้แจ้งเตือนล่วงหน้า)</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Maintenance Cost</strong></td>
+                                    <td>ค่าใช้จ่ายในการดำเนินงาน (บาท) จัดรูปแบบตัวเลข tabular-nums ชัดเจน</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Vendor / Technician</strong></td>
+                                    <td>ชื่อบริษัทคู่ค้าหรือชื่อช่างผู้เชี่ยวชาญภายนอกที่เข้าให้บริการ</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Reporter</strong></td>
+                                    <td>ชื่อเจ้าหน้าที่หรือนักวิจัยผู้แจ้งซ่อม/ผู้ประสานงาน</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Status</strong></td>
+                                    <td>สถานะงาน: <code>Pending</code> (รอดำเนินการ), <code>In Progress</code> (กำลังดำเนินการ), หรือ <code>Complete</code> (เสร็จสมบูรณ์)</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>PO & Cert Upload</strong></td>
+                                    <td>กล่องเลือกไฟล์เอกสาร PDF (รองรับสูงสุด 5 ไฟล์ต่อรายการ จัดเก็บเข้าสู่ IndexedDB)</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Save Record</strong></td>
+                                    <td>บันทึกข้อมูล พร้อมตรวจสอบการชนซ้อนกับคิวจองใน Lab Book+ อัตโนมัติ</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3 id="man-care-po">4.4 การแนบไฟล์ใบสั่งซื้อ (PO) และใบรับรองสอบเทียบ (Cert)</h3>
+                    <div class="docs-callout">
+                        <strong><i class="fa-solid fa-file-pdf text-rose-500"></i> จัดเก็บลง IndexedDB ปลอดภัยสูงสุด:</strong>
+                        ไฟล์ PDF ทั้งหมดถูกแยกเก็บใน IndexedDB ประจำเครื่อง ไม่กินโควตาตัวอักษรของ Local Storage และสามารถกดปุ่ม <strong>"View PO"</strong> ในตารางเพื่อเปิดพรีวิวอ่านเอกสารได้ทันที
+                    </div>
+
+                    <h3 id="man-care-conflict">4.5 การตรวจสอบการชนกับคิวจองเครื่องมือ (Cross-App Conflict Alert)</h3>
+                    <p>
+                        เมื่อเจ้าหน้าที่บันทึกวันที่จะส่งซ่อมหรือสอบเทียบ ระบบจะตรวจสอบข้ามไปยังตารางจองของ Lab Book+ ทันที หากมีผู้อื่นจองเครื่องไว้ในวันเดียวกัน ระบบจะแสดง SweetAlert เตือนชื่อผู้จองและช่วงเวลาทันที เพื่อป้องกันปัญหาเครื่องถูกส่งซ่อมขณะกำลังมีงานวิจัยสำคัญ
+                    </p>
+
+                    <h3 id="man-care-export">4.6 การส่งออกรายงานสรุป (Export PDF & Excel)</h3>
+                    <ul>
+                        <li><strong>Export to Excel (.xlsx)</strong>: สำหรับนำไปวิเคราะห์คำนวณงบประมาณต่อในโปรแกรมสเปรดชีต พร้อมสูตรสรุปยอดรวม</li>
+                        <li><strong>Export to PDF</strong>: สร้างเอกสารรายงานทางการ พร้อมฟอนต์ภาษาไทย TH Sarabun New สวยงามพร้อมพิมพ์</li>
+                    </ul>
+                </section>
+
+                <!-- 5. คู่มือผู้ดูแลระบบ -->
+                <section id="man-admin" class="docs-section">
+                    <h2><span style="color: var(--color-brand-primary);">5.</span> คู่มือสำหรับผู้ดูแลระบบ (Admin Control Guide)</h2>
+                    <p><em>(สงวนสิทธิ์เฉพาะผู้ใช้งานที่มีสิทธิ์ Role: <code>admin</code> เท่านั้น)</em></p>
+
+                    <h3 id="man-admin-eq">5.1 การจัดการเครื่องมือวิทยาศาสตร์และฟิลด์พารามิเตอร์เฉพาะ</h3>
+                    <p>สามารถเพิ่ม แก้ไขหมายเลข Serial Number เปลี่ยนชื่อผู้ดูแลประจำเครื่อง (Custodian) หรือกำหนด Dynamic Parameters สำหรับให้ผู้ใช้กรอกตอนส่งคืนเครื่องมือ</p>
+
+                    <h3 id="man-admin-loc">5.2 การจัดการอาคารและห้องปฏิบัติการ</h3>
+                    <p>สามารถเพิ่มห้องปฏิบัติการใหม่ เช่น <em>Pilot Plant Unit</em> หรือ <em>Fermentation Lab</em> ข้อมูลจะถูกอัปเดตไปยังตัวเลือกของทั้งสองระบบทันที</p>
+
+                    <h3 id="man-admin-users">5.3 การจัดการบัญชีผู้ใช้งานและสิทธิ์</h3>
+                    <p>สามารถเพิ่มรายชื่อนักวิจัยใหม่ กำหนดบทบาท (<code>admin</code> หรือ <code>user</code>) และรีเซ็ตรหัสผ่านได้ตลอดเวลา</p>
+
+                    <h3 id="man-admin-backup">5.4 การสำรองข้อมูลรวม 2 ระบบในคลิกเดียว (Unified Backup All)</h3>
+                    <div style="background: var(--color-surface-card); border: 1px solid var(--color-brand-border); padding: 1.25rem; border-radius: var(--radius-xl); margin: 1rem 0;">
+                        <h4 style="margin: 0 0 0.5rem; color: var(--color-brand-primary);"><i class="fa-solid fa-download"></i> สำรองและกู้คืนข้ามระบบ 100%</h4>
+                        <p style="margin: 0 0 0.75rem; font-size: 0.875rem; color: var(--color-text-secondary);">
+                            ในเวอร์ชัน 2.1 ทั้ง Lab Book+ และ Lab Care+ มีปุ่ม <strong>"Backup All (2 Systems)"</strong> ซึ่งจะรวมข้อมูลรายการจอง, ประวัติซ่อม, ข้อมูลเครื่องมือ, ผู้ใช้งาน และ <strong>ไฟล์แนบ PO ทั้งหมดใน IndexedDB</strong> เข้าเป็นไฟล์ JSON เดียว (<code>LabSuite_Unified_Backup_YYYY-MM-DD.json</code>)
+                        </p>
+                        <p style="margin: 0; font-size: 0.875rem; color: var(--color-text-secondary);">
+                            การกด <strong>"Import Unified JSON"</strong> ในระบบใดระบบหนึ่ง จะกู้คืนและซิงค์ข้อมูลคืนสู่ทั้ง 2 ระบบและ IndexedDB พร้อมกันทันที
+                        </p>
+                    </div>
+
+                    <h3 id="man-admin-purge">5.5 เครื่องมือเคลียร์ข้อมูลคืนพื้นที่ (Storage Cleanup & Quota Purge Tool)</h3>
+                    <p>
+                        เพื่อรักษาพื้นที่จัดเก็บบนคลาวด์ให้อยู่ในโควตาฟรี 1GB ของ Firebase Spark Plan และป้องกันความจำเบราว์เซอร์เต็ม:
+                    </p>
+                    <div class="docs-callout" style="border-left-color: #f59e0b;">
+                        <strong><i class="fa-solid fa-shield-halved text-emerald-600"></i> การันตีความปลอดภัยสูงสุด (Master Data Immutability):</strong>
+                        ระบบจะลบเฉพาะ <strong>ประวัติการจอง (Bookings) และประวัติงานซ่อม (Records พร้อมไฟล์แนบ PO)</strong> ที่เก่ากว่าช่วงเวลาที่เลือกเท่านั้น <strong>ไม่มีทางลบข้อมูลเครื่องมือ, ห้องแล็บ, รายชื่อผู้ใช้ หรือรายชื่อช่างเด็ดขาด</strong>
+                    </div>
+                    <p><strong>ตัวเลือกช่วงเวลาที่สามารถล้างได้:</strong></p>
+                    <ul>
+                        <li>เก่ากว่า 1 เดือน (> 30 วันที่ผ่านมา)</li>
+                        <li>เก่ากว่า 1 ไตรมาส (> 90 วันที่ผ่านมา - <em>ค่าแนะนำ</em>)</li>
+                        <li>เก่ากว่า 6 เดือน (> 180 วันที่ผ่านมา)</li>
+                        <li>เก่ากว่า 1 ปี (> 365 วันที่ผ่านมา)</li>
+                        <li>เก่ากว่า 2 ปี (> 730 วันที่ผ่านมา)</li>
+                        <li>ลบประวัติการใช้งานทั้งหมดของ User (ล้างกระดานเฉพาะ Transaction)</li>
+                    </ul>
+                    <p>
+                        ก่อนการลบจริง ระบบจะแสดงหน้าต่างสรุปจำนวนรายการที่จะลบ พร้อมปุ่ม <strong>"💾 แบ็คอัพก่อนล้าง"</strong> เพื่อดาวน์โหลดไฟล์สำรองข้อมูลฉบับเต็มเก็บไว้ก่อนเสมอ
+                    </p>
+
+                    <h3 id="man-admin-firebase">5.6 การเชื่อมต่อ Cloud Database (Firebase Spark Plan 100% Free)</h3>
+                    <p>ผู้ดูแลระบบสามารถเปิดใช้งาน Cloud Real-time Synchronization ในแพ็กเกจฟรีได้ง่ายๆ:</p>
+                    <ol style="padding-left: 1.25rem; line-height: 1.7;">
+                        <li>ไปที่ <a href="https://console.firebase.google.com/" target="_blank" style="color: var(--color-brand-primary); font-weight: 600;">Firebase Console</a> สร้างโปรเจกต์ใหม่ (แผน Spark ฟรี ไม่ต้องใช้บัตรเครดิต)</li>
+                        <li>สร้างฐานข้อมูล Cloud Firestore</li>
+                        <li>ไปที่ Project Settings &gt; General &gt; Your apps เลือก Web App (<code>&lt;/&gt;</code>) เพื่อคัดลอกค่า Config</li>
+                        <li>คลิกปุ่ม <strong>"Cloud Config"</strong> ในหน้าต่าง Admin กรอก <strong>API Key</strong> และ <strong>Project ID</strong> แล้วกด <strong>"บันทึกและเชื่อมต่อ"</strong></li>
+                        <li>ระบบจะแสดงสถานะ <code>Connected (Spark Plan)</code> สีเขียว และซิงค์ข้อมูลขึ้นคลาวด์แบบเรียลไทม์ หากออฟไลน์ระบบจะสลับเป็น Local-First อัตโนมัติโดยข้อมูลไม่สูญหาย</li>
+                    </ol>
+
+                    <div style="background: rgba(37,99,235,0.08); border: 1px solid rgba(37,99,235,0.25); border-radius: 12px; padding: 1rem; margin: 1rem 0; font-size: 0.85rem; line-height: 1.5;">
+                        <h4 style="margin: 0 0 0.5rem 0; color: #2563eb; display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fa-solid fa-magic-wand-sparkles"></i> โหมดเชื่อมต่ออัตโนมัติ (Zero-Config Auto-Connect)
+                        </h4>
+                        <p style="margin: 0 0 0.5rem 0;">ผู้ดูแลระบบสามารถนำค่า <code>apiKey</code> และ <code>projectId</code> ไปใส่ไว้ใน <code>DEFAULT_CONFIG</code> ของไฟล์ <code>shared-core.js</code> เพียงครั้งเดียว <strong>ผู้ใช้งานคนอื่นๆ บนเครื่องอื่นจะไม่ต้องกรอกค่าใดๆ เลย</strong> ระบบจะเชื่อมต่อไปยัง Firebase Cloud ให้โดยอัตโนมัติทันที</p>
+                        <h4 style="margin: 0.75rem 0 0.5rem 0; color: #10b981; display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fa-solid fa-file-zipper"></i> การบีบอัดไฟล์แนบขั้นสูงสุด (Maximum Compression & Cloud Attachments)
+                        </h4>
+                        <p style="margin: 0;">ไฟล์แนบ PDF ที่อัปโหลดจะถูกบีบอัดด้วย <strong>Native Gzip Web Streams API</strong> ลดขนาดลง <strong>50% - 80%</strong> ทันที และจัดเก็บใน Cloud Firestore คอลเลกชัน <code>lab_attachments</code> พร้อมให้ผู้ใช้คนอื่นเปิดดูแบบ On-Demand และรวมอยู่ในไฟล์สำรองข้อมูล (Backup) แบบบีบอัดเรียบร้อย</p>
+                    </div>
+                </section>
+
+                <!-- 6. FAQ & Troubleshooting -->
+                <section id="man-faq" class="docs-section">
+                    <h2><span style="color: var(--color-brand-primary);">6.</span> คำถามที่พบบ่อย (FAQ & Troubleshooting)</h2>
+                    
+                    <div class="docs-accordion">
+                        <div class="docs-accordion-item">
+                            <button class="docs-accordion-btn" onclick="toggleAccordion(this)">
+                                <span><i class="fa-solid fa-circle-question text-teal-600"></i> Q1: ล็อกอินด้วยอีเมล @mitrphol.com ไม่ผ่าน หรือต้องการกรอกชื่อสั้น?</span>
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </button>
+                            <div class="docs-accordion-content">
+                                ปัจจุบันระบบเวอร์ชัน 2.0 รองรับทั้งชื่อผู้ใช้สั้น (เช่น <code>Saranyap</code> หรือ <code>admin</code>) และอีเมลเต็มรูปแบบแล้ว ตรวจสอบรหัสผ่านเริ่มต้นคือ <code>user123</code> (หรือ <code>admin321</code> สำหรับแอดมิน)
+                            </div>
+                        </div>
+
+                        <div class="docs-accordion-item">
+                            <button class="docs-accordion-btn" onclick="toggleAccordion(this)">
+                                <span><i class="fa-solid fa-circle-question text-teal-600"></i> Q2: ต้องการเปิดใช้งานบนหน้าจอโทรศัพท์มือถือ แต่เมนูบังหน้าจอ?</span>
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </button>
+                            <div class="docs-accordion-content">
+                                บนหน้าจอโทรศัพท์ขนาดเล็ก (&lt; 768px) ระบบจะแสดง <strong>Mobile Bottom Navigation Bar</strong> ทางด้านล่างของหน้าจออัตโนมัติ เพื่อให้กดเปลี่ยนหน้าด้วยนิ้วหัวแม่มือได้อย่างสะดวกสบาย
+                            </div>
+                        </div>
+
+                        <div class="docs-accordion-item">
+                            <button class="docs-accordion-btn" onclick="toggleAccordion(this)">
+                                <span><i class="fa-solid fa-circle-question text-teal-600"></i> Q3: เปิดดูไฟล์ PDF ที่แนบไว้ไม่ได้เมื่อย้ายเครื่อง?</span>
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </button>
+                            <div class="docs-accordion-content">
+                                ในเวอร์ชัน 2.2 ไฟล์แนบ PDF ทุกไฟล์จะถูกบีบอัดด้วย <strong>Native Gzip Web Streams (LabCompressor)</strong> ลดขนาดลง 50% - 80% และอัปโหลดไปยังคอลเลกชัน <code>lab_attachments</code> บน Cloud Firestore อัตโนมัติ ผู้ใช้งานจึงสามารถเปิดดูเอกสารข้ามเครื่องหรืออุปกรณ์ได้ทันทีแบบ On-Demand Lazy Fetching โดยไม่ต้องกู้คืนข้อมูลแบบแมนนวล และยังสามารถสำรองข้อมูลรวมในไฟล์เดียวผ่านฟังก์ชัน Unified Backup ได้เสมอ
+                            </div>
+                        </div>
+
+                        <div class="docs-accordion-item">
+                            <button class="docs-accordion-btn" onclick="toggleAccordion(this)">
+                                <span><i class="fa-solid fa-circle-question text-teal-600"></i> Q4: ต้องการรีเซ็ตข้อมูลทั้งหมดกลับสู่ค่าเริ่มต้นโรงงาน (Factory Reset)?</span>
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </button>
+                            <div class="docs-accordion-content">
+                                สามารถเปิดใช้งานผ่านโหมด Private / Incognito ของเบราว์เซอร์ หรือเคลียร์ Storage ของเบราว์เซอร์ ชุดข้อมูลจำลองมาตรฐาน (Seed Data) จะถูกโหลดกลับมาใหม่อัตโนมัติ
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- ========================================================================= -->
+            <!-- TAB 2: SYSTEM DESIGN SPECIFICATION (สถาปัตยกรรมระบบ) -->
+            <!-- ========================================================================= -->
+            <div id="sectionDesign" style="display: none;">
+                <div class="docs-section">
+                    <h1>สถาปัตยกรรมระบบ (System Design Specification)</h1>
+                    <p style="font-size: 1.1rem; color: var(--color-text-secondary); margin-bottom: 1.5rem;">
+                        ข้อกำหนดทางสถาปัตยกรรม เทคโนโลยี สคีมาข้อมูล และหลักการยศาสตร์ด้านภาพ (Visual Ergonomics) สำหรับระบบ Lab Book+ & MPIR Lab Care+
+                    </p>
+
+                    <div class="docs-lead-meta">
+                        <div class="docs-meta-item"><i class="fa-solid fa-cubes text-teal-600"></i> <strong>Architecture:</strong> Unified Client-Side Multi-App</div>
+                        <div class="docs-meta-item"><i class="fa-solid fa-hard-drive text-sky-600"></i> <strong>Storage Engine:</strong> LocalStorage + IndexedDB + Firebase Spark</div>
+                        <div class="docs-meta-item"><i class="fa-solid fa-palette text-amber-600"></i> <strong>Design Tokens:</strong> Color Theory 60-30-10</div>
+                    </div>
+                </div>
+
+                <!-- 1. Executive Summary -->
+                <section id="des-exec" class="docs-section">
+                    <h2><span style="color: var(--color-brand-primary);">1.</span> Executive Summary</h2>
+                    <p>
+                        MPIR Lab Suite เป็นแพลตฟอร์มบริหารจัดการทรัพยากรห้องปฏิบัติการวิจัยและทดลองแบบครบวงจร ภายใต้สถาปัตยกรรม **Unified Client-Side Architecture** โดยมีเป้าหมายหลักในการขจัดจุดบอดเดิม (Blind Spots) 3 ประการ:
+                    </p>
+                    <ul>
+                        <li><strong>Data Overwrite Elimination:</strong> ไม่ให้เกิดการเขียนทับข้อมูลข้ามระบบระหว่าง Lab Book+ และ Care+</li>
+                        <li><strong>ID Type Safety:</strong> ป้องกันข้อผิดพลาดจากการผสมผสานรหัสเครื่องมือที่เป็นตัวเลขและสตริง</li>
+                        <li><strong>Enterprise Domain Support:</strong> รองรับการยืนยันตัวตนของบุคลากรทั้งกลุ่มมิตรผลและผู้ใช้นอกเครือข่าย</li>
+                    </ul>
+                </section>
+
+                <!-- 2. System Architecture & Topology -->
+                <section id="des-arch" class="docs-section">
+                    <h2><span style="color: var(--color-brand-primary);">2.</span> System Architecture & Topology</h2>
+                    <p>แผนภาพแสดงความสัมพันธ์ระหว่างส่วนติดต่อผู้ใช้ (UI Layer), สะพานเชื่อมส่วนกลาง (Shared Core Bridge) และชั้นจัดเก็บข้อมูล (Storage Layer):</p>
+
+                    <div class="docs-mermaid-card">
+                        <pre class="mermaid">
+graph TB
+    subgraph ClientLayer ["Client Browser Layer (Desktop / Tablet / Mobile)"]
+        UI_Book["Lab Book+<br>(index.html)"]
+        UI_Care["Lab Care+<br>(CarePlus.html)"]
+        UI_Docs["Documentation<br>(docs.html & docs/index.html)"]
+    end
+
+    subgraph CoreBridge ["Shared Core Engine (shared-core.js & shared-theme.css)"]
+        Bridge["LabStateBridge<br>(Data Normalization, Merged State & Unified Backup)"]
+        Compressor["LabCompressor<br>(Gzip Web Streams Compression & Decompression)"]
+        FbSync["LabFirebase<br>(Zero-Config Auto-Connect & Cloud Sync Adapter)"]
+        PoStore["LabPoStorage<br>(IndexedDB Local Attachment Cache)"]
+        Auth["LabAuth<br>(Mitr Phol Domain SSO & Session Guard)"]
+        Audio["LabAudio Engine<br>(Web Audio API Live Synthesizer)"]
+        Alert["LabAlert Engine<br>(SweetAlert2 + Haptic + Toast)"]
+        Theme["LabTheme<br>(60-30-10 Design Tokens & Dark Mode Sync)"]
+    end
+
+    subgraph LocalPersistence ["Local Storage & Persistence Layer"]
+        LS["localStorage<br>Key: 'NoteLabState_Merged'"]
+        IDB["IndexedDB: CarePlusStorage<br>Store: 'poFiles' (Compressed Blobs)"]
+        EventBus["Window Storage Event Bus<br>(Cross-Tab Live Synchronization)"]
+    end
+
+    subgraph CloudLayer ["Google Cloud Layer (Firebase Spark Free Tier)"]
+        FStore_State["Firestore Collection: 'lab_suite'<br>Doc: 'current_state' (Bookings, Records, Master Data)"]
+        FStore_Attach["Firestore Collection: 'lab_attachments'<br>Doc: '{recordId}' (Compressed PDF Files)"]
+    end
+
+    subgraph HostingLayer ["Production Hosting (Netlify)"]
+        NetlifyEdge["Netlify CDN Edge<br>(https://labbookplus.netlify.app/)"]
+        NetlifyRules["Routing & Headers Guard<br>(_redirects, _headers, netlify.toml)"]
+    end
+
+    NetlifyEdge --> NetlifyRules
+    NetlifyRules --> UI_Book
+    NetlifyRules --> UI_Care
+    NetlifyRules --> UI_Docs
+
+    UI_Book --> Bridge
+    UI_Care --> Bridge
+    UI_Book --> Auth
+    UI_Care --> Auth
+    UI_Book --> Alert
+    UI_Care --> Alert
+    UI_Book --> Audio
+    UI_Care --> Audio
+
+    Bridge <--> LS
+    Bridge <--> PoStore
+    PoStore <--> IDB
+    Bridge <--> Compressor
+    Bridge <--> FbSync
+
+    FbSync --> FStore_State
+    FbSync --> FStore_Attach
+
+    LS -.-> EventBus
+    EventBus -.-> UI_Book
+    EventBus -.-> UI_Care
+                        </pre>
+                    </div>
+                </section>
+
+                <!-- 3. 60-30-10 Design System -->
+                <section id="des-color" class="docs-section">
+                    <h2><span style="color: var(--color-brand-primary);">3.</span> Design System & Visual Ergonomics (60-30-10 Theory)</h2>
+                    <p>ระบบกำหนดสัดส่วนสีตามหลักจิตวิทยาเพื่อลดความล้าของสายตาเมื่อใช้งานเป็นเวลานาน:</p>
+
+                    <div class="docs-table-wrapper">
+                        <table class="docs-table">
+                            <thead>
+                                <tr>
+                                    <th>สัดส่วน</th>
+                                    <th>ตัวแปร CSS Token</th>
+                                    <th>โทนสีที่ใช้</th>
+                                    <th>วัตถุประสงค์การใช้งาน</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>60% Dominant</strong></td>
+                                    <td><code>--color-bg-base</code>, <code>--color-surface-card</code></td>
+                                    <td>
+                                        <span class="color-swatch-pill"><span class="swatch-dot" style="background:#F8FAFC;"></span> Slate-50 (#F8FAFC)</span><br>
+                                        <span class="color-swatch-pill mt-1"><span class="swatch-dot" style="background:#0B1120;"></span> Dark Midnight (#0B1120)</span>
+                                    </td>
+                                    <td>พื้นหลังหลัก โครงสร้างหน้าเว็บ พื้นหลังการ์ดส่วนใหญ่</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>30% Secondary</strong></td>
+                                    <td><code>--color-brand-primary</code>, <code>--color-brand-secondary</code></td>
+                                    <td>
+                                        <span class="color-swatch-pill"><span class="swatch-dot" style="background:#0F766E;"></span> Mitr Phol Teal (#0F766E)</span><br>
+                                        <span class="color-swatch-pill mt-1"><span class="swatch-dot" style="background:#0284C7;"></span> Sky Blue (#0284C7)</span>
+                                    </td>
+                                    <td>แถบ Navbar, หัวข้อ Section, โครงสร้างการ์ด และปุ่มสำคัญ</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>10% Accent</strong></td>
+                                    <td><code>--color-accent-cta</code>, <code>--color-accent-emerald</code>, <code>--color-accent-rose</code></td>
+                                    <td>
+                                        <span class="color-swatch-pill"><span class="swatch-dot" style="background:#F59E0B;"></span> Amber (#F59E0B)</span><br>
+                                        <span class="color-swatch-pill mt-1"><span class="swatch-dot" style="background:#10B981;"></span> Emerald (#10B981)</span><br>
+                                        <span class="color-swatch-pill mt-1"><span class="swatch-dot" style="background:#EF4444;"></span> Rose (#EF4444)</span>
+                                    </td>
+                                    <td>ปุ่ม Call-to-Action, สถานะ Badge, การแจ้งเตือนฉุกเฉินและข้อผิดพลาด</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>3.1 Visual Specifications</h3>
+                    <ul>
+                        <li><strong>Typography Leading</strong>: บรรทัดข้อความกำหนด Line Height เป็น <code>1.6</code> (Relaxed Leading)</li>
+                        <li><strong>Tabular Numerals</strong>: ข้อมูลตัวเลข ค่าใช้จ่าย และวันที่ใช้ <code>tabular-nums</code> ป้องกันตัวเลขอักษรแกว่ง</li>
+                        <li><strong>Border Radius</strong>: คอนเทนเนอร์ใหญ่ใช้ <code>16px (rounded-2xl)</code>, ฟอร์มและอินพุตใช้ <code>12px (rounded-xl)</code>, ปุ่มและป้ายใช้ <code>9999px (rounded-full)</code></li>
+                    </ul>
+                </section>
+
+                <!-- 4. Entity Relationship (ER) & Schema -->
+                <section id="des-schema" class="docs-section">
+
+                    <div class="docs-diagram-figure">
+                        <img src="images/diagram_database_schema.svg" alt="Database ER Diagram" />
+                        <div class="docs-diagram-caption">
+                            <i class="fa-solid fa-database text-sky-600"></i> เนเธเธเธ เธฒเธเธชเธเธตเธกเธฒเธเนเธญเธกเธนเธฅเน€เธเธดเธเธชเธฑเธกเธเธฑเธเธเน (Entity-Relationship Topology)
+                        </div>
+                    </div>
+                    <h2><span style="color: var(--color-brand-primary);">4.</span> Entity Relationship (ER) & Data Schema</h2>
+                    <p>โครงสร้างความสัมพันธ์ของข้อมูลแบบจำลองเชิงสัมพันธ์ในรูปแบบ JSON Schema และ IndexedDB Blob:</p>
+
+                    <div class="docs-mermaid-card">
+                        <pre class="mermaid">
+erDiagram
+    USERS ||--o{ BOOKINGS : creates
+    USERS ||--o{ RECORDS : reports
+    BUILDINGS ||--o{ EQUIPMENTS : houses
+    EQUIPMENTS ||--o{ BOOKINGS : booked_for
+    EQUIPMENTS ||--o{ RECORDS : undergoes
+    RECORDS ||--o{ PO_FILES : attaches
+
+    USERS {
+        string id PK "U-001"
+        string username "email or account name"
+        string password "hash/plaintext"
+        string name "Full Name"
+        string role "admin | user"
+    }
+
+    BUILDINGS {
+        string id PK "5, 6, 7..."
+        string name "Building / Unit Name"
+    }
+
+    EQUIPMENTS {
+        string id PK "EQ-001 or numeric"
+        string name "Equipment Name"
+        string building_id FK "Building ID"
+        string serial "Serial / Asset No."
+        string custodian "Responsible Person"
+    }
+
+    BOOKINGS {
+        string id PK "BK-1710000000"
+        string eqId FK "EQ-001"
+        string user "User Name"
+        string start "ISO 8601 Timestamp"
+        string end "ISO 8601 Timestamp"
+        boolean deleted "Soft Delete Flag"
+    }
+
+    RECORDS {
+        string id PK "REC-1710000000"
+        string equipment_name "Equipment Reference"
+        string building "Building Name"
+        string type "repair | calibration | pm"
+        number maintenance_cost "Cost in THB"
+        array po_files "List of PDF file names"
+    }
+
+    PO_FILES {
+        string record_id PK "FK to RECORDS.id"
+        array blobs "Base64 Blobs in IndexedDB"
+    }
+                        </pre>
+                    </div>
+                </section>
+
+                <!-- 5. State Synchronization -->
+                <section id="des-sync" class="docs-section">
+                    <h2><span style="color: var(--color-brand-primary);">5.</span> State Synchronization Engine (LabStateBridge)</h2>
+                    <p>กลไก Deep Merge อัจฉริยะที่ป้องกันการสูญหายของข้อมูลระหว่างสองระบบ:</p>
+
+                    <div class="docs-code-container">
+                        <div class="docs-code-header">
+                            <span>JavaScript: LabStateBridge Merge Logic</span>
+                            <button class="docs-copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                        </div>
+                        <pre class="docs-code-block"><code>// Data Merge & Normalization Guard
+const merged = {
+    ...currentStorage,
+    ...cleanIncomingData,
+    users: normalizedUsers,
+    equipments: normalizedEquipments.map(e => ({ ...e, id: String(e.id) })),
+    records: Array.isArray(incoming.records) ? incoming.records : currentStorage.records || [],
+    bookings: Array.isArray(incoming.bookings) ? incoming.bookings : currentStorage.bookings || []
+};
+localStorage.setItem('NoteLabState_Merged', JSON.stringify(merged));
+window.dispatchEvent(new CustomEvent('labStateChange', { detail: merged }));</code></pre>
+                    </div>
+
+                    <ul>
+                        <li><strong>Automatic String Casting</strong>: แปลงค่า ID ให้เป็นสตริงเสมอ ป้องกัน <code>TypeError: startsWith is not a function</code></li>
+                        <li><strong>Key Preservation</strong>: เก็บรักษาฟิลด์เฉพาะของ CarePlus (เช่น records, technicians, reporters) ไม่ให้ถูก Lab Book+ บันทึกทับ</li>
+                    </ul>
+                </section>
+
+                <!-- 6. Multimodal Feedback -->
+                <section id="des-feedback" class="docs-section">
+                    <h2><span style="color: var(--color-brand-primary);">6.</span> Multimodal Feedback Subsystem</h2>
+                    <p>ระบบตอบสนอง 3 ประสาทสัมผัส (ภาพ เสียง สัมผัส) เพื่อความมั่นใจสูงสุดในการใช้งาน:</p>
+
+                    <div class="docs-mermaid-card">
+                        <pre class="mermaid">
+flowchart LR
+    Action[User Action / Submit] --> Logic{Validation & Result}
+    Logic -- Success --> Visual1[Green Toast Badge]
+    Logic -- Success --> Audio1[Web Audio Chime: C5 to G5]
+    Logic -- Success --> Haptic1[Vibration: 30ms]
+
+    Logic -- Warning / Conflict --> Visual2[SweetAlert Confirm Dialog]
+    Logic -- Warning / Conflict --> Audio2[Web Audio Pop: 440Hz]
+    Logic -- Warning / Conflict --> Haptic2[Double Vibration: 40ms, 40ms]
+
+    Logic -- Error --> Visual3[Red Shake / Error Alert]
+    Logic -- Error --> Audio3[Web Audio Thud: 180Hz to 90Hz]
+    Logic -- Error --> Haptic3[Triple Vibration: 60ms, 50ms, 60ms]
+                        </pre>
+                    </div>
+
+                    <h3>6.1 Web Audio API Synthesizer</h3>
+                    <ul>
+                        <li><strong>Success Chime</strong>: คลื่นรูปไซน์ (Sine wave) ความถี่ 523.25Hz (C5) และ 783.99Hz (G5) Decay 0.3 วินาที</li>
+                        <li><strong>Click Sound</strong>: คลื่นรูปสามเหลี่ยม (Triangle wave) 800Hz สั้น 0.04 วินาที</li>
+                        <li><strong>Error Thud</strong>: คลื่นรูปสามเหลี่ยม ความถี่ 180Hz รูดลง 90Hz สั้น 0.25 วินาที</li>
+                    </ul>
+                </section>
+
+                <!-- 7. Storage Management & Compression Pipeline -->
+                <section id="des-storage" class="docs-section">
+                    <h2><span style="color: var(--color-brand-primary);">7.</span> Storage Management & Gzip Compression Pipeline</h2>
+                    <p>
+                        ในเวอร์ชัน 2.2 ระบบนำสถาปัตยกรรมบีบอัดขั้นสูง <strong>LabCompressor</strong> ด้วย Native Gzip Web Streams API มาใช้งานร่วมกับระบบจัดเก็บข้อมูลแบบ Multi-Tier:
+                    </p>
+                    <div class="docs-mermaid-card">
+                        <pre class="mermaid">
+flowchart LR
+    PDF[Original PDF File] --> Stream[ReadableStream]
+    Stream --> Comp[CompressionStream 'gzip']
+    Comp --> B64[Base64 Gzip String<br>50%-80% Size Reduction]
+    B64 --> IDB[(Local Cache: IndexedDB)]
+    B64 --> Cloud[(Cloud: lab_attachments/{recordId})]
+                        </pre>
+                    </div>
+                    <ul>
+                        <li><strong>Native Browser Gzip:</strong> ใช้ <code>CompressionStream('gzip')</code> และ <code>DecompressionStream('gzip')</code> โดยไม่ต้องพึ่งพา External Library ภายนอก ทำให้ทำงานเร็วระดับมิลลิวินาที</li>
+                        <li><strong>Dedicated Firestore Collection:</strong> แยกเก็บไฟล์แนบในคอลเลกชัน <code>lab_attachments</code> ไม่ปะปนกับคิวจองใน <code>lab_suite/current_state</code> ป้องกันปัญหา Document Size เกิน 1MB</li>
+                        <li><strong>On-Demand Lazy Fetching:</strong> โหลดไฟล์เฉพาะเมื่อผู้ใช้กดดูพรีวิว (Eye Icon) และคลายบีบอัดในหน่วยความจำเพื่อสร้าง Blob URL ให้ iframe แสดงผล ป้องกันการใช้เน็ตเวิร์กและแคชเกินจำเป็น</li>
+                        <li><strong>Unified Compressed Backup:</strong> เมื่อแอดมินส่งออก Backup ข้อมูลไฟล์แนบที่บีบอัดแล้วจะถูกแพ็กรวมเข้าสู่ไฟล์ JSON เดียวกันอย่างสมบูรณ์</li>
+                    </ul>
+                </section>
+
+                <!-- 8. Smart Defaults & Logic -->
+                <section id="des-smart" class="docs-section">
+                    <h2><span style="color: var(--color-brand-primary);">8.</span> Smart Defaults & Conflict Prevention Logic</h2>
+                    <ul>
+                        <li><strong>Smart Hourly Slot</strong>: คำนวณต้นชั่วโมงถัดไป +2 ชั่วโมงอัตโนมัติ</li>
+                        <li><strong>Cross-App Conflict Detection</strong>: เตือนทันทีเมื่อจะส่งซ่อมเครื่องมือที่มีการจองไว้ใน Lab Book+</li>
+                    </ul>
+                </section>
+
+                <!-- 9. Security & RBAC -->
+                <section id="des-rbac" class="docs-section">
+                    <h2><span style="color: var(--color-brand-primary);">9.</span> Security & Access Control (RBAC)</h2>
+                    <div class="docs-table-wrapper">
+                        <table class="docs-table">
+                            <thead>
+                                <tr>
+                                    <th>ความสามารถของระบบ</th>
+                                    <th style="text-align: center;">Administrator (Admin)</th>
+                                    <th style="text-align: center;">Standard User (นักวิจัย)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>ดูปฏิทิน คิวเครื่องมือ และประวัติซ่อมบำรุง</td>
+                                    <td style="text-align: center; color: #10b981;"><i class="fa-solid fa-check"></i></td>
+                                    <td style="text-align: center; color: #10b981;"><i class="fa-solid fa-check"></i></td>
+                                </tr>
+                                <tr>
+                                    <td>จองเครื่องมือวิทยาศาสตร์</td>
+                                    <td style="text-align: center; color: #10b981;"><i class="fa-solid fa-check"></i></td>
+                                    <td style="text-align: center; color: #10b981;"><i class="fa-solid fa-check"></i></td>
+                                </tr>
+                                <tr>
+                                    <td>บันทึกเวลาใช้งานจริง (Actual Usage)</td>
+                                    <td style="text-align: center; color: #10b981;"><i class="fa-solid fa-check"></i></td>
+                                    <td style="text-align: center; color: #10b981;"><i class="fa-solid fa-check"></i> (รายการตนเอง)</td>
+                                </tr>
+                                <tr>
+                                    <td>บันทึกประวัติซ่อมและอัปโหลดไฟล์ PO</td>
+                                    <td style="text-align: center; color: #10b981;"><i class="fa-solid fa-check"></i></td>
+                                    <td style="text-align: center; color: #10b981;"><i class="fa-solid fa-check"></i></td>
+                                </tr>
+                                <tr>
+                                    <td>จัดการเครื่องมือ (เพิ่ม/แก้ไข/ลบ)</td>
+                                    <td style="text-align: center; color: #10b981;"><i class="fa-solid fa-check"></i></td>
+                                    <td style="text-align: center; color: #ef4444;"><i class="fa-solid fa-xmark"></i></td>
+                                </tr>
+                                <tr>
+                                    <td>จัดการห้องปฏิบัติการ / อาคาร</td>
+                                    <td style="text-align: center; color: #10b981;"><i class="fa-solid fa-check"></i></td>
+                                    <td style="text-align: center; color: #ef4444;"><i class="fa-solid fa-xmark"></i></td>
+                                </tr>
+                                <tr>
+                                    <td>จัดการบัญชีผู้ใช้งานและสิทธิ์</td>
+                                    <td style="text-align: center; color: #10b981;"><i class="fa-solid fa-check"></i></td>
+                                    <td style="text-align: center; color: #ef4444;"><i class="fa-solid fa-xmark"></i></td>
+                                </tr>
+                                <tr>
+                                    <td>สำรองและกู้คืนฐานข้อมูลรวม (Unified Backup/Restore JSON)</td>
+                                    <td style="text-align: center; color: #10b981;"><i class="fa-solid fa-check"></i></td>
+                                    <td style="text-align: center; color: #ef4444;"><i class="fa-solid fa-xmark"></i></td>
+                                </tr>
+                                <tr>
+                                    <td>เคลียร์ข้อมูลคืนพื้นที่ (Storage Cleanup Purge Tool)</td>
+                                    <td style="text-align: center; color: #10b981;"><i class="fa-solid fa-check"></i></td>
+                                    <td style="text-align: center; color: #ef4444;"><i class="fa-solid fa-xmark"></i> (ซ่อน UI ทั้งหมด)</td>
+                                </tr>
+                                <tr>
+                                    <td>ตั้งค่า Cloud Firebase Sync (Spark Plan 0 บาท)</td>
+                                    <td style="text-align: center; color: #10b981;"><i class="fa-solid fa-check"></i></td>
+                                    <td style="text-align: center; color: #ef4444;"><i class="fa-solid fa-xmark"></i></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- 10. QA Checklist -->
+                <section id="des-qa" class="docs-section">
+                    <h2><span style="color: var(--color-brand-primary);">10.</span> Verification & Quality Assurance Checklist</h2>
+                    <ul style="list-style: none; padding-left: 0;">
+                        <li style="padding: 0.5rem 0; display: flex; align-items: center; gap: 0.75rem;">
+                            <i class="fa-solid fa-circle-check text-emerald-500 text-lg"></i>
+                            <span><strong>Zero-Crash Data Persistence</strong>: รองรับรหัสเครื่องมือทั้งแบบตัวเลขและสตริง</span>
+                        </li>
+                        <li style="padding: 0.5rem 0; display: flex; align-items: center; gap: 0.75rem;">
+                            <i class="fa-solid fa-circle-check text-emerald-500 text-lg"></i>
+                            <span><strong>Theme Consistency</strong>: สลับ Dark / Light Mode ซิงค์ทั้งระบบ</span>
+                        </li>
+                        <li style="padding: 0.5rem 0; display: flex; align-items: center; gap: 0.75rem;">
+                            <i class="fa-solid fa-circle-check text-emerald-500 text-lg"></i>
+                            <span><strong>Cross-App Quick Switcher</strong>: ปุ่มนำทางสลับระบบบน Header ทำงานรวดเร็ว</span>
+                        </li>
+                        <li style="padding: 0.5rem 0; display: flex; align-items: center; gap: 0.75rem;">
+                            <i class="fa-solid fa-circle-check text-emerald-500 text-lg"></i>
+                            <span><strong>Auditory & Haptic Feedback</strong>: เสียงสังเคราะห์สดและระบบสั่นทำงานเป็นธรรมชาติ</span>
+                        </li>
+                        <li style="padding: 0.5rem 0; display: flex; align-items: center; gap: 0.75rem;">
+                            <i class="fa-solid fa-circle-check text-emerald-500 text-lg"></i>
+                            <span><strong>Mobile Ergonomics</strong>: ปรับมุมมองอัตโนมัติสำหรับแท็บเล็ตและสมาร์ทโฟน</span>
+                        </li>
+                    </ul>
+                </section>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // Init Mermaid
+        document.addEventListener('DOMContentLoaded', () => {
+            const isDark = document.documentElement.classList.contains('dark') || document.body.classList.contains('dark');
+            mermaid.initialize({
+                startOnLoad: true,
+                theme: isDark ? 'dark' : 'neutral',
+                themeVariables: {
+                    primaryColor: '#0F766E',
+                    primaryTextColor: '#F8FAFC',
+                    lineColor: '#14B8A6'
+                }
+            });
+        });
+
+        // Tab Switcher between User Manual & System Design
+        function switchDocTab(tab) {
+            LabAudio.playClick();
+            const isManual = tab === 'manual';
+            document.getElementById('sectionManual').style.display = isManual ? 'block' : 'none';
+            document.getElementById('sectionDesign').style.display = isManual ? 'none' : 'block';
+            document.getElementById('tocManual').style.display = isManual ? 'block' : 'none';
+            document.getElementById('tocDesign').style.display = isManual ? 'none' : 'block';
+
+            document.getElementById('tabBtnManual').classList.toggle('active', isManual);
+            document.getElementById('tabBtnDesign').classList.toggle('active', !isManual);
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Accordion Toggle
+        function toggleAccordion(btn) {
+            LabAudio.playClick();
+            btn.classList.toggle('open');
+            const content = btn.nextElementSibling;
+            content.classList.toggle('show');
+        }
+
+        // Copy Account Helper
+        function copyText(u, p) {
+            navigator.clipboard.writeText(`${u} / ${p}`).then(() => {
+                LabAlert.toast('success', `คัดลอก: ${u} (รหัสผ่าน: ${p})`);
+            });
+        }
+
+        // Copy Code Snippet Helper
+        function copyCode(btn) {
+            const code = btn.closest('.docs-code-container').querySelector('code').innerText;
+            navigator.clipboard.writeText(code).then(() => {
+                LabAlert.toast('success', 'คัดลอกโค้ดสำเร็จ');
+            });
+        }
+
+        // Live Search in Documentation
+        function handleDocsSearch() {
+            const q = document.getElementById('docsSearchInput').value.toLowerCase().trim();
+            const sections = document.querySelectorAll('.docs-section');
+            sections.forEach(sec => {
+                if (!q) {
+                    sec.style.display = '';
+                    return;
+                }
+                const text = sec.innerText.toLowerCase();
+                sec.style.display = text.includes(q) ? '' : 'none';
+            });
+        }
+
+        // Re-render Mermaid on Theme Toggle
+        window.addEventListener('labThemeChange', (e) => {
+            const isDark = e.detail.theme === 'dark';
+            mermaid.initialize({
+                startOnLoad: false,
+                theme: isDark ? 'dark' : 'neutral'
+            });
+        });
+    </script>
+</body>
+</html>

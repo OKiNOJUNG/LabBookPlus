@@ -1,0 +1,9 @@
+# Netlify Redirects & Case-Insensitive Route Rewrites
+/careplus         /CarePlus.html    200
+/careplus.html    /CarePlus.html    200
+/CarePlus         /CarePlus.html    200
+/care             /CarePlus.html    200
+/docs             /docs.html        200
+/manual           /docs.html        200
+/book             /index.html       200
+/logbook          /index.html       200

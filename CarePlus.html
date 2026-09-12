@@ -6,6 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MPIR Lab Care+</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            corePlugins: { preflight: false }
+        };
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
@@ -14,27 +20,60 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="THSarabunNew.js"></script>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Prompt:wght@300;400;500;600&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Prompt:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
-    <!-- FontAwesome -->
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        /* --- Base & Typography --- */
+        :root {
+            --primary: #0284C7;
+            --primary-hover: #0369A1;
+            --secondary: #0F766E;
+            --bg-color: #F0F8FF;
+            --card-bg: rgba(255, 255, 255, 0.75);
+            --text-main: #1F2937;
+            --text-muted: #64748B;
+            --border-color: #E2E8F0;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --info: #3B82F6;
+            --font-ui: 'Inter', 'Prompt', 'Sarabun', sans-serif;
+            --font-data: 'Inter', 'Prompt', 'Sarabun', sans-serif;
+        }
+
+        body, table, th, td, p, span, h1, h2, h3, h4, h5, h6, input, select, textarea, button, label {
+            font-family: 'Inter', 'Prompt', 'Sarabun', sans-serif;
+        }
+
         body {
-            font-family: 'Inter', 'Prompt', sans-serif;
+            font-family: var(--font-ui);
             background-color: #f0f8ff;
-            /* Alice Blue - Mitr Phol tone */
+            color: var(--text-main);
             overflow-x: hidden;
         }
 
-        /* --- Login Background & Liquid Glass --- */
-        .login-bg {
+        /* Standardize heading, body, and table text colors to match MPIR Lab Book+ */
+        h1, h2, h3, h4, h5, h6 {
+            color: var(--text-main);
+        }
+
+        p, label, td {
+            color: var(--text-main);
+        }
+
+.login-bg {
             background: #0f172a url('bg.png') center/cover no-repeat;
             position: relative;
             z-index: 1;
             overflow: hidden;
+            height: 100vh;
+            min-height: 100vh;
+            max-height: 100vh;
         }
 
         .login-bg::before {
@@ -42,7 +81,6 @@
             position: absolute;
             width: 500px;
             height: 500px;
-            background: linear-gradient(135deg, rgba(14, 165, 233, 0.8), rgba(59, 130, 246, 0.8));
             border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
             filter: blur(60px);
             top: -10%;
@@ -56,7 +94,6 @@
             position: absolute;
             width: 400px;
             height: 400px;
-            background: linear-gradient(135deg, rgba(139, 92, 246, 0.8), rgba(236, 72, 153, 0.8));
             border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
             filter: blur(60px);
             bottom: -10%;
@@ -92,8 +129,7 @@
             pointer-events: none;
         }
 
-        /* --- Glassmorphism Core --- */
-        .glass {
+.glass {
             background: rgba(255, 255, 255, 0.65);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
@@ -123,8 +159,7 @@
             outline: none;
         }
 
-        /* --- iOS Elements & Interactions --- */
-        .ios-card {
+.ios-card {
             border-radius: 24px;
             transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
         }
@@ -163,11 +198,36 @@
             opacity: 1;
         }
 
-        /* Nav Tab */
+        .swal2-container,
+        div.swal2-container {
+            z-index: 100000 !important;
+        }
+
+        .nav-desktop-menu {
+            display: none;
+        }
+
+        @media (min-width: 768px) {
+            .nav-desktop-menu {
+                display: flex;
+                background: rgba(243, 244, 246, 0.5);
+                padding: 0.25rem;
+                border-radius: 0.75rem;
+                gap: 0.25rem;
+                margin-left: 1.5rem;
+            }
+        }
+
         .nav-pill {
-            border-radius: 12px;
-            transition: all 0.3s ease;
+            border: none;
+            background: transparent;
+            border-radius: 0.75rem;
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            font-weight: 500;
             color: #6b7280;
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
 
         .nav-pill:hover {
@@ -177,13 +237,60 @@
 
         .nav-pill.active {
             background: #ffffff;
-            color: #2563eb;
+            color: #0284C7;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
             font-weight: 600;
         }
 
-        /* Table Styles */
-        .glass-table th {
+        .nav-pill-mobile {
+            border: none;
+            background: transparent;
+            border-radius: 0.75rem;
+            padding: 0.5rem 0.35rem;
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: #4b5563;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .dark .nav-pill-mobile {
+            color: #94a3b8;
+        }
+
+        .nav-pill-mobile:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .dark .nav-pill-mobile:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .nav-pill-mobile.active {
+            background: #ffffff;
+            color: #0284c7;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            font-weight: 700;
+        }
+
+        .dark .nav-pill-mobile.active {
+            background: rgba(14, 165, 233, 0.25);
+            color: #38bdf8;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+        }
+
+        @media (max-width: 480px) {
+            .app-switch-btn span {
+                display: none;
+            }
+            .app-switch-btn {
+                padding: 0.35rem 0.5rem;
+            }
+        }
+
+.glass-table th {
             background: rgba(249, 250, 251, 0.6);
             color: #4b5563;
         }
@@ -201,54 +308,76 @@
             border: none;
         }
 
-        /* Calendar Responsive */
         .calendar-day {
-            min-height: 80px;
-            /* ลดความสูงขั้นต่ำสำหรับมือถือ */
-            border-radius: 12px;
-            background: rgba(255, 255, 255, 0.4);
-            border: 1px solid transparent;
-            transition: all 0.2s ease;
-            padding: 4px;
+            min-height: 54px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.45);
+            border: 1px solid rgba(226, 232, 240, 0.6);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 3px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
 
-        @media (min-width: 768px) {
+        .dark .calendar-day {
+            background: rgba(30, 41, 59, 0.5);
+            border-color: rgba(51, 65, 85, 0.6);
+        }
+
+        @media (min-width: 640px) {
             .calendar-day {
-                min-height: 120px;
+                min-height: 85px;
+                border-radius: 12px;
+                padding: 6px;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .calendar-day {
+                min-height: 115px;
                 border-radius: 16px;
                 padding: 8px;
             }
         }
 
         .calendar-day:hover {
-            background: rgba(255, 255, 255, 0.9);
-            transform: scale(1.02);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            background: rgba(255, 255, 255, 0.95);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            border-color: #3b82f6;
+        }
+
+        .dark .calendar-day:hover {
+            background: rgba(30, 41, 59, 0.9);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            border-color: #38bdf8;
         }
 
         .calendar-day.today {
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(239, 246, 255, 0.9);
             border: 2px solid #3b82f6;
+            box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.2);
         }
 
-        /* ปรับแต่งตารางสำหรับมือถือ */
-        @media (max-width: 640px) {
+        .dark .calendar-day.today {
+            background: rgba(30, 58, 138, 0.35);
+            border: 2px solid #38bdf8;
+        }
 
+        @media (max-width: 640px) {
             .glass-table th,
             .glass-table td {
-                padding: 12px 8px !important;
-                font-size: 0.75rem !important;
+                padding: 10px 6px !important;
+                font-size: 0.72rem !important;
             }
 
             .ios-card {
-                padding: 16px !important;
+                padding: 14px !important;
             }
-
-            /* ลด Padding ของการ์ดลง */
         }
 
-        /* Scrollbar */
-        ::-webkit-scrollbar {
+::-webkit-scrollbar {
             width: 6px;
             height: 6px;
         }
@@ -270,8 +399,7 @@
             scrollbar-width: thin;
         }
 
-        /* Utilities */
-        .hidden {
+.hidden {
             display: none;
         }
 
@@ -313,8 +441,24 @@
             background: linear-gradient(135deg, #0d9488, #2dd4bf);
         }
 
-        /* Teal for PM */
+</style>
+    
+    <style>
+        html.has-active-session #loginPage { display: none !important; }
+        html.has-active-session #mainApp { display: flex !important; }
     </style>
+    <script>
+        (function () {
+            try {
+                var s = localStorage.getItem('labUserSession') || sessionStorage.getItem('labUserSession');
+                if (s) {
+                    document.documentElement.classList.add('has-active-session');
+                }
+            } catch (e) {}
+        })();
+    </script>
+    <link rel="stylesheet" href="shared-theme.css">
+    <script src="shared-core.js"></script>
 </head>
 
 <body class="text-gray-800 antialiased selection:bg-blue-500 selection:text-white">
@@ -329,7 +473,7 @@
             class="login-glass p-10 rounded-[32px] w-full max-w-md page-transition relative overflow-hidden shadow-2xl">
 
             <div class="text-center mb-8 relative z-10 flex flex-col items-center">
-                <!-- Highlight Glow Behind Logo -->
+                
                 <div
                     class="absolute top-1/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-white/60 blur-3xl rounded-full -z-10">
                 </div>
@@ -351,15 +495,16 @@
                     <label class="block text-xs font-bold text-gray-500 mb-2 ml-1">Username</label>
                     <div class="relative flex items-center">
                         <input type="text" id="loginEmail" required placeholder="Username"
-                            class="w-full pl-5 pr-24 py-4 rounded-2xl glass-input text-gray-800 placeholder-gray-400 focus:border-[#0ea5e9]">
-                        <span
-                            class="absolute right-5 text-gray-500 font-medium pointer-events-none select-none">@lab.com</span>
+                            class="w-full px-5 py-4 rounded-2xl glass-input text-gray-800 placeholder-gray-400 focus:border-[#0ea5e9] pr-24">
+                        <span class="absolute right-4 text-gray-400 font-semibold pointer-events-none select-none text-sm">@lab.com</span>
                     </div>
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-gray-500 mb-2 ml-1">Password</label>
-                    <input type="password" id="loginPassword" required value="admin321" placeholder="••••••••"
-                        class="w-full px-5 py-4 rounded-2xl glass-input text-gray-800 placeholder-gray-400 focus:border-[#0ea5e9]">
+                    <div class="relative flex items-center">
+                        <input type="password" id="loginPassword" required value="admin321" placeholder="••••••••"
+                            class="w-full px-5 py-4 rounded-2xl glass-input text-gray-800 placeholder-gray-400 focus:border-[#0ea5e9]">
+                    </div>
                 </div>
                 <button type="submit"
                     class="w-full bg-[#0ea5e9] hover:bg-[#0284c7] text-white py-4 rounded-2xl font-bold shadow-lg shadow-sky-500/30 ios-btn text-lg mt-4 transition-colors">
@@ -373,64 +518,77 @@
 
         <nav class="sticky top-2 md:top-4 z-40 mx-2 md:mx-4 lg:mx-8">
             <div
-                class="glass glass-dark rounded-2xl shadow-sm px-4 lg:px-6 py-3 flex items-center justify-between backdrop-blur-xl">
-                <div class="flex items-center gap-4 md:gap-6">
+                class="glass glass-dark rounded-2xl shadow-sm px-4 lg:px-6 py-3 flex items-center justify-between backdrop-blur-xl" style="border-top: 4px solid #0284C7;">
+                <div class="flex items-center gap-3 md:gap-5">
                     <div class="flex items-center gap-2">
-                        <div
-                            class="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center text-white text-sm md:text-base font-bold shadow-md">
+                        <div class="brand-icon"
+                            style="background: linear-gradient(135deg, #0284C7, #38BDF8); color: white; font-weight: 800; font-family: sans-serif; font-size: 0.85rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.15); flex-shrink: 0; width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
                             LC+</div>
-                        <span class="text-base md:text-lg font-bold text-gray-800 tracking-tight hidden sm:block">MPIR
-                            Lab Care+</span>
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm sm:text-base md:text-lg font-bold text-gray-800 dark:text-slate-100 tracking-tight whitespace-nowrap">MPIR Lab Care+</span>
+                        </div>
                     </div>
 
-                    <div class="hidden md:flex bg-gray-100/50 p-1 rounded-xl gap-1">
-                        <button onclick="showPage('dashboard')" class="nav-pill px-4 py-2 text-sm"
+                    <div class="nav-desktop-menu">
+                        <button onclick="showPage('dashboard')" class="nav-pill active"
                             id="tabDashboard">Dashboard</button>
-                        <button onclick="showPage('records')" class="nav-pill px-4 py-2 text-sm"
+                        <button onclick="showPage('records')" class="nav-pill"
                             id="tabRecords">Records</button>
-                        <button onclick="showPage('addRecord')" class="nav-pill px-4 py-2 text-sm" id="tabAddRecord">Add
+                        <button onclick="showPage('addRecord')" class="nav-pill" id="tabAddRecord">Add
                             / Edit</button>
                         <button id="settingsBtn" onclick="showPage('settings')"
-                            class="nav-pill px-4 py-2 text-sm hidden">Admin</button>
+                            class="nav-pill hidden">Admin</button>
                     </div>
                 </div>
 
-                <div class="flex items-center gap-3 md:gap-4">
-                    <a href="index.html"
-                        class="px-3 py-1.5 md:px-4 md:py-2 text-xs md:text-sm font-bold text-teal-700 bg-teal-50 border border-teal-200 rounded-lg hover:bg-teal-600 hover:text-white transition shadow-sm flex items-center gap-2 whitespace-nowrap">
-                        <i class="fa-solid fa-book"></i> LB+
+                <div class="flex items-center gap-1.5 sm:gap-2 md:gap-3">
+                    <div id="nav-active-presence" class="flex items-center"></div>
+
+                    <button class="nav-action-btn" onclick="LabTheme.toggle()" title="สลับโหมดมืด/สว่าง (Dark/Light Mode)">
+                        <i class="fa-solid fa-circle-half-stroke"></i>
+                    </button>
+
+                    <button class="nav-action-btn" id="btnAudioToggleCP" onclick="LabAudio.toggleMute()" title="เปิด/ปิดเสียงตอบสนอง">
+                        <i class="fa-solid fa-volume-high"></i>
+                    </button>
+
+                    <button class="nav-action-btn relative" id="nav-notify-btn-cp" onclick="openUpcomingModal()" title="การแจ้งเตือนงานซ่อมบำรุงและสอบเทียบ (Next 90 Days)">
+                        <i class="fa-solid fa-bell"></i>
+                        <span id="nav-notify-badge-cp" class="hidden absolute -top-1 -right-1 bg-rose-500 text-white text-[9px] font-bold rounded-full w-4 h-4 flex items-center justify-center shadow-xs">0</span>
+                    </button>
+
+                    <a href="index.html" class="app-switch-btn" style="border-color: rgba(15, 118, 110, 0.4); background: rgba(15, 118, 110, 0.08); color: #0F766E; padding: 0.35rem 0.65rem; font-size: 0.75rem; white-space: nowrap;" onclick="LabAuth.syncSession()" title="สลับไปใช้งาน Lab Book+ (จองเครื่องมือ)">
+                        <i class="fa-solid fa-book"></i> <span>Lab Book+</span>
                     </a>
-                    <div class="flex flex-col items-end mr-1 md:mr-2">
-                        <span id="userDisplay" class="text-xs md:text-sm font-bold text-gray-800">User</span>
-                        <span id="userRole"
-                            class="text-[9px] md:text-[10px] font-bold tracking-widest text-blue-500 uppercase">Role</span>
+
+                    <div class="flex items-center gap-1.5 sm:gap-2">
+                        <div id="nav-user-avatar"></div>
+                        <div class="hidden lg:flex flex-col items-end mr-1 md:mr-2">
+                            <span id="userDisplay" class="text-xs md:text-sm font-bold text-gray-800 blue:text-slate-100 whitespace-nowrap">User</span>
+                            <span id="userRole"
+                                class="text-[9px] md:text-[10px] font-bold tracking-widest text-teal-600 dark:text-teal-400 uppercase">Role</span>
+                        </div>
                     </div>
-                    <button onclick="logout()"
-                        class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-red-50 text-red-500 flex items-center justify-center hover:bg-red-500 hover:text-white transition-all shadow-sm">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                            <polyline points="16 17 21 12 16 7"></polyline>
-                            <line x1="21" y1="12" x2="9" y2="12"></line>
-                        </svg>
+
+                    <button onclick="logout()" title="ออกจากระบบ"
+                        class="nav-action-btn" style="color: var(--color-accent-rose); border-color: rgba(244, 63, 94, 0.3);">
+                        <i class="fa-solid fa-right-from-bracket"></i>
                     </button>
                 </div>
             </div>
 
             <div
-                class="md:hidden mt-2 flex justify-between bg-white/90 backdrop-blur-xl rounded-2xl p-1.5 shadow-md overflow-x-auto gap-1 border border-white/50">
-                <button onclick="showPage('dashboard')"
-                    class="flex-1 px-2 py-2.5 text-[11px] font-bold rounded-xl text-gray-600 hover:bg-gray-100 transition shadow-sm active:bg-blue-50 active:text-blue-600">📊
-                    Dash</button>
-                <button onclick="showPage('records')"
-                    class="flex-1 px-2 py-2.5 text-[11px] font-bold rounded-xl text-gray-600 hover:bg-gray-100 transition active:bg-blue-50 active:text-blue-600">📑
-                    Recs</button>
-                <button onclick="showPage('addRecord')"
-                    class="flex-1 px-2 py-2.5 text-[11px] font-bold rounded-xl text-gray-600 hover:bg-gray-100 transition active:bg-blue-50 active:text-blue-600">✏️
-                    Add</button>
-                <button onclick="showPage('settings')"
-                    class="flex-1 px-2 py-2.5 text-[11px] font-bold rounded-xl text-gray-600 hover:bg-gray-100 transition active:bg-blue-50 active:text-blue-600">⚙️
-                    Set</button>
+                class="md:hidden mt-2 flex justify-between bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl rounded-2xl p-1.5 shadow-md overflow-x-auto gap-1 border border-white/50 dark:border-slate-700/50">
+                <button onclick="showPage('dashboard')" id="tabMobileDashboard"
+                    class="nav-pill-mobile active flex-1">📊 Dash</button>
+                <button onclick="showPage('records')" id="tabMobileRecords"
+                    class="nav-pill-mobile flex-1">📑 Recs</button>
+                <button onclick="showPage('addRecord')" id="tabMobileAddRecord"
+                    class="nav-pill-mobile flex-1">✏️ Add</button>
+                <a href="docs.html" target="_blank"
+                    class="nav-pill-mobile flex-1 text-center" style="text-decoration: none;">📖 Docs</a>
+                <button onclick="showPage('settings')" id="settingsBtnMobile"
+                    class="nav-pill-mobile flex-1 hidden">⚙️ Set</button>
             </div>
         </nav>
 
@@ -501,101 +659,105 @@
                         </div>
                     </div>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-                    <div class="glass ios-card p-6 flex justify-between items-center relative overflow-hidden">
-                        <div class="absolute right-0 top-0 w-24 h-24 bg-blue-400/20 rounded-bl-full -mr-4 -mt-4"></div>
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
+                    <div class="glass ios-card p-3 sm:p-4 flex justify-between items-center relative overflow-hidden">
+                        <div class="absolute right-0 top-0 w-16 h-16 bg-blue-400/20 rounded-bl-full -mr-2 -mt-2 pointer-events-none"></div>
                         <div>
-                            <p class="text-gray-500 text-xs font-bold uppercase tracking-wider mb-1">Total Records</p>
-                            <h2 class="text-4xl font-bold text-gray-800" id="cardTotalRecords">0</h2>
+                            <p class="text-gray-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider mb-0.5">Total Records</p>
+                            <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-800 dark:text-slate-100" id="cardTotalRecords">0</h2>
                         </div>
                         <div
-                            class="w-12 h-12 bg-blue-100/80 rounded-2xl flex items-center justify-center text-2xl shadow-sm">
+                            class="w-10 h-10 bg-blue-100/80 dark:bg-blue-950/50 rounded-xl flex items-center justify-center text-xl shadow-xs">
                             📄</div>
                     </div>
-                    <div class="glass ios-card p-6 flex justify-between items-center relative overflow-hidden">
-                        <div class="absolute right-0 top-0 w-24 h-24 bg-orange-400/20 rounded-bl-full -mr-4 -mt-4">
-                        </div>
+                    <div class="glass ios-card p-3 sm:p-4 flex justify-between items-center relative overflow-hidden">
+                        <div class="absolute right-0 top-0 w-16 h-16 bg-orange-400/20 rounded-bl-full -mr-2 -mt-2 pointer-events-none"></div>
                         <div>
-                            <p class="text-gray-500 text-xs font-bold uppercase tracking-wider mb-1">Repairs</p>
-                            <h2 class="text-4xl font-bold text-orange-600" id="cardRepairs">0</h2>
+                            <p class="text-gray-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider mb-0.5">Repairs</p>
+                            <h2 class="text-2xl sm:text-3xl font-extrabold text-orange-600 dark:text-orange-400" id="cardRepairs">0</h2>
                         </div>
                         <div
-                            class="w-12 h-12 bg-orange-100/80 rounded-2xl flex items-center justify-center text-2xl shadow-sm">
+                            class="w-10 h-10 bg-orange-100/80 dark:bg-orange-950/50 rounded-xl flex items-center justify-center text-xl shadow-xs">
                             🔧</div>
                     </div>
-                    <div class="glass ios-card p-6 flex justify-between items-center relative overflow-hidden">
-                        <div class="absolute right-0 top-0 w-24 h-24 bg-purple-400/20 rounded-bl-full -mr-4 -mt-4">
-                        </div>
+                    <div class="glass ios-card p-3 sm:p-4 flex justify-between items-center relative overflow-hidden">
+                        <div class="absolute right-0 top-0 w-16 h-16 bg-purple-400/20 rounded-bl-full -mr-2 -mt-2 pointer-events-none"></div>
                         <div>
-                            <p class="text-gray-500 text-xs font-bold uppercase tracking-wider mb-1">Calibrations</p>
-                            <h2 class="text-4xl font-bold text-purple-600" id="cardCalibrations">0</h2>
+                            <p class="text-gray-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider mb-0.5">Calibrations</p>
+                            <h2 class="text-2xl sm:text-3xl font-extrabold text-purple-600 dark:text-purple-400" id="cardCalibrations">0</h2>
                         </div>
                         <div
-                            class="w-12 h-12 bg-purple-100/80 rounded-2xl flex items-center justify-center text-2xl shadow-sm">
+                            class="w-10 h-10 bg-purple-100/80 dark:bg-purple-950/50 rounded-xl flex items-center justify-center text-xl shadow-xs">
                             ⚖️</div>
                     </div>
-                    <div class="glass ios-card p-6 flex justify-between items-center relative overflow-hidden">
-                        <div class="absolute right-0 top-0 w-24 h-24 bg-pink-400/20 rounded-bl-full -mr-4 -mt-4">
-                        </div>
+                    <div class="glass ios-card p-3 sm:p-4 flex justify-between items-center relative overflow-hidden">
+                        <div class="absolute right-0 top-0 w-16 h-16 bg-pink-400/20 rounded-bl-full -mr-2 -mt-2 pointer-events-none"></div>
                         <div>
-                            <p class="text-gray-500 text-xs font-bold uppercase tracking-wider mb-1">Spare parts</p>
-                            <h2 class="text-4xl font-bold text-pink-600" id="cardSpareParts">0</h2>
+                            <p class="text-gray-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider mb-0.5">Spare parts</p>
+                            <h2 class="text-2xl sm:text-3xl font-extrabold text-pink-600 dark:text-pink-400" id="cardSpareParts">0</h2>
                         </div>
                         <div
-                            class="w-12 h-12 bg-pink-100/80 rounded-2xl flex items-center justify-center text-2xl shadow-sm">
+                            class="w-10 h-10 bg-pink-100/80 dark:bg-pink-950/50 rounded-xl flex items-center justify-center text-xl shadow-xs">
                             ⚙️</div>
                     </div>
-                    <div class="glass ios-card p-6 flex justify-between items-center relative overflow-hidden cursor-pointer hover:bg-red-50/50 transition-colors"
+                    <div class="glass ios-card p-3 sm:p-4 flex justify-between items-center relative overflow-hidden cursor-pointer hover:bg-red-50/50 dark:hover:bg-red-950/30 transition-colors col-span-2 sm:col-span-1"
                         onclick="openUpcomingModal()">
-                        <div class="absolute right-0 top-0 w-24 h-24 bg-red-400/20 rounded-bl-full -mr-4 -mt-4"></div>
+                        <div class="absolute right-0 top-0 w-16 h-16 bg-red-400/20 rounded-bl-full -mr-2 -mt-2 pointer-events-none"></div>
                         <div>
-                            <p class="text-gray-500 text-xs font-bold uppercase tracking-wider mb-1">Next 90 Days</p>
-                            <h2 class="text-4xl font-bold text-red-500" id="cardUpcoming">0</h2>
+                            <p class="text-gray-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider mb-0.5">Next 90 Days</p>
+                            <h2 class="text-2xl sm:text-3xl font-extrabold text-red-500 dark:text-red-400" id="cardUpcoming">0</h2>
                         </div>
                         <div
-                            class="w-12 h-12 bg-red-100/80 rounded-2xl flex items-center justify-center text-2xl shadow-sm">
+                            class="w-10 h-10 bg-red-100/80 dark:bg-red-950/50 rounded-xl flex items-center justify-center text-xl shadow-xs">
                             ⏰</div>
                     </div>
                 </div>
 
-                <div class="glass ios-card p-8">
-                    <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-                        <h3 class="text-xl font-bold text-gray-800 flex items-center gap-2"><span
-                                class="bg-blue-500 w-2 h-6 rounded-full inline-block"></span> Schedule</h3>
+                <div class="glass ios-card p-4 sm:p-6 md:p-8">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-5 gap-3 sm:gap-4">
+                        <h3 class="text-lg sm:text-xl font-bold text-gray-800 dark:text-slate-100 flex items-center gap-2">
+                            <span class="bg-blue-500  w-2 h-6 rounded-full inline-block"></span><font color="grey">Schedule & Tasks</font>
+                        </h3>
 
-                        <div class="flex items-center gap-4 w-full md:w-auto justify-between md:justify-end">
-                            <div class="flex bg-gray-200/50 p-1 rounded-xl">
+                        <div class="flex flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto justify-between sm:justify-end">
+                            <div class="flex bg-gray-200/60 dark:bg-slate-800/80 p-1 rounded-xl">
                                 <button onclick="toggleScheduleView('calendar')" id="btnViewCalendar"
-                                    class="px-3 py-1.5 rounded-lg text-xs font-bold bg-white text-blue-600 shadow-sm transition">📅
-                                    Calendar</button>
+                                    class="px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-bold bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 shadow-sm transition">
+                                    <i class="fa-solid fa-calendar-days mr-1"></i> Calendar
+                                </button>
                                 <button onclick="toggleScheduleView('list')" id="btnViewList"
-                                    class="px-3 py-1.5 rounded-lg text-xs font-bold text-gray-500 hover:text-gray-800 transition">📋
-                                    List</button>
+                                    class="px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-bold text-gray-500 dark:text-slate-400 hover:text-gray-800 dark:hover:text-slate-200 transition">
+                                    <i class="fa-solid fa-list mr-1"></i> List
+                                </button>
                             </div>
 
-                            <div class="flex items-center gap-2 bg-gray-100/50 p-1 rounded-xl backdrop-blur-sm">
+                            <div class="flex items-center gap-1 sm:gap-1.5 bg-gray-100/70 dark:bg-slate-800/70 p-1 rounded-xl backdrop-blur-sm border border-gray-200/50 dark:border-slate-700/50">
+                                <button onclick="goToTodayCalendar()"
+                                    class="px-2.5 py-1 text-xs font-bold hover:bg-white dark:hover:bg-slate-700 hover:shadow-sm rounded-lg transition text-teal-600 dark:text-teal-400 bg-white/60 dark:bg-slate-800/60 border border-teal-200/50 dark:border-teal-800/40"
+                                    title="ไปยังเดือนปัจจุบัน">
+                                    <i class="fa-solid fa-calendar-day mr-1"></i> Today
+                                </button>
                                 <button onclick="previousMonth()"
-                                    class="w-8 h-8 flex items-center justify-center hover:bg-white hover:shadow rounded-lg transition text-gray-600">❮</button>
+                                    class="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center hover:bg-white dark:hover:bg-slate-700 hover:shadow rounded-lg transition text-gray-600 dark:text-gray-300">❮</button>
                                 <span id="currentMonthYear"
-                                    class="text-base font-bold min-w-[140px] text-center text-gray-800"></span>
+                                    class="text-xs sm:text-sm md:text-base font-bold min-w-[110px] sm:min-w-[140px] text-center text-gray-800 dark:text-slate-100"></span>
                                 <button onclick="nextMonth()"
-                                    class="w-8 h-8 flex items-center justify-center hover:bg-white hover:shadow rounded-lg transition text-gray-600">❯</button>
+                                    class="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center hover:bg-white dark:hover:bg-slate-700 hover:shadow rounded-lg transition text-gray-600 dark:text-gray-300">❯</button>
                             </div>
                         </div>
                     </div>
 
-                    <div id="calendarContainer">
-                        <div
-                            class="grid grid-cols-7 gap-4 mb-2 text-center text-gray-400 font-bold text-xs uppercase tracking-widest">
-                            <div>Sun</div>
-                            <div>Mon</div>
-                            <div>Tue</div>
-                            <div>Wed</div>
-                            <div>Thu</div>
-                            <div>Fri</div>
-                            <div>Sat</div>
+                    <div id="calendarContainer" class="w-full overflow-x-auto">
+                        <div class="grid grid-cols-7 gap-1 sm:gap-2 md:gap-3 mb-2 text-center text-gray-400 dark:text-slate-400 font-bold text-[10px] sm:text-xs uppercase tracking-wider">
+                            <div><span class="sm:hidden">S</span><span class="hidden sm:inline">Sun</span></div>
+                            <div><span class="sm:hidden">M</span><span class="hidden sm:inline">Mon</span></div>
+                            <div><span class="sm:hidden">T</span><span class="hidden sm:inline">Tue</span></div>
+                            <div><span class="sm:hidden">W</span><span class="hidden sm:inline">Wed</span></div>
+                            <div><span class="sm:hidden">T</span><span class="hidden sm:inline">Thu</span></div>
+                            <div><span class="sm:hidden">F</span><span class="hidden sm:inline">Fri</span></div>
+                            <div><span class="sm:hidden">S</span><span class="hidden sm:inline">Sat</span></div>
                         </div>
-                        <div id="calendar" class="grid grid-cols-7 gap-3"></div>
+                        <div id="calendar" class="grid grid-cols-7 gap-1 sm:gap-2 md:gap-3"></div>
                     </div>
 
                     <div id="listContainer" class="hidden max-h-[500px] overflow-y-auto custom-scroll pr-2 space-y-3">
@@ -703,14 +865,21 @@
                     </div>
                 </div>
 
-                <div class="flex justify-between items-center px-4">
-                    <div class="text-sm text-gray-500 font-medium">Showing <span id="startRow">0</span>-<span
-                            id="endRow">0</span> of <span id="totalRows">0</span></div>
+                <div class="flex flex-col sm:flex-row justify-between items-center gap-3 px-4 py-3">
+                    <div class="text-xs sm:text-sm text-gray-500 font-medium text-center sm:text-left">
+                        Showing <span id="startRow" class="font-bold text-gray-700">0</span> - <span
+                            id="endRow" class="font-bold text-gray-700">0</span> of <span id="totalRows" class="font-bold text-gray-700">0</span>
+                        <span class="ml-2 text-xs text-gray-400">(Page <span id="currentPageNum" class="font-semibold text-teal-600">1</span> / <span id="totalPagesNum" class="font-semibold text-teal-600">1</span>)</span>
+                    </div>
                     <div class="flex gap-2">
-                        <button onclick="prevPage()"
-                            class="glass-input px-4 py-2 rounded-xl text-sm hover:bg-white">Previous</button>
-                        <button onclick="nextPage()"
-                            class="glass-input px-4 py-2 rounded-xl text-sm hover:bg-white">Next</button>
+                        <button id="btnPrevPage" onclick="prevPage()"
+                            class="glass-input px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold hover:bg-white transition flex items-center gap-1.5 shadow-sm">
+                            <i class="fa-solid fa-chevron-left text-[10px]"></i> Previous
+                        </button>
+                        <button id="btnNextPage" onclick="nextPage()"
+                            class="glass-input px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold hover:bg-white transition flex items-center gap-1.5 shadow-sm">
+                            Next <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -870,8 +1039,8 @@
                             <button onclick="adminCancelLocation()" id="btnCancelLoc"
                                 class="hidden text-gray-500 px-2 text-sm font-bold">✕</button>
                         </div>
-                        <div class="max-h-60 overflow-y-auto pr-1 custom-scroll">
-                            <table class="w-full text-sm glass-table" id="adminLocationTable">
+                        <div class="max-h-60 overflow-y-auto overflow-x-auto pr-1 custom-scroll">
+                            <table class="w-full text-sm glass-table min-w-[320px]" id="adminLocationTable">
                                 <tbody class="text-sm"></tbody>
                             </table>
                         </div>
@@ -890,8 +1059,8 @@
                             <button onclick="adminCancelCompany()" id="btnCancelComp"
                                 class="hidden text-gray-500 px-2 text-sm font-bold">✕</button>
                         </div>
-                        <div class="max-h-60 overflow-y-auto pr-1 custom-scroll">
-                            <table class="w-full text-sm glass-table" id="adminCompanyTable">
+                        <div class="max-h-60 overflow-y-auto overflow-x-auto pr-1 custom-scroll">
+                            <table class="w-full text-sm glass-table min-w-[320px]" id="adminCompanyTable">
                                 <tbody class="text-sm"></tbody>
                             </table>
                         </div>
@@ -909,7 +1078,12 @@
                             <input type="text" id="adminEquipName" placeholder="e.g. Spectrophotometer"
                                 class="glass-input w-full p-2 rounded-lg text-sm mt-1">
                         </div>
-                        <div class="flex-1 min-w-[200px]">
+                        <div class="flex-1 min-w-[160px]">
+                            <label class="text-[10px] font-bold text-gray-400 uppercase">Model (รุ่น)</label>
+                            <input type="text" id="adminEquipModel" placeholder="e.g. UV-1800"
+                                class="glass-input w-full p-2 rounded-lg text-sm mt-1">
+                        </div>
+                        <div class="flex-1 min-w-[180px]">
                             <label class="text-[10px] font-bold text-gray-400 uppercase">Location</label>
                             <select id="adminEquipLoc" class="glass-input w-full p-2 rounded-lg text-sm mt-1"></select>
                         </div>
@@ -919,11 +1093,12 @@
                         <button onclick="adminCancelEquipment()" id="btnCancelEquip"
                             class="hidden px-4 py-2 text-sm text-gray-500 hover:bg-gray-200 rounded-lg">Cancel</button>
                     </div>
-                    <div class="max-h-80 overflow-y-auto custom-scroll">
-                        <table class="w-full text-sm text-left glass-table" id="adminEquipmentTable">
+                    <div class="max-h-80 overflow-y-auto overflow-x-auto custom-scroll">
+                        <table class="w-full text-sm text-left glass-table min-w-[480px]" id="adminEquipmentTable">
                             <thead class="bg-gray-100/50 text-gray-500 uppercase text-xs sticky top-0 backdrop-blur-md">
                                 <tr>
                                     <th class="p-3">Equipment Name</th>
+                                    <th class="p-3">Model</th>
                                     <th class="p-3">Location</th>
                                     <th class="p-3 text-right">Actions</th>
                                 </tr>
@@ -949,8 +1124,8 @@
                         <button onclick="adminCancelReporter()" id="btnCancelReporter"
                             class="hidden text-gray-500 px-4 py-2 text-sm hover:bg-gray-200 rounded-lg h-[38px]">Cancel</button>
                     </div>
-                    <div class="max-h-60 overflow-y-auto custom-scroll">
-                        <table class="w-full text-sm glass-table" id="adminReporterTable">
+                    <div class="max-h-60 overflow-y-auto overflow-x-auto custom-scroll">
+                        <table class="w-full text-sm glass-table min-w-[320px]" id="adminReporterTable">
                             <thead class="bg-gray-100/50 text-gray-500 uppercase text-xs sticky top-0 backdrop-blur-md">
                                 <tr>
                                     <th class="p-3">Reporter Name</th>
@@ -962,20 +1137,158 @@
                     </div>
                 </div>
 
-                <div class="glass ios-card p-6 flex items-center justify-between mt-8">
-                    <div>
-                        <h3 class="text-lg font-bold text-gray-800">System Data</h3>
-                        <p class="text-xs text-gray-500">Backup or restore your database JSON.</p>
+                <!-- System Storage & Data Retention Management (Admin Only) -->
+                <div class="glass ios-card p-6 mt-8 space-y-6" id="adminStorageCard">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-100 dark:border-slate-800 pb-4">
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-800 dark:text-slate-100 flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Database Storage & Backup (Unified)
+                            </h3>
+                            <p class="text-xs text-gray-500 dark:text-slate-400 mt-1">
+                                ระบบสำรองข้อมูลร่วมทั้ง 2 ระบบ (Lab Book+ และ Lab Care+) และการบริหารจัดการพื้นที่ Cloud Firebase แผนฟรี
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <button onclick="backupData()"
+                                class="ios-btn bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 text-xs sm:text-sm shadow-md flex items-center gap-1.5">
+                                <i class="fa-solid fa-download"></i> Backup All (2 Systems)
+                            </button>
+                            <button onclick="document.getElementById('importFile').click()"
+                                class="ios-btn bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-xs sm:text-sm shadow-md flex items-center gap-1.5">
+                                <i class="fa-solid fa-upload"></i> Import Unified JSON
+                            </button>
+                            <input type="file" id="importFile" class="hidden" accept=".json" onchange="importData(this)">
+                        </div>
                     </div>
-                    <div class="flex gap-3">
-                        <button onclick="backupData()"
-                            class="ios-btn bg-green-500 text-white px-4 py-2 text-sm shadow-lg shadow-green-500/20">Backup
-                            Data</button>
-                        <button onclick="document.getElementById('importFile').click()"
-                            class="ios-btn bg-blue-500 text-white px-4 py-2 text-sm shadow-lg shadow-blue-500/20">Import
-                            JSON</button>
-                        <input type="file" id="importFile" class="hidden" accept=".json" onchange="importData(this)">
+
+                    <!-- Cloud Firebase Free Tier (Spark Plan) Status -->
+                    <div class="p-4 rounded-xl bg-gray-50/80 dark:bg-slate-800/60 border border-gray-200/60 dark:border-slate-700/60 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <i class="fa-solid fa-cloud text-teal-600 dark:text-teal-400 text-base"></i>
+                                <span class="text-xs font-bold uppercase tracking-wider text-gray-600 dark:text-slate-300">Firebase Cloud Database</span>
+                                <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-teal-100 text-teal-800 dark:bg-teal-900/40 dark:text-teal-300">Spark Plan (Free Tier)</span>
+                            </div>
+                            <div class="text-xs text-gray-500 dark:text-slate-400 mt-1" id="careplusFbStatusDesc">
+                                กำลังตรวจสอบสถานะการเชื่อมต่อ Cloud...
+                            </div>
+                        </div>
+                        <button onclick="openFirebaseConfigModal()" class="px-3 py-1.5 rounded-lg border border-teal-300 dark:border-teal-700 text-teal-700 dark:text-teal-300 text-xs font-semibold hover:bg-teal-50 dark:hover:bg-slate-700 transition">
+                            <i class="fa-solid fa-gear mr-1"></i> Cloud Config
+                        </button>
                     </div>
+
+                    <!-- Audit Log (Care+ Activity Log) -->
+                    <div class="p-5 rounded-2xl bg-indigo-50/40 dark:bg-indigo-950/20 border border-indigo-200/60 dark:border-indigo-800/40 space-y-4" id="carePlusAuditSection">
+                        <div class="flex items-center justify-between flex-wrap gap-2">
+                            <div class="flex items-center gap-2">
+                                <i class="fa-solid fa-clipboard-list text-indigo-600 dark:text-indigo-400 text-lg"></i>
+                                <h4 class="text-sm font-bold text-gray-800 dark:text-slate-200">
+                                    Audit Log (ประวัติกิจกรรมทั้งหมด)
+                                </h4>
+                                <span class="text-[10px] font-bold bg-indigo-100 text-indigo-800 dark:bg-indigo-900/50 dark:text-indigo-300 px-2 py-0.5 rounded-full">Admin Only</span>
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-600 dark:text-slate-300 leading-relaxed">
+                            <i class="fa-solid fa-shield-halved text-emerald-600 mr-1"></i>
+                            บันทึกการดำเนินการทั้งหมดในระบบ Lab Care+ เช่น เพิ่ม/แก้ไข/ลบ เรคอร์ด, เปลี่ยนแปลงข้อมูลผู้ใช้, อุปกรณ์ ฯลฯ
+                        </p>
+                        <div class="table-container" style="max-height: 350px; overflow-y: auto;">
+                            <div style="overflow-x: auto;">
+                                <table class="w-full text-sm glass-table" style="min-width: 500px;">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 50px;">#</th>
+                                            <th>Timestamp</th>
+                                            <th>User</th>
+                                            <th>Action</th>
+                                            <th>Details</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="carePlusAuditTbody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between flex-wrap gap-2 pt-2">
+                            <span class="text-xs text-gray-500 dark:text-slate-400" id="carePlusAuditInfo">0 records</span>
+                            <div class="flex gap-2">
+                                <button onclick="carePlusAuditPage(-1)" class="px-3 py-1.5 rounded-lg border text-xs font-semibold text-gray-600 hover:bg-gray-100 dark:hover:bg-slate-700 transition" id="carePlusAuditPrev" disabled>← Previous</button>
+                                <button onclick="carePlusAuditPage(1)" class="px-3 py-1.5 rounded-lg border text-xs font-semibold text-gray-600 hover:bg-gray-100 dark:hover:bg-slate-700 transition" id="carePlusAuditNext">Next →</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Storage Cleanup / Retention Purge Tool (Strict Admin Control) -->
+                    <div class="p-5 rounded-2xl bg-amber-50/40 dark:bg-amber-950/20 border border-amber-200/60 dark:border-amber-800/40 space-y-4" id="adminPurgeSection">
+                        <div class="flex items-center justify-between flex-wrap gap-2">
+                            <div class="flex items-center gap-2">
+                                <i class="fa-solid fa-broom text-amber-600 dark:text-amber-400 text-lg"></i>
+                                <h4 class="text-sm font-bold text-gray-800 dark:text-slate-200">
+                                    เครื่องมือเคลียร์ข้อมูลคืนพื้นที่ (Storage Cleanup & Quota Purge)
+                                </h4>
+                                <span class="text-[10px] font-bold bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300 px-2 py-0.5 rounded-full">Admin Only</span>
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-600 dark:text-slate-300 leading-relaxed">
+                            <i class="fa-solid fa-shield-halved text-emerald-600 mr-1"></i> <strong>ความปลอดภัยสูงสุด:</strong> ระบบจะลบเฉพาะ<strong>ประวัติการทำรายการของผู้ใช้ (User Bookings & Maintenance Records)</strong> ที่เก่ากว่าช่วงเวลาที่เลือก เพื่อคืนพื้นที่โควตา 1GB ของแผนฟรี โดย<strong>ไม่มีทางลบข้อมูลหลักของผู้ดูแลระบบ (Users, Equipments, Buildings, Techs, Reporters) เด็ดขาด</strong>
+                        </p>
+                        <div class="flex flex-col sm:flex-row gap-3 items-stretch sm:items-end">
+                            <div class="flex-1">
+                                <label class="text-[11px] font-bold text-gray-600 dark:text-slate-300 uppercase block mb-1">เลือกช่วงเวลาข้อมูลที่จะล้าง</label>
+                                <select id="purgePeriodSelect" class="w-full glass-input px-3 py-2 rounded-xl text-xs font-semibold">
+                                    <option value="1_month">เก่ากว่า 1 เดือน (> 30 วันที่ผ่านมา)</option>
+                                    <option value="3_months" selected>เก่ากว่า 1 ไตรมาส (> 90 วันที่ผ่านมา)</option>
+                                    <option value="6_months">เก่ากว่า 6 เดือน (> 180 วันที่ผ่านมา)</option>
+                                    <option value="1_year">เก่ากว่า 1 ปี (> 365 วันที่ผ่านมา)</option>
+                                    <option value="2_years">เก่ากว่า 2 ปี (> 730 วันที่ผ่านมา)</option>
+                                    <option value="all_user_records">⚠️ ลบประวัติการใช้งานทั้งหมดของ User (ล้างกระดานเฉพาะรายการจองและซ่อม)</option>
+                                </select>
+                            </div>
+                            <button onclick="handleAdminPurgeClick()" class="ios-btn bg-gradient-to-r from-amber-500 to-red-500 hover:from-amber-600 hover:to-red-600 text-white px-5 py-2.5 text-xs font-bold shadow-md shadow-amber-500/20 flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-trash-can"></i> ตรวจสอบและเคลียร์ข้อมูล
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase Cloud Config Modal -->
+    <div id="firebaseConfigModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="glass ios-card rounded-3xl shadow-2xl w-[95%] max-w-lg p-6 space-y-4">
+            <div class="flex justify-between items-center border-b border-gray-200/50 dark:border-slate-700/50 pb-3">
+                <h3 class="text-base font-bold text-gray-800 dark:text-slate-100 flex items-center gap-2">
+                    <i class="fa-solid fa-cloud text-teal-600"></i> Firebase Spark Plan Config
+                </h3>
+                <button onclick="closeFirebaseConfigModal()" class="w-8 h-8 rounded-full bg-gray-100 dark:bg-slate-700 flex items-center justify-center text-gray-500 hover:text-red-500 text-base font-bold">✕</button>
+            </div>
+            <p class="text-xs text-gray-500 dark:text-slate-400 leading-relaxed">
+                ใส่การตั้งค่า Firebase Web App (จาก Firebase Console &gt; Project settings &gt; General &gt; Your apps) เพื่อเปิดใช้งาน Cloud Real-time Sync บนแผนฟรี (Spark)
+            </p>
+            <div class="p-3 bg-blue-50/80 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900/50 rounded-2xl text-[11px] text-blue-700 dark:text-blue-300 leading-relaxed">
+                <strong class="font-bold">💡 โหมดเชื่อมต่ออัตโนมัติ (Zero-Config Auto-Connect):</strong><br>
+                เมื่อกำหนด <code>DEFAULT_CONFIG</code> ในไฟล์ <code>shared-core.js</code> เรียบร้อยแล้ว ผู้ใช้งานคนอื่น<strong>ไม่ต้องกรอกข้อมูลใดๆ</strong> ระบบจะเชื่อมต่อฐานข้อมูล Cloud ให้โดยอัตโนมัติเมื่อเปิดใช้งาน
+            </div>
+            <div class="space-y-3 text-xs">
+                <div>
+                    <label class="font-bold text-gray-600 dark:text-slate-300">API Key</label>
+                    <input type="text" id="fbCfgApiKey" placeholder="AIzaSy..." class="w-full glass-input p-2 rounded-lg mt-1 font-mono text-xs">
+                </div>
+                <div>
+                    <label class="font-bold text-gray-600 dark:text-slate-300">Project ID</label>
+                    <input type="text" id="fbCfgProjectId" placeholder="lab-suite-xxxx" class="w-full glass-input p-2 rounded-lg mt-1 font-mono text-xs">
+                </div>
+                <div>
+                    <label class="font-bold text-gray-600 dark:text-slate-300">App ID (Optional)</label>
+                    <input type="text" id="fbCfgAppId" placeholder="1:xxxx:web:xxxx" class="w-full glass-input p-2 rounded-lg mt-1 font-mono text-xs">
+                </div>
+            </div>
+            <div class="flex justify-between items-center pt-3 border-t border-gray-200/50 dark:border-slate-700/50">
+                <button onclick="clearFirebaseConfig()" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30">ล้างการเชื่อมต่อ</button>
+                <div class="flex gap-2">
+                    <button onclick="closeFirebaseConfigModal()" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-gray-500 hover:bg-gray-100">ปิด</button>
+                    <button onclick="saveFirebaseConfigFromModal()" class="ios-btn bg-teal-600 hover:bg-teal-700 text-white px-4 py-1.5 text-xs font-bold rounded-lg shadow">บันทึกและเชื่อมต่อ</button>
                 </div>
             </div>
         </div>
@@ -1006,11 +1319,11 @@
                     class="text-gray-400 hover:text-red-500 text-2xl font-bold leading-none w-8 h-8 flex items-center justify-center rounded-full hover:bg-red-50 transition-colors">✕</button>
             </div>
             <div class="flex flex-1 overflow-hidden">
-                <!-- Sidebar for file list -->
+                
                 <div class="w-1/3 max-w-[280px] border-r border-gray-100 bg-gray-50/50 flex flex-col p-4 overflow-y-auto custom-scroll"
                     id="poSidebar">
                 </div>
-                <!-- Main preview area -->
+                
                 <div class="flex-1 bg-gray-100/50 p-3" id="poPdfPreviewArea">
                     <div class="flex items-center justify-center h-full text-gray-400">Select a file from the list to
                         view</div>
@@ -1053,7 +1366,6 @@
     </div>
 
     <script>
-        // --- Data Stores ---
         let _backupData = { "users": { "admin@lab.com": { "password": "admin321", "role": "admin", "name": "Administrator" }, "user@lab.com": { "password": "user123", "role": "user", "name": "Standard User" }, "Saranyap@mitrphol.com": { "password": "user123", "role": "user", "name": "Saranya phaengthai" }, "Waranyan@mitrphol.com": { "password": "user123", "role": "user", "name": "Waranya Natesuntorn" }, "Ratchaniwanj@mitrphol.com": { "password": "user123", "role": "user", "name": "Ratchaniwan Jaemsaeng" }, "Prayooths@mitrphol.com": { "password": "user123", "role": "user", "name": "Prayooth Saothong" }, "Chokchais@mitrphol.com": { "password": "user123", "role": "user", "name": "Chokchai Sompugdee" }, "Atiyat@mitrphol.com": { "password": "user123", "role": "user", "name": "Atiya Techaparin" }, "Kridsanak@mitrphol.com": { "password": "user123", "role": "user", "name": "Kridsana Krisomdee" }, "Jirachayak@mitrphol.com": { "password": "user123", "role": "user", "name": "Jirachaya klinsumalee" } }, "records": [{ "id": 1770458821533, "equipment_name": "Pilot Spray Dry", "building": "Production Trial Unit", "type": "calibration", "service_date": "2024-07-16", "next_service_date": "2026-07-16", "maintenance_cost": "8000", "technicians": ["บริษัท เกรทเทค ไซเบอร์เนติกส์ จำกัด"], "reporter": "Kridsana Krisomdee", "calendar_status": "complete", "po_file": "", "additional_files": ["Demo_Manual_v1.pdf", "Calibration_Cert.pdf"] }, { "id": 1770459393734, "equipment_name": "Water Purifier (Arioso UP900))", "building": "Washing room", "type": "repair", "service_date": "2024-07-24", "next_service_date": "2025-08-07", "maintenance_cost": "15300", "technicians": ["บริษัท เน็กซ์ไบโอ (ประเทศไทย) จำกัด"], "reporter": "Kridsana Krisomdee", "calendar_status": "complete", "po_file": "" }, { "id": 1770459648390, "equipment_name": "Water Purifier (Arioso UP900))", "building": "Washing room", "type": "repair", "service_date": "2025-08-07", "next_service_date": "", "maintenance_cost": "29200", "technicians": ["บริษัท เน็กซ์ไบโอ (ประเทศไทย) จำกัด"], "reporter": "Kridsana Krisomdee", "calendar_status": "complete", "po_file": "" }, { "id": 1770459871942, "equipment_name": "Water Purifier (Arioso UP900))", "building": "Washing room", "type": "repair", "service_date": "2025-03-31", "next_service_date": "", "maintenance_cost": "51100", "technicians": ["บริษัท เน็กซ์ไบโอ (ประเทศไทย) จำกัด"], "reporter": "Kridsana Krisomdee", "calendar_status": "complete", "po_file": "" }, { "id": 1770460540632, "equipment_name": "Water Purifier (Arioso UP900))", "building": "Washing room", "type": "repair", "service_date": "2025-11-17", "next_service_date": "", "maintenance_cost": "6650", "technicians": ["บริษัท เน็กซ์ไบโอ (ประเทศไทย) จำกัด"], "reporter": "Kridsana Krisomdee", "calendar_status": "complete", "po_file": "" }, { "id": 1770460788184, "equipment_name": "Separator (Alfa Laval)", "building": "Production Trial Unit", "type": "calibration", "service_date": "2024-06-18", "next_service_date": "2026-06-18", "maintenance_cost": "93000", "technicians": ["บริษัท อัลฟา ลาวาล (ไทยแลนด์) จำกัด"], "reporter": "Kridsana Krisomdee", "calendar_status": "complete", "po_file": "" }, { "id": 1770461421061, "equipment_name": "Spray dry (ฺB-290)", "building": "Micro Lab", "type": "repair", "service_date": "2025-07-09", "next_service_date": "", "maintenance_cost": "5200", "technicians": ["บริษัท บูชิ (ไทยแลนด์) จำกัด"], "reporter": "Kridsana Krisomdee", "calendar_status": "complete", "po_file": "" }, { "id": 1770461915055, "equipment_name": "Refrigerator, Panasonic", "building": "Micro Lab", "type": "repair", "service_date": "2025-04-03", "next_service_date": "", "maintenance_cost": "3400", "technicians": ["นายปรีชา ภูวโชติธนากุล"], "reporter": "Kridsana Krisomdee", "calendar_status": "complete", "po_file": "" }, { "id": 1770462031456, "equipment_name": "3-Door Refrigerator (4C), Natural (no.2)", "building": "Production Trial Unit", "type": "repair", "service_date": "2025-03-13", "next_service_date": "", "maintenance_cost": "9000", "technicians": ["นายปรีชา ภูวโชติธนากุล"], "reporter": "Kridsana Krisomdee", "calendar_status": "complete", "po_file": "" }, { "id": 1770462398376, "equipment_name": "Centrifuge Floor Type (Lynx4000))", "building": "General Micro Lab", "type": "repair", "service_date": "2024-08-07", "next_service_date": "", "maintenance_cost": "290000", "technicians": ["ห้างหุ้นส่วนจำกัด เอ็น.วาย.อาร์ "], "reporter": "Kridsana Krisomdee", "calendar_status": "complete", "po_file": "" }, { "id": 1770462497841, "equipment_name": "Centrifuge Floor Type (Lynx4000))", "building": "General Micro Lab", "type": "repair", "service_date": "2024-08-09", "next_service_date": "", "maintenance_cost": "349245", "technicians": ["บริษัท เอ็นวิชั่น แล็บซิสเต็ม จำกัด"], "reporter": "Kridsana Krisomdee", "calendar_status": "complete", "po_file": "" }, { "id": 1770462803655, "equipment_name": "Rotary evaporator, Eyela", "building": "Micro Lab", "type": "repair", "service_date": "2024-12-12", "next_service_date": "", "maintenance_cost": "28000", "technicians": ["บริษัท เอส.เอ.(ขอนแก่น) จำกัด"], "reporter": "Kridsana Krisomdee", "calendar_status": "complete", "po_file": "" }, { "id": 1770462917214, "equipment_name": "Rotary evaporator, Eyela", "building": "Micro Lab", "type": "repair", "service_date": "2025-06-19", "next_service_date": "", "maintenance_cost": "14800", "technicians": ["บริษัท เอส.เอ.(ขอนแก่น) จำกัด"], "reporter": "Kridsana Krisomdee", "calendar_status": "complete", "po_file": "" }, { "id": 1770463587072, "equipment_name": "pH & CD meter", "building": "Production Trial Unit", "type": "repair", "service_date": "2025-01-31", "next_service_date": "", "maintenance_cost": "1475", "technicians": ["บริษัท เมทเล่อร์-โทเลโด (ประเทศไทย) จำกัด"], "reporter": "Kridsana Krisomdee", "calendar_status": "complete", "po_file": "" }, { "id": 1770464269413, "equipment_name": "Moisture analyzer", "building": "General Micro Lab", "type": "calibration", "service_date": "2025-10-16", "next_service_date": "2026-10-16", "maintenance_cost": "14590", "technicians": ["บริษัท เมทเล่อร์-โทเลโด (ประเทศไทย) จำกัด"], "reporter": "Kridsana Krisomdee", "calendar_status": "complete", "po_file": "" }, { "id": 1770464690031, "equipment_name": "Pilot Spray Dry", "building": "Production Trial Unit", "type": "calibration", "service_date": "2023-07-06", "next_service_date": "2024-07-06", "maintenance_cost": "16500", "technicians": ["บริษัท เกรทเทค ไซเบอร์เนติกส์ จำกัด"], "reporter": "Kridsana Krisomdee", "calendar_status": "complete", "po_file": "" }, { "id": 1770465149396, "equipment_name": "Separator (Alfa Laval)", "building": "Production Trial Unit", "type": "calibration", "service_date": "2023-02-16", "next_service_date": "2024-02-16", "maintenance_cost": "99278", "technicians": ["บริษัท อัลฟา ลาวาล (ไทยแลนด์) จำกัด"], "reporter": "Kridsana Krisomdee", "calendar_status": "complete", "po_file": "" }], "technicians": ["บริษัท เกรทเทค ไซเบอร์เนติกส์ จำกัด", "บริษัท เน็กซ์ไบโอ (ประเทศไทย) จำกัด", "บริษัท อัลฟา ลาวาล (ไทยแลนด์) จำกัด", "บริษัท บูชิ (ไทยแลนด์) จำกัด", "นายปรีชา ภูวโชติธนากุล", "ห้างหุ้นส่วนจำกัด เอ็น.วาย.อาร์ ", "บริษัท เอ็นวิชั่น แล็บซิสเต็ม จำกัด", "บริษัท เอส.เอ.(ขอนแก่น) จำกัด", "บริษัท เมทเล่อร์-โทเลโด (ประเทศไทย) จำกัด"], "reporters": ["Laboratory Technician", "Administrative Staff", "Saranya Phaengthai", "Waranya Natesuntorn", "Ratchaniwan Jaemsaeng", "Prayooth Saothong", "Chokchai Sompugdee", "Atiya Techaparin", "Kridsana Krisomdee", "Jirachaya Klinsumalee"], "buildings": [{ "id": 5, "name": "Fermentation unit" }, { "id": 6, "name": "Production Trial Unit" }, { "id": 7, "name": "Analytical Lab" }, { "id": 8, "name": "General Micro Lab" }, { "id": 9, "name": "Preparation room" }, { "id": 10, "name": "Utility" }, { "id": 11, "name": "Washing room" }, { "id": 12, "name": "Biosafety Level 2 (BSL2)" }, { "id": 1770461142946, "name": "Micro Lab" }], "equipment": [{ "id": 1, "name": "Autoclave", "building_id": 5 }, { "id": 2, "name": "50L Fermenter", "building_id": 5 }, { "id": 3, "name": "500L Fermenter", "building_id": 5 }, { "id": 4, "name": "750L Hot Air Oven", "building_id": 5 }, { "id": 5, "name": "500L Mixing tank", "building_id": 6 }, { "id": 6, "name": "500L Pretreatment tank", "building_id": 6 }, { "id": 7, "name": "20L Rotary evaporator", "building_id": 6 }, { "id": 8, "name": "Falling Film Evaporator (10L/h)", "building_id": 6 }, { "id": 9, "name": "Mini Spray Dry (Buchi-B290)", "building_id": 6 }, { "id": 10, "name": "Pilot Spray Dry", "building_id": 6 }, { "id": 11, "name": "Separator (Alfa Laval)", "building_id": 6 }, { "id": 12, "name": "Tubular centrifuge", "building_id": 6 }, { "id": 13, "name": "Sequential Simulated Moving Bed (SMB)", "building_id": 6 }, { "id": 14, "name": "Autoclave, Hirayama", "building_id": 6 }, { "id": 15, "name": "Multi-function automatic filling machine", "building_id": 6 }, { "id": 16, "name": "Vacuum packager", "building_id": 6 }, { "id": 17, "name": "Packing machine", "building_id": 6 }, { "id": 18, "name": "Filter press", "building_id": 6 }, { "id": 19, "name": "HPLC (Waters)", "building_id": 7 }, { "id": 20, "name": "Incubator Shaker (Innova)", "building_id": 7 }, { "id": 21, "name": "Tangential Flow Fitration (Merck)", "building_id": 7 }, { "id": 22, "name": "Centrifuge Floor Type (Lynx4000))", "building_id": 8 }, { "id": 23, "name": "Incubator Shaker (InfrosTH))", "building_id": 8 }, { "id": 24, "name": "Incubator (Memmert) No.1", "building_id": 8 }, { "id": 25, "name": "Incubator (Memmert) No.2", "building_id": 8 }, { "id": 26, "name": "Moisture analyzer", "building_id": 8 }, { "id": 27, "name": "Biosafety Cabinet", "building_id": 8 }, { "id": 28, "name": "Spectrophotometer", "building_id": 8 }, { "id": 29, "name": "Fume hood", "building_id": 9 }, { "id": 30, "name": "Thermomixer", "building_id": 9 }, { "id": 31, "name": "UV Auto Dry Desiccator", "building_id": 9 }, { "id": 32, "name": "Boiler", "building_id": 10 }, { "id": 33, "name": "RO Water Unit", "building_id": 10 }, { "id": 34, "name": "Air Supply Unit", "building_id": 10 }, { "id": 35, "name": "Hot Air Oven (Memmert UF260))", "building_id": 11 }, { "id": 36, "name": "Water Purifier (Arioso UP900))", "building_id": 11 }, { "id": 37, "name": "ICE Maker", "building_id": 11 }, { "id": 38, "name": "Freezer -80 C (Eppendorf)", "building_id": 12 }, { "id": 39, "name": "Freezer -20 C (Panasonic)", "building_id": 12 }, { "id": 40, "name": "Autoclave HVA110 (Hirayama)", "building_id": 12 }, { "id": 41, "name": "Refridgerator centrifuge", "building_id": 12 }, { "id": 42, "name": "Spectrophotometer (Jenway)", "building_id": 12 }, { "id": 43, "name": "Incubator shaker (Biosan)", "building_id": 12 }, { "id": 44, "name": "YSI 2900D", "building_id": 12 }, { "id": 45, "name": "Waterless bead bath", "building_id": 12 }, { "id": 46, "name": "BSC (ESCO)", "building_id": 12 }, { "id": 47, "name": "42 L fermenter Techfros", "building_id": 12 }, { "id": 48, "name": "Chiller for techfors", "building_id": 12 }, { "id": 49, "name": "Steam generator", "building_id": 12 }, { "id": 50, "name": "1L Multifros fermenter #1", "building_id": 12 }, { "id": 51, "name": "1L Multifros fermenter #2", "building_id": 12 }, { "id": 52, "name": "1L Multifros fermenter #3", "building_id": 12 }, { "id": 53, "name": "1L Multifros fermenter #4", "building_id": 12 }, { "id": 54, "name": "1L Multifros fermenter #5", "building_id": 12 }, { "id": 55, "name": "1L Multifros fermenter #6", "building_id": 12 }, { "id": 56, "name": "5L Minifros #1", "building_id": 12 }, { "id": 57, "name": "5L Minifros #2", "building_id": 12 }, { "id": 58, "name": "Refrigerator (MITSUBISHI)", "building_id": 7 }, { "id": 59, "name": "Microplate Reader", "building_id": 7 }, { "id": 60, "name": "Gel Doc (BioRad)", "building_id": 7 }, { "id": 61, "name": "Sonicator", "building_id": 7 }, { "id": 62, "name": "Water bath (Lauda)", "building_id": 8 }, { "id": 63, "name": "Water bath (Thermo scientific)", "building_id": 8 }, { "id": 64, "name": "Microwave 1100W", "building_id": 8 }, { "id": 65, "name": "Microcentrifuge (Beckman coulter)", "building_id": 8 }, { "id": 66, "name": "3-Door Refrigerator (4C), Natural (no.1)", "building_id": 6 }, { "id": 67, "name": "3-Door Refrigerator (4C), Natural (no.2)", "building_id": 6 }, { "id": 68, "name": "Refrigerator (-20C), Haier", "building_id": 6 }, { "id": 69, "name": "2-Door Refrigerator (4C), POL-EKO", "building_id": 6 }, { "id": 70, "name": "Water bath, Memmert", "building_id": 6 }, { "id": 71, "name": "Water bath, Memmert from DC", "building_id": 6 }, { "id": 72, "name": "Analytical Balance 60 kg, Mettler-toledo", "building_id": 6 }, { "id": 73, "name": "Centrifuge  from New business, Hermle", "building_id": 6 }, { "id": 74, "name": "Overhead stirrer, IKA Eurostar 200", "building_id": 6 }, { "id": 75, "name": "Air Conditioner, Carrier 60,000 BTU no.1", "building_id": 6 }, { "id": 76, "name": "Air Conditioner, Carrier 60,000 BTU no.2", "building_id": 6 }, { "id": 77, "name": "Air Conditioner, Carrier 60,000 BTU no.3", "building_id": 6 }, { "id": 78, "name": "Peristaltic pump (Lab F6), Shenchen no.1", "building_id": 6 }, { "id": 79, "name": "Peristaltic pump (Lab F6), Shenchen no.2", "building_id": 6 }, { "id": 80, "name": "Peristaltic pump (Lab F6), Shenchen no.3", "building_id": 6 }, { "id": 81, "name": "Peristaltic pump (Lab F6), Shenchen no.4", "building_id": 6 }, { "id": 82, "name": "Peristaltic pump (Lab F6), Shenchen no.5", "building_id": 6 }, { "id": 83, "name": "Peristaltic pump (Lab N3), Shenchen no.1", "building_id": 6 }, { "id": 84, "name": "Peristaltic pump (Lab N3), Shenchen no.2", "building_id": 6 }, { "id": 85, "name": "Peristaltic pump (Lab N3), Shenchen no.3", "building_id": 6 }, { "id": 86, "name": "Peristaltic pump (BT101F) from N'Ae", "building_id": 6 }, { "id": 1770461244134, "name": "Spray dry (ฺB-290)", "building_id": 1770461142946 }, { "id": 1770461661504, "name": "Refrigerator, Panasonic", "building_id": 1770461142946 }, { "id": 1770462688377, "name": "Rotary evaporator, Eyela", "building_id": 1770461142946 }, { "id": 1770463495602, "name": "pH & CD meter", "building_id": 6 }] };
         let users = _backupData.users ? Object.entries(_backupData.users).map(([k, v], i) => ({
             id: 'U-' + String(i + 1).padStart(3, '0'),
@@ -1071,7 +1383,6 @@
         let equipment = _backupData.equipment || [];
         let poFilesDb = {};
 
-        // IndexedDB Configuration for PO Files
         const IDB_NAME = 'CarePlusStorage';
         const IDB_STORE = 'poFiles';
         let idbInst = null;
@@ -1098,7 +1409,6 @@
                                 poFilesDb[k] = reqGetAll.result[i];
                             });
 
-                            // Migrate from localStorage if exists
                             const savedState = localStorage.getItem('NoteLabState_Merged');
                             if (savedState) {
                                 try {
@@ -1161,142 +1471,204 @@
         let charts = {};
         let tempPoFiles = [];
 
-        // Pagination Vars
         let currentPage = 1;
         const rowsPerPage = 15;
         let filteredRecords = [];
 
-        // --- Initialization ---
         function loadCarePlusState() {
-            const savedState = localStorage.getItem('NoteLabState_Merged');
-            if (savedState) {
-                const state = JSON.parse(savedState);
-                if (state.users) users = state.users;
-                if (state.records) records = state.records;
-                if (state.technicians) technicians = state.technicians;
-                if (state.reporters) reporters = state.reporters;
-                if (state.equipments) equipment = state.equipments;
-                if (state.buildings) buildings = state.buildings;
-                if (state.poFilesDb) {
-                    poFilesDb = { ...poFilesDb, ...state.poFilesDb }; // Fallback
-                }
+            const state = LabStateBridge.getState();
+            if (state.users) users = state.users;
+            if (state.records) records = state.records;
+            if (state.technicians) technicians = state.technicians;
+            if (state.reporters) reporters = state.reporters;
+            if (state.equipments) equipment = state.equipments;
+            if (state.buildings) buildings = state.buildings;
+            if (state.poFilesDb) {
+                poFilesDb = { ...poFilesDb, ...state.poFilesDb }; // Fallback
             }
         }
 
         function saveCarePlusState() {
-            const savedState = localStorage.getItem('NoteLabState_Merged');
-            let state = savedState ? JSON.parse(savedState) : { users: [], equipments: [], buildings: [], bookings: [] };
-            state.users = users;
-            state.records = records;
-            state.technicians = technicians;
-            state.reporters = reporters;
-            state.equipments = equipment;
-            state.buildings = buildings;
-            delete state.poFilesDb; // Do not store massive PDFs in localStorage
-            localStorage.setItem('NoteLabState_Merged', JSON.stringify(state));
+            const prevState = LabStateBridge.getState() || {};
+            LabStateBridge.saveState({
+                ...prevState,
+                users: users,
+                records: records,
+                technicians: technicians,
+                reporters: reporters,
+                equipments: equipment,
+                buildings: buildings
+            });
         }
 
         window.addEventListener('DOMContentLoaded', async () => {
+            const activeUser = LabAuth.getCurrentUser();
+            if (activeUser) {
+                currentUser = { ...activeUser, email: activeUser.username };
+                document.documentElement.classList.add('has-active-session');
+                initApp();
+            } else {
+                currentUser = null;
+                document.documentElement.classList.remove('has-active-session');
+                document.getElementById('loginPage').classList.remove('hidden');
+                document.getElementById('mainApp').classList.add('hidden');
+            }
+
             try { await initIndexedDB(); } catch (e) { console.error(e); }
             loadCarePlusState();
 
-            // Listen for cross-tab updates from index.html
-            window.addEventListener('storage', (e) => {
-                if (e.key === 'NoteLabState_Merged') {
-                    loadCarePlusState();
-                    if (typeof currentUser !== 'undefined' && currentUser) {
-                        loadSettings(); // Updates all admin tables
-                        loadRecords(); // Updates main table
-                    }
+            // Listen for Cloud Real-time Updates (Firebase onSnapshot)
+            window.addEventListener('labRemoteSync', (e) => {
+                loadCarePlusState();
+                if (typeof currentUser !== 'undefined' && currentUser) {
+                    if (typeof loadSettings === 'function') loadSettings();
+                    if (typeof loadRecords === 'function') loadRecords();
+                    if (typeof updateDashboardCards === 'function') updateDashboardCards();
+                    if (typeof renderCharts === 'function') renderCharts();
                 }
-                if (e.key === 'labUserSession') {
-                    const savedEmail = localStorage.getItem('labUserSession');
-                    if (savedEmail) {
-                        const foundUser = users.find(u => u.username === savedEmail);
-                        if (foundUser) {
-                            currentUser = { ...foundUser, email: savedEmail };
-                            initApp();
-                        }
-                    } else {
-                        logout();
-                    }
+            });
+
+            // Listen for Live Presence Updates (Avatar Stack)
+            window.addEventListener('labPresenceSync', (e) => {
+                const presenceUsers = e.detail?.users || [];
+                const presenceEl = document.getElementById('nav-active-presence');
+                if (presenceEl && window.LabAvatar) {
+                    presenceEl.innerHTML = LabAvatar.renderActivePresenceStack(presenceUsers, currentUser?.id);
+                }
+            });
+
+            LabStateBridge.listen((newState, key) => {
+                loadCarePlusState();
+                if (typeof currentUser !== 'undefined' && currentUser) {
+                    loadSettings(); // Updates all admin tables
+                    loadRecords(); // Updates main table
+                }
+                const activeUser = LabAuth.getCurrentUser();
+                if (!activeUser && currentUser) {
+                    currentUser = null;
+                    document.documentElement.classList.remove('has-active-session');
+                    document.getElementById('loginPage').classList.remove('hidden');
+                    document.getElementById('mainApp').classList.add('hidden');
                 }
             });
 
             document.getElementById('loginForm').addEventListener('submit', handleLogin);
-
-            // ตรวจสอบ Session คงค้าง
-            const savedEmail = localStorage.getItem('labUserSession');
-            const foundUser = users.find(u => u.username === savedEmail);
-            if (savedEmail && foundUser) {
-                currentUser = { ...foundUser, email: savedEmail };
-                initApp();
-            } else {
-                // ถ้าไม่มี Session ค่อยแสดงหน้า Login
-                document.getElementById('loginPage').classList.remove('hidden');
-                document.getElementById('mainApp').classList.add('hidden');
-            }
         });
         function initApp() {
             document.getElementById('loginPage').classList.add('hidden');
             document.getElementById('mainApp').classList.remove('hidden');
             document.getElementById('userDisplay').textContent = currentUser.name;
             document.getElementById('userRole').textContent = currentUser.role.toUpperCase();
-            if (currentUser.role === 'admin') document.getElementById('settingsBtn').classList.remove('hidden');
+
+            // Render user avatar in header
+            const avatarContainer = document.getElementById('nav-user-avatar');
+            if (avatarContainer && window.LabAvatar) {
+                avatarContainer.innerHTML = LabAvatar.renderAvatar(currentUser, 'md', true);
+            }
+
+            // Start Presence Heartbeat for currentUser
+            if (window.LabFirebase && currentUser) {
+                LabFirebase.updatePresence(currentUser);
+            }
+
+            if (currentUser.role === 'admin') {
+                document.getElementById('settingsBtn')?.classList.remove('hidden');
+                document.getElementById('settingsBtnMobile')?.classList.remove('hidden');
+            } else {
+                document.getElementById('settingsBtn')?.classList.add('hidden');
+                document.getElementById('settingsBtnMobile')?.classList.add('hidden');
+            }
             showPage('dashboard');
 
             document.getElementById('addRecordForm').addEventListener('submit', handleSaveRecord);
             document.getElementById('poFileUpload').addEventListener('change', handleFileSelect);
 
-            // Global Funcs
             window.fullEditRecord = loadEditForm;
             window.deleteRecord = deleteRecord;
             window.viewPO = viewPO;
         }
 
-        function handleFileSelect(e) {
-            const files = Array.from(e.target.files);
-            if (files.length > 5) {
-                Swal.fire('Error', 'Maximum 5 files allowed.', 'error');
+        async function handleFileSelect(e) {
+            const rawFiles = Array.from(e.target.files);
+            if (!Array.isArray(tempPoFiles)) tempPoFiles = [];
+
+            if (tempPoFiles.length + rawFiles.length > 5) {
+                LabAlert.error(`อัปโหลดไฟล์ได้สูงสุดรวมไม่เกิน 5 ไฟล์ (ปัจจุบันเลือกไว้แล้ว ${tempPoFiles.length} ไฟล์)`, 'ข้อผิดพลาด');
                 e.target.value = '';
                 return;
             }
             let valid = true;
-            tempPoFiles = [];
-            let loaded = 0;
-            files.forEach(file => {
+            rawFiles.forEach(file => {
                 if (file.type !== "application/pdf") {
                     valid = false;
                 }
             });
             if (!valid) {
-                Swal.fire('Error', 'Only PDF files are allowed.', 'error');
+                LabAlert.error('อนุญาตให้อัปโหลดเฉพาะไฟล์ PDF เท่านั้น', 'รูปแบบไฟล์ไม่ถูกต้อง');
                 e.target.value = '';
                 return;
             }
 
-            if (files.length === 0) return;
+            if (rawFiles.length === 0) return;
 
-            files.forEach(file => {
-                const reader = new FileReader();
-                reader.onload = function (evt) {
-                    tempPoFiles.push({ name: file.name, data: evt.target.result });
-                    loaded++;
-                    if (loaded === files.length) {
-                        renderPoFilesList();
+            const list = document.getElementById('poFilesList');
+            const processingMsg = document.createElement('div');
+            processingMsg.className = 'text-xs text-blue-600 animate-pulse py-1 flex items-center gap-1.5';
+            processingMsg.innerHTML = '<i class="fa-solid fa-compress fa-spin"></i> กำลังประมวลผลและบีบอัดไฟล์เพิ่มเติม...';
+            list.appendChild(processingMsg);
+
+            for (const file of rawFiles) {
+                // Avoid adding duplicate file names
+                if (tempPoFiles.some(f => f.name === file.name)) {
+                    continue;
+                }
+                const dataUrl = await new Promise((resolve) => {
+                    const reader = new FileReader();
+                    reader.onload = (evt) => resolve(evt.target.result);
+                    reader.onerror = () => resolve('');
+                    reader.readAsDataURL(file);
+                });
+
+                if (dataUrl) {
+                    if (window.LabCompressor && LabCompressor.isSupported()) {
+                        const comp = await LabCompressor.compressDataUrl(dataUrl, file.name);
+                        tempPoFiles.push({
+                            name: file.name,
+                            compressed: comp.compressed,
+                            format: comp.format,
+                            mimeType: comp.mimeType,
+                            origSize: comp.origSize,
+                            compSize: comp.compSize,
+                            ratio: comp.ratio,
+                            data: comp.data
+                        });
+                    } else {
+                        tempPoFiles.push({
+                            name: file.name,
+                            compressed: false,
+                            data: dataUrl
+                        });
                     }
-                };
-                reader.readAsDataURL(file);
-            });
+                }
+            }
+
+            renderPoFilesList();
+            e.target.value = '';
         }
 
         function renderPoFilesList() {
             const list = document.getElementById('poFilesList');
             list.innerHTML = '';
             tempPoFiles.forEach((file, index) => {
-                list.innerHTML += `<div class="flex justify-between items-center px-2 py-1 bg-blue-50 rounded">
-                     <span class="text-blue-700 truncate mr-2">${file.name}</span>
-                     <button type="button" onclick="removeTempPoFile(${index})" class="text-red-500 hover:text-red-700 font-bold">✕</button>
+                const badge = (file.compressed && file.ratio)
+                    ? `<span class="text-[10px] bg-emerald-100 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 font-semibold px-2 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800">ลด ${file.ratio} (${Math.round((file.compSize || 0) / 1024)} KB)</span>`
+                    : '';
+                list.innerHTML += `<div class="flex justify-between items-center px-2.5 py-1.5 bg-blue-50/70 dark:bg-slate-800/60 border border-blue-100 dark:border-slate-700 rounded-xl text-xs mb-1.5">
+                     <div class="flex items-center gap-2 truncate mr-2">
+                         <span class="text-blue-700 dark:text-blue-400 font-medium truncate">${file.name}</span>
+                         ${badge}
+                     </div>
+                     <button type="button" onclick="removeTempPoFile(${index})" class="text-red-500 hover:text-red-700 font-bold px-1.5 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition">✕</button>
                  </div>`;
             });
         }
@@ -1311,14 +1683,12 @@
             return parseFloat(num).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
         }
 
-
-        function openUpcomingModal() {
+function openUpcomingModal() {
             const today = new Date();
             today.setHours(0, 0, 0, 0);
             const next90 = new Date(today);
             next90.setDate(today.getDate() + 90);
 
-            // แก้ไขจุดนี้: นำเงื่อนไขการกรองสถานะ complete ออก เพื่อให้ข้อมูลดึงมาแสดงผลตรงตามยอดบนการ์ดหน้า Dashboard
             let upcomingRecords = records.filter(r => {
                 let checkDate = null;
                 if (r.type === 'calibration' && r.next_service_date) checkDate = new Date(r.next_service_date);
@@ -1331,7 +1701,6 @@
                 return false;
             });
 
-            // เรียงลำดับจากวันที่จะมาถึงก่อน (Ascending)
             upcomingRecords.sort((a, b) => {
                 const dateA = new Date(a.type === 'calibration' ? a.next_service_date : a.service_date);
                 const dateB = new Date(b.type === 'calibration' ? b.next_service_date : b.service_date);
@@ -1350,7 +1719,6 @@
                     if (r.type === 'calibration') { typeIcon = '⚖️'; typeColor = 'text-purple-600 bg-purple-50 border-purple-200'; }
                     else if (r.type === 'pm') { typeIcon = '🛡️'; typeColor = 'text-teal-600 bg-teal-50 border-teal-200'; }
 
-                    // เพิ่มสไตล์และสถานะความคืบหน้าของงาน (Status Badge) เพื่อให้ตรวจสอบได้ว่างานไหนเสร็จหรือยังค้างอยู่
                     const isComplete = r.calendar_status === 'complete';
                     const statusBadgeClass = isComplete ? 'text-green-700 bg-green-50 border-green-200' : 'text-yellow-700 bg-yellow-50 border-yellow-200';
                     const opacityClass = isComplete ? 'opacity-60' : 'opacity-100';
@@ -1383,28 +1751,55 @@
         }
         function handleLogin(e) {
             e.preventDefault();
-            let email = document.getElementById('loginEmail').value;
-            if (!email.includes('@lab.com')) email += '@lab.com';
+            const rawUser = document.getElementById('loginEmail').value.trim();
+            const email = rawUser.includes('@') ? rawUser : `${rawUser}@lab.com`;
             const pwd = document.getElementById('loginPassword').value;
-            const userObj = users.find(u => u.username === email);
-            if (userObj && userObj.password === pwd) {
-                currentUser = { ...userObj, email };
-                localStorage.setItem('labUserSession', email); // บันทึก Session
+            let authRes = LabAuth.login(email, pwd);
+            if (!authRes.success && !rawUser.includes('@')) {
+                authRes = LabAuth.login(rawUser, pwd);
+            }
+
+            if (authRes.success) {
+                currentUser = { ...authRes.user, email: authRes.user.username };
                 initApp();
+                addCarePlusAudit('Login', `เข้าสู่ระบบ Care+ โดย ${authRes.user.name}`);
+                LabAlert.toast('success', `ยินดีต้อนรับคุณ ${authRes.user.name}`);
             } else {
-                Swal.fire({ title: 'Error', text: 'Invalid credentials', icon: 'error', confirmButtonColor: '#3b82f6' });
+                LabAlert.error('เข้าสู่ระบบไม่สำเร็จ', authRes.message);
             }
         }
+
         function logout() {
-            currentUser = null;
-            localStorage.removeItem('labUserSession'); // ล้าง Session
-            location.reload();
+            LabAlert.confirm({
+                title: 'ยืนยันออกจากระบบ?',
+                text: 'คุณต้องการออกจากระบบ MPIR Lab Care+ หรือไม่',
+                confirmText: 'ออกจากระบบ',
+                cancelText: 'ยกเลิก'
+            }).then(yes => {
+                if (yes) {
+                    if (window.LabFirebase) {
+                        LabFirebase.clearPresence();
+                    }
+                    LabAuth.logout();
+                    currentUser = null;
+                    document.documentElement.classList.remove('has-active-session');
+                    location.reload();
+                }
+            });
         }
+
         function showPage(page) {
+            LabAudio.playClick();
+            LabHaptic.tap();
             document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
-            document.getElementById(page + 'Page').classList.remove('hidden');
+            document.getElementById(page + 'Page')?.classList.remove('hidden');
             document.querySelectorAll('.nav-pill').forEach(b => b.classList.remove('active'));
-            document.getElementById('tab' + page.charAt(0).toUpperCase() + page.slice(1))?.classList.add('active');
+            const activeTab = document.getElementById('tab' + page.charAt(0).toUpperCase() + page.slice(1)) || (page === 'settings' ? document.getElementById('settingsBtn') : null);
+            activeTab?.classList.add('active');
+
+            document.querySelectorAll('.nav-pill-mobile').forEach(b => b.classList.remove('active'));
+            const activeMobileTab = document.getElementById('tabMobile' + page.charAt(0).toUpperCase() + page.slice(1)) || (page === 'settings' ? document.getElementById('settingsBtnMobile') : null);
+            activeMobileTab?.classList.add('active');
 
             if (page === 'dashboard') loadDashboard();
             if (page === 'records') loadRecords();
@@ -1412,9 +1807,7 @@
             if (page === 'settings') loadSettings();
         }
 
-        // --- Dashboard ---
-
-        function loadDashboard() {
+function loadDashboard() {
             initDashboardFilters();
             updateDashboard();
         }
@@ -1436,7 +1829,6 @@
             populate('dashFilterProv', technicians);
             populate('dashFilterRep', reporters);
 
-            // Populate years from records
             const years = records.map(r => new Date(r.service_date).getFullYear()).filter(y => !isNaN(y));
             populate('dashFilterYear', years);
         }
@@ -1461,7 +1853,7 @@
                 return matchYear && matchLoc && matchEquip && matchType && matchProv && matchRep;
             });
 
-            renderCalendar();
+            renderCalendar(filteredData);
             renderCharts(filteredData);
             updateDashboardCards(filteredData);
         }
@@ -1493,10 +1885,20 @@
                 if (checkDate) return checkDate >= today && checkDate <= next90;
                 return false;
             }).length;
-            document.getElementById('cardUpcoming').innerText = upcoming;
+            const cardUp = document.getElementById('cardUpcoming');
+            if (cardUp) cardUp.innerText = upcoming;
+            const badgeCP = document.getElementById('nav-notify-badge-cp');
+            if (badgeCP) {
+                if (upcoming > 0) {
+                    badgeCP.innerText = upcoming > 99 ? '99+' : upcoming;
+                    badgeCP.classList.remove('hidden');
+                } else {
+                    badgeCP.classList.add('hidden');
+                }
+            }
         }
 
-        function renderCalendar() {
+        function renderCalendar(data) {
             const year = currentCalendarMonth.getFullYear();
             const month = currentCalendarMonth.getMonth();
             document.getElementById('currentMonthYear').textContent = new Date(year, month).toLocaleString('en-US', { month: 'long', year: 'numeric' });
@@ -1510,13 +1912,14 @@
             calendar.innerHTML = '';
             listContainer.innerHTML = '';
 
+            const sourceRecords = data || records;
             let monthRecords = [];
 
-            for (let i = 0; i < firstDay; i++) calendar.innerHTML += `<div></div>`;
+            for (let i = 0; i < firstDay; i++) calendar.innerHTML += `<div class="opacity-0 pointer-events-none"></div>`;
 
             for (let day = 1; day <= daysInMonth; day++) {
                 const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                const items = records.filter(r => (r.type !== 'calibration' && r.service_date === dateStr) || (r.type === 'calibration' && r.next_service_date === dateStr));
+                const items = sourceRecords.filter(r => (r.type !== 'calibration' && r.service_date === dateStr) || (r.type === 'calibration' && r.next_service_date === dateStr));
 
                 if (items.length > 0) {
                     monthRecords.push({ date: dateStr, items: items });
@@ -1524,21 +1927,24 @@
 
                 const isToday = new Date().toISOString().split('T')[0] === dateStr;
 
-                let html = `<div class="text-right text-xs font-bold ${isToday ? 'text-blue-600' : 'text-gray-400'} mb-1">${day}</div>`;
+                let html = `<div class="text-right text-[10px] sm:text-xs font-bold ${isToday ? 'text-blue-600 dark:text-blue-400 font-extrabold' : 'text-gray-400 dark:text-slate-400'} mb-1">${day}</div>`;
 
-                // จุดที่แก้ไข: ลบลูป forEach ที่ซ้อนกันซ้ำซากออก
                 items.slice(0, 3).forEach(i => {
                     const bgClass = i.type === 'repair' ? 'bg-repair' : (i.type === 'pm' ? 'bg-pm' : 'bg-calib');
                     const opacity = i.calendar_status === 'complete' ? 'opacity-50' : 'opacity-100';
 
-                    html += `<div class="cal-event-chip ${bgClass} ${opacity} whitespace-normal break-words leading-tight py-1.5 px-2 mb-1 border border-black/5">
-                        <span class="block">${i.equipment_name}</span>
-                        <span class="block text-[8.5px] opacity-90 mt-0.5 border-t border-white/20 pt-0.5">📍 ${i.building || 'N/A'}</span>
+                    html += `<div class="cal-event-chip ${bgClass} ${opacity} whitespace-normal break-words leading-tight py-0.5 sm:py-1 px-1 sm:px-1.5 mb-0.5 sm:mb-1 border border-black/5 rounded text-[9px] sm:text-[11px] shadow-xs cursor-pointer">
+                        <span class="block truncate font-semibold">${i.equipment_name}</span>
+                        <span class="hidden sm:block text-[8px] sm:text-[9px] opacity-90 mt-0.5 border-t border-white/20 pt-0.5 truncate">📍 ${i.building || 'N/A'}</span>
                      </div>`;
                 });
 
+                if (items.length > 3) {
+                    html += `<div class="text-[8px] sm:text-[10px] font-bold text-blue-600 dark:text-blue-400 text-center sm:text-left leading-none">+${items.length - 3} more</div>`;
+                }
+
                 const div = document.createElement('div');
-                div.className = `calendar-day ${isToday ? 'today' : ''}`;
+                div.className = `calendar-day ${isToday ? 'today' : ''} cursor-pointer`;
                 div.innerHTML = html;
                 div.onclick = () => openCalendarDay(dateStr, items);
                 calendar.appendChild(div);
@@ -1584,7 +1990,6 @@
                 });
             }
         }
-        // ฟังก์ชันสลับมุมมอง
         function toggleScheduleView(viewType) {
             const calContainer = document.getElementById('calendarContainer');
             const listContainer = document.getElementById('listContainer');
@@ -1728,19 +2133,21 @@
             closeCalendarModal();
             loadRecords();
         }
+        function goToTodayCalendar() {
+            if (typeof LabAudio !== 'undefined') LabAudio.playClick();
+            currentCalendarMonth = new Date();
+            renderCalendar();
+        }
         function previousMonth() { currentCalendarMonth.setMonth(currentCalendarMonth.getMonth() - 1); renderCalendar(); }
         function nextMonth() { currentCalendarMonth.setMonth(currentCalendarMonth.getMonth() + 1); renderCalendar(); }
 
-        // --- Charts ---
-
-        function renderCharts(data) {
+function renderCharts(data) {
             const sourceData = data || records;
 
             if (charts.monthly) charts.monthly.destroy();
             if (charts.type) charts.type.destroy();
             if (charts.loc) charts.loc.destroy();
 
-            // Register DataLabels Plugin globally for these charts
             Chart.register(ChartDataLabels);
             Chart.defaults.font.family = "'Inter', sans-serif";
             Chart.defaults.color = '#6b7280';
@@ -1753,7 +2160,6 @@
 
             sourceData.forEach(r => {
                 const d = new Date(r.service_date);
-                // ยกเลิกการกรองปี เพื่อให้กราฟแสดงข้อมูลรวมทุกปี จะได้เห็นความเคลื่อนไหวตลอด
                 if (r.type === 'repair') repairData[d.getMonth()]++;
                 else if (r.type === 'pm') pmData[d.getMonth()]++;
                 else if (r.type === 'spare_parts') spareData[d.getMonth()]++;
@@ -1769,7 +2175,6 @@
                 offset: 2
             };
 
-            // เปลี่ยนจาก Line เป็น Bar Chart เพื่อให้อ่านง่ายขึ้น
             charts.monthly = new Chart(document.getElementById('monthlyChart'), {
                 type: 'bar',
                 data: {
@@ -1802,7 +2207,6 @@
                 }
             });
 
-            // ... (ส่วนของ charts.type doughnut คงไว้เหมือนเดิม) ...
             const totalRepairs = sourceData.filter(r => r.type === 'repair').length;
             const totalCalibs = sourceData.filter(r => r.type === 'calibration').length;
             const totalPM = sourceData.filter(r => r.type === 'pm').length;
@@ -1823,7 +2227,6 @@
                 }
             });
 
-            // ปรับ Data ของกราฟ Location ให้หั่นชื่ออาคารด้วยช่องว่าง (Split by Space) เพื่อ Wrap Text
             const locLabels = buildings.map(b => b.name.split(' ')); // <-- จุดที่แก้ไข
             const locData = locLabels.map((nameArr, index) => sourceData.filter(r => r.building === buildings[index].name).length);
 
@@ -1842,10 +2245,8 @@
             });
             if (charts.cost) charts.cost.destroy();
 
-            // 1. ดึงรายชื่ออุปกรณ์ที่ไม่ซ้ำกัน
             const equipLabels = [...new Set(sourceData.map(r => r.equipment_name))];
 
-            // 2. คำนวณค่าใช้จ่ายแต่ละประเภทของอุปกรณ์แต่ละตัว
             const costRepair = equipLabels.map(eq => {
                 return sourceData.filter(r => r.equipment_name === eq && r.type === 'repair')
                     .reduce((sum, r) => sum + (parseFloat(r.maintenance_cost) || 0), 0);
@@ -1863,7 +2264,6 @@
                     .reduce((sum, r) => sum + (parseFloat(r.maintenance_cost) || 0), 0);
             });
 
-            // 3. หั่นชื่ออุปกรณ์ด้วยช่องว่างเพื่อให้ข้อความขึ้นบรรทัดใหม่ได้สวยงาม
             const wrapEquipLabels = equipLabels.map(name => name.split(' '));
 
             charts.cost = new Chart(document.getElementById('costChart'), {
@@ -1923,7 +2323,6 @@
                 }
             });
         }
-        // --- Records Table ---
         function loadRecords() { applyFilters(); }
         function applyFilters() {
             const s = document.getElementById('filterSearch').value.toLowerCase();
@@ -1945,13 +2344,45 @@
         function renderRecordsTable() {
             const tbody = document.getElementById('recordsTableBody');
             tbody.innerHTML = '';
+            const total = filteredRecords.length;
+            const totalPages = Math.ceil(total / rowsPerPage) || 1;
+            if (currentPage > totalPages) currentPage = totalPages;
+            if (currentPage < 1) currentPage = 1;
+
             const start = (currentPage - 1) * rowsPerPage;
             const end = start + rowsPerPage;
             const pageData = filteredRecords.slice(start, end);
 
-            document.getElementById('startRow').innerText = pageData.length > 0 ? start + 1 : 0;
-            document.getElementById('endRow').innerText = Math.min(end, filteredRecords.length);
-            document.getElementById('totalRows').innerText = filteredRecords.length;
+            const startEl = document.getElementById('startRow');
+            const endEl = document.getElementById('endRow');
+            const totalEl = document.getElementById('totalRows');
+            if (startEl) startEl.innerText = pageData.length > 0 ? start + 1 : 0;
+            if (endEl) endEl.innerText = Math.min(end, total);
+            if (totalEl) totalEl.innerText = total;
+
+            const pageNumEl = document.getElementById('currentPageNum');
+            const totalPagesEl = document.getElementById('totalPagesNum');
+            if (pageNumEl) pageNumEl.innerText = currentPage;
+            if (totalPagesEl) totalPagesEl.innerText = totalPages;
+
+            const prevBtn = document.getElementById('btnPrevPage');
+            const nextBtn = document.getElementById('btnNextPage');
+            if (prevBtn) {
+                prevBtn.disabled = currentPage <= 1;
+                if (currentPage <= 1) {
+                    prevBtn.classList.add('opacity-40', 'cursor-not-allowed');
+                } else {
+                    prevBtn.classList.remove('opacity-40', 'cursor-not-allowed');
+                }
+            }
+            if (nextBtn) {
+                nextBtn.disabled = currentPage >= totalPages;
+                if (currentPage >= totalPages) {
+                    nextBtn.classList.add('opacity-40', 'cursor-not-allowed');
+                } else {
+                    nextBtn.classList.remove('opacity-40', 'cursor-not-allowed');
+                }
+            }
 
             pageData.forEach((r, i) => {
                 let statusBadge = r.calendar_status === 'complete' ?
@@ -1971,24 +2402,33 @@
                 if (r.type === 'pm') typeColor = 'bg-teal-400';
                 if (r.type === 'spare_parts') typeColor = 'bg-pink-400';
 
-                // เช็คสิทธิ์: อนุญาตถ้าเป็น admin หรือ เป็นคนสร้าง Record นี้เอง
+                let typeLabel = '-';
+                if (r.type) {
+                    const t = String(r.type).trim().toLowerCase();
+                    if (t === 'pm') typeLabel = 'PM';
+                    else if (t === 'calibration') typeLabel = 'Calibration';
+                    else if (t === 'repair') typeLabel = 'Repair';
+                    else if (t === 'spare_parts' || t === 'spare parts') typeLabel = 'Spare parts';
+                    else typeLabel = r.type;
+                }
+
                 const canEdit = currentUser.role === 'admin' || r.created_by === currentUser.email;
 
                 let actionButtons = `<span class="text-xs text-gray-400 italic">View Only</span>`;
                 if (canEdit) {
                     actionButtons = `
                 <div class="flex items-center justify-center gap-2 opacity-50 group-hover:opacity-100 transition-opacity">
-                    <button onclick="fullEditRecord(${r.id})" class="w-8 h-8 rounded-full bg-blue-50 hover:bg-blue-500 hover:text-white text-blue-500 flex items-center justify-center transition shadow-sm">✏️</button>
-                    <button onclick="deleteRecord(${r.id})" class="w-8 h-8 rounded-full bg-red-50 hover:bg-red-500 hover:text-white text-red-500 flex items-center justify-center transition shadow-sm">✕</button>
+                    <button onclick="fullEditRecord(${r.id})" class="w-8 h-8 rounded-full bg-blue-50 hover:bg-blue-500 hover:text-white text-blue-500 flex items-center justify-center transition shadow-sm" title="Edit">✏️</button>
+                    <button onclick="deleteRecord(${r.id})" class="w-8 h-8 rounded-full bg-red-50 hover:bg-red-500 hover:text-white text-red-500 flex items-center justify-center transition shadow-sm" title="Delete">✕</button>
                 </div>
             `;
                 }
 
                 const tr = document.createElement('tr');
-                tr.className = "group";
+                tr.className = "group border-b border-gray-100 hover:bg-white/60 transition-colors";
                 tr.innerHTML = `
             <td class="px-4 py-4 min-w-[220px] break-words whitespace-normal"><div class="font-semibold text-gray-800">${r.equipment_name}</div><div class="text-[10px] text-gray-400 font-bold uppercase tracking-wide">${r.building || 'N/A'}</div></td>
-            <td class="px-4 py-4 min-w-[120px]"><span class="w-2 h-2 rounded-full inline-block mr-2 ${typeColor}"></span><span class="text-sm text-gray-600 capitalize">${r.type}</span></td>
+            <td class="px-4 py-4 min-w-[120px]"><span class="w-2 h-2 rounded-full inline-block mr-2 ${typeColor}"></span><span class="text-sm text-gray-600">${typeLabel}</span></td>
             <td class="px-4 py-4 min-w-[110px] text-gray-500 font-mono text-xs">${r.service_date}</td>
             <td class="px-4 py-4 min-w-[120px] text-right font-medium text-gray-700">฿${formatCurrency(r.maintenance_cost)}</td>
             <td class="px-4 py-4 min-w-[180px] break-words whitespace-normal text-gray-600 text-xs">${r.technicians[0] || '-'}</td>
@@ -2004,55 +2444,259 @@
                 tbody.appendChild(tr);
             });
         }
-        // --- Import / Backup ---
+
+        function prevPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                renderRecordsTable();
+            }
+        }
+
+        function nextPage() {
+            const totalPages = Math.ceil(filteredRecords.length / rowsPerPage) || 1;
+            if (currentPage < totalPages) {
+                currentPage++;
+                renderRecordsTable();
+            }
+        }
         async function backupData() {
-            // Include poFilesDb from IndexedDB
-            const allFiles = await getAllPoFilesFromIDB();
-            const data = JSON.stringify({ users, records, technicians, reporters, buildings, equipment, poFilesDb: allFiles });
-            const blob = new Blob([data], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `lab_backup_${new Date().toISOString().split('T')[0]}.json`;
-            a.click();
+            await LabStateBridge.exportCombinedBackup();
+            addCarePlusAudit('Backup', 'สำรองข้อมูลทั้ง 2 ระบบ');
         }
 
         function importData(input) {
-            const reader = new FileReader();
-            reader.onload = e => {
-                try {
-                    const d = JSON.parse(e.target.result);
-                    if (d.records) { records = d.records; saveCarePlusState(); }
-                    if (d.users) users = d.users;
-                    if (d.buildings) buildings = d.buildings;
-                    if (d.equipment) equipment = d.equipment;
-                    if (d.technicians) technicians = d.technicians;
-                    if (d.reporters) reporters = d.reporters;
-                    if (d.poFiles) poFilesDb = d.poFiles; // Fallback for old backups
-                    if (d.poFilesDb) poFilesDb = d.poFilesDb;
-                    for (const [k, v] of Object.entries(poFilesDb)) { savePoFileToIDB(k, v); }
-
-                    Swal.fire({ title: 'Success', text: 'Data Imported', icon: 'success', timer: 1500, showConfirmButton: false }).then(() => {
-                        loadSettings(); loadDashboard(); loadRecords();
-                    });
-                } catch (err) {
-                    Swal.fire('Error', 'Invalid JSON File', 'error');
-                }
-            };
-            reader.readAsText(input.files[0]);
+            if (!input || !input.files || !input.files[0]) return;
+            LabStateBridge.importCombinedBackup(input.files[0], (newState) => {
+                records = newState.records || [];
+                users = newState.users || [];
+                buildings = newState.buildings || [];
+                equipment = newState.equipments || newState.equipment || [];
+                technicians = newState.technicians || [];
+                reporters = newState.reporters || [];
+                loadSettings();
+                loadDashboard();
+                loadRecords();
+            });
             input.value = '';
         }
-        // --- Admin Funcs ---
+
+        async function handleAdminPurgeClick() {
+            const user = LabAuth.getCurrentUser();
+            if (!user || user.role !== 'admin') {
+                LabAlert.error('คุณไม่มีสิทธิ์เข้าถึงฟังก์ชันนี้ (เฉพาะ Admin เท่านั้น)', 'สิทธิ์ไม่เพียงพอ');
+                return;
+            }
+
+            const period = document.getElementById('purgePeriodSelect').value;
+            const preview = LabStateBridge.previewPurgeCount(period);
+
+            const periodLabel = {
+                '1_month': 'เก่ากว่า 1 เดือน (30 วัน)',
+                '3_months': 'เก่ากว่า 1 ไตรมาส (90 วัน)',
+                '6_months': 'เก่ากว่า 6 เดือน (180 วัน)',
+                '1_year': 'เก่ากว่า 1 ปี (365 วัน)',
+                '2_years': 'เก่ากว่า 2 ปี (730 วัน)',
+                'all_user_records': 'ประวัติการทำรายการทั้งหมดของ User'
+            }[period];
+
+            if (preview.bookingsToPurge === 0 && preview.recordsToPurge === 0) {
+                LabAlert.toast('info', `ไม่พบรายการที่เข้าเกณฑ์ช่วงเวลา "${periodLabel}" ที่ต้องล้าง`);
+                return;
+            }
+
+            const confirmHtml = `
+                <div class="text-left text-sm space-y-3">
+                    <p class="text-gray-600 dark:text-slate-300">คุณกำลังจะล้างข้อมูลที่ <strong>${periodLabel}</strong>:</p>
+                    <div class="bg-amber-50 dark:bg-amber-900/30 p-3 rounded-xl border border-amber-200 dark:border-amber-800 text-xs space-y-1.5">
+                        <div>📅 รายการจองใน Lab Book+: <strong>${preview.bookingsToPurge}</strong> จาก ${preview.totalBookings} รายการ</div>
+                        <div>🔧 รายการซ่อมใน Lab Care+: <strong>${preview.recordsToPurge}</strong> จาก ${preview.totalRecords} รายการ</div>
+                        <div class="text-emerald-600 dark:text-emerald-400 font-semibold mt-1">🛡️ ข้อมูลเครื่องมือ, ห้อง, ผู้ใช้, ช่าง จะปลอดภัยและไม่ถูกลบ</div>
+                    </div>
+                    <p class="text-xs text-red-500 font-bold">⚠️ การลบจะไม่สามารถย้อนกลับได้ แนะนำให้ดาวน์โหลด Backup ก่อนดำเนินการ</p>
+                </div>
+            `;
+
+            Swal.fire({
+                title: 'ยืนยันการเคลียร์ข้อมูล?',
+                html: confirmHtml,
+                icon: 'warning',
+                showCancelButton: true,
+                showDenyButton: true,
+                confirmButtonText: 'ยืนยันล้างข้อมูล',
+                denyButtonText: '💾 แบคอัพก่อนแล้วล้าง',
+                cancelButtonText: 'ยกเลิก',
+                confirmButtonColor: '#EF4444',
+                denyButtonColor: '#10B981',
+                cancelButtonColor: '#6B7280'
+            }).then(async (result) => {
+                if (result.isDenied) {
+                    await LabStateBridge.exportCombinedBackup();
+                    setTimeout(() => executePurge(period, user), 1200);
+                } else if (result.isConfirmed) {
+                    executePurge(period, user);
+                }
+            });
+        }
+
+        async function executePurge(period, user) {
+            try {
+                const res = await LabStateBridge.purgeUserTransactions(period, user);
+                records = LabStateBridge.getState().records || [];
+                loadDashboard();
+                loadRecords();
+                addCarePlusAudit('Purge Data', `ล้างข้อมูล: Bookings=${res.purgedBookings}, Records=${res.purgedRecords}, AuditLogs=${res.purgedAuditLogs || 0}`);
+                renderCarePlusAudit();
+                LabAlert.success('เคลียร์ข้อมูลสำเร็จ', `ลบรายการจอง ${res.purgedBookings} รายการ, ประวัติซ่อม ${res.purgedRecords} รายการ, Audit Log ${res.purgedAuditLogs || 0} รายการ`);
+            } catch (err) {
+                LabAlert.error(err.message, 'เกิดข้อผิดพลาด');
+            }
+        }
+
+        function updateFirebaseStatusUI() {
+            const el = document.getElementById('careplusFbStatusDesc');
+            if (!el || !window.LabFirebase) return;
+            const s = LabFirebase.getStatus();
+            el.innerHTML = `<span class="${s.badgeClass} px-2 py-0.5 rounded font-bold">${s.statusText}</span> <span class="text-[10px] text-gray-400">(${s.plan})</span>`;
+        }
+
+        function openFirebaseConfigModal() {
+            const modal = document.getElementById('firebaseConfigModal');
+            if (!modal) return;
+            const cfg = LabFirebase.getConfig() || {};
+            document.getElementById('fbCfgApiKey').value = cfg.apiKey || '';
+            document.getElementById('fbCfgProjectId').value = cfg.projectId || '';
+            document.getElementById('fbCfgAppId').value = cfg.appId || '';
+            modal.classList.remove('hidden');
+        }
+
+        function closeFirebaseConfigModal() {
+            const modal = document.getElementById('firebaseConfigModal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function saveFirebaseConfigFromModal() {
+            const apiKey = document.getElementById('fbCfgApiKey').value.trim();
+            const projectId = document.getElementById('fbCfgProjectId').value.trim();
+            const appId = document.getElementById('fbCfgAppId').value.trim();
+
+            if (!apiKey || !projectId) {
+                LabAlert.error('กรุณากรอก API Key และ Project ID', 'ข้อมูลไม่ครบถ้วน');
+                return;
+            }
+
+            LabFirebase.saveConfig({ apiKey, projectId, appId });
+            closeFirebaseConfigModal();
+            updateFirebaseStatusUI();
+        }
+
+        function clearFirebaseConfig() {
+            LabFirebase.saveConfig(null);
+            closeFirebaseConfigModal();
+            updateFirebaseStatusUI();
+        }
+
+        // ========== CARE+ AUDIT LOG SYSTEM ==========
+        const CAREPLUS_AUDIT_KEY = 'carePlusAuditLog';
+        let carePlusAuditCurrentPage = 0;
+        const CAREPLUS_AUDIT_PER_PAGE = 10;
+
+        function getCarePlusAuditLog() {
+            try {
+                const raw = localStorage.getItem(CAREPLUS_AUDIT_KEY);
+                return raw ? JSON.parse(raw) : [];
+            } catch { return []; }
+        }
+
+        function saveCarePlusAuditLog(logs) {
+            localStorage.setItem(CAREPLUS_AUDIT_KEY, JSON.stringify(logs));
+        }
+
+        function addCarePlusAudit(action, details = '') {
+            const logs = getCarePlusAuditLog();
+            const user = LabAuth.getCurrentUser();
+            logs.unshift({
+                id: Date.now(),
+                timestamp: new Date().toISOString(),
+                user: user ? user.name || user.username : 'System',
+                action: action,
+                details: details
+            });
+            // Keep max 500 entries
+            if (logs.length > 500) logs.length = 500;
+            saveCarePlusAuditLog(logs);
+        }
+
+        function renderCarePlusAudit() {
+            const tbody = document.getElementById('carePlusAuditTbody');
+            const info = document.getElementById('carePlusAuditInfo');
+            const prevBtn = document.getElementById('carePlusAuditPrev');
+            const nextBtn = document.getElementById('carePlusAuditNext');
+            if (!tbody) return;
+
+            const logs = getCarePlusAuditLog();
+            const total = logs.length;
+            const maxPage = Math.max(0, Math.ceil(total / CAREPLUS_AUDIT_PER_PAGE) - 1);
+            carePlusAuditCurrentPage = Math.min(carePlusAuditCurrentPage, maxPage);
+            carePlusAuditCurrentPage = Math.max(0, carePlusAuditCurrentPage);
+
+            const start = carePlusAuditCurrentPage * CAREPLUS_AUDIT_PER_PAGE;
+            const page = logs.slice(start, start + CAREPLUS_AUDIT_PER_PAGE);
+
+            if (page.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center text-gray-400 py-6">ยังไม่มีประวัติกิจกรรม</td></tr>';
+            } else {
+                tbody.innerHTML = page.map((log, i) => `<tr class="border-b border-gray-100 hover:bg-gray-50">
+                    <td class="p-2 text-gray-400 text-xs">${start + i + 1}</td>
+                    <td class="p-2 text-xs text-gray-600 whitespace-nowrap">${new Date(log.timestamp).toLocaleString('th-TH', { dateStyle: 'short', timeStyle: 'short' })}</td>
+                    <td class="p-2 text-xs font-medium text-gray-700">${log.user}</td>
+                    <td class="p-2 text-xs"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${getAuditActionBadge(log.action)}">${log.action}</span></td>
+                    <td class="p-2 text-xs text-gray-500 max-w-[200px] truncate" title="${(log.details || '').replace(/"/g, '&quot;')}">${log.details || '-'}</td>
+                </tr>`).join('');
+            }
+
+            if (info) info.textContent = `${total} records | Page ${carePlusAuditCurrentPage + 1}/${maxPage + 1}`;
+            if (prevBtn) prevBtn.disabled = carePlusAuditCurrentPage <= 0;
+            if (nextBtn) nextBtn.disabled = carePlusAuditCurrentPage >= maxPage;
+        }
+
+        function getAuditActionBadge(action) {
+            if (!action) return 'bg-gray-100 text-gray-600';
+            const a = action.toLowerCase();
+            if (a.includes('add') || a.includes('create') || a.includes('เพิ่ม')) return 'bg-green-100 text-green-700';
+            if (a.includes('edit') || a.includes('update') || a.includes('แก้ไข')) return 'bg-blue-100 text-blue-700';
+            if (a.includes('delete') || a.includes('ลบ')) return 'bg-red-100 text-red-700';
+            if (a.includes('login') || a.includes('เข้าสู่ระบบ')) return 'bg-indigo-100 text-indigo-700';
+            if (a.includes('backup') || a.includes('สำรอง')) return 'bg-amber-100 text-amber-700';
+            if (a.includes('purge') || a.includes('ล้าง')) return 'bg-rose-100 text-rose-700';
+            return 'bg-gray-100 text-gray-600';
+        }
+
+        function carePlusAuditPage(dir) {
+            carePlusAuditCurrentPage += dir;
+            renderCarePlusAudit();
+        }
+        // ========== END AUDIT LOG SYSTEM ==========
 
         function loadSettings() {
+            const currentUser = LabAuth.getCurrentUser();
+            const purgeSec = document.getElementById('adminPurgeSection');
+            if (purgeSec) {
+                purgeSec.style.display = (currentUser && currentUser.role === 'admin') ? 'block' : 'none';
+            }
+            const auditSec = document.getElementById('carePlusAuditSection');
+            if (auditSec) {
+                auditSec.style.display = (currentUser && currentUser.role === 'admin') ? 'block' : 'none';
+            }
+            updateFirebaseStatusUI();
+
             renderAdminUsers();
             renderAdminLocations();
             renderAdminCompanies();
             renderAdminEquipment();
             renderAdminReporters();
+            renderCarePlusAudit();
         }
 
-        // 1. User
         function renderAdminUsers() {
             document.querySelector('#adminUserTable tbody').innerHTML = users.map(u => `
         <tr class="border-b border-gray-100 hover:bg-gray-50"><td class="p-3 font-medium text-gray-700">${u.username}</td>
@@ -2064,12 +2708,12 @@
         }
 
         function adminEditUser(id) {
-            const u = users.find(x => x.id === id);
+            const u = users.find(x => String(x.id) === String(id));
             if (!u) return;
             const emailInput = document.getElementById('adminUserEmail');
             emailInput.value = u.username;
-            emailInput.disabled = true; // ล็อกไม่ให้แก้ Email
-            emailInput.classList.add('opacity-50', 'cursor-not-allowed');
+            emailInput.disabled = false;
+            emailInput.classList.remove('opacity-50', 'cursor-not-allowed');
             emailInput.dataset.editId = u.id;
 
             document.getElementById('adminUserName').value = u.name;
@@ -2080,27 +2724,44 @@
             btn.textContent = 'Update';
             btn.classList.replace('bg-blue-600', 'bg-orange-500');
             document.getElementById('btnCancelUser').classList.remove('hidden');
+
+            const targetEl = emailInput.closest('.glass') || emailInput;
+            if (targetEl) targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            setTimeout(() => emailInput.focus(), 250);
         }
 
         function adminSaveUser() {
             const emailInput = document.getElementById('adminUserEmail');
-            const e = emailInput.value;
+            const e = emailInput.value.trim();
             const id = emailInput.dataset.editId;
-            const n = document.getElementById('adminUserName').value;
-            const p = document.getElementById('adminUserPass').value;
+            const n = document.getElementById('adminUserName').value.trim();
+            const p = document.getElementById('adminUserPass').value.trim();
             const r = document.getElementById('adminUserRole').value;
-            if (e && n && p) {
-                if (id) {
-                    const u = users.find(x => x.id === id);
-                    if (u) { u.name = n; u.password = p; u.role = r; }
-                } else {
-                    const newId = 'U-' + String(users.length + 1).padStart(3, '0');
-                    users.push({ id: newId, username: e, name: n, password: p, role: r });
-                }
-                saveCarePlusState();
-                renderAdminUsers();
-                adminCancelUser();
+            if (!e || !n || !p) {
+                LabAlert.warning('กรุณากรอกข้อมูล Email, Name และ Password ให้ครบถ้วน');
+                return;
             }
+            if (id) {
+                const u = users.find(x => String(x.id) === String(id));
+                if (u) {
+                    u.username = e;
+                    u.name = n;
+                    u.password = p;
+                    u.role = r;
+                }
+                LabAlert.toast('success', 'แก้ไขข้อมูลผู้ใช้เรียบร้อย');
+            } else {
+                if (users.some(x => x.username.toLowerCase() === e.toLowerCase())) {
+                    LabAlert.error('Email นี้มีอยู่ในระบบแล้ว');
+                    return;
+                }
+                const newId = 'U-' + String(Date.now()).slice(-6);
+                users.push({ id: newId, username: e, name: n, password: p, role: r });
+                LabAlert.toast('success', 'เพิ่มผู้ใช้ใหม่เรียบร้อย');
+            }
+            saveCarePlusState();
+            renderAdminUsers();
+            adminCancelUser();
         }
 
         function adminCancelUser() {
@@ -2120,14 +2781,25 @@
         }
 
         function adminDeleteUser(id) {
-            const u = users.find(x => x.id === id);
-            if (u && u.username !== 'admin@lab.com') {
-                users = users.filter(x => x.id !== id);
-                saveCarePlusState();
-                renderAdminUsers();
+            const u = users.find(x => String(x.id) === String(id));
+            if (!u) return;
+            if (u.username === 'admin@lab.com') {
+                LabAlert.error('ไม่อนุญาตให้ลบบัญชีผู้ดูแลระบบหลัก (admin@lab.com)');
+                return;
             }
+            if (currentUser && (String(currentUser.id) === String(id) || currentUser.email === u.username)) {
+                LabAlert.error('ไม่สามารถลบบัญชีที่กำลังเข้าสู่ระบบอยู่ได้');
+                return;
+            }
+            LabAlert.confirm(`ต้องการลบผู้ใช้ "${u.name}" (${u.username}) หรือไม่?`, 'การดำเนินการนี้ไม่สามารถยกเลิกได้', 'ลบผู้ใช้', 'ยกเลิก').then(confirmed => {
+                if (confirmed) {
+                    users = users.filter(x => String(x.id) !== String(id));
+                    saveCarePlusState();
+                    renderAdminUsers();
+                    LabAlert.toast('success', 'ลบผู้ใช้เรียบร้อย');
+                }
+            });
         }
-        // 2. Location
         function renderAdminLocations() {
             document.querySelector('#adminLocationTable tbody').innerHTML = buildings.map(b => `
         <tr class="border-b border-gray-100 hover:bg-gray-50"><td class="p-3 text-gray-700 font-medium">${b.name}</td>
@@ -2146,6 +2818,10 @@
             btn.textContent = 'Update';
             btn.classList.replace('bg-blue-600', 'bg-orange-500');
             document.getElementById('btnCancelLoc').classList.remove('hidden');
+
+            const targetEl = document.getElementById('adminLocName')?.closest('.glass') || document.getElementById('adminLocName');
+            if (targetEl) targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            setTimeout(() => document.getElementById('adminLocName')?.focus(), 250);
         }
 
         function adminSaveLocation() {
@@ -2174,7 +2850,6 @@
         }
 
         function adminDeleteLocation(id) { buildings = buildings.filter(b => b.id != id); renderAdminLocations(); }
-        // 3. Provider (Formerly Company)
         function renderAdminCompanies() {
             document.querySelector('#adminCompanyTable tbody').innerHTML = technicians.map(t => `
         <tr class="border-b border-gray-100 hover:bg-gray-50"><td class="p-3 text-gray-700 font-medium">${t}</td>
@@ -2192,6 +2867,10 @@
             btn.textContent = 'Update';
             btn.classList.replace('bg-blue-600', 'bg-orange-500');
             document.getElementById('btnCancelComp').classList.remove('hidden');
+
+            const targetEl = document.getElementById('adminCompName')?.closest('.glass') || document.getElementById('adminCompName');
+            if (targetEl) targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            setTimeout(() => document.getElementById('adminCompName')?.focus(), 250);
         }
 
         function adminSaveCompany() {
@@ -2201,7 +2880,6 @@
                 if (oldName) {
                     const index = technicians.indexOf(oldName);
                     if (index !== -1) { technicians[index] = name; saveCarePlusState(); }
-                    // สั่งให้อัปเดตชื่อ Provider ในประวัติเก่าทั้งหมดให้อัตโนมัติ เพื่อความสม่ำเสมอของข้อมูล
                     records.forEach(r => {
                         if (r.technicians.includes(oldName)) {
                             r.technicians = [name];
@@ -2226,7 +2904,6 @@
         }
 
         function adminDeleteCompany(name) { technicians = technicians.filter(t => t !== name); renderAdminCompanies(); }
-        // 4. Equipment Inventory
         function renderAdminEquipment() {
             const locSelect = document.getElementById('adminEquipLoc');
             locSelect.innerHTML = buildings.map(b => `<option value="${b.id}">${b.name}</option>`).join('');
@@ -2234,6 +2911,7 @@
             document.querySelector('#adminEquipmentTable tbody').innerHTML = equipment.map(e => `
         <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
             <td class="p-3 font-medium text-gray-700">${e.name}</td>
+            <td class="p-3 text-gray-500 text-xs">${e.model || '-'}</td>
             <td class="p-3 text-gray-500 text-xs uppercase tracking-wide">${buildings.find(b => b.id == e.building_id)?.name || '-'}</td>
             <td class="p-3 text-right whitespace-nowrap">
                 <button onclick="viewEquipmentHistory('${e.name}')" class="text-teal-600 hover:text-teal-800 mr-3 font-bold bg-teal-50 px-2 py-1 rounded text-xs">History</button>
@@ -2243,23 +2921,35 @@
         </tr>`).join('');
         }
         function adminSaveEquipment() {
-            const name = document.getElementById('adminEquipName').value;
+            const name = document.getElementById('adminEquipName').value.trim();
+            const model = (document.getElementById('adminEquipModel')?.value || '').trim();
             const bid = parseInt(document.getElementById('adminEquipLoc').value);
             const id = document.getElementById('adminEquipId').value;
             if (name && bid) {
                 if (id) {
-                    const index = equipment.findIndex(x => x.id == id);
-                    if (index !== -1) { equipment[index].name = name; equipment[index].building_id = bid; saveCarePlusState(); }
+                    const index = equipment.findIndex(x => String(x.id) === String(id));
+                    if (index !== -1) {
+                        equipment[index].name = name;
+                        equipment[index].model = model || '-';
+                        equipment[index].building_id = bid;
+                        saveCarePlusState();
+                    }
                 } else {
-                    equipment.push({ id: Date.now(), name: name, building_id: bid });
+                    const newId = 'EQ-' + String(Date.now()).slice(-6);
+                    equipment.push({ id: newId, name: name, model: model || '-', building_id: bid, serial: 'N/A', custodian: 'Admin' });
                     saveCarePlusState();
                 }
+                LabAlert.toast('success', 'บันทึกข้อมูลเครื่องมือเรียบร้อย');
                 renderAdminEquipment(); renderAdminLocations(); adminCancelEquipment();
             }
         }
         function adminEditEquipment(id) {
-            const e = equipment.find(x => x.id == id);
+            const e = equipment.find(x => String(x.id) === String(id));
+            if (!e) return;
             document.getElementById('adminEquipName').value = e.name;
+            if (document.getElementById('adminEquipModel')) {
+                document.getElementById('adminEquipModel').value = e.model && e.model !== '-' ? e.model : '';
+            }
             document.getElementById('adminEquipLoc').value = e.building_id;
             document.getElementById('adminEquipId').value = e.id;
 
@@ -2267,9 +2957,16 @@
             btn.textContent = 'Update';
             btn.classList.replace('bg-blue-600', 'bg-orange-500');
             document.getElementById('btnCancelEquip').classList.remove('hidden');
+
+            const targetEl = document.getElementById('adminEquipName')?.closest('.glass') || document.getElementById('adminEquipName');
+            if (targetEl) targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            setTimeout(() => document.getElementById('adminEquipName')?.focus(), 250);
         }
         function adminCancelEquipment() {
             document.getElementById('adminEquipName').value = '';
+            if (document.getElementById('adminEquipModel')) {
+                document.getElementById('adminEquipModel').value = '';
+            }
             document.getElementById('adminEquipId').value = '';
             const btn = document.getElementById('btnSaveEquip');
             btn.textContent = 'Add Item';
@@ -2277,12 +2974,17 @@
             document.getElementById('btnCancelEquip').classList.add('hidden');
         }
         function adminDeleteEquipment(id) {
-            Swal.fire({ title: 'Delete Item?', text: 'Cannot undo', icon: 'warning', showCancelButton: true, confirmButtonColor: '#ef4444' }).then(res => {
-                if (res.isConfirmed) { equipment = equipment.filter(e => e.id != id); saveCarePlusState(); renderAdminEquipment(); renderAdminLocations(); }
+            LabAlert.confirm('ต้องการลบเครื่องมือ?', 'ข้อมูลจะถูกลบออกจากระบบทันที', 'ลบเครื่องมือ', 'ยกเลิก').then(confirmed => {
+                if (confirmed) {
+                    equipment = equipment.filter(e => String(e.id) !== String(id));
+                    saveCarePlusState();
+                    renderAdminEquipment();
+                    renderAdminLocations();
+                    LabAlert.toast('success', 'ลบเครื่องมือเรียบร้อย');
+                }
             });
         }
 
-        // 5. Reporters Management
         function renderAdminReporters() {
             document.querySelector('#adminReporterTable tbody').innerHTML = reporters.map(r => `
         <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
@@ -2315,6 +3017,10 @@
             btn.textContent = 'Update';
             btn.classList.replace('bg-blue-600', 'bg-orange-500');
             document.getElementById('btnCancelReporter').classList.remove('hidden');
+
+            const targetEl = document.getElementById('adminReporterName')?.closest('.glass') || document.getElementById('adminReporterName');
+            if (targetEl) targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            setTimeout(() => document.getElementById('adminReporterName')?.focus(), 250);
         }
         function adminCancelReporter() {
             document.getElementById('adminReporterName').value = '';
@@ -2326,9 +3032,7 @@
         }
         function adminDeleteReporter(name) { reporters = reporters.filter(r => r !== name); renderAdminReporters(); }
 
-
-        // --- Forms ---
-        function loadEditForm(id) {
+function loadEditForm(id) {
             const r = records.find(x => x.id === id);
             if (!r) return;
             loadAddRecordForm(); showPage('addRecord');
@@ -2359,25 +3063,36 @@
 
             tempPoFiles = poFilesDb[r.id] ? [...poFilesDb[r.id]] : [];
             renderPoFilesList();
+
+            // Asynchronously fetch from Cloud if missing in local IDB
+            if (tempPoFiles.length === 0 && r.po_files && r.po_files.length > 0 && window.LabFirebase && LabFirebase.isConfigured()) {
+                LabFirebase.fetchAttachmentFromCloud(r.id).then(cloudFiles => {
+                    if (cloudFiles && Array.isArray(cloudFiles) && cloudFiles.length > 0) {
+                        if (typeof poFilesDb === 'undefined') window.poFilesDb = {};
+                        poFilesDb[r.id] = cloudFiles;
+                        savePoFileToIDB(r.id, cloudFiles);
+                        tempPoFiles = [...cloudFiles];
+                        renderPoFilesList();
+                    }
+                });
+            }
         }
 
         function deleteAttachedPO(recordId) {
-            Swal.fire({
-                title: 'Delete PO File?',
-                text: 'การลบไฟล์จะลบออกจากระบบทันที คุณแน่ใจหรือไม่?',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#ef4444'
-            }).then(res => {
-                if (res.isConfirmed) {
+            LabAlert.confirm('ต้องการลบไฟล์แนบ PO?', 'การลบไฟล์จะลบออกจากระบบทันที คุณแน่ใจหรือไม่?', 'ลบไฟล์', 'ยกเลิก').then(confirmed => {
+                if (confirmed) {
                     const r = records.find(x => x.id === recordId);
                     if (r) {
                         r.po_file = '';
                         r.po_files = [];
                         delete poFilesDb[recordId];
                         deletePoFileFromIDB(recordId);
+                        if (window.LabFirebase) {
+                            LabFirebase.deleteAttachmentFromCloud(recordId);
+                        }
                         saveCarePlusState();
                         loadEditForm(recordId);
+                        LabAlert.toast('success', 'ลบไฟล์แนบสำเร็จ');
                     }
                 }
             });
@@ -2409,7 +3124,6 @@
             const t = document.getElementById('serviceType').value;
             document.getElementById('nextServiceDateContainer').classList.toggle('hidden', t !== 'calibration');
         }
-        // อัปเดตฟังก์ชันตอนบันทึก (ให้แนบ Email คนสร้างไปด้วย)
         function handleSaveRecord(e) {
             e.preventDefault();
             const editId = document.getElementById('editRecordId').value;
@@ -2438,9 +3152,13 @@
                             if (typeof poFilesDb === 'undefined') window.poFilesDb = {};
                             poFilesDb[editId] = [...tempPoFiles];
                             savePoFileToIDB(editId, poFilesDb[editId]);
+                            if (window.LabFirebase) {
+                                LabFirebase.syncAttachmentToCloud(editId, poFilesDb[editId]);
+                            }
                         }
                         saveCarePlusState();
-                        Swal.fire({ title: 'Updated', icon: 'success', confirmButtonColor: '#3b82f6' });
+                        addCarePlusAudit('Edit Record', `แก้ไขเรคอร์ด ID:${editId} - ${recordData.equipment_name}`);
+                        LabAlert.toast('success', 'บันทึกการแก้ไขข้อมูลสำเร็จ');
                     }
                 } else {
                     const newId = Date.now();
@@ -2449,15 +3167,18 @@
                         if (typeof poFilesDb === 'undefined') window.poFilesDb = {};
                         poFilesDb[newId] = [...tempPoFiles];
                         savePoFileToIDB(newId, poFilesDb[newId]);
+                        if (window.LabFirebase) {
+                            LabFirebase.syncAttachmentToCloud(newId, poFilesDb[newId]);
+                        }
                     }
                     records.push(newRec);
                     saveCarePlusState();
-                    Swal.fire({ title: 'Saved', icon: 'success', confirmButtonColor: '#3b82f6' });
+                    addCarePlusAudit('Add Record', `เพิ่มเรคอร์ดใหม่ - ${recordData.equipment_name} (${recordData.type})`);
+                    LabAlert.toast('success', 'บันทึกประวัติการบำรุงรักษาสำเร็จ');
                 }
                 showPage('records');
             };
 
-            // Check Booking conflicts (NoteLab)
             const savedState = localStorage.getItem('NoteLabState_Merged');
             const state = savedState ? JSON.parse(savedState) : {};
             const bookings = state.bookings || [];
@@ -2478,15 +3199,13 @@
                 });
 
                 if (overlappingBooking) {
-                    Swal.fire({
-                        title: 'Booking Conflict!',
-                        html: `There is an active booking by <strong>${overlappingBooking.user}</strong> on this date.<br>From: ${overlappingBooking.start.replace('T', ' ')}<br>To: ${overlappingBooking.end.replace('T', ' ')}`,
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonText: 'Save anyway',
-                        cancelButtonText: 'Cancel'
-                    }).then(res => {
-                        if (res.isConfirmed) {
+                    LabAlert.confirm(
+                        'พบการจองเครื่องมือทับซ้อน!',
+                        `มีการจองเครื่องมือโดย <strong>${overlappingBooking.user}</strong> ในช่วงเวลาดังกล่าว<br>ตั้งแต่: ${overlappingBooking.start.replace('T', ' ')}<br>ถึง: ${overlappingBooking.end.replace('T', ' ')}`,
+                        'บันทึกต่อไป',
+                        'ยกเลิก'
+                    ).then(confirmed => {
+                        if (confirmed) {
                             proceedSave();
                         }
                     });
@@ -2497,20 +3216,26 @@
             proceedSave();
         }
         function deleteRecord(id) {
-            Swal.fire({ title: 'Delete?', text: 'Cannot undo', icon: 'warning', showCancelButton: true, confirmButtonColor: '#ef4444' }).then(res => {
-                if (res.isConfirmed) {
+            const delRec = records.find(r => r.id === id);
+            LabAlert.confirm('ต้องการลบประวัติตรวจสอบ/ซ่อมบำรุง?', 'ข้อมูลนี้ไม่สามารถกู้คืนได้เมื่อลบไปแล้ว', 'ลบประวัติ', 'ยกเลิก').then(confirmed => {
+                if (confirmed) {
                     records = records.filter(r => r.id !== id);
                     if (poFilesDb[id]) {
                         delete poFilesDb[id];
                         deletePoFileFromIDB(id);
                     }
+                    if (window.LabFirebase) {
+                        LabFirebase.deleteAttachmentFromCloud(id);
+                    }
                     saveCarePlusState();
+                    addCarePlusAudit('Delete Record', `ลบเรคอร์ด ID:${id}${delRec ? ' - ' + delRec.equipment_name : ''}`);
                     loadRecords();
                     updateDashboardCards();
+                    LabAlert.toast('success', 'ลบประวัติสำเร็จ');
                 }
             });
         }
-        function viewPO(id) {
+        async function viewPO(id) {
             const r = records.find(rec => rec.id == id);
             if (!r) return;
 
@@ -2518,25 +3243,38 @@
             const preview = document.getElementById('poPdfPreviewArea');
 
             sidebar.innerHTML = '';
-            preview.innerHTML = '<div class="flex items-center justify-center h-full text-gray-400">Select a file from the list to view</div>';
+            preview.innerHTML = '<div class="flex items-center justify-center h-full text-gray-400">กำลังเตรียมเอกสาร...</div>';
+
+            // Pre-fetch from Firebase Cloud if missing locally
+            if ((!poFilesDb[id] || poFilesDb[id].length === 0) && window.LabFirebase && LabFirebase.isConfigured()) {
+                try {
+                    const cloudFiles = await LabFirebase.fetchAttachmentFromCloud(id);
+                    if (cloudFiles && Array.isArray(cloudFiles) && cloudFiles.length > 0) {
+                        if (typeof poFilesDb === 'undefined') window.poFilesDb = {};
+                        poFilesDb[id] = cloudFiles;
+                        savePoFileToIDB(id, cloudFiles);
+                    }
+                } catch (e) {
+                    console.warn("Pre-fetch cloud error:", e);
+                }
+            }
 
             let filesList = [];
             if (r.po_files && r.po_files.length > 0) {
                 filesList = r.po_files.map((name, i) => ({ name, index: i }));
             } else if (r.po_file) {
-                // Legacy data compatibility
                 filesList = [{ name: r.po_file, index: 0 }];
             } else if (poFilesDb[id] && poFilesDb[id].length > 0) {
                 filesList = poFilesDb[id].map((f, i) => ({ name: f.name, index: i }));
             }
 
             if (filesList.length === 0) {
-                sidebar.innerHTML = '<div class="text-gray-500 text-sm italic p-4 text-center">No documents found.</div>';
+                sidebar.innerHTML = '<div class="text-gray-500 text-sm italic p-4 text-center">ไม่พบไฟล์เอกสารแนบ</div>';
             } else {
                 filesList.forEach(file => {
                     const btn = document.createElement('button');
-                    btn.className = "w-full text-left px-4 py-3 mb-2 rounded-xl bg-white border border-gray-200 hover:border-blue-400 hover:shadow-md transition-all flex items-center gap-3";
-                    btn.innerHTML = `<span class="text-xl">📄</span><span class="text-sm font-bold text-gray-700 truncate w-full" title="${file.name}">${file.name}</span>`;
+                    btn.className = "w-full text-left px-4 py-3 mb-2 rounded-xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 hover:border-blue-400 hover:shadow-md transition-all flex items-center gap-3";
+                    btn.innerHTML = `<span class="text-xl">📄</span><span class="text-sm font-bold text-gray-700 dark:text-slate-200 truncate w-full" title="${file.name}">${file.name}</span>`;
                     btn.onclick = () => previewPOFile(id, file.index, btn, file.name);
                     sidebar.appendChild(btn);
                 });
@@ -2546,7 +3284,7 @@
             document.getElementById('poViewerModal').classList.remove('hidden');
         }
 
-        function previewPOFile(id, index, btnEl, fileName) {
+        async function previewPOFile(id, index, btnEl, fileName) {
             const sidebar = document.getElementById('poSidebar');
             Array.from(sidebar.children).forEach(child => {
                 child.classList.remove('border-blue-500', 'bg-blue-50', 'ring-2', 'ring-blue-200');
@@ -2557,20 +3295,58 @@
                 btnEl.classList.add('border-blue-500', 'bg-blue-50', 'ring-2', 'ring-blue-200');
             }
 
-            const files = poFilesDb[id];
             const preview = document.getElementById('poPdfPreviewArea');
-            if (files && files[index] && files[index].data) {
-                preview.innerHTML = `<iframe src="${files[index].data}" width="100%" height="100%" style="border:none;border-radius:12px;"></iframe>`;
-            } else {
+            let files = poFilesDb[id];
+
+            // If file is missing locally, attempt on-demand fetch from Firebase Cloud
+            if ((!files || !files[index]) && window.LabFirebase && LabFirebase.isConfigured()) {
                 preview.innerHTML = `
-                    <div style="display:flex; justify-content:center; align-items:center; height:100%; font-family:sans-serif; color:#666; background:#f9fafb; flex-direction:column; border-radius:12px; border:2px dashed #d1d5db;">
-                        <svg style="width:48px;height:48px;margin-bottom:16px;color:#9ca3af;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        <h2 style="margin:0 0 8px;font-size:20px;color:#374151;">File Preview Not Available</h2>
-                        <p style="margin:0;font-size:14px;">The actual file data for <strong>${fileName}</strong> was not found in the local database.</p>
-                        <p style="margin:8px 0 0;font-size:12px;color:#9ca3af;">(This happens with demo data or if local storage was cleared)</p>
+                    <div style="display:flex; justify-content:center; align-items:center; height:100%; font-family:sans-serif; color:#2563eb; background:#f0f9ff; flex-direction:column; border-radius:12px; border:2px dashed #93c5fd;">
+                        <svg class="animate-spin" style="width:36px;height:36px;margin-bottom:12px;" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
+                        <h3 style="margin:0 0 6px;font-size:16px;font-weight:600;">กำลังดาวน์โหลดและขยายไฟล์จาก Firebase Cloud...</h3>
+                        <p style="margin:0;font-size:13px;color:#64748b;">กำลังดึงเอกสารแนบจากฐานข้อมูลก้อนเมฆ (Spark Plan)</p>
                     </div>
                 `;
+                try {
+                    const cloudFiles = await LabFirebase.fetchAttachmentFromCloud(id);
+                    if (cloudFiles && Array.isArray(cloudFiles) && cloudFiles.length > 0) {
+                        if (typeof poFilesDb === 'undefined') window.poFilesDb = {};
+                        poFilesDb[id] = cloudFiles;
+                        savePoFileToIDB(id, cloudFiles);
+                        files = cloudFiles;
+                    }
+                } catch (e) {
+                    console.warn("Cloud attachment fetch error:", e);
+                }
             }
+
+            if (files && files[index]) {
+                const target = files[index];
+                try {
+                    let dataUrl = '';
+                    if (window.LabCompressor) {
+                        dataUrl = await LabCompressor.decompressToDataUrl(target);
+                    } else {
+                        dataUrl = target.data || '';
+                    }
+
+                    if (dataUrl && dataUrl.startsWith('data:')) {
+                        preview.innerHTML = `<iframe src="${dataUrl}" width="100%" height="100%" style="border:none;border-radius:12px;"></iframe>`;
+                        return;
+                    }
+                } catch (err) {
+                    console.error("Error previewing file:", err);
+                }
+            }
+
+            preview.innerHTML = `
+                <div style="display:flex; justify-content:center; align-items:center; height:100%; font-family:sans-serif; color:#666; background:#f9fafb; flex-direction:column; border-radius:12px; border:2px dashed #d1d5db;">
+                    <svg style="width:48px;height:48px;margin-bottom:16px;color:#9ca3af;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <h2 style="margin:0 0 8px;font-size:20px;color:#374151;">File Preview Not Available</h2>
+                    <p style="margin:0;font-size:14px;">The actual file data for <strong>${fileName}</strong> was not found in the local or cloud database.</p>
+                    <p style="margin:8px 0 0;font-size:12px;color:#9ca3af;">(Demo data or file has not been synced to Cloud yet)</p>
+                </div>
+            `;
         }
 
         function closePOViewerModal() {
@@ -2582,7 +3358,6 @@
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF('l');
 
-            // Add font if base64 is available
             if (window.THSarabunNew_base64) {
                 doc.addFileToVFS("THSarabunNew.ttf", window.THSarabunNew_base64);
                 doc.addFont("THSarabunNew.ttf", "THSarabunNew", "normal");
@@ -2592,7 +3367,6 @@
             doc.setFontSize(22); doc.setTextColor(40); doc.text('รายงานการซ่อมบำรุง (Lab Maintenance Report)', 14, 20);
             doc.setFontSize(14); doc.text(`วันที่ออกรายงาน: ${new Date().toLocaleString('th-TH')}`, 14, 28);
 
-            // UPDATED: Added 'Reporter' column
             const tableColumn = ["ชื่อเครื่องมือ (Equipment)", "ประเภท (Type)", "วันที่ (Date)", "ราคา (Cost)", "ผู้ให้บริการ (Provider)", "ผู้แจ้ง (Reporter)", "สถานะ (Status)"];
 
             const tableRows = filteredRecords.map(r => [
@@ -2614,7 +3388,6 @@
         }
 
         function exportToExcel() {
-            // UPDATED: Added all columns
             const ws = XLSX.utils.json_to_sheet(filteredRecords.map(r => ({
                 "Equipment Name": r.equipment_name,
                 "Location": r.building,
@@ -2632,7 +3405,6 @@
             XLSX.utils.book_append_sheet(wb, ws, "Records");
             XLSX.writeFile(wb, "lab_records.xlsx");
         }
-        // --- Equipment History Logic ---
         let currentHistoryEquip = '';
 
         function viewEquipmentHistory(equipName) {
@@ -2647,17 +3419,14 @@
         }
 
         function switchHistoryTab(type) {
-            // Reset tabs
             document.querySelectorAll('.hist-tab').forEach(t => {
                 t.className = 'hist-tab flex-1 px-4 py-2.5 rounded-xl text-sm font-bold bg-gray-100 text-gray-500 transition hover:bg-gray-200';
             });
 
-            // Active tab styling
             if (type === 'repair') document.getElementById('tabHistRepair').className = 'hist-tab flex-1 px-4 py-2.5 rounded-xl text-sm font-bold bg-orange-100 text-orange-700 transition shadow-sm';
             if (type === 'calibration') document.getElementById('tabHistCalib').className = 'hist-tab flex-1 px-4 py-2.5 rounded-xl text-sm font-bold bg-purple-100 text-purple-700 transition shadow-sm';
             if (type === 'pm') document.getElementById('tabHistPM').className = 'hist-tab flex-1 px-4 py-2.5 rounded-xl text-sm font-bold bg-teal-100 text-teal-700 transition shadow-sm';
 
-            // Filter and sort records
             const histRecords = records.filter(r => r.equipment_name === currentHistoryEquip && r.type === type)
                 .sort((a, b) => new Date(b.service_date) - new Date(a.service_date));
 
