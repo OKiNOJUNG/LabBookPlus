@@ -176,6 +176,12 @@
             border: 1px solid rgba(245, 158, 11, 0.3);
         }
 
+        .eq-status-repair {
+            background: rgba(244, 63, 94, 0.12);
+            color: #e11d48;
+            border: 1px solid rgba(244, 63, 94, 0.3);
+        }
+
         .hidden {
             display: none !important;
         }
@@ -1754,16 +1760,6 @@
                         <span id="nav-notify-badge" class="hidden">0</span>
                     </button>
 
-                    <button class="nav-action-btn" onclick="LabTheme.toggle()"
-                        title="สลับโหมดมืด/สว่าง (Dark/Light Mode)">
-                        <i class="fa-solid fa-circle-half-stroke"></i>
-                    </button>
-
-                    <button class="nav-action-btn" id="btnAudioToggle" onclick="LabAudio.toggleMute()"
-                        title="เปิด/ปิดเสียงตอบสนอง">
-                        <i class="fa-solid fa-volume-high"></i>
-                    </button>
-
                     <a href="CarePlus.html" class="app-switch-btn" onclick="LabAuth.syncSession()"
                         title="สลับไปใช้งาน MPIR Lab Care+"
                         style="background: rgba(14, 165, 233, 0.12); border-color: rgba(14, 165, 233, 0.4); color: #0284c7; padding: 0.35rem 0.65rem; font-size: 0.75rem; white-space: nowrap;">
@@ -1796,8 +1792,6 @@
                     Equip</button>
                 <button class="nav-pill-mobile" onclick="app.showView('data-table-view')" id="tab-mobile-datatable">📑
                     Data</button>
-                <button class="nav-pill-mobile" onclick="app.openDocsModal('manual')" id="tab-mobile-docs">📖
-                    Docs</button>
                 <button class="nav-pill-mobile hidden" id="nav-admin-btn-mobile" onclick="app.showView('admin-view')">⚙️
                     Admin</button>
             </div>
@@ -1832,8 +1826,10 @@
                     </div>
                     <div class="form-group" style="margin-top: 1.5rem;">
                         <label>Password</label>
-                        <input type="password" id="login-pass" required placeholder="••••••••"
-                            style="background-color: white; border: none; border-radius: 12px; padding: 1rem; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);">
+                        <div style="position: relative; display: flex; align-items: center; width: 100%;">
+                            <input type="password" id="login-pass" required placeholder="••••••••"
+                                style="width: 100%; background-color: white; border: none; border-radius: 12px; padding: 1rem; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); box-sizing: border-box;">
+                        </div>
                     </div>
                     <button type="submit" class="btn"
                         style="width: 100%; justify-content: center; margin-top: 2rem;">Login</button>
@@ -3350,7 +3346,6 @@
                     const mobBtn = document.getElementById(mbId);
                     if (mobBtn) mobBtn.classList.add('active');
 
-                    LabAudio.playClick();
                     LabHaptic.tap();
                 }
 
@@ -3851,7 +3846,6 @@
                         err.textContent = authRes.message;
                         err.classList.remove('hidden');
                     }
-                    LabAudio.playError();
                     LabHaptic.error();
                 }
             },
@@ -3899,11 +3893,25 @@
                 const now = new Date();
                 return (this.state.bookings || []).some(b =>
                     !b.deleted &&
-                    b.eqId === eqId &&
+                    String(b.eqId) === String(eqId) &&
                     !b.finishDetails &&
                     new Date(b.start) <= now &&
                     new Date(b.end) >= now
                 );
+            },
+
+            isEquipmentInMaintenance(eqName, eqId) {
+                const todayStr = moment().format('YYYY-MM-DD');
+                const allState = LabStateBridge.getState() || {};
+                const records = allState.records || this.state.records || [];
+                return records.some(r => {
+                    const matchEq = (r.equipment_name && eqName && r.equipment_name.trim().toLowerCase() === eqName.trim().toLowerCase()) ||
+                                   (r.equipment_id && eqId && String(r.equipment_id) === String(eqId));
+                    if (!matchEq) return false;
+                    const isToday = r.service_date === todayStr || (r.type === 'calibration' && r.next_service_date === todayStr);
+                    const isPending = r.calendar_status !== 'complete';
+                    return isToday && isPending;
+                });
             },
 
             populateCalendarDropdowns() {
@@ -4698,10 +4706,16 @@
                         card.className = 'eq-card';
                         card.onclick = () => { window.location.hash = `#add?eq=${eq.id}`; };
 
+                        const isMaintenance = this.isEquipmentInMaintenance(eq.name, eq.id);
                         const isBusy = this.isEquipmentInUse(eq.id);
-                        const statusBadge = isBusy
-                            ? `<span class="eq-card-status-pill eq-status-busy"><span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span> In Use</span>`
-                            : `<span class="eq-card-status-pill eq-status-avail"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Available</span>`;
+                        let statusBadge = '';
+                        if (isMaintenance) {
+                            statusBadge = `<span class="eq-card-status-pill eq-status-repair"><span class="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"></span> Maintenance</span>`;
+                        } else if (isBusy) {
+                            statusBadge = `<span class="eq-card-status-pill eq-status-busy"><span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span> In Use</span>`;
+                        } else {
+                            statusBadge = `<span class="eq-card-status-pill eq-status-avail"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Available</span>`;
+                        }
 
                         card.innerHTML = `
                         <div class="eq-card-status-badge">${statusBadge}</div>
@@ -5141,21 +5155,60 @@
                         const eq = this.state.equipments.find(e => e.id === eqId);
                         const eqName = eq ? eq.name : '';
 
-                        const maintenanceRecords = this.state.records || [];
+                        const allState = LabStateBridge.getState() || {};
+                        const maintenanceRecords = allState.records || this.state.records || [];
                         const conflictingMaintenance = maintenanceRecords.find(r => {
-                            if (r.equipment_name !== eqName) return false;
+                            const matchEq = (r.equipment_name && eqName && r.equipment_name.trim().toLowerCase() === eqName.trim().toLowerCase()) ||
+                                           (r.equipment_id && eqId && String(r.equipment_id) === String(eqId));
+                            if (!matchEq) return false;
+                            if (r.calendar_status === 'complete') return false;
+
                             const svcDate = moment(r.service_date, 'YYYY-MM-DD');
                             const svcStart = svcDate.clone().startOf('day');
                             const svcEnd = svcDate.clone().endOf('day');
-                            return currentStart.isBefore(svcEnd) && currentEnd.isAfter(svcStart);
+                            const overlapsSvc = currentStart.isBefore(svcEnd) && currentEnd.isAfter(svcStart);
+
+                            let overlapsNext = false;
+                            if (r.type === 'calibration' && r.next_service_date) {
+                                const nextDate = moment(r.next_service_date, 'YYYY-MM-DD');
+                                overlapsNext = currentStart.isBefore(nextDate.clone().endOf('day')) && currentEnd.isAfter(nextDate.clone().startOf('day'));
+                            }
+                            return overlapsSvc || overlapsNext;
                         });
 
                         if (conflictingMaintenance) {
+                            const typeThai = conflictingMaintenance.type === 'repair' ? 'ซ่อมแซม (Repair)' :
+                                            (conflictingMaintenance.type === 'calibration' ? 'สอบเทียบ (Calibration)' : 'บำรุงรักษาเชิงป้องกัน (PM)');
+                            const targetDate = conflictingMaintenance.service_date || conflictingMaintenance.next_service_date;
+                            const provider = (conflictingMaintenance.technicians && conflictingMaintenance.technicians[0]) ? conflictingMaintenance.technicians[0] : '-';
+                            const reporter = conflictingMaintenance.reporter || '-';
+
                             Swal.fire({
-                                title: 'Maintenance Conflict!',
-                                html: `This equipment is scheduled for <strong>${conflictingMaintenance.type.toUpperCase()}</strong> on ${conflictingMaintenance.service_date}.<br>Please select another date.`,
-                                icon: 'error',
-                                confirmButtonText: 'OK'
+                                title: '⚠️ ไม่สามารถจองเครื่องมือได้!',
+                                html: `
+                                    <div style="text-align: left; font-size: 0.95rem; line-height: 1.6; color: #1e293b;">
+                                        <div style="background: #fff1f2; border: 1px solid #fecdd3; border-radius: 12px; padding: 12px 14px; margin-bottom: 12px;">
+                                            <div style="font-weight: 700; color: #be123c; margin-bottom: 4px;">
+                                                🔧 เครื่องมือนี้ติดกำหนดการใน Lab Care+
+                                            </div>
+                                            <div style="font-size: 0.85rem; color: #64748b;">มีรายการบำรุงรักษาในระบบเชื่อมโยงในช่วงเวลาเดียวกัน</div>
+                                        </div>
+                                        <table style="width: 100%; font-size: 0.88rem; border-collapse: collapse;">
+                                            <tr><td style="padding: 4px 0; color: #64748b; width: 35%;">เครื่องมือ:</td><td style="font-weight: 600; color: #0f172a;">${eqName}</td></tr>
+                                            <tr><td style="padding: 4px 0; color: #64748b;">ประเภทงาน:</td><td style="font-weight: 700; color: #0284c7;">${typeThai}</td></tr>
+                                            <tr><td style="padding: 4px 0; color: #64748b;">วันที่กำหนด:</td><td style="font-weight: 600; color: #0f172a;">${targetDate}</td></tr>
+                                            <tr><td style="padding: 4px 0; color: #64748b;">ผู้ให้บริการ:</td><td style="color: #334155;">${provider}</td></tr>
+                                            <tr><td style="padding: 4px 0; color: #64748b;">ผู้แจ้ง/รับผิดชอบ:</td><td style="color: #334155;">${reporter}</td></tr>
+                                            <tr><td style="padding: 4px 0; color: #64748b;">สถานะ:</td><td><span style="background: #fef3c7; color: #b45309; padding: 2px 8px; border-radius: 6px; font-weight: 600; font-size: 0.75rem;">${conflictingMaintenance.calendar_status || 'Pending'}</span></td></tr>
+                                        </table>
+                                        <p style="margin-top: 12px; margin-bottom: 0; font-size: 0.82rem; color: #e11d48; font-weight: 600;">
+                                            *กรุณาเลือกช่วงเวลาอื่นที่ไม่มีกำหนดการบำรุงรักษาเครื่องมือ
+                                        </p>
+                                    </div>
+                                `,
+                                icon: 'warning',
+                                confirmButtonText: 'รับทราบ',
+                                confirmButtonColor: '#0F766E'
                             });
                             return null;
                         }
@@ -5163,7 +5216,7 @@
                         const conflictingBooking = this.state.bookings.find(b => {
                             if (editId && b.id === editId) return false;
                             if (b.deleted) return false;
-                            if (b.eqId !== eqId) return false;
+                            if (String(b.eqId) !== String(eqId)) return false;
                             const bStart = moment(b.start);
                             const bEnd = moment(b.end);
                             return currentStart.isBefore(bEnd) && currentEnd.isAfter(bStart);
@@ -5173,15 +5226,36 @@
                             const cbStart = moment(conflictingBooking.start).format('DD/MM/YYYY HH:mm');
                             const cbEnd = moment(conflictingBooking.end).format('DD/MM/YYYY HH:mm');
                             const cbBookedAt = moment(conflictingBooking.history[0]?.timestamp || conflictingBooking.start).format('DD/MM/YYYY HH:mm');
+                            const cbProject = conflictingBooking.project || conflictingBooking.title || 'ไม่ระบุ';
+                            const cbUser = conflictingBooking.user || 'Unknown';
 
                             if (!skipConflicts && repeatType === 'None') {
                                 Swal.fire({
-                                    title: 'Time Conflict!',
-                                    html: `This equipment is already booked by <strong>${conflictingBooking.user}</strong><br>From: ${cbStart}<br>To: ${cbEnd}<br>Booked on: ${cbBookedAt}`,
-                                    icon: 'error',
+                                    title: '⚠️ ไม่สามารถจองได้ (ช่วงเวลาซ้ำซ้อน)',
+                                    html: `
+                                        <div style="text-align: left; font-size: 0.95rem; line-height: 1.6; color: #1e293b;">
+                                            <div style="background: #fff7ed; border: 1px solid #ffedd5; border-radius: 12px; padding: 12px 14px; margin-bottom: 12px;">
+                                                <div style="font-weight: 700; color: #c2410c; margin-bottom: 4px;">
+                                                    ⏰ มีผู้ใช้งานจองเครื่องมือนี้ในช่วงเวลาดังกล่าวแล้ว
+                                                </div>
+                                                <div style="font-size: 0.85rem; color: #64748b;">เครื่องมือถูกจองไว้แล้ว ไม่สามารถบันทึกการจองซ้ำเวลาได้</div>
+                                            </div>
+                                            <table style="width: 100%; font-size: 0.88rem; border-collapse: collapse;">
+                                                <tr><td style="padding: 4px 0; color: #64748b; width: 35%;">เครื่องมือ:</td><td style="font-weight: 600; color: #0f172a;">${eqName}</td></tr>
+                                                <tr><td style="padding: 4px 0; color: #64748b;">ผู้จอง:</td><td style="font-weight: 700; color: #0284c7;">${cbUser}</td></tr>
+                                                <tr><td style="padding: 4px 0; color: #64748b;">โครงการ/เรื่อง:</td><td style="color: #334155;">${cbProject}</td></tr>
+                                                <tr><td style="padding: 4px 0; color: #64748b;">เวลาเริ่มต้น:</td><td style="font-weight: 600; color: #0f172a;">${cbStart}</td></tr>
+                                                <tr><td style="padding: 4px 0; color: #64748b;">เวลาสิ้นสุด:</td><td style="font-weight: 600; color: #0f172a;">${cbEnd}</td></tr>
+                                                <tr><td style="padding: 4px 0; color: #64748b;">ทำรายการเมื่อ:</td><td style="color: #64748b; font-size: 0.8rem;">${cbBookedAt}</td></tr>
+                                            </table>
+                                        </div>
+                                    `,
+                                    icon: 'warning',
                                     showCancelButton: true,
-                                    confirmButtonText: 'View Details',
-                                    cancelButtonText: 'Close'
+                                    confirmButtonText: 'ดูรายละเอียดการจอง',
+                                    cancelButtonText: 'ปิด',
+                                    confirmButtonColor: '#0284C7',
+                                    cancelButtonColor: '#94A3B8'
                                 }).then((result) => {
                                     if (result.isConfirmed) {
                                         app.showBookingDetails(conflictingBooking.id);
@@ -5189,7 +5263,12 @@
                                 });
                                 return null;
                             } else if (!skipConflicts) {
-                                Swal.fire('Conflict', `Conflict detected on ${currentStart.format('DD/MM/YYYY')} with ${conflictingBooking.user}. Check "Skip past conflicts" to ignore.`, 'error');
+                                Swal.fire({
+                                    title: 'พบการจองซ้ำซ้อน',
+                                    text: `พบการจองทับซ้อนในวันที่ ${currentStart.format('DD/MM/YYYY')} โดย ${cbUser} (ทำเครื่องหมาย "ข้ามรายการซ้ำในอดีต" หากต้องการข้าม)`,
+                                    icon: 'error',
+                                    confirmButtonColor: '#0F766E'
+                                });
                                 return null;
                             }
                         } else {

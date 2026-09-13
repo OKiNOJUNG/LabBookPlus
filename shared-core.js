@@ -628,13 +628,10 @@
                 a.click();
                 document.body.removeChild(a);
                 setTimeout(() => URL.revokeObjectURL(url), 2000);
-
-                LabAudio.playSuccess();
                 LabAlert.toast('success', 'สำรองข้อมูลรวมทั้ง 2 ระบบ (พร้อมบีบอัดไฟล์แนบ) เรียบร้อยแล้ว');
                 return true;
             } catch (err) {
                 console.error("exportCombinedBackup error:", err);
-                LabAudio.playError();
                 LabAlert.error('เกิดข้อผิดพลาดในการสร้างไฟล์สำรองข้อมูล', 'Backup Failed');
                 return false;
             }
@@ -750,7 +747,6 @@
                     LabFirebase.syncToCloud(newState);
                 }
 
-                LabAudio.playSuccess();
                 LabHaptic.success();
 
                 // Restore Care+ Audit Log if present in backup
@@ -768,7 +764,6 @@
                 return true;
             } catch (err) {
                 console.error("importCombinedBackup error:", err);
-                LabAudio.playError();
                 LabAlert.error(`เกิดข้อผิดพลาด: ${err.message || 'โครงสร้างไฟล์ไม่ถูกต้อง'}`, 'นำเข้าข้อมูลไม่สำเร็จ');
                 return false;
             }
@@ -1017,153 +1012,18 @@
         }
     } catch (e) {}
 
-    // --- 4. Web Audio Synthesizer (Zero External Dependencies) ---
-    let audioCtx = null;
-    const AUDIO_MUTE_KEY = 'lab_audio_muted';
-
+    // --- 4. Web Audio Synthesizer (Disabled & Sound Removed) ---
     const LabAudio = {
-        isMuted() {
-            return localStorage.getItem(AUDIO_MUTE_KEY) === 'true';
-        },
-
-        initCtx() {
-            try {
-                if (!audioCtx) {
-                    const AudioContext = window.AudioContext || window.webkitAudioContext;
-                    if (AudioContext) audioCtx = new AudioContext();
-                }
-                if (audioCtx && audioCtx.state === 'suspended') {
-                    audioCtx.resume();
-                }
-            } catch (e) {
-                console.warn("[LabAudio] initCtx error:", e);
-            }
-            return audioCtx;
-        },
-
-        toggleMute() {
-            this.initCtx();
-            const next = !this.isMuted();
-            localStorage.setItem(AUDIO_MUTE_KEY, String(next));
-            this.updateUI();
-
-            if (!next) {
-                this.playSuccess();
-                if (window.LabAlert && LabAlert.toast) {
-                    LabAlert.toast('success', '🔊 เปิดเสียงตอบสนองแล้ว', 1200);
-                }
-            } else {
-                if (window.LabAlert && LabAlert.toast) {
-                    LabAlert.toast('info', '🔇 ปิดเสียงตอบสนองแล้ว', 1200);
-                }
-            }
-            window.dispatchEvent(new CustomEvent('labAudioMuteChange', { detail: { muted: next } }));
-            return next;
-        },
-
-        updateUI() {
-            const muted = this.isMuted();
-            const btns = [
-                document.getElementById('btnAudioToggle'),
-                document.getElementById('btnAudioToggleCP'),
-                ...document.querySelectorAll('.btn-audio-toggle')
-            ].filter(Boolean);
-
-            btns.forEach(btn => {
-                const icon = btn.querySelector('i');
-                if (muted) {
-                    if (icon) icon.className = 'fa-solid fa-volume-xmark';
-                    btn.title = 'เปิดเสียงตอบสนอง (ปัจจุบัน: ปิดเสียง)';
-                    btn.setAttribute('aria-label', 'เปิดเสียงตอบสนอง');
-                    btn.style.color = '#ef4444';
-                    btn.style.opacity = '0.85';
-                } else {
-                    if (icon) icon.className = 'fa-solid fa-volume-high';
-                    btn.title = 'ปิดเสียงตอบสนอง (ปัจจุบัน: เปิดเสียง)';
-                    btn.setAttribute('aria-label', 'ปิดเสียงตอบสนอง');
-                    btn.style.color = '';
-                    btn.style.opacity = '1';
-                }
-            });
-        },
-
-        playTone(freq, type, duration, startVol = 0.16, endVol = 0.001) {
-            if (this.isMuted()) return;
-            try {
-                const ctx = this.initCtx();
-                if (!ctx) return;
-
-                const now = ctx.currentTime;
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-
-                osc.type = type || 'sine';
-                osc.frequency.setValueAtTime(freq, now);
-
-                gain.gain.setValueAtTime(startVol, now);
-                gain.gain.linearRampToValueAtTime(0, now + duration);
-
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-
-                osc.start(now);
-                osc.stop(now + duration + 0.05);
-            } catch (e) {
-                // Ignore audio autoplay restrictions quietly
-            }
-        },
-
-        // Pleasant high-harmonic dual chime for success
-        playSuccess() {
-            if (this.isMuted()) return;
-            this.playTone(880, 'sine', 0.12, 0.18);
-            setTimeout(() => {
-                this.playTone(1320, 'sine', 0.22, 0.20);
-            }, 100);
-        },
-
-        // Crisp micro tick on tab click
-        playClick() {
-            if (this.isMuted()) return;
-            this.playTone(1000, 'triangle', 0.04, 0.08);
-        },
-
-        // Warm soft lower frequency thud on error
-        playError() {
-            if (this.isMuted()) return;
-            this.playTone(280, 'sawtooth', 0.15, 0.16);
-            setTimeout(() => {
-                this.playTone(200, 'sawtooth', 0.22, 0.18);
-            }, 120);
-        },
-
-        // Double attention alert
-        playWarning() {
-            if (this.isMuted()) return;
-            this.playTone(600, 'sine', 0.08, 0.14);
-            setTimeout(() => {
-                this.playTone(600, 'sine', 0.12, 0.14);
-            }, 120);
-        }
+        isMuted() { return true; },
+        initCtx() { return null; },
+        toggleMute() { return true; },
+        updateUI() {},
+        playTone() {},
+        playSuccess() {},
+        playClick() {},
+        playError() {},
+        playWarning() {}
     };
-
-    // Auto-unlock audio & sync UI on first user touch/click
-    if (typeof window !== 'undefined') {
-        const unlockAudio = () => {
-            if (audioCtx && audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
-        };
-        window.addEventListener('click', unlockAudio, { passive: true });
-        window.addEventListener('touchstart', unlockAudio, { passive: true });
-        if (typeof document !== 'undefined') {
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', () => LabAudio.updateUI());
-            } else {
-                setTimeout(() => LabAudio.updateUI(), 50);
-            }
-        }
-    }
 
     // --- 5. Mobile Haptic Engine ---
     const LabHaptic = {
@@ -1179,53 +1039,40 @@
         error() { this.vibrate([30, 40, 30]); }
     };
 
-    // --- 6. Dark Mode Controller (LabTheme) ---
-    const THEME_KEY = 'lab_theme';
-
+    // --- 6. Theme Controller (Dark Mode Removed - Light Mode Enforced) ---
     const LabTheme = {
         getTheme() {
-            const saved = localStorage.getItem(THEME_KEY);
-            if (saved === 'dark' || saved === 'light') return saved;
-            // Check system preference
-            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                return 'dark';
-            }
             return 'light';
         },
 
-        setTheme(theme) {
-            localStorage.setItem(THEME_KEY, theme);
-            if (theme === 'dark') {
-                document.documentElement.classList.add('dark');
-                document.body?.classList.add('dark');
-            } else {
+        setTheme() {
+            if (typeof document !== 'undefined') {
                 document.documentElement.classList.remove('dark');
                 document.body?.classList.remove('dark');
             }
-            window.dispatchEvent(new CustomEvent('labThemeChange', { detail: { theme } }));
         },
 
         toggle() {
-            const next = this.getTheme() === 'dark' ? 'light' : 'dark';
-            this.setTheme(next);
-            LabAudio.playClick();
-            return next;
+            this.setTheme();
+            return 'light';
         },
 
         init() {
-            this.setTheme(this.getTheme());
+            try {
+                localStorage.removeItem('lab_theme');
+            } catch (e) {}
+            this.setTheme();
         }
     };
 
     // --- 7. SweetAlert 2.0 Theme Wrapper (LabAlert) ---
     const LabAlert = {
         getSwalDefaults() {
-            const isDark = LabTheme.getTheme() === 'dark';
             return {
-                background: isDark ? '#1E293B' : '#FFFFFF',
-                color: isDark ? '#F8FAFC' : '#0F172A',
+                background: '#FFFFFF',
+                color: '#0F172A',
                 confirmButtonColor: '#0F766E', // Mitr Phol Teal
-                cancelButtonColor: isDark ? '#475569' : '#94A3B8',
+                cancelButtonColor: '#94A3B8',
                 customClass: {
                     popup: 'lab-swal-popup',
                     title: 'lab-swal-title',
@@ -1237,13 +1084,10 @@
 
         toast(type, title, timer = 2200) {
             if (type === 'success') {
-                LabAudio.playSuccess();
                 LabHaptic.success();
             } else if (type === 'error') {
-                LabAudio.playError();
                 LabHaptic.error();
             } else {
-                LabAudio.playClick();
                 LabHaptic.tap();
             }
 
@@ -1264,29 +1108,60 @@
         },
 
         confirm(options) {
-            LabAudio.playWarning();
             LabHaptic.tap();
 
             if (typeof Swal !== 'undefined') {
                 const defaults = this.getSwalDefaults();
-                return Swal.fire({
-                    title: options.title || 'ยืนยันการดำเนินการ?',
-                    text: options.text || '',
-                    icon: options.icon || 'warning',
+                let title = 'ยืนยันการดำเนินการ?';
+                let text = '';
+                let html = undefined;
+                let icon = 'warning';
+                let confirmText = 'ยืนยัน';
+                let cancelText = 'ยกเลิก';
+                let confirmColor = defaults.confirmButtonColor;
+
+                if (typeof options === 'string') {
+                    title = options;
+                    if (arguments.length > 1) {
+                        const arg1 = arguments[1];
+                        if (typeof arg1 === 'string' && (arg1.includes('<') || arg1.includes('\n'))) {
+                            html = arg1;
+                        } else {
+                            text = arg1 || '';
+                        }
+                    }
+                    if (arguments.length > 2) confirmText = arguments[2];
+                    if (arguments.length > 3) cancelText = arguments[3];
+                } else if (options && typeof options === 'object') {
+                    title = options.title || title;
+                    text = options.text || '';
+                    html = options.html;
+                    icon = options.icon || icon;
+                    confirmText = options.confirmText || confirmText;
+                    cancelText = options.cancelText || cancelText;
+                    confirmColor = options.confirmColor || confirmColor;
+                }
+
+                const swalOpts = {
+                    title,
+                    icon,
                     showCancelButton: true,
-                    confirmButtonText: options.confirmText || 'ยืนยัน',
-                    cancelButtonText: options.cancelText || 'ยกเลิก',
-                    confirmButtonColor: options.confirmColor || defaults.confirmButtonColor,
+                    confirmButtonText: confirmText,
+                    cancelButtonText: cancelText,
+                    confirmButtonColor: confirmColor,
                     cancelButtonColor: defaults.cancelButtonColor,
                     background: defaults.background,
                     color: defaults.color
-                }).then(res => res.isConfirmed);
+                };
+                if (html) swalOpts.html = html;
+                else swalOpts.text = text;
+
+                return Swal.fire(swalOpts).then(res => res.isConfirmed);
             }
-            return Promise.resolve(confirm(options.title + '\n' + (options.text || '')));
+            return Promise.resolve(confirm((typeof options === 'string' ? options : options.title) + '\n' + (typeof options === 'string' ? (arguments[1] || '') : (options.text || ''))));
         },
 
         success(title, text) {
-            LabAudio.playSuccess();
             LabHaptic.success();
             if (typeof Swal !== 'undefined') {
                 const defaults = this.getSwalDefaults();
@@ -1302,7 +1177,6 @@
         },
 
         error(title, text) {
-            LabAudio.playError();
             LabHaptic.error();
             if (typeof Swal !== 'undefined') {
                 const defaults = this.getSwalDefaults();

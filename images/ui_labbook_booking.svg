@@ -1,0 +1,126 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" width="100%" height="100%">
+  <defs>
+    <linearGradient id="navGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0f766e" />
+      <stop offset="100%" stop-color="#14b8a6" />
+    </linearGradient>
+    <filter id="cardShadow" x="-2%" y="-2%" width="104%" height="104%">
+      <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#000" flood-opacity="0.2" />
+    </filter>
+  </defs>
+
+  <!-- Browser Frame Background -->
+  <rect width="960" height="520" rx="12" fill="#0b1120" stroke="#334155" stroke-width="2" />
+
+  <!-- Browser Title Bar -->
+  <path d="M0 12 C0 5.37 5.37 0 12 0 L948 0 C954.63 0 960 5.37 960 12 L960 36 L0 36 Z" fill="#1e293b" />
+  <circle cx="20" cy="18" r="5" fill="#ef4444" />
+  <circle cx="36" cy="18" r="5" fill="#f59e0b" />
+  <circle cx="52" cy="18" r="5" fill="#10b981" />
+  <rect x="240" y="8" width="480" height="20" rx="10" fill="#0f172a" />
+  <text x="480" y="22" fill="#94a3b8" font-family="'Segoe UI', sans-serif" font-size="11" text-anchor="middle">https://labbookplus.netlify.app/ (Lab Book+ Equipment LogBook)</text>
+
+  <!-- App Header Navbar -->
+  <g transform="translate(0, 36)">
+    <rect width="960" height="48" fill="#0f172a" stroke="#334155" />
+    <!-- Brand -->
+    <circle cx="30" cy="24" r="12" fill="#0f766e" />
+    <text x="50" y="29" fill="#f8fafc" font-family="'Segoe UI', sans-serif" font-size="14" font-weight="800">Lab Book+</text>
+    <rect x="135" y="14" width="70" height="20" rx="10" fill="#0f766e" fill-opacity="0.2" stroke="#14b8a6" />
+    <text x="170" y="28" fill="#2dd4bf" font-family="'Segoe UI', sans-serif" font-size="9" font-weight="700" text-anchor="middle">LOGBOOK</text>
+
+    <!-- Nav Pills -->
+    <rect x="230" y="11" width="80" height="26" rx="13" fill="#0f766e" />
+    <text x="270" y="27" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="11" font-weight="700" text-anchor="middle">Dashboard</text>
+
+    <text x="350" y="27" fill="#94a3b8" font-family="'Segoe UI', sans-serif" font-size="11" font-weight="600">Equipments</text>
+    <text x="440" y="27" fill="#94a3b8" font-family="'Segoe UI', sans-serif" font-size="11" font-weight="600">Data Table</text>
+    <text x="520" y="27" fill="#94a3b8" font-family="'Segoe UI', sans-serif" font-size="11" font-weight="600">Admin</text>
+
+    <!-- Right Tools -->
+    <rect x="670" y="11" width="95" height="26" rx="6" fill="#0284c7" fill-opacity="0.2" stroke="#0284c7" />
+    <text x="717" y="27" fill="#38bdf8" font-family="'Segoe UI', sans-serif" font-size="11" font-weight="700" text-anchor="middle">🩺 Lab Care+</text>
+
+    <rect x="775" y="11" width="95" height="26" rx="6" fill="#0f766e" fill-opacity="0.25" stroke="#14b8a6" />
+    <text x="822" y="27" fill="#2dd4bf" font-family="'Segoe UI', sans-serif" font-size="11" font-weight="700" text-anchor="middle">📖 Docs &amp; Guide</text>
+
+    <circle cx="895" cy="24" r="12" fill="#334155" />
+    <text x="915" y="28" fill="#f8fafc" font-family="'Segoe UI', sans-serif" font-size="11" font-weight="700">Admin</text>
+  </g>
+
+  <!-- Main Content Layout (Left Filters + Calendar, Right Quick Booking) -->
+  <g transform="translate(20, 96)">
+    <!-- Top Filter Bar -->
+    <rect width="580" height="42" rx="8" fill="#1e293b" stroke="#334155" />
+    <text x="14" y="25" fill="#f1f5f9" font-family="'Segoe UI', Sarabun, sans-serif" font-size="11" font-weight="700">🏢 อาคาร 5 &amp; 6</text>
+    <text x="120" y="25" fill="#f1f5f9" font-family="'Segoe UI', Sarabun, sans-serif" font-size="11" font-weight="700">🔬 เครื่องมือ: HPLC-01</text>
+    <rect x="475" y="9" width="95" height="24" rx="4" fill="#0f766e" />
+    <text x="522" y="25" fill="#ffffff" font-family="'Segoe UI', Sarabun, sans-serif" font-size="11" font-weight="700" text-anchor="middle">+ จองเครื่องมือ</text>
+
+    <!-- Calendar View Area -->
+    <g transform="translate(0, 52)">
+      <rect width="580" height="350" rx="8" fill="#0f172a" stroke="#334155" />
+      
+      <!-- Calendar Header Days -->
+      <rect width="580" height="30" rx="8" fill="#1e293b" />
+      <text x="45" y="20" fill="#94a3b8" font-family="'Segoe UI', sans-serif" font-size="11" text-anchor="middle">MON</text>
+      <text x="127" y="20" fill="#94a3b8" font-family="'Segoe UI', sans-serif" font-size="11" text-anchor="middle">TUE</text>
+      <text x="210" y="20" fill="#94a3b8" font-family="'Segoe UI', sans-serif" font-size="11" text-anchor="middle">WED</text>
+      <text x="290" y="20" fill="#94a3b8" font-family="'Segoe UI', sans-serif" font-size="11" text-anchor="middle">THU</text>
+      <text x="372" y="20" fill="#94a3b8" font-family="'Segoe UI', sans-serif" font-size="11" text-anchor="middle">FRI</text>
+      <text x="455" y="20" fill="#94a3b8" font-family="'Segoe UI', sans-serif" font-size="11" text-anchor="middle">SAT</text>
+      <text x="535" y="20" fill="#94a3b8" font-family="'Segoe UI', sans-serif" font-size="11" text-anchor="middle">SUN</text>
+
+      <!-- Calendar Badges -->
+      <rect x="90" y="45" width="75" height="42" rx="4" fill="#0f766e" fill-opacity="0.3" stroke="#14b8a6" />
+      <text x="96" y="62" fill="#2dd4bf" font-family="'Segoe UI', sans-serif" font-size="9.5" font-weight="700">09:00 - 12:00</text>
+      <text x="96" y="77" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="9">HPLC-01 (Dr.A)</text>
+
+      <rect x="250" y="95" width="75" height="42" rx="4" fill="#3b82f6" fill-opacity="0.3" stroke="#60a5fa" />
+      <text x="256" y="112" fill="#93c5fd" font-family="'Segoe UI', sans-serif" font-size="9.5" font-weight="700">13:00 - 15:30</text>
+      <text x="256" y="127" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="9">GC-MS (MitrPhol)</text>
+
+      <rect x="335" y="150" width="75" height="42" rx="4" fill="#10b981" fill-opacity="0.3" stroke="#34d399" />
+      <text x="341" y="167" fill="#6ee7b7" font-family="'Segoe UI', sans-serif" font-size="9.5" font-weight="700">Completed</text>
+      <text x="341" y="182" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="9">Centrifuge-02</text>
+
+      <rect x="170" y="210" width="75" height="42" rx="4" fill="#f59e0b" fill-opacity="0.3" stroke="#fbbf24" />
+      <text x="176" y="227" fill="#fde68a" font-family="'Segoe UI', sans-serif" font-size="9.5" font-weight="700">Recurring</text>
+      <text x="176" y="242" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="9">Spectro (Weekly)</text>
+    </g>
+
+    <!-- Right Side: Booking Form Preview Card -->
+    <g transform="translate(600, 0)">
+      <rect width="320" height="402" rx="10" fill="#1e293b" stroke="#475569" filter="url(#cardShadow)" />
+      <rect x="0" y="0" width="320" height="38" rx="10" fill="#0f766e" />
+      <text x="16" y="24" fill="#ffffff" font-family="'Segoe UI', Sarabun, sans-serif" font-size="13" font-weight="700">📋 แบบฟอร์มการจอง (Booking Modal)</text>
+
+      <!-- Form Inputs Mockup -->
+      <g transform="translate(16, 50)">
+        <text x="0" y="12" fill="#94a3b8" font-family="'Segoe UI', sans-serif" font-size="10">เครื่องมือวิทยาศาสตร์ (Equipment)</text>
+        <rect x="0" y="18" width="288" height="26" rx="4" fill="#0f172a" stroke="#334155" />
+        <text x="10" y="35" fill="#f1f5f9" font-family="'Segoe UI', sans-serif" font-size="10">EQ-001: HPLC Waters Alliance</text>
+
+        <text x="0" y="62" fill="#94a3b8" font-family="'Segoe UI', sans-serif" font-size="10">ช่วงเวลา (Start &amp; End Time)</text>
+        <rect x="0" y="68" width="138" height="26" rx="4" fill="#0f172a" stroke="#334155" />
+        <text x="8" y="85" fill="#f1f5f9" font-family="'Segoe UI', sans-serif" font-size="10">09:00</text>
+        <rect x="150" y="68" width="138" height="26" rx="4" fill="#0f172a" stroke="#334155" />
+        <text x="158" y="85" fill="#f1f5f9" font-family="'Segoe UI', sans-serif" font-size="10">12:00</text>
+
+        <text x="0" y="112" fill="#94a3b8" font-family="'Segoe UI', sans-serif" font-size="10">วัตถุประสงค์งานทดลอง (Objective)</text>
+        <rect x="0" y="118" width="288" height="36" rx="4" fill="#0f172a" stroke="#334155" />
+        <text x="10" y="135" fill="#f1f5f9" font-family="'Segoe UI', Sarabun, sans-serif" font-size="10">ทดสอบปริมาณสารสกัดชีวภาพกลุ่ม A</text>
+
+        <rect x="0" y="165" width="288" height="30" rx="4" fill="#0f766e" fill-opacity="0.15" stroke="#14b8a6" />
+        <text x="10" y="184" fill="#2dd4bf" font-family="'Segoe UI', sans-serif" font-size="10" font-weight="600">🔁 จองวนซ้ำรายสัปดาห์ (Auto-Skip Conflict)</text>
+
+        <rect x="0" y="205" width="288" height="30" rx="4" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6" />
+        <text x="10" y="224" fill="#60a5fa" font-family="'Segoe UI', sans-serif" font-size="10" font-weight="600">📱 รองรับ QR Check-in หน้าเครื่อง</text>
+
+        <!-- Submit Button -->
+        <rect x="0" y="250" width="288" height="34" rx="6" fill="#0f766e" />
+        <text x="144" y="272" fill="#ffffff" font-family="'Segoe UI', Sarabun, sans-serif" font-size="12" font-weight="700" text-anchor="middle">💾 ยืนยันการจองเครื่องมือ</text>
+      </g>
+    </g>
+  </g>
+</svg>

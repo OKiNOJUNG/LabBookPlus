@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0b1120" />
+      <stop offset="100%" stop-color="#1e293b" />
+    </linearGradient>
+    <linearGradient id="greenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#059669" />
+      <stop offset="100%" stop-color="#10b981" />
+    </linearGradient>
+    <linearGradient id="roseGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e11d48" />
+      <stop offset="100%" stop-color="#f43f5e" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="480" rx="16" fill="url(#bgGrad2)" stroke="#334155" stroke-width="1.5" />
+
+  <!-- Header Title -->
+  <g transform="translate(40, 30)">
+    <text x="0" y="24" fill="#f8fafc" font-family="'Segoe UI', Sarabun, sans-serif" font-size="20" font-weight="800">Zero-Configuration Cloud Auto-Connect Architecture</text>
+    <text x="0" y="44" fill="#94a3b8" font-family="'Segoe UI', sans-serif" font-size="12">เปรียบเทียบขั้นตอนการทำงาน: ระบบเดิมที่ต้องกรอกค่าเอง VS ระบบใหม่ v2.2 ที่เชื่อมต่อให้อัตโนมัติทันที</text>
+  </g>
+
+  <!-- Left: Old System (Manual Config) -->
+  <g transform="translate(40, 90)">
+    <rect width="425" height="355" rx="12" fill="#0f172a" stroke="#475569" />
+    <rect x="0" y="0" width="425" height="40" rx="12" fill="#1e293b" />
+    <rect x="16" y="10" width="100" height="20" rx="10" fill="#dc2626" fill-opacity="0.2" stroke="#ef4444" />
+    <text x="66" y="24" fill="#f87171" font-family="'Segoe UI', sans-serif" font-size="11" font-weight="700" text-anchor="middle">ระบบเดิม (OLD)</text>
+    <text x="130" y="25" fill="#94a3b8" font-family="'Segoe UI', sans-serif" font-size="12" font-weight="600">Manual Config Required</text>
+
+    <!-- Step 1 -->
+    <g transform="translate(20, 60)">
+      <circle cx="16" cy="16" r="14" fill="#334155" />
+      <text x="16" y="21" fill="#f8fafc" font-family="'Segoe UI', sans-serif" font-size="12" font-weight="700" text-anchor="middle">1</text>
+      <text x="44" y="14" fill="#f1f5f9" font-family="'Segoe UI', Sarabun, sans-serif" font-size="12" font-weight="600">ผู้ใช้คนอื่นเปิดเว็บเบราว์เซอร์</text>
+      <text x="44" y="30" fill="#94a3b8" font-family="'Segoe UI', sans-serif" font-size="10.5">ไม่มี Config ใน localStorage ประจำเครื่อง</text>
+    </g>
+
+    <!-- Step 2 -->
+    <g transform="translate(20, 115)">
+      <circle cx="16" cy="16" r="14" fill="#334155" />
+      <text x="16" y="21" fill="#f8fafc" font-family="'Segoe UI', sans-serif" font-size="12" font-weight="700" text-anchor="middle">2</text>
+      <text x="44" y="14" fill="#f87171" font-family="'Segoe UI', Sarabun, sans-serif" font-size="12" font-weight="600">ระบบทำงานแบบ Local-Only</text>
+      <text x="44" y="30" fill="#94a3b8" font-family="'Segoe UI', sans-serif" font-size="10.5">ไม่สามารถเชื่อมต่อ Cloud หรือซิงค์ข้อมูลกับคนอื่นได้</text>
+    </g>
+
+    <!-- Step 3 -->
+    <g transform="translate(20, 170)">
+      <circle cx="16" cy="16" r="14" fill="#334155" />
+      <text x="16" y="21" fill="#f8fafc" font-family="'Segoe UI', sans-serif" font-size="12" font-weight="700" text-anchor="middle">3</text>
+      <text x="44" y="14" fill="#f1f5f9" font-family="'Segoe UI', Sarabun, sans-serif" font-size="12" font-weight="600">ผู้ใช้ต้องขอ API Key จากแอดมิน</text>
+      <text x="44" y="30" fill="#94a3b8" font-family="'Segoe UI', sans-serif" font-size="10.5">ส่งต่อข้อความ apiKey, projectId, appId ผ่านแชท</text>
+    </g>
+
+    <!-- Step 4 -->
+    <g transform="translate(20, 225)">
+      <circle cx="16" cy="16" r="14" fill="#334155" />
+      <text x="16" y="21" fill="#f8fafc" font-family="'Segoe UI', sans-serif" font-size="12" font-weight="700" text-anchor="middle">4</text>
+      <text x="44" y="14" fill="#f1f5f9" font-family="'Segoe UI', Sarabun, sans-serif" font-size="12" font-weight="600">เปิด Modal กรอกข้อมูลเองทีละเครื่อง</text>
+      <text x="44" y="30" fill="#94a3b8" font-family="'Segoe UI', sans-serif" font-size="10.5">เสี่ยงต่อการคัดลอกตกหล่น หรือใส่ช่องผิด</text>
+    </g>
+
+    <!-- Result Banner -->
+    <g transform="translate(20, 285)">
+      <rect width="385" height="45" rx="8" fill="#450a0a" stroke="#991b1b" />
+      <text x="20" y="28" fill="#fca5a5" font-family="'Segoe UI', Sarabun, sans-serif" font-size="11.5" font-weight="600">❌ ผู้ใช้ 10 คนต้องกรอก 10 ครั้ง เสียเวลาและยุ่งยาก</text>
+    </g>
+  </g>
+
+  <!-- Right: New System v2.2 (Auto-Connect) -->
+  <g transform="translate(495, 90)">
+    <rect width="425" height="355" rx="12" fill="#0f172a" stroke="#059669" stroke-width="1.5" />
+    <rect x="0" y="0" width="425" height="40" rx="12" fill="#064e3b" />
+    <rect x="16" y="10" width="115" height="20" rx="10" fill="#059669" fill-opacity="0.3" stroke="#34d399" />
+    <text x="73" y="24" fill="#6ee7b7" font-family="'Segoe UI', sans-serif" font-size="11" font-weight="700" text-anchor="middle">ระบบใหม่ v2.2</text>
+    <text x="145" y="25" fill="#f8fafc" font-family="'Segoe UI', sans-serif" font-size="12" font-weight="700">Zero-Config Auto-Connect</text>
+
+    <!-- Step 1 -->
+    <g transform="translate(20, 60)">
+      <circle cx="16" cy="16" r="14" fill="#0f766e" />
+      <text x="16" y="21" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="12" font-weight="700" text-anchor="middle">1</text>
+      <text x="44" y="14" fill="#f8fafc" font-family="'Segoe UI', Sarabun, sans-serif" font-size="12" font-weight="700">ผู้ใช้ทุกคนเปิดเว็บได้ทันที</text>
+      <text x="44" y="30" fill="#5eead4" font-family="'Segoe UI', sans-serif" font-size="10.5">https://labbookplus.netlify.app/</text>
+    </g>
+
+    <!-- Step 2 -->
+    <g transform="translate(20, 115)">
+      <circle cx="16" cy="16" r="14" fill="#0f766e" />
+      <text x="16" y="21" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="12" font-weight="700" text-anchor="middle">2</text>
+      <text x="44" y="14" fill="#f8fafc" font-family="'Segoe UI', Sarabun, sans-serif" font-size="12" font-weight="700">shared-core.js โหลด DEFAULT_CONFIG กลาง</text>
+      <text x="44" y="30" fill="#94a3b8" font-family="'Segoe UI', sans-serif" font-size="10.5">บรรจุ credential ของ 'mpir-lab-suite' ในระดับคอร์</text>
+    </g>
+
+    <!-- Step 3 -->
+    <g transform="translate(20, 170)">
+      <circle cx="16" cy="16" r="14" fill="#0f766e" />
+      <text x="16" y="21" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="12" font-weight="700" text-anchor="middle">3</text>
+      <text x="44" y="14" fill="#f8fafc" font-family="'Segoe UI', Sarabun, sans-serif" font-size="12" font-weight="700">เชื่อมต่อ Google Cloud Firestore ทันที</text>
+      <text x="44" y="30" fill="#94a3b8" font-family="'Segoe UI', sans-serif" font-size="10.5">ประมวลผลเร็วระดับ 0ms Setup ไม่ต้องรอการยืนยันตัวตน</text>
+    </g>
+
+    <!-- Step 4 -->
+    <g transform="translate(20, 225)">
+      <circle cx="16" cy="16" r="14" fill="#0f766e" />
+      <text x="16" y="21" fill="#ffffff" font-family="'Segoe UI', sans-serif" font-size="12" font-weight="700" text-anchor="middle">4</text>
+      <text x="44" y="14" fill="#34d399" font-family="'Segoe UI', Sarabun, sans-serif" font-size="12" font-weight="700">แสดงสถานะ Connected (Spark Plan) สีเขียว</text>
+      <text x="44" y="30" fill="#94a3b8" font-family="'Segoe UI', sans-serif" font-size="10.5">ข้อมูลการจองและประวัติซ่อมซิงค์หากันแบบเรียลไทม์ 100%</text>
+    </g>
+
+    <!-- Result Banner -->
+    <g transform="translate(20, 285)">
+      <rect width="385" height="45" rx="8" fill="#064e3b" stroke="#059669" />
+      <text x="20" y="28" fill="#a7f3d0" font-family="'Segoe UI', Sarabun, sans-serif" font-size="11.5" font-weight="700">✅ ใช้งานได้ทันทีทุกคน 100% ไม่ต้องกรอกค่าใดๆ ทั้งสิ้น</text>
+    </g>
+  </g>
+</svg>

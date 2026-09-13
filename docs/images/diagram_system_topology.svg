@@ -1,0 +1,139 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 580" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a" />
+      <stop offset="100%" stop-color="#1e293b" />
+    </linearGradient>
+    <linearGradient id="tealGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f766e" />
+      <stop offset="100%" stop-color="#14b8a6" />
+    </linearGradient>
+    <linearGradient id="skyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0369a1" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </linearGradient>
+    <linearGradient id="amberGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#d97706" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </linearGradient>
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b" stop-opacity="0.9" />
+      <stop offset="100%" stop-color="#0f172a" stop-opacity="0.9" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000" flood-opacity="0.3" />
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="580" rx="16" fill="url(#bgGrad)" stroke="#334155" stroke-width="1.5" />
+
+  <!-- Header Title -->
+  <g transform="translate(40, 35)">
+    <rect x="0" y="0" width="880" height="46" rx="10" fill="#0f172a" stroke="#334155" />
+    <circle cx="24" cy="23" r="10" fill="#0f766e" />
+    <text x="44" y="28" fill="#f8fafc" font-family="'Segoe UI', Sarabun, sans-serif" font-size="16" font-weight="700">MPIR Lab Suite v2.2 - System Architecture &amp; Topology</text>
+    <rect x="740" y="11" width="124" height="24" rx="12" fill="#0f766e" fill-opacity="0.25" stroke="#14b8a6" />
+    <text x="802" y="27" fill="#2dd4bf" font-family="'Segoe UI', sans-serif" font-size="11" font-weight="700" text-anchor="middle">NETLIFY PRODUCTION</text>
+  </g>
+
+  <!-- Netlify CDN Layer -->
+  <g transform="translate(40, 95)">
+    <rect width="880" height="50" rx="10" fill="url(#cardGrad)" stroke="#0284c7" stroke-dasharray="4,4" filter="url(#shadow)" />
+    <text x="20" y="28" fill="#38bdf8" font-family="'Segoe UI', sans-serif" font-size="12" font-weight="700">NETLIFY EDGE CDN</text>
+    <text x="20" y="42" fill="#94a3b8" font-family="'Segoe UI', sans-serif" font-size="10">https://labbookplus.netlify.app/ (_redirects, _headers: max-age=0, must-revalidate)</text>
+  </g>
+
+  <!-- Client Browser Layer -->
+  <g transform="translate(40, 160)">
+    <rect width="880" height="95" rx="12" fill="#0f172a" stroke="#334155" filter="url(#shadow)" />
+    <text x="20" y="24" fill="#94a3b8" font-family="'Segoe UI', sans-serif" font-size="11" font-weight="700" letter-spacing="1">CLIENT BROWSER LAYER</text>
+
+    <!-- App 1: Lab Book+ -->
+    <g transform="translate(20, 34)">
+      <rect width="265" height="48" rx="8" fill="url(#tealGrad)" filter="url(#shadow)" />
+      <text x="16" y="24" fill="#ffffff" font-family="'Segoe UI', Sarabun, sans-serif" font-size="13" font-weight="700">Lab Book+ (index.html)</text>
+      <text x="16" y="40" fill="#ccfbf1" font-family="'Segoe UI', sans-serif" font-size="10">Equipment LogBook &amp; Usage Booking</text>
+    </g>
+
+    <!-- App 2: Lab Care+ -->
+    <g transform="translate(305, 34)">
+      <rect width="265" height="48" rx="8" fill="url(#skyGrad)" filter="url(#shadow)" />
+      <text x="16" y="24" fill="#ffffff" font-family="'Segoe UI', Sarabun, sans-serif" font-size="13" font-weight="700">Lab Care+ (CarePlus.html)</text>
+      <text x="16" y="40" fill="#e0f2fe" font-family="'Segoe UI', sans-serif" font-size="10">PM, Calibration &amp; PO Archive</text>
+    </g>
+
+    <!-- App 3: Docs Portal -->
+    <g transform="translate(590, 34)">
+      <rect width="270" height="48" rx="8" fill="#1e293b" stroke="#64748b" stroke-width="1.5" />
+      <text x="16" y="24" fill="#f8fafc" font-family="'Segoe UI', Sarabun, sans-serif" font-size="13" font-weight="700">Docs Portal (docs.html)</text>
+      <text x="16" y="40" fill="#94a3b8" font-family="'Segoe UI', sans-serif" font-size="10">Interactive Manual &amp; Architecture</text>
+    </g>
+  </g>
+
+  <!-- Shared Core Engine -->
+  <g transform="translate(40, 270)">
+    <rect width="880" height="125" rx="12" fill="url(#cardGrad)" stroke="#14b8a6" stroke-width="1.5" filter="url(#shadow)" />
+    <text x="20" y="24" fill="#2dd4bf" font-family="'Segoe UI', sans-serif" font-size="12" font-weight="700" letter-spacing="1">SHARED CORE ENGINE (shared-core.js &amp; shared-theme.css)</text>
+
+    <!-- Module Pills -->
+    <g transform="translate(20, 38)">
+      <!-- LabStateBridge -->
+      <rect x="0" y="0" width="195" height="34" rx="6" fill="#1e293b" stroke="#334155" />
+      <text x="12" y="21" fill="#f1f5f9" font-family="'Segoe UI', sans-serif" font-size="11" font-weight="600">LabStateBridge (Merge Guard)</text>
+
+      <!-- LabCompressor -->
+      <rect x="210" y="0" width="205" height="34" rx="6" fill="#1e293b" stroke="#10b981" stroke-width="1.5" />
+      <text x="222" y="21" fill="#34d399" font-family="'Segoe UI', sans-serif" font-size="11" font-weight="700">LabCompressor (Gzip Streams)</text>
+
+      <!-- LabFirebase -->
+      <rect x="430" y="0" width="200" height="34" rx="6" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5" />
+      <text x="442" y="21" fill="#38bdf8" font-family="'Segoe UI', sans-serif" font-size="11" font-weight="700">LabFirebase (Auto-Connect)</text>
+
+      <!-- LabPoStorage -->
+      <rect x="645" y="0" width="195" height="34" rx="6" fill="#1e293b" stroke="#334155" />
+      <text x="657" y="21" fill="#f1f5f9" font-family="'Segoe UI', sans-serif" font-size="11" font-weight="600">LabPoStorage (IndexedDB)</text>
+
+      <!-- Row 2 -->
+      <rect x="0" y="44" width="195" height="30" rx="6" fill="#0f172a" stroke="#334155" />
+      <text x="12" y="64" fill="#94a3b8" font-family="'Segoe UI', sans-serif" font-size="10">LabAuth (Mitr Phol SSO)</text>
+
+      <rect x="210" y="44" width="205" height="30" rx="6" fill="#0f172a" stroke="#334155" />
+      <text x="222" y="64" fill="#94a3b8" font-family="'Segoe UI', sans-serif" font-size="10">LabAudio (Web Audio Synthesizer)</text>
+
+      <rect x="430" y="44" width="200" height="30" rx="6" fill="#0f172a" stroke="#334155" />
+      <text x="442" y="64" fill="#94a3b8" font-family="'Segoe UI', sans-serif" font-size="10">LabAlert (SweetAlert2 + Haptic)</text>
+
+      <rect x="645" y="44" width="195" height="30" rx="6" fill="#0f172a" stroke="#334155" />
+      <text x="657" y="64" fill="#94a3b8" font-family="'Segoe UI', sans-serif" font-size="10">LabTheme (60-30-10 &amp; Dark Mode)</text>
+    </g>
+  </g>
+
+  <!-- Storage Tier (Bottom Split: Local & Cloud) -->
+  <g transform="translate(40, 410)">
+    <!-- Local Storage Box -->
+    <rect x="0" y="0" width="425" height="145" rx="12" fill="#0f172a" stroke="#475569" filter="url(#shadow)" />
+    <text x="18" y="24" fill="#cbd5e1" font-family="'Segoe UI', sans-serif" font-size="12" font-weight="700">LOCAL PERSISTENCE (Browser Client)</text>
+    
+    <rect x="18" y="38" width="389" height="32" rx="6" fill="#1e293b" stroke="#334155" />
+    <text x="30" y="58" fill="#f8fafc" font-family="'Segoe UI', sans-serif" font-size="10" font-weight="600">localStorage: 'NoteLabState_Merged' (Bookings, Records, Users)</text>
+    
+    <rect x="18" y="76" width="389" height="32" rx="6" fill="#1e293b" stroke="#334155" />
+    <text x="30" y="96" fill="#f8fafc" font-family="'Segoe UI', sans-serif" font-size="10" font-weight="600">IndexedDB: 'CarePlusStorage' (Local Gzip Compressed Blobs)</text>
+
+    <rect x="18" y="114" width="389" height="22" rx="4" fill="#0f766e" fill-opacity="0.15" />
+    <text x="30" y="129" fill="#2dd4bf" font-family="'Segoe UI', sans-serif" font-size="9.5">Window Storage Event Bus: Real-Time Cross-Tab Synchronization</text>
+
+    <!-- Cloud Storage Box -->
+    <rect x="455" y="0" width="425" height="145" rx="12" fill="#0f172a" stroke="#0284c7" filter="url(#shadow)" />
+    <text x="473" y="24" fill="#38bdf8" font-family="'Segoe UI', sans-serif" font-size="12" font-weight="700">CLOUD LAYER (Google Cloud Firestore - Spark Plan)</text>
+
+    <rect x="473" y="38" width="389" height="44" rx="6" fill="#1e293b" stroke="#0369a1" />
+    <text x="485" y="56" fill="#e0f2fe" font-family="'Segoe UI', sans-serif" font-size="11" font-weight="700">Collection: 'lab_suite' / 'current_state'</text>
+    <text x="485" y="72" fill="#94a3b8" font-family="'Segoe UI', sans-serif" font-size="9.5">Real-time sync of all bookings, maintenance records &amp; master data</text>
+
+    <rect x="473" y="90" width="389" height="44" rx="6" fill="#1e293b" stroke="#10b981" />
+    <text x="485" y="108" fill="#a7f3d0" font-family="'Segoe UI', sans-serif" font-size="11" font-weight="700">Collection: 'lab_attachments' / '{recordId}'</text>
+    <text x="485" y="124" fill="#94a3b8" font-family="'Segoe UI', sans-serif" font-size="9.5">Dedicated Gzip Base64 files (50-80% reduced) with On-Demand Lazy Fetching</text>
+  </g>
+</svg>

@@ -1,0 +1,130 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a" />
+      <stop offset="100%" stop-color="#1e293b" />
+    </linearGradient>
+    <linearGradient id="compGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#059669" />
+      <stop offset="100%" stop-color="#10b981" />
+    </linearGradient>
+    <linearGradient id="streamGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0284c7" />
+      <stop offset="100%" stop-color="#38bdf8" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="480" rx="16" fill="url(#bgGrad3)" stroke="#334155" stroke-width="1.5" />
+
+  <!-- Header Title -->
+  <g transform="translate(40, 30)">
+    <text x="0" y="24" fill="#f8fafc" font-family="'Segoe UI', Sarabun, sans-serif" font-size="20" font-weight="800">LabCompressor: Gzip Web Streams &amp; Cloud Attachment Pipeline</text>
+    <text x="0" y="44" fill="#94a3b8" font-family="'Segoe UI', sans-serif" font-size="12">กระบวนการบีบอัดไฟล์ PDF ใบสั่งซื้อ (PO/Cert) ลดขนาด 50%-80% และการดึงข้อมูลแสดงผลแบบ On-Demand</text>
+  </g>
+
+  <!-- Section 1: Upload & Compression Flow -->
+  <g transform="translate(40, 95)">
+    <rect width="880" height="155" rx="12" fill="#0b1120" stroke="#059669" stroke-width="1.5" />
+    <rect x="0" y="0" width="880" height="34" rx="12" fill="#064e3b" />
+    <text x="18" y="22" fill="#a7f3d0" font-family="'Segoe UI', sans-serif" font-size="12" font-weight="700">1. PHASE: UPLOAD &amp; HIGH-RATIO GZIP COMPRESSION</text>
+
+    <!-- Step 1.1 -->
+    <g transform="translate(20, 48)">
+      <rect width="180" height="85" rx="8" fill="#1e293b" stroke="#334155" />
+      <rect x="12" y="12" width="32" height="32" rx="6" fill="#ef4444" fill-opacity="0.2" />
+      <text x="28" y="32" fill="#ef4444" font-family="'Segoe UI', sans-serif" font-size="11" font-weight="700" text-anchor="middle">PDF</text>
+      <text x="54" y="26" fill="#f8fafc" font-family="'Segoe UI', Sarabun, sans-serif" font-size="12" font-weight="700">ต้นฉบับ PDF</text>
+      <text x="54" y="40" fill="#94a3b8" font-family="'Segoe UI', sans-serif" font-size="10.5">ขนาดเดิม ~2.4 MB</text>
+      <text x="14" y="68" fill="#cbd5e1" font-family="'Segoe UI', sans-serif" font-size="9.5">FileReader.readAsDataURL</text>
+    </g>
+
+    <!-- Arrow -->
+    <text x="218" y="95" fill="#10b981" font-family="'Segoe UI', sans-serif" font-size="20" font-weight="700">→</text>
+
+    <!-- Step 1.2 -->
+    <g transform="translate(245, 48)">
+      <rect width="205" height="85" rx="8" fill="#1e293b" stroke="#10b981" />
+      <text x="14" y="24" fill="#34d399" font-family="'Segoe UI', sans-serif" font-size="12" font-weight="700">CompressionStream</text>
+      <text x="14" y="40" fill="#94a3b8" font-family="'Segoe UI', sans-serif" font-size="10">format: 'gzip' (Native Streams)</text>
+      <rect x="14" y="50" width="177" height="24" rx="4" fill="#064e3b" />
+      <text x="102" y="66" fill="#6ee7b7" font-family="'Segoe UI', sans-serif" font-size="10" font-weight="700" text-anchor="middle">⚡ บีบอัดลดลง 75% ในหน่วยความจำ</text>
+    </g>
+
+    <!-- Arrow -->
+    <text x="468" y="95" fill="#10b981" font-family="'Segoe UI', sans-serif" font-size="20" font-weight="700">→</text>
+
+    <!-- Step 1.3 -->
+    <g transform="translate(495, 48)">
+      <rect width="170" height="85" rx="8" fill="#1e293b" stroke="#334155" />
+      <text x="14" y="24" fill="#f8fafc" font-family="'Segoe UI', sans-serif" font-size="12" font-weight="700">Base64 Gzip String</text>
+      <text x="14" y="40" fill="#38bdf8" font-family="'Segoe UI', sans-serif" font-size="10.5">เหลือขนาด ~600 KB</text>
+      <text x="14" y="58" fill="#94a3b8" font-family="'Segoe UI', sans-serif" font-size="9.5">Prefix: 'data:application/</text>
+      <text x="14" y="70" fill="#94a3b8" font-family="'Segoe UI', sans-serif" font-size="9.5">gzip;base64,...'</text>
+    </g>
+
+    <!-- Arrow Split -->
+    <text x="682" y="95" fill="#10b981" font-family="'Segoe UI', sans-serif" font-size="20" font-weight="700">→</text>
+
+    <!-- Step 1.4 -->
+    <g transform="translate(710, 48)">
+      <rect width="150" height="38" rx="6" fill="#1e293b" stroke="#334155" />
+      <text x="12" y="24" fill="#cbd5e1" font-family="'Segoe UI', sans-serif" font-size="10" font-weight="600">IndexedDB: poFiles</text>
+
+      <rect x="0" y="46" width="150" height="38" rx="6" fill="#1e293b" stroke="#0284c7" />
+      <text x="12" y="70" fill="#38bdf8" font-family="'Segoe UI', sans-serif" font-size="10" font-weight="700">Firestore: lab_attachments</text>
+    </g>
+  </g>
+
+  <!-- Section 2: On-Demand Lazy Decompression Flow -->
+  <g transform="translate(40, 275)">
+    <rect width="880" height="165" rx="12" fill="#0b1120" stroke="#0284c7" stroke-width="1.5" />
+    <rect x="0" y="0" width="880" height="34" rx="12" fill="#0369a1" />
+    <text x="18" y="22" fill="#e0f2fe" font-family="'Segoe UI', sans-serif" font-size="12" font-weight="700">2. PHASE: ON-DEMAND LAZY FETCHING &amp; IN-MEMORY PREVIEW</text>
+
+    <!-- Step 2.1 -->
+    <g transform="translate(20, 50)">
+      <rect width="180" height="95" rx="8" fill="#1e293b" stroke="#334155" />
+      <text x="14" y="24" fill="#f8fafc" font-family="'Segoe UI', Sarabun, sans-serif" font-size="12" font-weight="700">ผู้ใช้กดดูไฟล์แนบ</text>
+      <text x="14" y="40" fill="#94a3b8" font-family="'Segoe UI', sans-serif" font-size="10">คลิกไอคอนรูปดวงตา (Eye)</text>
+      <rect x="14" y="52" width="152" height="30" rx="4" fill="#0f172a" />
+      <text x="24" y="71" fill="#38bdf8" font-family="'Segoe UI', sans-serif" font-size="10">fetchAttachmentFromCloud</text>
+    </g>
+
+    <!-- Arrow -->
+    <text x="218" y="100" fill="#38bdf8" font-family="'Segoe UI', sans-serif" font-size="20" font-weight="700">→</text>
+
+    <!-- Step 2.2 -->
+    <g transform="translate(245, 50)">
+      <rect width="205" height="95" rx="8" fill="#1e293b" stroke="#38bdf8" />
+      <text x="14" y="24" fill="#38bdf8" font-family="'Segoe UI', sans-serif" font-size="12" font-weight="700">DecompressionStream</text>
+      <text x="14" y="40" fill="#94a3b8" font-family="'Segoe UI', sans-serif" font-size="10">format: 'gzip' (In-Memory RAM)</text>
+      <text x="14" y="60" fill="#cbd5e1" font-family="'Segoe UI', Sarabun, sans-serif" font-size="10">คลายข้อมูลกลับเป็นไบต์ PDF</text>
+      <text x="14" y="76" fill="#6ee7b7" font-family="'Segoe UI', sans-serif" font-size="10" font-weight="600">ความเร็ว &lt; 50ms ไม่กินพื้นที่ดิสก์</text>
+    </g>
+
+    <!-- Arrow -->
+    <text x="468" y="100" fill="#38bdf8" font-family="'Segoe UI', sans-serif" font-size="20" font-weight="700">→</text>
+
+    <!-- Step 2.3 -->
+    <g transform="translate(495, 50)">
+      <rect width="170" height="95" rx="8" fill="#1e293b" stroke="#334155" />
+      <text x="14" y="24" fill="#f8fafc" font-family="'Segoe UI', sans-serif" font-size="12" font-weight="700">Blob URL Generator</text>
+      <text x="14" y="42" fill="#94a3b8" font-family="'Segoe UI', sans-serif" font-size="10">URL.createObjectURL(blob)</text>
+      <text x="14" y="64" fill="#cbd5e1" font-family="'Segoe UI', sans-serif" font-size="9.5">Mime: 'application/pdf'</text>
+      <text x="14" y="80" fill="#94a3b8" font-family="'Segoe UI', sans-serif" font-size="9.5">Auto-revoke on close</text>
+    </g>
+
+    <!-- Arrow -->
+    <text x="682" y="100" fill="#38bdf8" font-family="'Segoe UI', sans-serif" font-size="20" font-weight="700">→</text>
+
+    <!-- Step 2.4 -->
+    <g transform="translate(710, 50)">
+      <rect width="150" height="95" rx="8" fill="#1e293b" stroke="#10b981" />
+      <text x="14" y="24" fill="#34d399" font-family="'Segoe UI', sans-serif" font-size="12" font-weight="700">Modal Preview</text>
+      <text x="14" y="42" fill="#f8fafc" font-family="'Segoe UI', Sarabun, sans-serif" font-size="10.5">แสดงบน &lt;iframe&gt;</text>
+      <text x="14" y="62" fill="#94a3b8" font-family="'Segoe UI', sans-serif" font-size="9.5">พรีวิวเอกสารได้ทันที</text>
+      <text x="14" y="78" fill="#38bdf8" font-family="'Segoe UI', sans-serif" font-size="9.5">รองรับข้ามเครื่อง 100%</text>
+    </g>
+  </g>
+</svg>
