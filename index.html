@@ -3251,6 +3251,11 @@
                     this.renderPresence(e.detail);
                 });
 
+                // Real-time cloud status change listener
+                window.addEventListener('labCloudStatusChange', () => {
+                    this.updateFirebaseStatusUI();
+                });
+
                 this.updateUI();
                 this.handleRouting();
                 this.updateFirebaseStatusUI();
@@ -3893,7 +3898,7 @@
                 const now = new Date();
                 return (this.state.bookings || []).some(b =>
                     !b.deleted &&
-                    String(b.eqId) === String(eqId) &&
+                    String(b.eqId || b.equipmentId) === String(eqId) &&
                     !b.finishDetails &&
                     new Date(b.start) <= now &&
                     new Date(b.end) >= now
@@ -5216,7 +5221,7 @@
                         const conflictingBooking = this.state.bookings.find(b => {
                             if (editId && b.id === editId) return false;
                             if (b.deleted) return false;
-                            if (String(b.eqId) !== String(eqId)) return false;
+                            if (String(b.eqId || b.equipmentId) !== String(eqId)) return false;
                             const bStart = moment(b.start);
                             const bEnd = moment(b.end);
                             return currentStart.isBefore(bEnd) && currentEnd.isAfter(bStart);
@@ -5275,7 +5280,7 @@
                             const dur = moment.duration(currentEnd.diff(currentStart)).asMinutes();
 
                             let historyEntry = [];
-                            let finishDetailsData = undefined;
+                            let finishDetailsData = null;
 
                             if (oldBookingForDiff) {
                                 const diffs = [];
@@ -5305,7 +5310,7 @@
                                     timestamp: new Date().toISOString()
                                 }];
 
-                                finishDetailsData = oldBookingForDiff.finishDetails; // Preserve finished data
+                                finishDetailsData = oldBookingForDiff.finishDetails || null; // Preserve finished data
                             } else {
                                 historyEntry = [{
                                     action: 'Created Booking',
@@ -5317,10 +5322,12 @@
                             newBookings.push({
                                 ...baseBooking,
                                 id: editId || 'BK-' + Date.now() + Math.floor(Math.random() * 1000),
+                                eqId: eqId,
+                                equipmentId: eqId,
                                 start: currentStart.format('YYYY-MM-DDTHH:mm'),
                                 end: currentEnd.format('YYYY-MM-DDTHH:mm'),
                                 durationMins: dur,
-                                finishDetails: finishDetailsData,
+                                finishDetails: finishDetailsData || null,
                                 history: historyEntry
                             });
                         }

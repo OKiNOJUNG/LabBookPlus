@@ -447,6 +447,14 @@
                     state.bookings = JSON.parse(JSON.stringify(SEED_DATA.bookings));
                     modified = true;
                 }
+                // Harmonize booking equipment identifiers (both eqId and equipmentId)
+                state.bookings.forEach(b => {
+                    const resolvedEqId = b.eqId || b.equipmentId;
+                    if (resolvedEqId) {
+                        if (!b.eqId) { b.eqId = String(resolvedEqId); modified = true; }
+                        if (!b.equipmentId) { b.equipmentId = String(resolvedEqId); modified = true; }
+                    }
+                });
 
                 if (modified) {
                     this.saveState(state);
@@ -881,9 +889,18 @@
                 await LabPoStorage.deleteKeys(purgedRecordIds);
             }
 
-            // Sync to Firebase if active
+            // Sync to Firebase if active, and purge corresponding cloud attachments in lab_attachments
             if (window.LabFirebase && LabFirebase.isConfigured()) {
                 await LabFirebase.syncToCloud(state);
+                if (purgedRecordIds.length > 0) {
+                    for (const rid of purgedRecordIds) {
+                        try {
+                            await LabFirebase.deleteAttachmentFromCloud(rid);
+                        } catch (e) {
+                            console.warn(`[LabStateBridge] deleteAttachmentFromCloud notice for record ${rid}:`, e);
+                        }
+                    }
+                }
             }
 
             return {
@@ -1267,6 +1284,7 @@
         app: null,
         db: null,
         isConnecting: false,
+        _initPromise: null,
 
         // Built-in Enterprise Configuration - Connects automatically for all users without entering keys
         DEFAULT_CONFIG: {
@@ -1278,11 +1296,33 @@
             appId: "1:619561217857:web:1543a9598a1046642efbc0"
         },
 
+        // Deep-clean payload to guarantee no 'undefined' values reach Firestore SDK set()
+        sanitizePayload(val) {
+            if (val === undefined) return null;
+            if (val === null || typeof val !== 'object') return val;
+            if (val instanceof Date) return val.toISOString();
+            if (Array.isArray(val)) {
+                return val.map(item => this.sanitizePayload(item));
+            }
+            const clean = {};
+            for (const key of Object.keys(val)) {
+                const item = val[key];
+                if (item !== undefined) {
+                    clean[key] = this.sanitizePayload(item);
+                }
+            }
+            return clean;
+        },
+
         getConfig() {
             try {
                 const raw = localStorage.getItem(this.CONFIG_KEY);
                 if (raw) {
                     const parsed = JSON.parse(raw);
+                    // Explicit user opt-out into Local-first mode
+                    if (parsed && parsed.disabled) {
+                        return { disabled: true };
+                    }
                     if (parsed && parsed.apiKey && parsed.projectId && !parsed.projectId.includes('xxxx')) {
                         return parsed;
                     }
@@ -1297,13 +1337,19 @@
         },
 
         saveConfig(cfg) {
-            if (!cfg || typeof cfg !== 'object') {
-                localStorage.removeItem(this.CONFIG_KEY);
-                LabAlert.toast('info', 'ลบการตั้งค่า Firebase เรียบร้อยแล้ว (กลับสู่โหมด Local)');
+            if (!cfg || typeof cfg !== 'object' || cfg.disabled) {
+                localStorage.setItem(this.CONFIG_KEY, JSON.stringify({ disabled: true }));
+                this.db = null;
+                this.app = null;
+                this.isConnecting = false;
+                this._initPromise = null;
+                window.dispatchEvent(new CustomEvent('labCloudStatusChange', { detail: this.getStatus() }));
+                LabAlert.toast('info', 'ตัดการเชื่อมต่อ Cloud เรียบร้อยแล้ว (กำลังทำงานแบบ Local-first)');
                 return;
             }
             localStorage.setItem(this.CONFIG_KEY, JSON.stringify(cfg));
             this.init().then(ok => {
+                window.dispatchEvent(new CustomEvent('labCloudStatusChange', { detail: this.getStatus() }));
                 if (ok) {
                     LabAlert.toast('success', 'เชื่อมต่อ Firebase Cloud สำเร็จ');
                     // Initial push
@@ -1315,12 +1361,12 @@
         },
 
         clearConfig() {
-            this.saveConfig(null);
+            this.saveConfig({ disabled: true });
         },
 
         isConfigured() {
             const cfg = this.getConfig();
-            return !!(cfg && cfg.apiKey && cfg.projectId);
+            return !!(cfg && !cfg.disabled && cfg.apiKey && cfg.projectId);
         },
 
         getStatus() {
@@ -1351,32 +1397,41 @@
 
         async init() {
             const cfg = this.getConfig();
-            if (!cfg || !cfg.apiKey || !cfg.projectId) return false;
-            if (this.isConnecting) return false;
+            if (!cfg || cfg.disabled || !cfg.apiKey || !cfg.projectId) return false;
+            if (this.db) return true;
+            if (this._initPromise) return this._initPromise;
 
             this.isConnecting = true;
-            try {
-                if (typeof firebase === 'undefined') {
-                    await this.loadScript('https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js');
-                    await this.loadScript('https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js');
-                }
+            this._initPromise = (async () => {
+                try {
+                    if (typeof firebase === 'undefined') {
+                        await this.loadScript('https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js');
+                        await this.loadScript('https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js');
+                    }
 
-                if (!firebase.apps.length) {
-                    this.app = firebase.initializeApp(cfg);
-                } else {
-                    this.app = firebase.app();
-                }
+                    if (!firebase.apps.length) {
+                        this.app = firebase.initializeApp(cfg);
+                    } else {
+                        this.app = firebase.app();
+                    }
 
-                this.db = firebase.firestore();
-                console.log("[LabFirebase] Connected to Spark Plan (Cloud Firestore)");
-                this.listenToRemote();
-                this.isConnecting = false;
-                return true;
-            } catch (err) {
-                console.warn("[LabFirebase] Cloud connection fallback to LocalStorage:", err);
-                this.isConnecting = false;
-                return false;
-            }
+                    this.db = firebase.firestore();
+                    console.log("[LabFirebase] Connected to Spark Plan (Cloud Firestore)");
+                    this.listenToRemote();
+                    this.isConnecting = false;
+                    window.dispatchEvent(new CustomEvent('labCloudStatusChange', { detail: this.getStatus() }));
+                    return true;
+                } catch (err) {
+                    console.warn("[LabFirebase] Cloud connection fallback to LocalStorage:", err);
+                    this.isConnecting = false;
+                    window.dispatchEvent(new CustomEvent('labCloudStatusChange', { detail: this.getStatus() }));
+                    return false;
+                } finally {
+                    this._initPromise = null;
+                }
+            })();
+
+            return this._initPromise;
         },
 
         async syncToCloud(state) {
@@ -1385,11 +1440,12 @@
                 if (!ok || !this.db) return false;
             }
             try {
+                const sanitized = this.sanitizePayload(state || {});
+                delete sanitized.poFilesDb; // Do not store heavy blobs in main state document
                 const payload = {
-                    ...state,
+                    ...sanitized,
                     lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
                 };
-                delete payload.poFilesDb; // Do not store heavy blobs in main state document
                 await this.db.collection('lab_suite').doc('current_state').set(payload, { merge: true });
                 return true;
             } catch (err) {
@@ -1425,12 +1481,13 @@
                     }
                 }
 
+                const cleanFiles = this.sanitizePayload(processedFiles);
                 await this.db.collection('lab_attachments').doc(String(recordId)).set({
                     recordId: String(recordId),
-                    files: processedFiles,
+                    files: cleanFiles,
                     updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                 }, { merge: true });
-                console.log(`[LabFirebase] Synced ${processedFiles.length} compressed attachment(s) to Cloud for record ${recordId}`);
+                console.log(`[LabFirebase] Synced ${cleanFiles.length} compressed attachment(s) to Cloud for record ${recordId}`);
                 return true;
             } catch (err) {
                 console.warn(`[LabFirebase] syncAttachmentToCloud error for record ${recordId}:`, err);
@@ -1591,6 +1648,15 @@
             } catch (e) {}
         },
 
+        getSignature(data) {
+            if (!data) return '';
+            const b = (data.bookings || []).map(x => `${x.id}:${x.status || ''}:${x.start || ''}:${x.end || ''}:${x.eqId || x.equipmentId || ''}:${x.project || ''}:${x.desc || ''}:${x.user || ''}:${x.deleted ? 1 : 0}`).join('|');
+            const r = (data.records || []).map(x => `${x.id}:${x.type || ''}:${x.service_date || ''}:${x.next_service_date || ''}:${x.calendar_status || ''}:${x.maintenance_cost || ''}:${(x.technicians || []).join(',')}:${x.reporter || ''}`).join('|');
+            const u = (data.users || []).map(x => `${x.id}:${x.username}:${x.name}:${x.role}:${x.password}`).join('|');
+            const e = (data.equipments || data.equipment || []).map(x => `${x.id}:${x.name}:${x.building_id || ''}:${x.model || ''}:${x.serial || ''}`).join('|');
+            return `${b}##${r}##${u}##${e}`;
+        },
+
         listenToRemote() {
             if (!this.db) return;
             try {
@@ -1601,24 +1667,41 @@
                             delete remoteData.lastUpdated;
                             const current = LabStateBridge.getState();
                             
-                            const getSig = (data) => {
-                                if (!data) return '';
-                                const b = (data.bookings || []).map(x => `${x.id}:${x.status || ''}:${x.start || ''}:${x.end || ''}:${x.deleted ? 1 : 0}`).join('|');
-                                const r = (data.records || []).map(x => `${x.id}:${x.service_date || ''}:${x.calendar_status || ''}:${x.maintenance_cost || ''}`).join('|');
-                                const u = (data.users || []).map(x => `${x.id}:${x.username}:${x.name}:${x.role}:${x.password}`).join('|');
-                                const e = (data.equipments || data.equipment || []).map(x => `${x.id}:${x.name}:${x.model || ''}:${x.serial || ''}`).join('|');
-                                return `${b}##${r}##${u}##${e}`;
-                            };
-
-                            const curSig = getSig(current);
-                            const remSig = getSig(remoteData);
+                            const curSig = this.getSignature(current);
+                            const remSig = this.getSignature(remoteData);
 
                             if (curSig !== remSig) {
+                                // Smart merge bookings without dropping concurrent or offline entries
+                                const curBookings = current.bookings || [];
+                                const remBookings = Array.isArray(remoteData.bookings) ? remoteData.bookings : [];
+                                const mergedBookingsMap = new Map();
+                                curBookings.forEach(b => { if (b && b.id) mergedBookingsMap.set(String(b.id), b); });
+                                remBookings.forEach(b => {
+                                    if (b && b.id) {
+                                        const existing = mergedBookingsMap.get(String(b.id)) || {};
+                                        mergedBookingsMap.set(String(b.id), { ...existing, ...b });
+                                    }
+                                });
+                                const finalBookings = Array.from(mergedBookingsMap.values());
+
+                                // Smart merge records
+                                const curRecords = current.records || [];
+                                const remRecords = Array.isArray(remoteData.records) ? remoteData.records : [];
+                                const mergedRecordsMap = new Map();
+                                curRecords.forEach(r => { if (r && r.id) mergedRecordsMap.set(String(r.id), r); });
+                                remRecords.forEach(r => {
+                                    if (r && r.id) {
+                                        const existing = mergedRecordsMap.get(String(r.id)) || {};
+                                        mergedRecordsMap.set(String(r.id), { ...existing, ...r });
+                                    }
+                                });
+                                const finalRecords = Array.from(mergedRecordsMap.values());
+
                                 const merged = {
                                     ...current,
                                     ...remoteData,
-                                    bookings: Array.isArray(remoteData.bookings) ? remoteData.bookings : (current.bookings || []),
-                                    records: Array.isArray(remoteData.records) ? remoteData.records : (current.records || []),
+                                    bookings: finalBookings,
+                                    records: finalRecords,
                                     users: Array.isArray(remoteData.users) && remoteData.users.length > 0 ? remoteData.users : (current.users || []),
                                     equipments: Array.isArray(remoteData.equipments) ? remoteData.equipments : (current.equipments || []),
                                     equipment: Array.isArray(remoteData.equipments) ? remoteData.equipments : (current.equipments || [])
@@ -1686,6 +1769,10 @@
 
         renderAvatar(user, size = 36, showOnlineDot = true) {
             if (!user) return '';
+            if (typeof size === 'string') {
+                const map = { sm: 28, md: 36, lg: 48, xl: 64 };
+                size = map[size.toLowerCase()] || parseInt(size, 10) || 36;
+            }
             const [c1, c2] = this.getColorPair(user.username || user.name);
             const initials = this.getInitials(user.name || user.username);
             const dotSize = Math.max(8, Math.round(size * 0.28));

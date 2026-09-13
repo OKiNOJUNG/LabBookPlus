@@ -1625,6 +1625,7 @@
 
             try { await initIndexedDB(); } catch (e) { console.error(e); }
             loadCarePlusState();
+            updateFirebaseStatusUI();
 
             // Listen for Cloud Real-time Updates (Firebase onSnapshot)
             window.addEventListener('labRemoteSync', (e) => {
@@ -1639,11 +1640,16 @@
 
             // Listen for Live Presence Updates (Avatar Stack)
             window.addEventListener('labPresenceSync', (e) => {
-                const presenceUsers = e.detail?.users || [];
+                const presenceUsers = Array.isArray(e.detail) ? e.detail : (e.detail?.users || []);
                 const presenceEl = document.getElementById('nav-active-presence');
                 if (presenceEl && window.LabAvatar) {
-                    presenceEl.innerHTML = LabAvatar.renderActivePresenceStack(presenceUsers, currentUser?.id);
+                    presenceEl.innerHTML = LabAvatar.renderActivePresenceStack(presenceUsers, 4);
                 }
+            });
+
+            // Listen for Real-time Cloud Connection Status Changes
+            window.addEventListener('labCloudStatusChange', () => {
+                updateFirebaseStatusUI();
             });
 
             LabStateBridge.listen((newState, key) => {
@@ -1669,10 +1675,10 @@
             document.getElementById('userDisplay').textContent = currentUser.name;
             document.getElementById('userRole').textContent = currentUser.role.toUpperCase();
 
-            // Render user avatar in header
+            // Render user avatar in header (using numeric size 36px)
             const avatarContainer = document.getElementById('nav-user-avatar');
             if (avatarContainer && window.LabAvatar) {
-                avatarContainer.innerHTML = LabAvatar.renderAvatar(currentUser, 'md', true);
+                avatarContainer.innerHTML = LabAvatar.renderAvatar(currentUser, 36, true);
             }
 
             // Start Presence Heartbeat for currentUser
@@ -3222,10 +3228,10 @@ function loadEditForm(id) {
         }
 
         function updateEquipmentOptions() {
-            const bid = parseInt(document.getElementById('buildingSelect').value);
+            const bid = document.getElementById('buildingSelect').value;
             const eqSel = document.getElementById('equipmentSelect');
             eqSel.innerHTML = '<option value="">Select equipment</option>';
-            if (bid) equipment.filter(e => e.building_id === bid).forEach(e => { eqSel.innerHTML += `<option value="${e.name}">${e.name}</option>`; });
+            if (bid) equipment.filter(e => String(e.building_id) === String(bid)).forEach(e => { eqSel.innerHTML += `<option value="${e.name}">${e.name}</option>`; });
         }
         function toggleServiceFields() {
             const t = document.getElementById('serviceType').value;
@@ -3367,10 +3373,10 @@ function loadEditForm(id) {
             proceedSave();
         }
         function deleteRecord(id) {
-            const delRec = records.find(r => r.id === id);
+            const delRec = records.find(r => String(r.id) === String(id));
             LabAlert.confirm('ต้องการลบประวัติตรวจสอบ/ซ่อมบำรุง?', 'ข้อมูลนี้ไม่สามารถกู้คืนได้เมื่อลบไปแล้ว', 'ลบประวัติ', 'ยกเลิก').then(confirmed => {
                 if (confirmed) {
-                    records = records.filter(r => r.id !== id);
+                    records = records.filter(r => String(r.id) !== String(id));
                     if (poFilesDb[id]) {
                         delete poFilesDb[id];
                         deletePoFileFromIDB(id);
