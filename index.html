@@ -1778,6 +1778,11 @@
                         <div id="nav-user-avatar" class="flex items-center"></div>
                     </div>
 
+                    <button class="nav-action-btn" onclick="app.openChangePasswordModal()" title="เปลี่ยนรหัสผ่าน"
+                        style="color: var(--color-brand-primary); border-color: rgba(15, 118, 110, 0.3);">
+                        <i class="fa-solid fa-key"></i>
+                    </button>
+
                     <button class="nav-action-btn" onclick="app.logout()" title="ออกจากระบบ"
                         style="color: var(--color-accent-rose); border-color: rgba(244, 63, 94, 0.3);">
                         <i class="fa-solid fa-right-from-bracket"></i>
@@ -1799,43 +1804,55 @@
 
         <div id="login-view">
             <div style="position: absolute; top: 1.5rem; right: 1.5rem; display: flex; gap: 0.75rem; z-index: 50;">
-                <a href="CarePlus.html" class="btn"
-                    style="background-color: #0ea5e9; color: #ffffff; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); font-weight: bold; text-decoration: none;">
-                    <i class="fa-solid fa-laptop-medical"></i> Lab Care Plus
+                <a href="CarePlus.html" class="login-switch-pill" onclick="LabAuth.syncSession()" title="สลับไปใช้งาน MPIR Lab Care+">
+                    <i class="fa-solid fa-screwdriver-wrench" style="color: #0284c7;"></i>
+                    <span>Lab Care+</span>
+                    <i class="fa-solid fa-arrow-right text-xs opacity-60"></i>
                 </a>
             </div>
+
             <div class="login-card">
-                <img src="logo.png" alt="Logo"
-                    style="width: 130px; height: 130px; object-fit: contain; margin: 0 auto 1rem auto; display: block; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
-                <h2><span style="color: #1a7a7a;">MP</span><span style="color: #1742a6;">IR</span></h2>
-                <h3 style="color: #166565; text-align: center; margin-bottom: 1.5rem; font-weight: 700;">Lab Book Plus
-                </h3>
-                <div
-                    style="background-color: #f3f4f6; color: #374151; padding: 0.6rem 1rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600; text-align: center; margin-bottom: 2rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                    Please login to continue
+                <div class="text-center mb-6">
+                    <div style="width: 88px; height: 88px; margin: 0 auto 1.25rem; border-radius: 50%; background: #ffffff; padding: 4px; box-shadow: 0 10px 25px -5px rgba(15, 118, 110, 0.25), 0 0 0 1px rgba(15, 118, 110, 0.1); display: flex; align-items: center; justify-content: center;">
+                        <img src="logo.png" alt="MPIR Logo" style="width: 100%; height: 100%; object-fit: contain; border-radius: 50%;">
+                    </div>
+                    <h2 style="margin: 0; line-height: 1.1;"><span style="color: #0F766E;">MP</span><span style="color: #0284C7;">IR</span></h2>
+                    <h3 style="color: #0F766E; margin: 0.25rem 0 0.5rem 0; font-size: 1.25rem; font-weight: 800;">Lab Book+</h3>
+                    <div style="display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.25rem 0.75rem; border-radius: 9999px; background: rgba(15, 118, 110, 0.08); color: #0F766E; font-size: 0.75rem; font-weight: 700; border: 1px solid rgba(15, 118, 110, 0.2);">
+                        <span class="badge-dot pulse" style="background: #10B981; color: #10B981;"></span>
+                        <span>Equipment Booking Platform</span>
+                    </div>
                 </div>
+
                 <form id="login-form" onsubmit="app.login(event)">
                     <div class="form-group">
-                        <label>Username</label>
-                        <div style="position: relative; display: flex; align-items: center;">
-                            <input type="text" id="login-user" required placeholder="Username"
-                                style="width: 100%; background-color: white; border: none; border-radius: 12px; padding: 1rem 5.5rem 1rem 1rem; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);">
-                            <span
-                                style="position: absolute; right: 1rem; color: #6b7280; font-weight: 500; pointer-events: none; user-select: none;">@lab.com</span>
+                        <label for="login-user">ชื่อผู้ใช้ / อีเมลองค์กร</label>
+                        <div class="login-input-group">
+                            <i class="fa-solid fa-user login-input-icon"></i>
+                            <input type="text" id="login-user" required placeholder="admin@lab.com หรือชื่อผู้ใช้" autocomplete="username">
                         </div>
                     </div>
-                    <div class="form-group" style="margin-top: 1.5rem;">
-                        <label>Password</label>
-                        <div style="position: relative; display: flex; align-items: center; width: 100%;">
-                            <input type="password" id="login-pass" required placeholder="••••••••"
-                                style="width: 100%; background-color: white; border: none; border-radius: 12px; padding: 1rem; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); box-sizing: border-box;">
+
+                    <div class="form-group" style="margin-top: 1rem;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.4rem;">
+                            <label for="login-pass" style="margin: 0;">รหัสผ่าน</label>
+                        </div>
+                        <div class="login-input-group">
+                            <i class="fa-solid fa-lock login-input-icon"></i>
+                            <input type="password" id="login-pass" required placeholder="••••••••" autocomplete="current-password">
+                            <button type="button" class="login-password-toggle" onclick="LabSmart.togglePassword('login-pass', this)" title="แสดง/ซ่อนรหัสผ่าน">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
                         </div>
                     </div>
-                    <button type="submit" class="btn"
-                        style="width: 100%; justify-content: center; margin-top: 2rem;">Login</button>
+
+                    <button type="submit" class="btn btn-shimmer" id="btn-login-submit">
+                        <i class="fa-solid fa-right-to-bracket"></i>
+                        <span>เข้าสู่ระบบ (Sign In)</span>
+                    </button>
                 </form>
-                <div id="login-error" class="hidden text-danger text-center mt-4" style="font-size: 0.9rem;">Invalid
-                    credentials</div>
+
+                <div id="login-error" class="hidden text-danger text-center mt-3" style="font-size: 0.85rem; font-weight: 600; color: #E11D48;">Invalid credentials</div>
             </div>
         </div>
 
@@ -2475,12 +2492,13 @@
             </div>
 
             <div id="admin-sec-users" class="glass-card" style="padding: 1.5rem; border-radius: 16px;">
-                <div class="header-actions" style="margin-bottom: 1rem;">
+                <div class="header-actions" style="margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
                     <h3
-                        style="font-size: 1.15rem; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 0.5rem;">
+                        style="font-size: 1.15rem; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 0.5rem; margin: 0;">
                         <span style="width: 8px; height: 8px; border-radius: 50%; background: #3b82f6;"></span> User
                         Management
                     </h3>
+                    <input type="text" id="admin-users-search" class="glass-input" placeholder="🔍 ค้นหาผู้ใช้งาน (ชื่อ, email, role)..." oninput="app.renderAdminUsers()" style="font-size: 0.8rem; padding: 0.4rem 0.75rem; width: 260px; max-width: 100%;">
                 </div>
                 <div class="glass-card mb-4"
                     style="padding: 1rem; border-radius: 12px; background: rgba(255, 255, 255, 0.04);">
@@ -2533,12 +2551,13 @@
 
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem;">
                 <div id="admin-sec-locations" class="glass-card" style="padding: 1.5rem; border-radius: 16px;">
-                    <div class="header-actions" style="margin-bottom: 1rem;">
+                    <div class="header-actions" style="margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
                         <h3
-                            style="font-size: 1.15rem; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 0.5rem;">
+                            style="font-size: 1.15rem; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 0.5rem; margin: 0;">
                             <span style="width: 8px; height: 8px; border-radius: 50%; background: #10b981;"></span>
                             Locations & Rooms
                         </h3>
+                        <input type="text" id="admin-locations-search" class="glass-input" placeholder="🔍 ค้นหาสถานที่ / ห้อง..." oninput="app.renderAdminLocations()" style="font-size: 0.8rem; padding: 0.4rem 0.75rem; width: 220px; max-width: 100%;">
                     </div>
                     <div class="glass-card mb-4"
                         style="padding: 1rem; border-radius: 12px; background: rgba(255, 255, 255, 0.04);">
@@ -2694,12 +2713,13 @@
             </div>
 
             <div id="admin-sec-equipments" class="glass-card" style="padding: 1.5rem; border-radius: 16px;">
-                <div class="header-actions" style="margin-bottom: 1rem;">
+                <div class="header-actions" style="margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
                     <h3
-                        style="font-size: 1.15rem; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 0.5rem;">
+                        style="font-size: 1.15rem; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 0.5rem; margin: 0;">
                         <span style="width: 8px; height: 8px; border-radius: 50%; background: #ec4899;"></span>
                         Equipment Inventory
                     </h3>
+                    <input type="text" id="admin-equipments-search" class="glass-input" placeholder="🔍 ค้นหาเครื่องมือ (ชื่อ, Model, Serial, Location)..." oninput="app.renderAdminEquipments(true)" style="font-size: 0.8rem; padding: 0.4rem 0.75rem; width: 300px; max-width: 100%;">
                 </div>
                 <div class="glass-card mb-4"
                     style="padding: 1rem; border-radius: 12px; background: rgba(255, 255, 255, 0.04);">
@@ -2751,15 +2771,23 @@
                         <tbody id="admin-eq-tbody"></tbody>
                     </table>
                 </div>
+                <div class="flex items-center justify-between flex-wrap gap-2" style="margin-top: 0.75rem;">
+                    <span style="font-size: 0.75rem; color: var(--text-muted);" id="admin-eq-page-info">0 records</span>
+                    <div class="flex gap-2">
+                        <button onclick="app.eqAdminPage(-1)" class="btn btn-outline" style="font-size: 0.75rem; padding: 0.35rem 0.75rem;" id="admin-eq-prev" disabled>← Previous</button>
+                        <button onclick="app.eqAdminPage(1)" class="btn btn-outline" style="font-size: 0.75rem; padding: 0.35rem 0.75rem;" id="admin-eq-next">Next →</button>
+                    </div>
+                </div>
             </div>
 
             <div id="admin-sec-bookings" class="glass-card" style="padding: 1.5rem; border-radius: 16px;">
-                <div class="header-actions" style="margin-bottom: 1rem;">
+                <div class="header-actions" style="margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
                     <h3
-                        style="font-size: 1.15rem; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 0.5rem;">
+                        style="font-size: 1.15rem; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 0.5rem; margin: 0;">
                         <span style="width: 8px; height: 8px; border-radius: 50%; background: #6366f1;"></span> All
                         Bookings (Audit Log)
                     </h3>
+                    <input type="text" id="admin-bookings-search" class="glass-input" placeholder="🔍 ค้นหารายการจอง (ID, ผู้จอง, เครื่องมือ, สถานะ)..." oninput="app.renderAdminBookings(true)" style="font-size: 0.8rem; padding: 0.4rem 0.75rem; width: 300px; max-width: 100%;">
                 </div>
                 <div class="table-container" style="max-height: 400px; overflow-y: auto;">
                     <table>
@@ -3084,6 +3112,50 @@
         </div>
     </div>
 
+    <!-- Change Password Modal -->
+    <div id="modal-change-password" class="modal hidden" style="z-index: 1100;">
+        <div class="modal-content" style="max-width: 440px; padding: 1.5rem; border-radius: 20px;">
+            <div class="modal-header" style="padding-bottom: 0.75rem; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between;">
+                <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 0.5rem; margin: 0;">
+                    <i class="fa-solid fa-key" style="color: var(--primary);"></i> เปลี่ยนรหัสผ่าน (Change Password)
+                </h3>
+                <button type="button" class="btn-outline btn-icon-only" style="border:none;" onclick="app.closeModal('change-password')">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            </div>
+            <form onsubmit="app.submitChangePassword(event)" style="padding-top: 1rem; display: flex; flex-direction: column; gap: 0.85rem;">
+                <div class="form-group">
+                    <label style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 0.25rem;">รหัสผ่านเดิม (Current Password)</label>
+                    <div style="position: relative; display: flex; align-items: center;">
+                        <input type="password" id="cp-old-password" class="glass-input" required style="width: 100%; padding-right: 2.5rem;" autocomplete="current-password" placeholder="กรอกรหัสผ่านปัจจุบัน">
+                        <i class="fa-solid fa-eye" onclick="app.togglePasswordVisibility('cp-old-password', this)" style="position: absolute; right: 0.75rem; cursor: pointer; color: var(--text-muted);"></i>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 0.25rem;">รหัสผ่านใหม่ (New Password)</label>
+                    <div style="position: relative; display: flex; align-items: center;">
+                        <input type="password" id="cp-new-password" class="glass-input" required minlength="4" style="width: 100%; padding-right: 2.5rem;" autocomplete="new-password" placeholder="ตั้งรหัสผ่านใหม่ (อย่างน้อย 4 ตัว)">
+                        <i class="fa-solid fa-eye" onclick="app.togglePasswordVisibility('cp-new-password', this)" style="position: absolute; right: 0.75rem; cursor: pointer; color: var(--text-muted);"></i>
+                    </div>
+                    <span style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.2rem; display: block;">ความยาวอย่างน้อย 4 ตัวอักษร</span>
+                </div>
+                <div class="form-group">
+                    <label style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 0.25rem;">ยืนยันรหัสผ่านใหม่ (Confirm New Password)</label>
+                    <div style="position: relative; display: flex; align-items: center;">
+                        <input type="password" id="cp-confirm-password" class="glass-input" required minlength="4" style="width: 100%; padding-right: 2.5rem;" autocomplete="new-password" placeholder="กรอกรหัสผ่านใหม่อีกครั้ง">
+                        <i class="fa-solid fa-eye" onclick="app.togglePasswordVisibility('cp-confirm-password', this)" style="position: absolute; right: 0.75rem; cursor: pointer; color: var(--text-muted);"></i>
+                    </div>
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 0.5rem; padding-top: 0.75rem; border-top: 1px solid var(--border-color);">
+                    <button type="button" class="btn btn-outline" onclick="app.closeModal('change-password')">ยกเลิก</button>
+                    <button type="submit" class="btn" style="background: var(--primary); color: white;">
+                        <i class="fa-solid fa-check"></i> บันทึกรหัสผ่านใหม่
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Documentation & System Design In-App Modal -->
     <div id="modal-docs" class="modal hidden" style="z-index: 1200; display: none;">
         <div class="modal-content"
@@ -3143,6 +3215,8 @@
             charts: {},
             previousView: 'dashboard-view',
             qrTimeout: null,
+            eqAdminPage_: 0,
+            EQ_ADMIN_PER_PAGE: 15,
             bookingAuditPage_: 0,
             BOOKING_AUDIT_PER_PAGE: 10,
 
@@ -3214,8 +3288,109 @@
             },
 
             getLocName(id, buildings) {
-                const b = buildings.find(x => x.id == id);
+                const b = (buildings || this.state.buildings || []).find(x => x.id == id);
                 return b ? b.name : 'Unknown';
+            },
+
+            findEquipment(idOrBooking) {
+                if (!idOrBooking) return null;
+                const targetId = typeof idOrBooking === 'object' ? (idOrBooking.eqId || idOrBooking.equipmentId || idOrBooking.id) : idOrBooking;
+                const sTarget = String(targetId || '').trim();
+                if (!sTarget && typeof idOrBooking === 'object' && idOrBooking.equipmentName) {
+                    return (this.state.equipments || []).find(e => String(e.name || '').trim().toLowerCase() === String(idOrBooking.equipmentName || '').trim().toLowerCase()) || null;
+                }
+                if (!sTarget) return null;
+                let eq = (this.state.equipments || []).find(e => String(e.id).trim() === sTarget);
+                if (eq) return eq;
+                const numTarget = sTarget.replace(/^EQ-?/i, '');
+                eq = (this.state.equipments || []).find(e => {
+                    const sid = String(e.id || '').trim();
+                    return sid === numTarget || sid.replace(/^EQ-?/i, '') === numTarget;
+                });
+                if (eq) return eq;
+                if (typeof idOrBooking === 'object' && (idOrBooking.equipmentName || idOrBooking.equipment || idOrBooking.eqName)) {
+                    const name = (idOrBooking.equipmentName || idOrBooking.equipment || idOrBooking.eqName).trim().toLowerCase();
+                    eq = (this.state.equipments || []).find(e => String(e.name || '').trim().toLowerCase() === name);
+                    if (eq) return eq;
+                }
+                return null;
+            },
+
+            getBookingEquipmentName(b) {
+                if (!b) return 'Unknown';
+                const eq = this.findEquipment(b);
+                if (eq && eq.name) return eq.name;
+                if (b.equipmentName && String(b.equipmentName).trim()) return b.equipmentName;
+                if (b.equipment && String(b.equipment).trim() && b.equipment !== 'Unknown') return b.equipment;
+                if (b.eqName && String(b.eqName).trim()) return b.eqName;
+                return b.eqId || b.equipmentId ? `Equipment #${b.eqId || b.equipmentId}` : 'Unknown';
+            },
+
+            openChangePasswordModal() {
+                if (!this.state.user) {
+                    return Swal.fire('กรุณาเข้าสู่ระบบ', 'ต้องเข้าสู่ระบบก่อนเปลี่ยนรหัสผ่าน', 'warning');
+                }
+                const oldInp = document.getElementById('cp-old-password');
+                const newInp = document.getElementById('cp-new-password');
+                const confInp = document.getElementById('cp-confirm-password');
+                if (oldInp) oldInp.value = '';
+                if (newInp) newInp.value = '';
+                if (confInp) confInp.value = '';
+                this.openModal('change-password');
+            },
+
+            togglePasswordVisibility(inputId, iconEl) {
+                const inp = document.getElementById(inputId);
+                if (!inp) return;
+                if (inp.type === 'password') {
+                    inp.type = 'text';
+                    iconEl.classList.remove('fa-eye');
+                    iconEl.classList.add('fa-eye-slash');
+                } else {
+                    inp.type = 'password';
+                    iconEl.classList.remove('fa-eye-slash');
+                    iconEl.classList.add('fa-eye');
+                }
+            },
+
+            async submitChangePassword(e) {
+                if (e) e.preventDefault();
+                const oldPass = document.getElementById('cp-old-password')?.value;
+                const newPass = document.getElementById('cp-new-password')?.value;
+                const confirmPass = document.getElementById('cp-confirm-password')?.value;
+
+                if (!oldPass || !newPass || !confirmPass) {
+                    return Swal.fire('ข้อมูลไม่ครบถ้วน', 'กรุณากรอกข้อมูลให้ครบทุกช่อง', 'warning');
+                }
+                if (newPass !== confirmPass) {
+                    return Swal.fire('รหัสผ่านไม่ตรงกัน', 'กรุณากรอกรหัสผ่านใหม่และการยืนยันให้ตรงกัน', 'error');
+                }
+                if (newPass.length < 4) {
+                    return Swal.fire('รหัสผ่านสั้นเกินไป', 'รหัสผ่านใหม่ต้องมีความยาวอย่างน้อย 4 ตัวอักษร', 'warning');
+                }
+                if (oldPass === newPass) {
+                    return Swal.fire('รหัสผ่านซ้ำ', 'รหัสผ่านใหม่ต้องไม่เหมือนกับรหัสผ่านเดิม', 'warning');
+                }
+
+                const res = await LabAuth.changePassword(oldPass, newPass);
+                if (res && res.success) {
+                    this.loadState();
+                    this.closeModal('change-password');
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'เปลี่ยนรหัสผ่านสำเร็จ',
+                        text: 'รหัสผ่านของคุณถูกอัปเดตเรียบร้อยแล้ว',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                } else {
+                    Swal.fire('เกิดข้อผิดพลาด', (res && res.message) || 'ไม่สามารถเปลี่ยนรหัสผ่านได้', 'error');
+                }
+            },
+
+            eqAdminPage(dir) {
+                this.eqAdminPage_ = (this.eqAdminPage_ || 0) + dir;
+                this.renderAdminEquipments(false);
             },
 
             init() {
@@ -3231,18 +3406,17 @@
                 window.addEventListener('labRemoteSync', (e) => {
                     this.loadState();
                     this.updateUI();
-                    if (this.calendar && typeof this.calendar.refetchEvents === 'function') {
-                        this.initCalendar();
-                    }
-                    if (window.location.hash === '#equipment') {
+                    this.initCalendar();
+                    this.renderCharts();
+                    this.updateDashboardMetrics();
+                    if (window.location.hash === '#equipment' || this.previousView === 'equipment-view') {
                         this.renderEquipmentGrid();
                     }
-                    if (window.location.hash === '#datatable') {
+                    if (window.location.hash === '#datatable' || this.previousView === 'data-table-view') {
                         this.renderDataTable();
                     }
-                    if (window.location.hash === '#admin') {
-                        this.renderAdminUsers();
-                        this.renderAdminEquipments();
+                    if (window.location.hash === '#admin' || this.previousView === 'admin-view') {
+                        this.renderAdminData();
                     }
                 });
 
@@ -3281,7 +3455,10 @@
                     ...this.state,
                     records: currentState.records || []
                 };
-                LabStateBridge.saveState(merged);
+                const saved = LabStateBridge.saveState(merged);
+                if (saved) {
+                    this.state = saved;
+                }
             },
 
             handleRouting() {
@@ -3574,7 +3751,16 @@
             renderAdminLocations() {
                 const tbody = document.getElementById('admin-locations-tbody');
                 if (!tbody) return;
-                tbody.innerHTML = this.state.buildings.map(b => `
+                const query = (document.getElementById('admin-locations-search')?.value || '').trim().toLowerCase();
+                const filtered = (this.state.buildings || []).filter(b => {
+                    if (!query) return true;
+                    return String(b.name || '').toLowerCase().includes(query);
+                });
+                if (filtered.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="2" class="text-center text-muted py-4">ไม่พบสถานที่/ห้องที่ตรงกับเงื่อนไขค้นหา</td></tr>`;
+                    return;
+                }
+                tbody.innerHTML = filtered.map(b => `
                 <tr style="border-bottom: 1px solid var(--border-color);">
                     <td style="padding: 1rem;">${b.name}</td>
                     <td style="padding: 1rem; text-align: right; white-space: nowrap;">
@@ -3621,27 +3807,61 @@
                 this.renderAdminLocations();
             },
 
-            renderAdminEquipments() {
+            renderAdminEquipments(resetPage = false) {
+                if (resetPage) {
+                    this.eqAdminPage_ = 0;
+                }
+                this.eqAdminPage_ = this.eqAdminPage_ || 0;
                 const locSelect = document.getElementById('adminEqLoc');
                 if (locSelect) {
-                    locSelect.innerHTML = '<option value="">--Select Location--</option>' + this.state.buildings.map(b => `<option value="${b.id}">${b.name}</option>`).join('');
+                    locSelect.innerHTML = '<option value="">--Select Location--</option>' + (this.state.buildings || []).map(b => `<option value="${b.id}">${b.name}</option>`).join('');
                 }
                 const tbody = document.getElementById('admin-eq-tbody');
                 if (!tbody) return;
-                tbody.innerHTML = this.state.equipments.map(eq => `
-                <tr style="border-bottom: 1px solid var(--border-color);">
-                    <td>${eq.id}</td>
-                    <td style="font-weight: 600;">${eq.name}</td>
-                    <td><span class="badge" style="font-size: 0.75rem; background: rgba(15, 118, 110, 0.1); color: #0F766E;">${eq.model || '-'}</span></td>
-                    <td>${eq.serial || '-'}</td>
-                    <td>${this.getLocName(eq.building_id, this.state.buildings)}</td>
-                    <td>${eq.custodian || '-'}</td>
-                    <td style="text-align: right; white-space: nowrap;">
-                        <button class="btn btn-outline btn-icon-only" onclick="app.showEqHistoryModal('${eq.id}')" title="View History" style="margin-right: 0.5rem;"><i class="fa-solid fa-clock-rotate-left"></i></button>
-                        <button class="btn btn-outline btn-icon-only" onclick="app.adminEditEquipment('${eq.id}')" title="Edit" style="margin-right: 0.5rem;"><i class="fa-solid fa-pen-to-square"></i></button>
-                        <button class="btn btn-outline btn-icon-only text-danger" onclick="app.adminDeleteEquipment('${eq.id}')" title="Delete"><i class="fa-solid fa-trash-can"></i></button>
-                    </td>
-                </tr>`).join('');
+
+                const query = (document.getElementById('admin-equipments-search')?.value || '').trim().toLowerCase();
+                const filtered = (this.state.equipments || []).filter(eq => {
+                    if (!query) return true;
+                    const locName = this.getLocName(eq.building_id, this.state.buildings);
+                    const s = `${eq.id || ''} ${eq.name || ''} ${eq.model || ''} ${eq.serial || ''} ${locName} ${eq.custodian || ''}`.toLowerCase();
+                    return s.includes(query);
+                });
+
+                const total = filtered.length;
+                const perPage = this.EQ_ADMIN_PER_PAGE || 15;
+                const maxPage = Math.max(0, Math.ceil(total / perPage) - 1);
+                if (this.eqAdminPage_ > maxPage) this.eqAdminPage_ = maxPage;
+                if (this.eqAdminPage_ < 0) this.eqAdminPage_ = 0;
+
+                const start = this.eqAdminPage_ * perPage;
+                const page = filtered.slice(start, start + perPage);
+
+                if (page.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="7" class="text-center text-muted py-6">ไม่พบเครื่องมือที่ตรงกับเงื่อนไขค้นหา</td></tr>`;
+                } else {
+                    tbody.innerHTML = page.map(eq => `
+                    <tr style="border-bottom: 1px solid var(--border-color);">
+                        <td>${eq.id}</td>
+                        <td style="font-weight: 600;">${eq.name}</td>
+                        <td><span class="badge" style="font-size: 0.75rem; background: rgba(15, 118, 110, 0.1); color: #0F766E;">${eq.model || '-'}</span></td>
+                        <td>${eq.serial || '-'}</td>
+                        <td>${this.getLocName(eq.building_id, this.state.buildings)}</td>
+                        <td>${eq.custodian || '-'}</td>
+                        <td style="text-align: right; white-space: nowrap;">
+                            <button class="btn btn-outline btn-icon-only" onclick="app.showEqHistoryModal('${eq.id}')" title="View History" style="margin-right: 0.5rem;"><i class="fa-solid fa-clock-rotate-left"></i></button>
+                            <button class="btn btn-outline btn-icon-only" onclick="app.adminEditEquipment('${eq.id}')" title="Edit" style="margin-right: 0.5rem;"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button class="btn btn-outline btn-icon-only text-danger" onclick="app.adminDeleteEquipment('${eq.id}')" title="Delete"><i class="fa-solid fa-trash-can"></i></button>
+                        </td>
+                    </tr>`).join('');
+                }
+
+                // Update pagination controls
+                const pageInfo = document.getElementById('admin-eq-page-info');
+                const prevBtn = document.getElementById('admin-eq-prev');
+                const nextBtn = document.getElementById('admin-eq-next');
+                if (pageInfo) pageInfo.textContent = `${total} records | Page ${this.eqAdminPage_ + 1}/${maxPage + 1}`;
+                if (prevBtn) prevBtn.disabled = this.eqAdminPage_ <= 0;
+                if (nextBtn) nextBtn.disabled = this.eqAdminPage_ >= maxPage;
             },
             adminEditEquipment(id) {
                 const e = this.state.equipments.find(x => x.id === id);
@@ -3710,7 +3930,19 @@
                 const tbody = document.getElementById('admin-users-tbody');
                 if (!tbody) return;
                 const now = new Date();
-                tbody.innerHTML = this.state.users.map(u => {
+                const query = (document.getElementById('admin-users-search')?.value || '').trim().toLowerCase();
+                const filtered = (this.state.users || []).filter(u => {
+                    if (!query) return true;
+                    const s = `${u.id || ''} ${u.username || ''} ${u.name || ''} ${u.role || ''}`.toLowerCase();
+                    return s.includes(query);
+                });
+
+                if (filtered.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted py-6">ไม่พบผู้ใช้งานที่ตรงกับเงื่อนไขค้นหา</td></tr>`;
+                    return;
+                }
+
+                tbody.innerHTML = filtered.map(u => {
                     let wCount = u.warnings ? u.warnings.length : 0;
                     (this.state.bookings || []).forEach(b => {
                         const isMatch = (b.user && (b.user === u.username || b.user === u.name || b.user === u.email)) ||
@@ -3834,9 +4066,15 @@
 
             login(e) {
                 e.preventDefault();
-                const u = document.getElementById('login-user').value;
-                const p = document.getElementById('login-pass').value;
+                const uInput = document.getElementById('login-user');
+                const pInput = document.getElementById('login-pass');
+                const u = uInput.value;
+                const p = pInput.value;
                 const err = document.getElementById('login-error');
+
+                LabSmart.clearInlineError(uInput);
+                LabSmart.clearInlineError(pInput);
+
                 const authRes = LabAuth.login(u, p);
 
                 if (authRes.success) {
@@ -3851,7 +4089,8 @@
                         err.textContent = authRes.message;
                         err.classList.remove('hidden');
                     }
-                    LabHaptic.error();
+                    LabSmart.setInlineError(pInput, authRes.message);
+                    LabAlert.toast('error', authRes.message, 2500);
                 }
             },
             logout() {
@@ -3950,14 +4189,17 @@
                 return (this.state.bookings || []).filter(b => {
                     if (b.deleted) return false;
 
-                    const eq = this.state.equipments.find(e => String(e.id) === String(b.eqId || b.equipmentId));
-                    if (!eq) return false;
+                    const eq = this.findEquipment(b);
+                    if (!eq) {
+                        // If user specifically filtered by location or equipment, skip
+                        if (locFilter || eqFilter) return false;
+                    } else {
+                        // 1. Location filter
+                        if (locFilter && String(eq.building_id) !== String(locFilter)) return false;
 
-                    // 1. Location filter
-                    if (locFilter && String(eq.building_id) !== String(locFilter)) return false;
-
-                    // 2. Equipment filter
-                    if (eqFilter && String(eq.id) !== String(eqFilter)) return false;
+                        // 2. Equipment filter
+                        if (eqFilter && String(eq.id) !== String(eqFilter)) return false;
+                    }
 
                     // 3. Status filter
                     if (statusFilter) {
@@ -4106,8 +4348,8 @@
 
                     const maxVisible = 2;
                     items.slice(0, maxVisible).forEach(b => {
-                        const eq = (this.state.equipments || []).find(e => String(e.id) === String(b.eqId || b.equipmentId));
-                        const eqName = eq ? eq.name : 'Unknown';
+                        const eq = this.findEquipment(b);
+                        const eqName = this.getBookingEquipmentName(b);
                         const locName = eq ? (this.getLocName(eq.building_id, this.state.buildings || []) || '-') : '-';
                         const status = this.getBookingStatus(b);
                         const bgClass = status === 'InUse' ? 'bg-amber-500/90 text-white' : (status === 'Booked' ? 'bg-sky-600/90 text-white' : 'bg-emerald-600/90 text-white');
@@ -4289,8 +4531,7 @@
                 // 1. Monthly Usage by Equipment (Top 8)
                 const eqUsage = {};
                 filtered.forEach(b => {
-                    const eq = (this.state.equipments || []).find(e => String(e.id) === String(b.eqId || b.equipmentId));
-                    const name = eq ? eq.name : 'Unknown';
+                    const name = this.getBookingEquipmentName(b);
                     eqUsage[name] = (eqUsage[name] || 0) + (b.durationMins || 0);
                 });
                 const sortedEq = Object.entries(eqUsage).sort((a, b) => b[1] - a[1]).slice(0, 8);
@@ -4616,8 +4857,8 @@
                 }
                 const sorted = [...this.state.bookings].filter(b => !b.deleted).sort((a, b) => new Date(b.start) - new Date(a.start));
                 const ws = XLSX.utils.json_to_sheet(sorted.map(b => {
-                    const eq = (this.state.equipments || []).find(e => String(e.id) === String(b.eqId || b.equipmentId));
-                    const eqName = eq ? eq.name : 'Unknown';
+                    const eq = this.findEquipment(b);
+                    const eqName = this.getBookingEquipmentName(b);
                     const locName = eq ? this.getLocName(eq.building_id, this.state.buildings) : '-';
                     return {
                         "Date Start": moment(b.start).format('YYYY-MM-DD HH:mm'),
@@ -4719,7 +4960,7 @@
                         } else if (isBusy) {
                             statusBadge = `<span class="eq-card-status-pill eq-status-busy"><span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span> In Use</span>`;
                         } else {
-                            statusBadge = `<span class="eq-card-status-pill eq-status-avail"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Available</span>`;
+                            statusBadge = `<span class="eq-card-status-pill eq-status-avail">Available</span>`;
                         }
 
                         card.innerHTML = `
@@ -4831,12 +5072,15 @@
                     .sort((a, b) => new Date(b.start) - new Date(a.start));
 
                 const filtered = sorted.filter(b => {
-                    const eq = this.state.equipments.find(e => String(e.id) === String(b.eqId || b.equipmentId));
-                    const eqName = eq ? eq.name : 'Unknown';
+                    const eqName = this.getBookingEquipmentName(b);
                     const status = this.getBookingStatus(b);
 
                     if (statusFilter && status.toLowerCase() !== statusFilter.toLowerCase()) return false;
-                    if (eqFilter && String(b.eqId || b.equipmentId) !== String(eqFilter)) return false;
+                    if (eqFilter) {
+                        const eq = this.findEquipment(b);
+                        const matchId = eq ? String(eq.id) : String(b.eqId || b.equipmentId);
+                        if (matchId !== String(eqFilter)) return false;
+                    }
 
                     if (filterText) {
                         const searchString = `${moment(b.start).format('DD MMM YYYY HH:mm')} ${eqName} ${b.user} ${b.project || ''} ${status}`.toLowerCase();
@@ -4857,8 +5101,7 @@
                     tbody.innerHTML = `<tr><td colspan="7" class="text-center text-muted py-6">ไม่พบข้อมูลการจอง (No matching records)</td></tr>`;
                 } else {
                     paged.forEach(b => {
-                        const eq = this.state.equipments.find(e => String(e.id) === String(b.eqId || b.equipmentId));
-                        const eqName = eq ? eq.name : 'Unknown';
+                        const eqName = this.getBookingEquipmentName(b);
                         const status = this.getBookingStatus(b);
 
                         let totalMins = Number(b.durationMins);
@@ -5304,7 +5547,7 @@
 
                                 const diffString = diffs.length > 0 ? diffs.join(', ') : 'No changes made';
 
-                                historyEntry = [...oldBookingForDiff.history, {
+                                historyEntry = [...(oldBookingForDiff.history || []), {
                                     action: `Edited: ${diffString}`,
                                     by: this.state.user.name,
                                     timestamp: new Date().toISOString()
@@ -5319,11 +5562,16 @@
                                 }];
                             }
 
+                            const resolvedEq = this.findEquipment(eqId);
+                            const resolvedEqName = resolvedEq ? resolvedEq.name : (eqName || 'Unknown');
+
                             newBookings.push({
                                 ...baseBooking,
                                 id: editId || 'BK-' + Date.now() + Math.floor(Math.random() * 1000),
                                 eqId: eqId,
                                 equipmentId: eqId,
+                                equipmentName: resolvedEqName,
+                                equipment: resolvedEqName,
                                 start: currentStart.format('YYYY-MM-DDTHH:mm'),
                                 end: currentEnd.format('YYYY-MM-DDTHH:mm'),
                                 durationMins: dur,
@@ -5587,6 +5835,7 @@
                     remarks: document.getElementById('finish-remarks').value,
                     dynamicData: dynData
                 };
+                if (!b.history) b.history = [];
                 b.history.push({
                     action: 'Finished Usage',
                     by: this.state.user.name,
@@ -5777,6 +6026,7 @@
                 this.renderAdminLocations();
                 this.renderAdminEquipments();
                 this.renderAdminUsers();
+                this.renderAdminBookings();
                 this.updateFirebaseStatusUI();
 
                 const purgeSec = document.getElementById('index-admin-purge-section');
@@ -5784,34 +6034,59 @@
                     purgeSec.style.display = (this.state.user && this.state.user.role === 'admin') ? 'block' : 'none';
                 }
 
-                document.getElementById('list-names').innerHTML = [...new Set(this.state.equipments.map(e => e.name))].map(n => `<option value="${n}">`).join('');
-                document.getElementById('list-locations').innerHTML = this.state.buildings.map(b => `<li style="padding:0.5rem;border-bottom:1px solid #eee;">${b.name}</li>`).join('');
-                document.getElementById('list-custodians').innerHTML = [...new Set(this.state.equipments.map(e => e.custodian))].map(n => `<option value="${n}">`).join('');
+                const listNames = document.getElementById('list-names');
+                if (listNames) listNames.innerHTML = [...new Set((this.state.equipments || []).map(e => e.name))].map(n => `<option value="${n}">`).join('');
+                const listLocs = document.getElementById('list-locations');
+                if (listLocs) listLocs.innerHTML = (this.state.buildings || []).map(b => `<li style="padding:0.5rem;border-bottom:1px solid #eee;">${b.name}</li>`).join('');
+                const listCusts = document.getElementById('list-custodians');
+                if (listCusts) listCusts.innerHTML = [...new Set((this.state.equipments || []).map(e => e.custodian))].map(n => `<option value="${n}">`).join('');
+            },
 
+            renderAdminBookings(resetPage = false) {
+                if (resetPage) {
+                    this.bookingAuditPage_ = 0;
+                }
                 const bkTbody = document.getElementById('admin-bookings-tbody');
-                const allSorted = [...this.state.bookings].sort((a, b) => new Date(b.start) - new Date(a.start));
-                const total = allSorted.length;
-                const perPage = this.BOOKING_AUDIT_PER_PAGE;
-                const maxPage = Math.max(0, Math.ceil(total / perPage) - 1);
-                this.bookingAuditPage_ = Math.min(this.bookingAuditPage_, maxPage);
-                this.bookingAuditPage_ = Math.max(0, this.bookingAuditPage_);
-                const start = this.bookingAuditPage_ * perPage;
-                const page = allSorted.slice(start, start + perPage);
+                if (!bkTbody) return;
 
-                bkTbody.innerHTML = page.map(b => {
-                    const eq = (this.state.equipments || []).find(e => String(e.id) === String(b.eqId || b.equipmentId));
+                const query = (document.getElementById('admin-bookings-search')?.value || '').trim().toLowerCase();
+                const allSorted = [...(this.state.bookings || [])].sort((a, b) => new Date(b.start) - new Date(a.start));
+
+                const filtered = allSorted.filter(b => {
+                    if (!query) return true;
+                    const eqName = this.getBookingEquipmentName(b);
                     const status = this.getBookingStatus(b);
-                    const btnAction = b.deleted ?
-                        `<button class="btn btn-outline btn-icon-only" onclick="app.showBookingDetails('${b.id}')" title="View Audit"><i class="fa-solid fa-eye"></i></button>` :
-                        `<button class="btn btn-outline btn-icon-only" onclick="app.showBookingDetails('${b.id}')" title="View Audit" style="margin-right: 0.5rem;"><i class="fa-solid fa-eye"></i></button>
-                     <button class="btn btn-outline btn-icon-only text-danger" onclick="app.deleteBooking('${b.id}')" title="Delete"><i class="fa-solid fa-trash-can"></i></button>`;
+                    const s = `${b.id || ''} ${moment(b.start).format('DD/MM/YYYY')} ${eqName} ${b.user || b.userName || b.userEmail || ''} ${status}`.toLowerCase();
+                    return s.includes(query);
+                });
 
-                    return `<tr>
-                    <td>${b.id}</td><td>${moment(b.start).format('DD/MM/YYYY')}</td>
-                    <td>${eq ? eq.name : (b.equipmentName || 'Unknown')}</td><td>${b.user || b.userName || b.userEmail || '-'}</td><td>${this.getBadgeHTML(status)}</td>
-                    <td style="text-align: right; white-space: nowrap;">${btnAction}</td>
-                </tr>`;
-                }).join('');
+                const total = filtered.length;
+                const perPage = this.BOOKING_AUDIT_PER_PAGE || 10;
+                const maxPage = Math.max(0, Math.ceil(total / perPage) - 1);
+                if (this.bookingAuditPage_ > maxPage) this.bookingAuditPage_ = maxPage;
+                if (this.bookingAuditPage_ < 0) this.bookingAuditPage_ = 0;
+
+                const start = this.bookingAuditPage_ * perPage;
+                const page = filtered.slice(start, start + perPage);
+
+                if (page.length === 0) {
+                    bkTbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted py-6">ไม่พบรายการจองที่ตรงกับเงื่อนไขค้นหา</td></tr>`;
+                } else {
+                    bkTbody.innerHTML = page.map(b => {
+                        const eqName = this.getBookingEquipmentName(b);
+                        const status = this.getBookingStatus(b);
+                        const btnAction = b.deleted ?
+                            `<button class="btn btn-outline btn-icon-only" onclick="app.showBookingDetails('${b.id}')" title="View Audit"><i class="fa-solid fa-eye"></i></button>` :
+                            `<button class="btn btn-outline btn-icon-only" onclick="app.showBookingDetails('${b.id}')" title="View Audit" style="margin-right: 0.5rem;"><i class="fa-solid fa-eye"></i></button>
+                         <button class="btn btn-outline btn-icon-only text-danger" onclick="app.deleteBooking('${b.id}')" title="Delete"><i class="fa-solid fa-trash-can"></i></button>`;
+
+                        return `<tr>
+                        <td>${b.id}</td><td>${moment(b.start).format('DD/MM/YYYY')}</td>
+                        <td>${eqName}</td><td>${b.user || b.userName || b.userEmail || '-'}</td><td>${this.getBadgeHTML(status)}</td>
+                        <td style="text-align: right; white-space: nowrap;">${btnAction}</td>
+                    </tr>`;
+                    }).join('');
+                }
 
                 // Update pagination info
                 const infoEl = document.getElementById('admin-bookings-info');
@@ -5823,8 +6098,8 @@
             },
 
             bookingAuditPage(dir) {
-                this.bookingAuditPage_ += dir;
-                this.loadAdminData();
+                this.bookingAuditPage_ = (this.bookingAuditPage_ || 0) + dir;
+                this.renderAdminBookings(false);
             },
 
             editEquipment(id) {

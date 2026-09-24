@@ -188,7 +188,8 @@
                 status: "in-use",
                 purpose: "50L Pilot Yeast culture run"
             }
-        ]
+        ],
+        auditLogs: []
     };
 
     // --- 1.5 High-Ratio Document & PDF Compressor (LabCompressor) ---
@@ -397,7 +398,7 @@
 
                 if (!state || typeof state !== 'object') {
                     state = JSON.parse(JSON.stringify(SEED_DATA));
-                    this.saveState(state);
+                    this.saveState(state, true); // skipCloud = true: prevent blank client from overwriting cloud
                     return state;
                 }
 
@@ -408,7 +409,7 @@
                     state.users = JSON.parse(JSON.stringify(SEED_DATA.users));
                     modified = true;
                 } else {
-                    state.users.forEach(u => { if (u.activeSession) { delete u.activeSession; modified = true; } });
+                    state.users.forEach(u => { if (u && u.activeSession) { delete u.activeSession; modified = true; } });
                 }
                 if (!Array.isArray(state.buildings) || state.buildings.length === 0) {
                     state.buildings = JSON.parse(JSON.stringify(SEED_DATA.buildings));
@@ -422,6 +423,7 @@
                 }
                 // Standardize equipment items (ensure String ID to prevent startsWith crash)
                 eqList.forEach((e, idx) => {
+                    if (!e || typeof e !== 'object') return;
                     if (!e.id) e.id = 'EQ-' + String(idx + 1).padStart(3, '0');
                     else e.id = String(e.id);
                     if (!e.model) e.model = '-';
@@ -432,7 +434,7 @@
                 state.equipment = eqList; // keep synonym in sync
 
                 if (!Array.isArray(state.records)) {
-                    state.records = JSON.parse(JSON.stringify(SEED_DATA.records));
+                    state.records = JSON.parse(JSON.stringify(SEED_DATA.records || []));
                     modified = true;
                 }
                 if (!Array.isArray(state.technicians) || state.technicians.length === 0) {
@@ -444,32 +446,69 @@
                     modified = true;
                 }
                 if (!Array.isArray(state.bookings)) {
-                    state.bookings = JSON.parse(JSON.stringify(SEED_DATA.bookings));
+                    state.bookings = JSON.parse(JSON.stringify(SEED_DATA.bookings || []));
                     modified = true;
                 }
-                // Harmonize booking equipment identifiers (both eqId and equipmentId)
+                if (!Array.isArray(state.auditLogs)) {
+                    try {
+                        const legacyAudit = localStorage.getItem('carePlusAuditLog');
+                        state.auditLogs = legacyAudit ? JSON.parse(legacyAudit) : [];
+                    } catch (e) {
+                        state.auditLogs = [];
+                    }
+                    modified = true;
+                }
+                // Harmonize booking equipment identifiers (both eqId and equipmentId) and resolve equipmentName
                 state.bookings.forEach(b => {
+                    if (!b || typeof b !== 'object') return;
                     const resolvedEqId = b.eqId || b.equipmentId;
                     if (resolvedEqId) {
                         if (!b.eqId) { b.eqId = String(resolvedEqId); modified = true; }
                         if (!b.equipmentId) { b.equipmentId = String(resolvedEqId); modified = true; }
                     }
+                    if (!b.equipmentName || b.equipmentName === 'Unknown') {
+                        const targetId = String(resolvedEqId || '');
+                        let match = eqList.find(e => String(e.id) === targetId);
+                        if (!match && targetId) {
+                            const numOnly = targetId.replace(/\D/g, '');
+                            if (numOnly) {
+                                match = eqList.find(e => String(e.id).replace(/\D/g, '') === numOnly);
+                            }
+                        }
+                        if (match && match.name) {
+                            b.equipmentName = match.name;
+                            modified = true;
+                        } else if (b.equipment && typeof b.equipment === 'string') {
+                            b.equipmentName = b.equipment;
+                            modified = true;
+                        }
+                    }
                 });
 
                 if (modified) {
-                    this.saveState(state);
+                    this.saveState(state, true);
                 }
 
                 return state;
             } catch (err) {
                 console.error("LabStateBridge.getState error, restoring seed:", err);
                 const fresh = JSON.parse(JSON.stringify(SEED_DATA));
-                this.saveState(fresh);
+                this.saveState(fresh, true);
                 return fresh;
             }
         },
 
         _syncTimeout: null,
+        flushSync() {
+            if (this._syncTimeout) {
+                clearTimeout(this._syncTimeout);
+                this._syncTimeout = null;
+            }
+            if (window.LabFirebase && LabFirebase.isConfigured()) {
+                const current = this.getStateInternal();
+                LabFirebase.syncToCloud(current);
+            }
+        },
         saveState(partialOrFull, skipCloud = false) {
             try {
                 const current = this.getStateInternal();
@@ -1007,6 +1046,44 @@
             return !!(u && u.role === 'admin');
         },
 
+        changePassword(oldPassword, newPassword) {
+            const currentUser = this.getCurrentUser();
+            if (!currentUser) {
+                return { success: false, message: 'กรุณาเข้าสู่ระบบก่อนเปลี่ยนรหัสผ่าน' };
+            }
+            if (!oldPassword || !newPassword) {
+                return { success: false, message: 'กรุณากรอกรหัสผ่านเดิมและรหัสผ่านใหม่' };
+            }
+            if (String(currentUser.password) !== String(oldPassword).trim()) {
+                return { success: false, message: 'รหัสผ่านเดิมไม่ถูกต้อง' };
+            }
+            const cleanNew = String(newPassword).trim();
+            if (cleanNew.length < 4) {
+                return { success: false, message: 'รหัสผ่านใหม่ต้องมีความยาวอย่างน้อย 4 ตัวอักษร' };
+            }
+            if (String(oldPassword).trim() === cleanNew) {
+                return { success: false, message: 'รหัสผ่านใหม่ต้องไม่ซ้ำกับรหัสผ่านเดิม' };
+            }
+
+            const state = LabStateBridge.getState();
+            const uIdx = (state.users || []).findIndex(u =>
+                String(u.id) === String(currentUser.id) ||
+                u.username.toLowerCase() === currentUser.username.toLowerCase()
+            );
+
+            if (uIdx === -1) {
+                return { success: false, message: 'ไม่พบข้อมูลผู้ใช้ในระบบ' };
+            }
+
+            state.users[uIdx].password = cleanNew;
+            LabStateBridge.saveState(state);
+
+            // Update current memory user reference if needed
+            currentUser.password = cleanNew;
+
+            return { success: true, message: 'เปลี่ยนรหัสผ่านสำเร็จเรียบร้อย' };
+        },
+
         syncSession() {
             try {
                 const u = this.getCurrentUser();
@@ -1268,6 +1345,12 @@
             }
             errEl.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> <span>${msg}</span>`;
             LabHaptic.error();
+
+            const onInput = () => {
+                this.clearInlineError(inputEl);
+                inputEl.removeEventListener('input', onInput);
+            };
+            inputEl.addEventListener('input', onInput);
         },
 
         clearInlineError(inputEl) {
@@ -1275,8 +1358,43 @@
             inputEl.classList.remove('lab-input-error');
             const errEl = inputEl.parentNode.querySelector('.lab-inline-error-msg');
             if (errEl) errEl.remove();
+        },
+
+        togglePassword(inputId, btnEl) {
+            const input = document.getElementById(inputId);
+            if (!input) return;
+            LabHaptic.tap();
+            const isPass = input.type === 'password';
+            input.type = isPass ? 'text' : 'password';
+            const icon = btnEl ? btnEl.querySelector('i') : null;
+            if (icon) {
+                icon.className = isPass ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye';
+            }
+        },
+
+        fillDemo(u, p, uId, pId) {
+            LabHaptic.tap();
+            const uInput = document.getElementById(uId);
+            const pInput = document.getElementById(pId);
+            if (uInput) {
+                uInput.value = u;
+                this.clearInlineError(uInput);
+            }
+            if (pInput) {
+                pInput.value = p;
+                this.clearInlineError(pInput);
+            }
+            LabAlert.toast('info', `ใช้บัญชีทดสอบ: ${u}`, 1500);
         }
     };
+
+    // Global Haptic feedback for touch and clicks
+    document.addEventListener('click', (e) => {
+        const target = e.target.closest('button, .btn, .ios-btn, .lab-btn, .nav-pill, .app-switch-btn, .demo-chip, .modal-close-btn');
+        if (target) {
+            LabHaptic.tap();
+        }
+    }, { passive: true });
 
     // --- 9. Firebase Spark (Free Tier) Cloud Adapter (LabFirebase) ---
     const LabFirebase = {
@@ -1654,7 +1772,11 @@
             const r = (data.records || []).map(x => `${x.id}:${x.type || ''}:${x.service_date || ''}:${x.next_service_date || ''}:${x.calendar_status || ''}:${x.maintenance_cost || ''}:${(x.technicians || []).join(',')}:${x.reporter || ''}`).join('|');
             const u = (data.users || []).map(x => `${x.id}:${x.username}:${x.name}:${x.role}:${x.password}`).join('|');
             const e = (data.equipments || data.equipment || []).map(x => `${x.id}:${x.name}:${x.building_id || ''}:${x.model || ''}:${x.serial || ''}`).join('|');
-            return `${b}##${r}##${u}##${e}`;
+            const loc = (data.buildings || []).map(x => `${x.id}:${x.name || ''}`).join('|');
+            const tech = (data.technicians || []).join('|');
+            const rep = (data.reporters || []).join('|');
+            const a = (data.auditLogs || []).slice(0, 20).map(x => `${x.id}:${x.action || ''}:${x.timestamp || ''}`).join('|');
+            return `${b}##${r}##${u}##${e}##${loc}##${tech}##${rep}##${a}`;
         },
 
         listenToRemote() {
@@ -1697,14 +1819,37 @@
                                 });
                                 const finalRecords = Array.from(mergedRecordsMap.values());
 
+                                // Smart merge equipments to preserve model
+                                const rawRemEquip = Array.isArray(remoteData.equipments) ? remoteData.equipments : (Array.isArray(remoteData.equipment) ? remoteData.equipment : null);
+                                const curEquip = current.equipments || current.equipment || [];
+                                const mergedEquip = rawRemEquip ? rawRemEquip.map(re => {
+                                    const matchCur = curEquip.find(ce => String(ce.id) === String(re.id) || ce.name === re.name);
+                                    return {
+                                        ...re,
+                                        model: (re.model && re.model !== '-') ? re.model : (matchCur?.model || re.model || '-')
+                                    };
+                                }) : curEquip;
+
+                                // Smart merge auditLogs
+                                const curAudit = Array.isArray(current.auditLogs) ? current.auditLogs : [];
+                                const remAudit = Array.isArray(remoteData.auditLogs) ? remoteData.auditLogs : [];
+                                const mergedAuditMap = new Map();
+                                curAudit.forEach(a => { if (a && a.id) mergedAuditMap.set(String(a.id), a); });
+                                remAudit.forEach(a => { if (a && a.id) mergedAuditMap.set(String(a.id), a); });
+                                const finalAudit = Array.from(mergedAuditMap.values()).sort((x, y) => new Date(y.timestamp) - new Date(x.timestamp)).slice(0, 300);
+
                                 const merged = {
                                     ...current,
                                     ...remoteData,
                                     bookings: finalBookings,
                                     records: finalRecords,
                                     users: Array.isArray(remoteData.users) && remoteData.users.length > 0 ? remoteData.users : (current.users || []),
-                                    equipments: Array.isArray(remoteData.equipments) ? remoteData.equipments : (current.equipments || []),
-                                    equipment: Array.isArray(remoteData.equipments) ? remoteData.equipments : (current.equipments || [])
+                                    equipments: mergedEquip,
+                                    equipment: mergedEquip,
+                                    buildings: Array.isArray(remoteData.buildings) && remoteData.buildings.length > 0 ? remoteData.buildings : (current.buildings || []),
+                                    technicians: Array.isArray(remoteData.technicians) && remoteData.technicians.length > 0 ? remoteData.technicians : (current.technicians || []),
+                                    reporters: Array.isArray(remoteData.reporters) && remoteData.reporters.length > 0 ? remoteData.reporters : (current.reporters || []),
+                                    auditLogs: finalAudit
                                 };
                                 LabStateBridge.saveStateFromRemote(merged);
                                 window.dispatchEvent(new CustomEvent('labRemoteSync', { detail: merged }));
@@ -1824,9 +1969,10 @@
         }
     });
 
-    // Cleanup active presence when closing tab/browser
+    // Cleanup active presence when closing tab/browser and flush pending sync
     window.addEventListener('beforeunload', () => {
         try {
+            if (window.LabStateBridge) LabStateBridge.flushSync();
             const cur = LabAuth.getCurrentUser();
             if (cur && window.LabFirebase) {
                 LabFirebase.clearPresence(cur);
@@ -1835,6 +1981,7 @@
     });
     window.addEventListener('pagehide', () => {
         try {
+            if (window.LabStateBridge) LabStateBridge.flushSync();
             const cur = LabAuth.getCurrentUser();
             if (cur && window.LabFirebase) {
                 LabFirebase.clearPresence(cur);

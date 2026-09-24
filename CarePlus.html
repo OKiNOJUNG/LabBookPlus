@@ -408,16 +408,98 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
         }
 
-        @media (max-width: 480px) {
+        @media (max-width: 640px) {
             .app-switch-btn span {
-                display: none;
+                display: none !important;
             }
             .app-switch-btn {
-                padding: 0.35rem 0.5rem;
+                padding: 0.35rem 0.5rem !important;
+                font-size: 0.72rem !important;
+            }
+            .nav-action-btn {
+                width: 32px !important;
+                height: 32px !important;
+                font-size: 0.75rem !important;
+            }
+            .brand-icon {
+                width: 30px !important;
+                height: 30px !important;
+                font-size: 0.75rem !important;
             }
         }
 
-.glass-table th {
+        @media (min-width: 641px) and (max-width: 1024px) {
+            .app-switch-btn {
+                padding: 0.35rem 0.55rem;
+                font-size: 0.75rem;
+            }
+            .nav-action-btn {
+                width: 34px;
+                height: 34px;
+            }
+        }
+
+        .col-sort-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            user-select: none;
+            transition: color 0.15s ease;
+        }
+        .col-sort-btn:hover {
+            color: #0284c7;
+        }
+        .col-filter-trigger {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 22px;
+            height: 22px;
+            border-radius: 6px;
+            border: 1px solid transparent;
+            color: #94a3b8;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            margin-left: 4px;
+            background: transparent;
+        }
+        .col-filter-trigger:hover {
+            background: rgba(2, 132, 199, 0.1);
+            color: #0284c7;
+        }
+        .col-filter-trigger.active {
+            background: #0284c7 !important;
+            color: #ffffff !important;
+            border-color: #0284c7 !important;
+            box-shadow: 0 1px 4px rgba(2, 132, 199, 0.35);
+        }
+        .col-filter-popover {
+            position: fixed;
+            z-index: 100010;
+            background: rgba(255, 255, 255, 0.98);
+            border: 1px solid rgba(226, 232, 240, 0.9);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            border-radius: 16px;
+            width: 290px;
+            max-width: 90vw;
+            backdrop-filter: blur(16px);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            animation: popoverFadeIn 0.15s ease-out;
+        }
+        .dark .col-filter-popover {
+            background: rgba(15, 23, 42, 0.98);
+            border-color: rgba(51, 65, 85, 0.9);
+            color: #f1f5f9;
+        }
+        @keyframes popoverFadeIn {
+            from { opacity: 0; transform: translateY(-4px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .glass-table th {
             background: rgba(249, 250, 251, 0.6);
             color: #4b5563;
         }
@@ -592,44 +674,55 @@
 
     <div id="loginPage" class="min-h-screen flex items-center justify-center p-4 relative login-bg">
         <div style="position: absolute; top: 1.5rem; right: 1.5rem; display: flex; gap: 0.75rem; z-index: 50;">
-            <a href="index.html" class="btn"
-                style="background-color: #0f766e; color: #ffffff; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); font-weight: bold; text-decoration: none;">
-                <i class="fa-solid fa-book"></i> Lab Book Plus
+            <a href="index.html" class="login-switch-pill" onclick="LabAuth.syncSession()" title="สลับไปใช้งาน MPIR Lab Book+">
+                <i class="fa-solid fa-book" style="color: #0F766E;"></i>
+                <span>Lab Book+</span>
+                <i class="fa-solid fa-arrow-right text-xs opacity-60"></i>
             </a>
         </div>
 
         <div class="login-card">
-            <img src="logo.png" alt="Logo"
-                style="width: 130px; height: 130px; object-fit: contain; margin: 0 auto 1rem auto; display: block; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
-            <h2><span style="color: #1a7a7a;">MP</span><span style="color: #1742a6;">IR</span></h2>
-            <h3 style="color: #166565; text-align: center; margin-bottom: 1.5rem; font-weight: 700;">Lab Care Plus
-            </h3>
-            <div
-                style="background-color: #f3f4f6; color: #374151; padding: 0.6rem 1rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600; text-align: center; margin-bottom: 2rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                Please login to continue
+            <div class="text-center mb-6">
+                <div style="width: 88px; height: 88px; margin: 0 auto 1.25rem; border-radius: 50%; background: #ffffff; padding: 4px; box-shadow: 0 10px 25px -5px rgba(2, 132, 199, 0.25), 0 0 0 1px rgba(2, 132, 199, 0.1); display: flex; align-items: center; justify-content: center;">
+                    <img src="logo.png" alt="MPIR Logo" style="width: 100%; height: 100%; object-fit: contain; border-radius: 50%;">
+                </div>
+                <h2 style="margin: 0; line-height: 1.1;"><span style="color: #0F766E;">MP</span><span style="color: #0284C7;">IR</span></h2>
+                <h3 style="color: #0284C7; margin: 0.25rem 0 0.5rem 0; font-size: 1.25rem; font-weight: 800;">Lab Care+</h3>
+                <div style="display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.25rem 0.75rem; border-radius: 9999px; background: rgba(2, 132, 199, 0.08); color: #0284C7; font-size: 0.75rem; font-weight: 700; border: 1px solid rgba(2, 132, 199, 0.2);">
+                    <span class="badge-dot pulse" style="background: #0284C7; color: #0284C7;"></span>
+                    <span>Maintenance & Calibration Suite</span>
+                </div>
             </div>
 
             <form id="loginForm">
                 <div class="form-group">
-                    <label>Username</label>
-                    <div style="position: relative; display: flex; align-items: center; width: 100%;">
-                        <input type="text" id="loginEmail" required placeholder="Username"
-                            style="width: 100%; background-color: white; border: none; border-radius: 12px; padding: 1rem 5.5rem 1rem 1rem; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); box-sizing: border-box;">
-                        <span
-                            style="position: absolute; right: 1rem; color: #6b7280; font-weight: 500; pointer-events: none; user-select: none;">@lab.com</span>
+                    <label for="loginEmail">ชื่อผู้ใช้ / อีเมลองค์กร</label>
+                    <div class="login-input-group">
+                        <i class="fa-solid fa-user login-input-icon"></i>
+                        <input type="text" id="loginEmail" required placeholder="admin@lab.com หรือชื่อผู้ใช้" autocomplete="username">
                     </div>
                 </div>
-                <div class="form-group" style="margin-top: 1.5rem;">
-                    <label>Password</label>
-                    <div style="position: relative; display: flex; align-items: center; width: 100%;">
-                        <input type="password" id="loginPassword" required placeholder="••••••••"
-                            style="width: 100%; background-color: white; border: none; border-radius: 12px; padding: 1rem; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); box-sizing: border-box;">
+
+                <div class="form-group" style="margin-top: 1rem;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.4rem;">
+                        <label for="loginPassword" style="margin: 0;">รหัสผ่าน</label>
+                    </div>
+                    <div class="login-input-group">
+                        <i class="fa-solid fa-lock login-input-icon"></i>
+                        <input type="password" id="loginPassword" required placeholder="••••••••" autocomplete="current-password">
+                        <button type="button" class="login-password-toggle" onclick="LabSmart.togglePassword('loginPassword', this)" title="แสดง/ซ่อนรหัสผ่าน">
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
                     </div>
                 </div>
-                <button type="submit" class="btn"
-                    style="width: 100%; justify-content: center; margin-top: 2rem;">Login</button>
+
+                <button type="submit" class="btn btn-shimmer btn-shimmer-sky" id="btn-login-submit-cp">
+                    <i class="fa-solid fa-right-to-bracket"></i>
+                    <span>เข้าสู่ระบบ (Sign In)</span>
+                </button>
             </form>
-            <div id="login-error" class="hidden text-danger text-center mt-4" style="font-size: 0.9rem; color: #ef4444;">Invalid credentials</div>
+
+            <div id="login-error" class="hidden text-danger text-center mt-3" style="font-size: 0.85rem; font-weight: 600; color: #E11D48;">Invalid credentials</div>
         </div>
     </div>
 
@@ -680,6 +773,11 @@
                                 class="text-[9px] md:text-[10px] font-bold tracking-widest text-teal-600 dark:text-teal-400 uppercase">Role</span>
                         </div>
                     </div>
+
+                    <button onclick="openChangePasswordModal()" title="เปลี่ยนรหัสผ่าน"
+                        class="nav-action-btn" style="color: var(--color-brand-primary); border-color: rgba(15, 118, 110, 0.3);">
+                        <i class="fa-solid fa-key"></i>
+                    </button>
 
                     <button onclick="logout()" title="ออกจากระบบ"
                         class="nav-action-btn" style="color: var(--color-accent-rose); border-color: rgba(244, 63, 94, 0.3);">
@@ -888,9 +986,48 @@
                     <div class="h-64"><canvas id="locationChart"></canvas></div>
                 </div>
 
-                <div class="glass ios-card p-6 mt-6">
-                    <h3 class="text-lg font-bold text-gray-800 mb-6">Maintenance Cost by Equipment</h3>
-                    <div class="h-80"><canvas id="costChart"></canvas></div>
+                <div class="glass ios-card p-4 sm:p-6 mt-6">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
+                        <div>
+                            <h3 class="text-lg sm:text-xl font-bold text-gray-800 dark:text-slate-100 flex items-center gap-2">
+                                <span class="w-2 h-6 bg-teal-500 rounded-full inline-block"></span>
+                                Visualize Maintenance Cost by Equipment
+                            </h3>
+                            <p class="text-xs text-gray-500 dark:text-slate-400 mt-0.5">
+                                สรุปยอดรวมค่าใช้จ่ายซ่อมบำรุงและสอบเทียบ แยกตามเครื่องมือและประเภทงาน (เรียงตามยอดรวมจากมากไปน้อย)
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-1.5 bg-gray-100/80 dark:bg-slate-800/80 p-1 rounded-xl self-stretch sm:self-auto justify-end">
+                            <span class="text-[10px] font-bold uppercase text-gray-400 px-2 hidden sm:inline">แสดงผล:</span>
+                            <button id="btnCostLimit10" onclick="setCostChartLimit(10)" class="px-2.5 py-1 text-xs font-bold rounded-lg bg-white dark:bg-slate-700 text-teal-600 dark:text-teal-400 shadow-sm transition">Top 10</button>
+                            <button id="btnCostLimit20" onclick="setCostChartLimit(20)" class="px-2.5 py-1 text-xs font-bold rounded-lg text-gray-600 dark:text-slate-300 hover:text-teal-600 transition">Top 20</button>
+                            <button id="btnCostLimitAll" onclick="setCostChartLimit(0)" class="px-2.5 py-1 text-xs font-bold rounded-lg text-gray-600 dark:text-slate-300 hover:text-teal-600 transition">ทั้งหมด (All)</button>
+                        </div>
+                    </div>
+
+                    <!-- Quick Summary Stat Badges -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+                        <div class="bg-white/60 dark:bg-slate-800/60 p-3 rounded-xl border border-gray-100 dark:border-slate-700">
+                            <div class="text-[10px] uppercase font-bold text-gray-400 dark:text-slate-400">ยอดรวมค่าใช้จ่าย</div>
+                            <div class="text-base sm:text-lg font-extrabold text-teal-600 dark:text-teal-400 mt-0.5" id="costStatTotal">฿0</div>
+                        </div>
+                        <div class="bg-white/60 dark:bg-slate-800/60 p-3 rounded-xl border border-gray-100 dark:border-slate-700">
+                            <div class="text-[10px] uppercase font-bold text-gray-400 dark:text-slate-400">เครื่องมือที่ค่าใช้จ่ายสูงสุด</div>
+                            <div class="text-xs sm:text-sm font-bold text-gray-800 dark:text-slate-200 truncate mt-0.5" id="costStatTopItem">-</div>
+                        </div>
+                        <div class="bg-white/60 dark:bg-slate-800/60 p-3 rounded-xl border border-gray-100 dark:border-slate-700">
+                            <div class="text-[10px] uppercase font-bold text-gray-400 dark:text-slate-400">จำนวนเครื่องมือที่มีประวัติ</div>
+                            <div class="text-base sm:text-lg font-extrabold text-blue-600 dark:text-blue-400 mt-0.5" id="costStatCount">0 เครื่อง</div>
+                        </div>
+                        <div class="bg-white/60 dark:bg-slate-800/60 p-3 rounded-xl border border-gray-100 dark:border-slate-700">
+                            <div class="text-[10px] uppercase font-bold text-gray-400 dark:text-slate-400">ค่าเฉลี่ยต่อเครื่อง</div>
+                            <div class="text-base sm:text-lg font-extrabold text-purple-600 dark:text-purple-400 mt-0.5" id="costStatAvg">฿0</div>
+                        </div>
+                    </div>
+
+                    <div id="costChartContainer" class="w-full relative overflow-x-auto min-h-[380px]">
+                        <canvas id="costChart"></canvas>
+                    </div>
                 </div>
             </div>
 
@@ -958,15 +1095,75 @@
                         <table class="w-full glass-table text-left border-collapse">
                             <thead>
                                 <tr class="text-xs font-bold tracking-wider uppercase border-b border-gray-200/50">
-                                    <th class="px-6 py-4">Equipment / Loc</th>
-                                    <th class="px-6 py-4">Type</th>
-                                    <th class="px-6 py-4">Date</th>
-                                    <th class="px-6 py-4 text-right">Cost</th>
-                                    <th class="px-6 py-4">Provider</th>
-                                    <th class="px-6 py-4">Reporter</th>
-                                    <th class="px-6 py-4 text-center">PO</th>
-                                    <th class="px-6 py-4 text-center">Status</th>
-                                    <th class="px-6 py-4 text-center">Action</th>
+                                    <th class="px-4 py-3.5">
+                                        <div class="flex items-center justify-between">
+                                            <span class="col-sort-btn" onclick="handleHeaderSort('equipment')" title="คลิกเพื่อเรียงลำดับ">
+                                                Equipment / Loc <span id="sortIcon_equipment" class="text-gray-400">↕</span>
+                                            </span>
+                                            <button type="button" class="col-filter-trigger" id="filterBtn_equipment" onclick="openColumnFilter(event, 'equipment', 'Equipment / Location')" title="กรองข้อมูล Equipment">
+                                                <i class="fa-solid fa-filter text-[10px]"></i>
+                                            </button>
+                                        </div>
+                                    </th>
+                                    <th class="px-4 py-3.5">
+                                        <div class="flex items-center justify-between">
+                                            <span class="col-sort-btn" onclick="handleHeaderSort('type')" title="คลิกเพื่อเรียงลำดับ">
+                                                Type <span id="sortIcon_type" class="text-gray-400">↕</span>
+                                            </span>
+                                            <button type="button" class="col-filter-trigger" id="filterBtn_type" onclick="openColumnFilter(event, 'type', 'Job Type')" title="กรองข้อมูล Type">
+                                                <i class="fa-solid fa-filter text-[10px]"></i>
+                                            </button>
+                                        </div>
+                                    </th>
+                                    <th class="px-4 py-3.5">
+                                        <div class="flex items-center justify-between">
+                                            <span class="col-sort-btn" onclick="handleHeaderSort('service_date')" title="คลิกเพื่อเรียงลำดับ">
+                                                Date <span id="sortIcon_service_date" class="text-gray-400">↕</span>
+                                            </span>
+                                            <button type="button" class="col-filter-trigger" id="filterBtn_service_date" onclick="openColumnFilter(event, 'service_date', 'Service Date')" title="กรองข้อมูล Date">
+                                                <i class="fa-solid fa-filter text-[10px]"></i>
+                                            </button>
+                                        </div>
+                                    </th>
+                                    <th class="px-4 py-3.5 text-right">
+                                        <div class="flex items-center justify-end">
+                                            <span class="col-sort-btn" onclick="handleHeaderSort('cost')" title="คลิกเพื่อเรียงลำดับ">
+                                                Cost <span id="sortIcon_cost" class="text-gray-400">↕</span>
+                                            </span>
+                                        </div>
+                                    </th>
+                                    <th class="px-4 py-3.5">
+                                        <div class="flex items-center justify-between">
+                                            <span class="col-sort-btn" onclick="handleHeaderSort('provider')" title="คลิกเพื่อเรียงลำดับ">
+                                                Provider <span id="sortIcon_provider" class="text-gray-400">↕</span>
+                                            </span>
+                                            <button type="button" class="col-filter-trigger" id="filterBtn_provider" onclick="openColumnFilter(event, 'provider', 'Provider')" title="กรองข้อมูล Provider">
+                                                <i class="fa-solid fa-filter text-[10px]"></i>
+                                            </button>
+                                        </div>
+                                    </th>
+                                    <th class="px-4 py-3.5">
+                                        <div class="flex items-center justify-between">
+                                            <span class="col-sort-btn" onclick="handleHeaderSort('reporter')" title="คลิกเพื่อเรียงลำดับ">
+                                                Reporter <span id="sortIcon_reporter" class="text-gray-400">↕</span>
+                                            </span>
+                                            <button type="button" class="col-filter-trigger" id="filterBtn_reporter" onclick="openColumnFilter(event, 'reporter', 'Reporter')" title="กรองข้อมูล Reporter">
+                                                <i class="fa-solid fa-filter text-[10px]"></i>
+                                            </button>
+                                        </div>
+                                    </th>
+                                    <th class="px-4 py-3.5 text-center">PO</th>
+                                    <th class="px-4 py-3.5 text-center">
+                                        <div class="flex items-center justify-center">
+                                            <span class="col-sort-btn" onclick="handleHeaderSort('status')" title="คลิกเพื่อเรียงลำดับ">
+                                                Status <span id="sortIcon_status" class="text-gray-400">↕</span>
+                                            </span>
+                                            <button type="button" class="col-filter-trigger" id="filterBtn_status" onclick="openColumnFilter(event, 'status', 'Status')" title="กรองข้อมูล Status">
+                                                <i class="fa-solid fa-filter text-[10px]"></i>
+                                            </button>
+                                        </div>
+                                    </th>
+                                    <th class="px-4 py-3.5 text-center">Action</th>
                                 </tr>
                             </thead>
                             <tbody id="recordsTableBody" class="text-sm"></tbody>
@@ -1087,9 +1284,21 @@
                 </div>
 
                 <div class="glass ios-card p-6">
-                    <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                        <span class="w-2 h-2 rounded-full bg-blue-500"></span> User Management
-                    </h3>
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+                        <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-blue-500"></span> User Management
+                        </h3>
+                        <div class="flex items-center gap-2">
+                            <div class="relative w-full sm:w-64">
+                                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+                                <input type="text" id="adminUserSearch" oninput="renderAdminUsers()" placeholder="ค้นหาผู้ใช้ (Email, Name, Role)..."
+                                    class="glass-input w-full pl-8 pr-7 py-1.5 text-xs rounded-lg">
+                                <button type="button" onclick="document.getElementById('adminUserSearch').value=''; renderAdminUsers();"
+                                    class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 text-xs hidden" id="btnClearUserSearch">✕</button>
+                            </div>
+                            <span id="adminUserCount" class="text-xs text-gray-500 font-medium whitespace-nowrap bg-gray-100 px-2 py-1 rounded-md"></span>
+                        </div>
+                    </div>
                     <div class="bg-white/50 p-4 rounded-xl mb-4 flex gap-3 flex-wrap items-end border border-white/60">
                         <div class="flex-1 min-w-[200px]">
                             <label class="text-[10px] font-bold text-gray-400 uppercase">Email</label>
@@ -1136,10 +1345,13 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="glass ios-card p-6">
-                        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                            <span class="w-2 h-2 rounded-full bg-green-500"></span> Locations
-                        </h3>
-                        <div class="flex gap-2 mb-4">
+                        <div class="flex items-center justify-between gap-2 mb-4">
+                            <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-green-500"></span> Locations
+                            </h3>
+                            <span id="adminLocCount" class="text-xs text-gray-500 font-medium whitespace-nowrap bg-gray-100 px-2 py-0.5 rounded-md"></span>
+                        </div>
+                        <div class="flex gap-2 mb-3">
                             <input type="hidden" id="adminLocId">
                             <input type="text" id="adminLocName" placeholder="New Location Name"
                                 class="glass-input w-full p-2 rounded-lg text-sm">
@@ -1147,6 +1359,13 @@
                                 class="ios-btn bg-blue-600 text-white px-4 py-2 text-sm shadow-md">Add</button>
                             <button onclick="adminCancelLocation()" id="btnCancelLoc"
                                 class="hidden text-gray-500 px-2 text-sm font-bold">✕</button>
+                        </div>
+                        <div class="relative mb-3">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+                            <input type="text" id="adminLocSearch" oninput="renderAdminLocations()" placeholder="ค้นหาสถานที่..."
+                                class="glass-input w-full pl-8 pr-7 py-1.5 text-xs rounded-lg">
+                            <button type="button" onclick="document.getElementById('adminLocSearch').value=''; renderAdminLocations();"
+                                class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 text-xs hidden" id="btnClearLocSearch">✕</button>
                         </div>
                         <div class="max-h-60 overflow-y-auto overflow-x-auto pr-1 custom-scroll">
                             <table class="w-full text-sm glass-table min-w-[320px]" id="adminLocationTable">
@@ -1156,10 +1375,13 @@
                     </div>
 
                     <div class="glass ios-card p-6">
-                        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                            <span class="w-2 h-2 rounded-full bg-orange-500"></span> Providers
-                        </h3>
-                        <div class="flex gap-2 mb-4">
+                        <div class="flex items-center justify-between gap-2 mb-4">
+                            <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-orange-500"></span> Providers
+                            </h3>
+                            <span id="adminCompCount" class="text-xs text-gray-500 font-medium whitespace-nowrap bg-gray-100 px-2 py-0.5 rounded-md"></span>
+                        </div>
+                        <div class="flex gap-2 mb-3">
                             <input type="hidden" id="adminCompOldName">
                             <input type="text" id="adminCompName" placeholder="New Provider Name"
                                 class="glass-input w-full p-2 rounded-lg text-sm">
@@ -1167,6 +1389,13 @@
                                 class="ios-btn bg-blue-600 text-white px-4 py-2 text-sm shadow-md">Add</button>
                             <button onclick="adminCancelCompany()" id="btnCancelComp"
                                 class="hidden text-gray-500 px-2 text-sm font-bold">✕</button>
+                        </div>
+                        <div class="relative mb-3">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+                            <input type="text" id="adminCompSearch" oninput="renderAdminCompanies()" placeholder="ค้นหาผู้ให้บริการ / บริษัท..."
+                                class="glass-input w-full pl-8 pr-7 py-1.5 text-xs rounded-lg">
+                            <button type="button" onclick="document.getElementById('adminCompSearch').value=''; renderAdminCompanies();"
+                                class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 text-xs hidden" id="btnClearCompSearch">✕</button>
                         </div>
                         <div class="max-h-60 overflow-y-auto overflow-x-auto pr-1 custom-scroll">
                             <table class="w-full text-sm glass-table min-w-[320px]" id="adminCompanyTable">
@@ -1177,9 +1406,21 @@
                 </div>
 
                 <div class="glass ios-card p-6">
-                    <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                        <span class="w-2 h-2 rounded-full bg-pink-500"></span> Equipment Inventory
-                    </h3>
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+                        <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-pink-500"></span> Equipment Inventory
+                        </h3>
+                        <div class="flex items-center gap-2">
+                            <div class="relative w-full sm:w-64">
+                                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+                                <input type="text" id="adminEquipSearch" oninput="renderAdminEquipment()" placeholder="ค้นหาเครื่องมือ (ชื่อ, รุ่น, สถานที่)..."
+                                    class="glass-input w-full pl-8 pr-7 py-1.5 text-xs rounded-lg">
+                                <button type="button" onclick="document.getElementById('adminEquipSearch').value=''; renderAdminEquipment();"
+                                    class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 text-xs hidden" id="btnClearEquipSearch">✕</button>
+                            </div>
+                            <span id="adminEquipCount" class="text-xs text-gray-500 font-medium whitespace-nowrap bg-gray-100 px-2 py-1 rounded-md"></span>
+                        </div>
+                    </div>
                     <div class="bg-white/50 p-4 rounded-xl mb-4 flex gap-3 flex-wrap items-end border border-white/60">
                         <input type="hidden" id="adminEquipId">
                         <div class="flex-1 min-w-[200px]">
@@ -1218,10 +1459,13 @@
                 </div>
 
                 <div class="glass ios-card p-6">
-                    <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                        <span class="w-2 h-2 rounded-full bg-teal-500"></span> Reporters
-                    </h3>
-                    <div class="flex gap-2 mb-4 items-end">
+                    <div class="flex items-center justify-between gap-2 mb-4">
+                        <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-teal-500"></span> Reporters
+                        </h3>
+                        <span id="adminReporterCount" class="text-xs text-gray-500 font-medium whitespace-nowrap bg-gray-100 px-2 py-0.5 rounded-md"></span>
+                    </div>
+                    <div class="flex gap-2 mb-3 items-end">
                         <div class="flex-1">
                             <input type="hidden" id="adminReporterOldName">
                             <label class="text-[10px] font-bold text-gray-400 uppercase ml-1">Reporter Name</label>
@@ -1232,6 +1476,13 @@
                             class="ios-btn bg-blue-600 text-white px-6 py-2 text-sm shadow-md h-[38px]">Add</button>
                         <button onclick="adminCancelReporter()" id="btnCancelReporter"
                             class="hidden text-gray-500 px-4 py-2 text-sm hover:bg-gray-200 rounded-lg h-[38px]">Cancel</button>
+                    </div>
+                    <div class="relative mb-3">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+                        <input type="text" id="adminReporterSearch" oninput="renderAdminReporters()" placeholder="ค้นหาผู้รายงาน..."
+                            class="glass-input w-full pl-8 pr-7 py-1.5 text-xs rounded-lg">
+                        <button type="button" onclick="document.getElementById('adminReporterSearch').value=''; renderAdminReporters();"
+                            class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 text-xs hidden" id="btnClearReporterSearch">✕</button>
                     </div>
                     <div class="max-h-60 overflow-y-auto overflow-x-auto custom-scroll">
                         <table class="w-full text-sm glass-table min-w-[320px]" id="adminReporterTable">
@@ -1360,6 +1611,46 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Change Password Modal -->
+    <div id="changePasswordModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="glass ios-card rounded-3xl shadow-2xl w-[95%] max-w-md p-6 space-y-4">
+            <div class="flex justify-between items-center border-b border-gray-200/50 dark:border-slate-700/50 pb-3">
+                <h3 class="text-base font-bold text-gray-800 dark:text-slate-100 flex items-center gap-2">
+                    <i class="fa-solid fa-key text-teal-600"></i> เปลี่ยนรหัสผ่าน (Change Password)
+                </h3>
+                <button type="button" onclick="closeChangePasswordModal()" class="w-8 h-8 rounded-full bg-gray-100 dark:bg-slate-700 flex items-center justify-center text-gray-500 hover:text-red-500 text-base font-bold">✕</button>
+            </div>
+            <form onsubmit="submitChangePassword(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="font-bold text-gray-600 dark:text-slate-300">รหัสผ่านเดิม (Current Password)</label>
+                    <div class="relative flex items-center mt-1">
+                        <input type="password" id="cpOldPassword" required class="w-full glass-input p-2.5 rounded-xl pr-9 text-xs" autocomplete="current-password" placeholder="กรอกรหัสผ่านปัจจุบัน">
+                        <i class="fa-solid fa-eye absolute right-3 text-gray-400 cursor-pointer" onclick="toggleCpPasswordVisibility('cpOldPassword', this)"></i>
+                    </div>
+                </div>
+                <div>
+                    <label class="font-bold text-gray-600 dark:text-slate-300">รหัสผ่านใหม่ (New Password)</label>
+                    <div class="relative flex items-center mt-1">
+                        <input type="password" id="cpNewPassword" required minlength="4" class="w-full glass-input p-2.5 rounded-xl pr-9 text-xs" autocomplete="new-password" placeholder="ตั้งรหัสผ่านใหม่ (อย่างน้อย 4 ตัว)">
+                        <i class="fa-solid fa-eye absolute right-3 text-gray-400 cursor-pointer" onclick="toggleCpPasswordVisibility('cpNewPassword', this)"></i>
+                    </div>
+                    <span class="text-[10px] text-gray-400 mt-1 block">ความยาวอย่างน้อย 4 ตัวอักษร</span>
+                </div>
+                <div>
+                    <label class="font-bold text-gray-600 dark:text-slate-300">ยืนยันรหัสผ่านใหม่ (Confirm New Password)</label>
+                    <div class="relative flex items-center mt-1">
+                        <input type="password" id="cpConfirmPassword" required minlength="4" class="w-full glass-input p-2.5 rounded-xl pr-9 text-xs" autocomplete="new-password" placeholder="กรอกรหัสผ่านใหม่อีกครั้ง">
+                        <i class="fa-solid fa-eye absolute right-3 text-gray-400 cursor-pointer" onclick="toggleCpPasswordVisibility('cpConfirmPassword', this)"></i>
+                    </div>
+                </div>
+                <div class="flex justify-end gap-2 pt-3 border-t border-gray-200/50 dark:border-slate-700/50">
+                    <button type="button" onclick="closeChangePasswordModal()" class="px-3.5 py-1.5 rounded-xl text-xs font-semibold text-gray-500 hover:bg-gray-100 dark:hover:bg-slate-700 transition">ยกเลิก</button>
+                    <button type="submit" class="ios-btn bg-teal-600 hover:bg-teal-700 text-white px-4 py-1.5 text-xs font-bold rounded-xl shadow">บันทึกรหัสผ่านใหม่</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -1492,6 +1783,20 @@
         let equipment = _backupData.equipment || [];
         let poFilesDb = {};
 
+        // Early sync from LabStateBridge if present
+        if (typeof LabStateBridge !== 'undefined') {
+            try {
+                const _initState = LabStateBridge.getState() || {};
+                if (Array.isArray(_initState.users) && _initState.users.length > 0) users = _initState.users;
+                if (Array.isArray(_initState.records)) records = _initState.records;
+                if (Array.isArray(_initState.technicians) && _initState.technicians.length > 0) technicians = _initState.technicians;
+                if (Array.isArray(_initState.reporters) && _initState.reporters.length > 0) reporters = _initState.reporters;
+                if (Array.isArray(_initState.equipments) && _initState.equipments.length > 0) equipment = _initState.equipments;
+                else if (Array.isArray(_initState.equipment) && _initState.equipment.length > 0) equipment = _initState.equipment;
+                if (Array.isArray(_initState.buildings) && _initState.buildings.length > 0) buildings = _initState.buildings;
+            } catch (e) { console.warn("[CarePlus] early state init notice:", e); }
+        }
+
         const IDB_NAME = 'CarePlusStorage';
         const IDB_STORE = 'poFiles';
         let idbInst = null;
@@ -1584,21 +1889,43 @@
         const rowsPerPage = 15;
         let filteredRecords = [];
 
+        function getEquipmentModel(r) {
+            if (r && r.model && r.model !== '-') return r.model;
+            const eqName = r?.equipment_name || (typeof r === 'string' ? r : '');
+            const eqId = r?.equipment_id || r?.id;
+            if (Array.isArray(equipment)) {
+                const match = equipment.find(e => (e && e.name === eqName) || (e && String(e.id) === String(eqId)));
+                if (match && match.model && match.model !== '-') return match.model;
+            }
+            return '';
+        }
+
         function loadCarePlusState() {
-            const state = LabStateBridge.getState();
-            if (state.users) users = state.users;
-            if (state.records) records = state.records;
-            if (state.technicians) technicians = state.technicians;
-            if (state.reporters) reporters = state.reporters;
-            if (state.equipments) equipment = state.equipments;
-            if (state.buildings) buildings = state.buildings;
-            if (state.poFilesDb) {
-                poFilesDb = { ...poFilesDb, ...state.poFilesDb }; // Fallback
+            if (typeof LabStateBridge === 'undefined') return;
+            try {
+                const state = LabStateBridge.getState() || {};
+                if (Array.isArray(state.users) && state.users.length > 0) users = state.users;
+                if (Array.isArray(state.records)) records = state.records;
+                if (Array.isArray(state.technicians) && state.technicians.length > 0) technicians = state.technicians;
+                if (Array.isArray(state.reporters) && state.reporters.length > 0) reporters = state.reporters;
+                if (Array.isArray(state.equipments) && state.equipments.length > 0) equipment = state.equipments;
+                else if (Array.isArray(state.equipment) && state.equipment.length > 0) equipment = state.equipment;
+                if (Array.isArray(state.buildings) && state.buildings.length > 0) buildings = state.buildings;
+                if (Array.isArray(state.auditLogs)) {
+                    localStorage.setItem('carePlusAuditLog', JSON.stringify(state.auditLogs));
+                }
+                if (state.poFilesDb) {
+                    poFilesDb = { ...poFilesDb, ...state.poFilesDb }; // Fallback
+                }
+            } catch (err) {
+                console.warn("[CarePlus] loadCarePlusState notice:", err);
             }
         }
 
         function saveCarePlusState() {
+            if (typeof LabStateBridge === 'undefined') return;
             const prevState = LabStateBridge.getState() || {};
+            const auditList = getCarePlusAuditLog();
             LabStateBridge.saveState({
                 ...prevState,
                 users: users,
@@ -1606,11 +1933,17 @@
                 technicians: technicians,
                 reporters: reporters,
                 equipments: equipment,
-                buildings: buildings
+                equipment: equipment,
+                buildings: buildings,
+                auditLogs: auditList
             });
+            if (typeof LabStateBridge.flushSync === 'function') {
+                LabStateBridge.flushSync();
+            }
         }
 
         window.addEventListener('DOMContentLoaded', async () => {
+            loadCarePlusState(); // Load state BEFORE initializing UI
             const activeUser = LabAuth.getCurrentUser();
             if (activeUser) {
                 currentUser = { ...activeUser, email: activeUser.username };
@@ -1635,6 +1968,7 @@
                     if (typeof loadRecords === 'function') loadRecords();
                     if (typeof updateDashboardCards === 'function') updateDashboardCards();
                     if (typeof renderCharts === 'function') renderCharts();
+                    if (typeof renderCarePlusAudit === 'function') renderCarePlusAudit();
                 }
             });
 
@@ -1657,6 +1991,7 @@
                 if (typeof currentUser !== 'undefined' && currentUser) {
                     loadSettings(); // Updates all admin tables
                     loadRecords(); // Updates main table
+                    if (typeof renderCarePlusAudit === 'function') renderCarePlusAudit();
                 }
                 const activeUser = LabAuth.getCurrentUser();
                 if (!activeUser && currentUser) {
@@ -1829,6 +2164,8 @@ function openUpcomingModal() {
                 content.innerHTML = upcomingRecords.map(r => {
                     const d = new Date(r.type === 'calibration' ? r.next_service_date : r.service_date);
                     const dateStr = d.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
+                    const model = getEquipmentModel(r);
+                    const modelBadge = model ? `<span class="inline-flex items-center gap-1 text-[10px] font-semibold text-teal-700 bg-teal-50 dark:bg-teal-900/30 dark:text-teal-300 px-2 py-0.5 rounded border border-teal-200 dark:border-teal-800">🏷️ รุ่น: ${escapeHtml(model)}</span>` : '';
 
                     let typeIcon = '🔧'; let typeColor = 'text-orange-600 bg-orange-50 border-orange-200';
                     if (r.type === 'calibration') { typeIcon = '⚖️'; typeColor = 'text-purple-600 bg-purple-50 border-purple-200'; }
@@ -1843,8 +2180,11 @@ function openUpcomingModal() {
                 <div class="flex justify-between items-start">
                     <div>
                         <div class="text-xs font-bold text-red-500 mb-1 flex items-center gap-1">🗓️ ${dateStr}</div>
-                        <h4 class="font-bold text-gray-800 text-base">${r.equipment_name}</h4>
-                        <div class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mt-1">📍 ${r.building || 'N/A'}</div>
+                        <h4 class="font-bold text-gray-800 text-base">${escapeHtml(r.equipment_name)}</h4>
+                        <div class="flex flex-wrap items-center gap-2 mt-1">
+                            ${modelBadge}
+                            <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">📍 ${escapeHtml(r.building || 'N/A')}</span>
+                        </div>
                     </div>
                     <div class="flex flex-col items-end gap-1.5">
                         <span class="px-2 py-1 rounded border ${typeColor} text-[10px] font-bold uppercase shadow-sm">
@@ -1866,21 +2206,29 @@ function openUpcomingModal() {
         }
         function handleLogin(e) {
             e.preventDefault();
-            const rawUser = document.getElementById('loginEmail').value.trim();
+            const uInput = document.getElementById('loginEmail');
+            const pInput = document.getElementById('loginPassword');
+            const rawUser = uInput.value.trim();
             const email = rawUser.includes('@') ? rawUser : `${rawUser}@lab.com`;
-            const pwd = document.getElementById('loginPassword').value;
+            const pwd = pInput.value;
+
+            LabSmart.clearInlineError(uInput);
+            LabSmart.clearInlineError(pInput);
+
             let authRes = LabAuth.login(email, pwd);
             if (!authRes.success && !rawUser.includes('@')) {
                 authRes = LabAuth.login(rawUser, pwd);
             }
 
             if (authRes.success) {
+                loadCarePlusState();
                 currentUser = { ...authRes.user, email: authRes.user.username };
                 initApp();
                 addCarePlusAudit('Login', `เข้าสู่ระบบ Care+ โดย ${authRes.user.name}`);
                 LabAlert.toast('success', `ยินดีต้อนรับคุณ ${authRes.user.name}`);
             } else {
-                LabAlert.error('เข้าสู่ระบบไม่สำเร็จ', authRes.message);
+                LabSmart.setInlineError(pInput, authRes.message);
+                LabAlert.toast('error', authRes.message, 2500);
             }
         }
 
@@ -1901,6 +2249,65 @@ function openUpcomingModal() {
                     location.reload();
                 }
             });
+        }
+
+        function openChangePasswordModal() {
+            if (!currentUser && !LabAuth.getCurrentUser()) {
+                return LabAlert.error('กรุณาเข้าสู่ระบบ', 'ต้องเข้าสู่ระบบก่อนเปลี่ยนรหัสผ่าน');
+            }
+            const oldInp = document.getElementById('cpOldPassword');
+            const newInp = document.getElementById('cpNewPassword');
+            const confInp = document.getElementById('cpConfirmPassword');
+            if (oldInp) oldInp.value = '';
+            if (newInp) newInp.value = '';
+            if (confInp) confInp.value = '';
+            document.getElementById('changePasswordModal')?.classList.remove('hidden');
+        }
+
+        function closeChangePasswordModal() {
+            document.getElementById('changePasswordModal')?.classList.add('hidden');
+        }
+
+        function toggleCpPasswordVisibility(inputId, iconEl) {
+            const inp = document.getElementById(inputId);
+            if (!inp) return;
+            if (inp.type === 'password') {
+                inp.type = 'text';
+                iconEl.classList.remove('fa-eye');
+                iconEl.classList.add('fa-eye-slash');
+            } else {
+                inp.type = 'password';
+                iconEl.classList.remove('fa-eye-slash');
+                iconEl.classList.add('fa-eye');
+            }
+        }
+
+        async function submitChangePassword(e) {
+            if (e) e.preventDefault();
+            const oldPass = document.getElementById('cpOldPassword')?.value;
+            const newPass = document.getElementById('cpNewPassword')?.value;
+            const confirmPass = document.getElementById('cpConfirmPassword')?.value;
+
+            if (!oldPass || !newPass || !confirmPass) {
+                return LabAlert.error('ข้อมูลไม่ครบถ้วน', 'กรุณากรอกข้อมูลให้ครบทุกช่อง');
+            }
+            if (newPass !== confirmPass) {
+                return LabAlert.error('รหัสผ่านไม่ตรงกัน', 'กรุณากรอกรหัสผ่านใหม่และการยืนยันให้ตรงกัน');
+            }
+            if (newPass.length < 4) {
+                return LabAlert.error('รหัสผ่านสั้นเกินไป', 'รหัสผ่านใหม่ต้องมีความยาวอย่างน้อย 4 ตัวอักษร');
+            }
+            if (oldPass === newPass) {
+                return LabAlert.error('รหัสผ่านซ้ำ', 'รหัสผ่านใหม่ต้องไม่เหมือนกับรหัสผ่านเดิม');
+            }
+
+            const res = await LabAuth.changePassword(oldPass, newPass);
+            if (res && res.success) {
+                closeChangePasswordModal();
+                LabAlert.toast('success', 'เปลี่ยนรหัสผ่านเรียบร้อยแล้ว');
+            } else {
+                LabAlert.error('เกิดข้อผิดพลาด', (res && res.message) || 'ไม่สามารถเปลี่ยนรหัสผ่านได้');
+            }
         }
 
         function showPage(page) {
@@ -2046,10 +2453,12 @@ function loadDashboard() {
                 items.slice(0, 3).forEach(i => {
                     const bgClass = i.type === 'repair' ? 'bg-repair' : (i.type === 'pm' ? 'bg-pm' : 'bg-calib');
                     const opacity = i.calendar_status === 'complete' ? 'opacity-50' : 'opacity-100';
+                    const model = getEquipmentModel(i);
+                    const modelSnippet = model ? ` <span class="opacity-90 font-normal">(${escapeHtml(model)})</span>` : '';
 
                     html += `<div class="cal-event-chip ${bgClass} ${opacity} whitespace-normal break-words leading-tight py-0.5 sm:py-1 px-1 sm:px-1.5 mb-0.5 sm:mb-1 border border-black/5 rounded text-[9px] sm:text-[11px] shadow-xs cursor-pointer">
-                        <span class="block truncate font-semibold">${i.equipment_name}</span>
-                        <span class="hidden sm:block text-[8px] sm:text-[9px] opacity-90 mt-0.5 border-t border-white/20 pt-0.5 truncate">📍 ${i.building || 'N/A'}</span>
+                        <span class="block truncate font-semibold">${escapeHtml(i.equipment_name)}${modelSnippet}</span>
+                        <span class="hidden sm:block text-[8px] sm:text-[9px] opacity-90 mt-0.5 border-t border-white/20 pt-0.5 truncate">${model ? '🏷️ ' + escapeHtml(model) + ' | ' : ''}📍 ${escapeHtml(i.building || 'N/A')}</span>
                      </div>`;
                 });
 
@@ -2078,6 +2487,7 @@ function loadDashboard() {
                     group.items.forEach(i => {
                         const isComplete = i.calendar_status === 'complete';
                         const statusColor = isComplete ? 'text-green-600 bg-green-50 border-green-200' : 'text-yellow-600 bg-yellow-50 border-yellow-200';
+                        const model = getEquipmentModel(i);
 
                         let typeIcon = '🔧'; let typeText = 'text-orange-600';
                         if (i.type === 'calibration') { typeIcon = '⚖️'; typeText = 'text-purple-600'; }
@@ -2088,8 +2498,11 @@ function loadDashboard() {
                         <div class="flex items-center gap-3 overflow-hidden">
                             <div class="text-xl ${typeText} opacity-80">${typeIcon}</div>
                             <div>
-                                <div class="font-bold text-gray-800 text-sm truncate">${i.equipment_name}</div>
-                                <div class="text-[10px] text-gray-500 font-medium">📍 ${i.building || 'N/A'} | 🏢 ${i.technicians[0] || '-'}</div>
+                                <div class="font-bold text-gray-800 text-sm flex flex-wrap items-center gap-1.5">
+                                    <span>${escapeHtml(i.equipment_name)}</span>
+                                    ${model ? `<span class="text-[10px] font-semibold text-teal-700 bg-teal-50 px-1.5 py-0.2 rounded border border-teal-200">🏷️ ${escapeHtml(model)}</span>` : ''}
+                                </div>
+                                <div class="text-[10px] text-gray-500 font-medium">📍 ${escapeHtml(i.building || 'N/A')} | 🏢 ${escapeHtml(i.technicians[0] || '-')}</div>
                             </div>
                         </div>
                         <div class="text-[10px] font-bold uppercase tracking-wide border px-2 py-1 rounded-md ${statusColor}">
@@ -2172,6 +2585,8 @@ function loadDashboard() {
             </button>` :
                     `<span class="text-[10px] text-gray-400 italic flex items-center gap-1">🚫 No Doc</span>`;
 
+                const model = getEquipmentModel(i);
+
                 return `
         <div class="bg-white rounded-2xl p-0 shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-all relative group mb-3 last:mb-0">
             <div class="absolute left-0 top-0 bottom-0 w-1.5 ${statusColor}"></div>
@@ -2179,10 +2594,11 @@ function loadDashboard() {
             <div class="p-4 pl-5">
                 <div class="flex justify-between items-start mb-3">
                     <div class="pr-2">
-                        <h4 class="font-bold text-gray-800 text-base leading-tight">${i.equipment_name}</h4>
-                        <div class="flex items-center gap-2 mt-1">
+                        <h4 class="font-bold text-gray-800 text-base leading-tight">${escapeHtml(i.equipment_name)}</h4>
+                        <div class="flex flex-wrap items-center gap-1.5 mt-1">
+                            ${model ? `<span class="text-[10px] font-bold text-teal-700 bg-teal-50 border border-teal-200 px-1.5 py-0.5 rounded">🏷️ รุ่น: ${escapeHtml(model)}</span>` : ''}
                             <span class="text-[10px] font-bold uppercase tracking-wider text-gray-500 flex items-center gap-1 bg-gray-50 px-1.5 py-0.5 rounded">
-                                📍 ${i.building || 'N/A'}
+                                📍 ${escapeHtml(i.building || 'N/A')}
                             </span>
                         </div>
                     </div>
@@ -2356,102 +2772,410 @@ function renderCharts(data) {
                     plugins: { datalabels: commonLabelOptions }
                 }
             });
-            if (charts.cost) charts.cost.destroy();
+            // --- Maintenance Cost by Equipment (Horizontal Bar Chart) ---
+            if (charts.cost) {
+                charts.cost.destroy();
+                charts.cost = null;
+            }
 
-            const equipLabels = [...new Set(sourceData.map(r => r.equipment_name))];
+            const equipCostMap = new Map();
+            sourceData.forEach(r => {
+                const eqName = r.equipment_name || 'Unknown';
+                const cost = parseFloat(r.maintenance_cost) || 0;
+                const type = (r.type || '').toLowerCase();
 
-            const costRepair = equipLabels.map(eq => {
-                return sourceData.filter(r => r.equipment_name === eq && r.type === 'repair')
-                    .reduce((sum, r) => sum + (parseFloat(r.maintenance_cost) || 0), 0);
-            });
-            const costCalib = equipLabels.map(eq => {
-                return sourceData.filter(r => r.equipment_name === eq && r.type === 'calibration')
-                    .reduce((sum, r) => sum + (parseFloat(r.maintenance_cost) || 0), 0);
-            });
-            const costPM = equipLabels.map(eq => {
-                return sourceData.filter(r => r.equipment_name === eq && r.type === 'pm')
-                    .reduce((sum, r) => sum + (parseFloat(r.maintenance_cost) || 0), 0);
-            });
-            const costSpare = equipLabels.map(eq => {
-                return sourceData.filter(r => r.equipment_name === eq && r.type === 'spare_parts')
-                    .reduce((sum, r) => sum + (parseFloat(r.maintenance_cost) || 0), 0);
+                if (!equipCostMap.has(eqName)) {
+                    equipCostMap.set(eqName, {
+                        name: eqName,
+                        model: getEquipmentModel(r),
+                        repair: 0,
+                        calibration: 0,
+                        pm: 0,
+                        spare_parts: 0,
+                        total: 0
+                    });
+                }
+                const entry = equipCostMap.get(eqName);
+                if (type === 'repair') entry.repair += cost;
+                else if (type === 'calibration') entry.calibration += cost;
+                else if (type === 'pm') entry.pm += cost;
+                else if (type === 'spare_parts' || type === 'spare parts') entry.spare_parts += cost;
+                entry.total += cost;
             });
 
-            const wrapEquipLabels = equipLabels.map(name => name.split(' '));
+            // Sorted descending by total cost
+            let equipCostList = Array.from(equipCostMap.values())
+                .filter(item => item.total > 0)
+                .sort((a, b) => b.total - a.total);
 
-            charts.cost = new Chart(document.getElementById('costChart'), {
-                type: 'bar',
-                data: {
-                    labels: wrapEquipLabels,
-                    datasets: [
-                        { label: 'Repair', data: costRepair, backgroundColor: '#fb923c', borderRadius: { topLeft: 0, topRight: 0, bottomLeft: 4, bottomRight: 4 } },
-                        { label: 'Calibration', data: costCalib, backgroundColor: '#c084fc', borderRadius: 0 },
-                        { label: 'PM', data: costPM, backgroundColor: '#14b8a6', borderRadius: 0 },
-                        { label: 'Spare parts', data: costSpare, backgroundColor: '#ec4899', borderRadius: { topLeft: 4, topRight: 4, bottomLeft: 0, bottomRight: 0 } }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        x: {
-                            stacked: true, // ทำให้กราฟซ้อนกันในแกน X
-                            grid: { display: false },
-                            ticks: { font: { size: 10 } }
-                        },
-                        y: {
-                            stacked: true, // ทำให้กราฟซ้อนกันในแกน Y
-                            beginAtZero: true,
-                            grid: { color: 'rgba(0,0,0,0.05)' },
-                            ticks: { callback: (value) => '฿' + value.toLocaleString() } // ใส่เครื่องหมายบาท
-                        }
+            // Summary statistics cards
+            const totalCostSum = equipCostList.reduce((acc, curr) => acc + curr.total, 0);
+            const totalEquipCount = equipCostList.length;
+            const topItem = equipCostList.length > 0 ? `${equipCostList[0].name} (฿${formatCurrency(equipCostList[0].total)})` : '-';
+            const avgCost = totalEquipCount > 0 ? totalCostSum / totalEquipCount : 0;
+
+            const statTotalEl = document.getElementById('costStatTotal');
+            const statTopEl = document.getElementById('costStatTopItem');
+            const statCountEl = document.getElementById('costStatCount');
+            const statAvgEl = document.getElementById('costStatAvg');
+
+            if (statTotalEl) statTotalEl.textContent = '฿' + formatCurrency(totalCostSum);
+            if (statTopEl) statTopEl.textContent = topItem;
+            if (statCountEl) statCountEl.textContent = totalEquipCount + ' เครื่อง';
+            if (statAvgEl) statAvgEl.textContent = '฿' + formatCurrency(Math.round(avgCost));
+
+            let displayList = equipCostList;
+            if (typeof costChartLimit === 'number' && costChartLimit > 0 && equipCostList.length > costChartLimit) {
+                displayList = equipCostList.slice(0, costChartLimit);
+            }
+
+            const chartContainer = document.getElementById('costChartContainer');
+            if (chartContainer) {
+                const targetHeight = Math.max(340, displayList.length * 36 + 60);
+                chartContainer.style.height = `${targetHeight}px`;
+            }
+
+            const labels = displayList.map(item => {
+                return (item.model && item.model !== '-') ? `${item.name} (${item.model})` : item.name;
+            });
+
+            const costRepair = displayList.map(item => item.repair);
+            const costCalib = displayList.map(item => item.calibration);
+            const costPM = displayList.map(item => item.pm);
+            const costSpare = displayList.map(item => item.spare_parts);
+
+            const costCanvas = document.getElementById('costChart');
+            if (costCanvas) {
+                charts.cost = new Chart(costCanvas, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            { label: 'Repair', data: costRepair, backgroundColor: '#fb923c', borderRadius: 4 },
+                            { label: 'Calibration', data: costCalib, backgroundColor: '#c084fc', borderRadius: 4 },
+                            { label: 'PM', data: costPM, backgroundColor: '#14b8a6', borderRadius: 4 },
+                            { label: 'Spare parts', data: costSpare, backgroundColor: '#ec4899', borderRadius: 4 }
+                        ]
                     },
-                    animation: { duration: 500 },
-                    plugins: {
-                        tooltip: {
-                            callbacks: {
-                                label: function (context) {
-                                    let label = context.dataset.label || '';
-                                    if (label) label += ': ';
-                                    if (context.parsed.y !== null) {
-                                        label += '฿' + context.parsed.y.toLocaleString();
-                                    }
-                                    return label;
+                    options: {
+                        indexAxis: 'y', // Horizontal bar chart
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                stacked: true,
+                                beginAtZero: true,
+                                grid: { color: 'rgba(0,0,0,0.06)' },
+                                ticks: {
+                                    callback: (val) => '฿' + (val >= 1000 ? (val / 1000).toLocaleString() + 'k' : val)
+                                }
+                            },
+                            y: {
+                                stacked: true,
+                                grid: { display: false },
+                                ticks: {
+                                    font: { size: 11, weight: '600' },
+                                    autoSkip: false
                                 }
                             }
                         },
-                        datalabels: {
-                            color: '#1f2937', // ปรับให้สีอักษรเข้มขึ้น
-                            textStrokeColor: '#ffffff', // ขอบสีขาวช่วยให้ตัวเลขชัดเจน
-                            textStrokeWidth: 3,
-                            font: { weight: 'bold', size: 10 },
-                            formatter: (value) => {
-                                if (value === 0) return '';
-                                return value >= 1000 ? (value / 1000).toFixed(1).replace(/\.0$/, '') + 'k' : value;
+                        animation: { duration: 400 },
+                        plugins: {
+                            tooltip: {
+                                callbacks: {
+                                    label: function (ctx) {
+                                        const val = ctx.parsed.x || 0;
+                                        if (val <= 0) return null;
+                                        return `${ctx.dataset.label}: ฿${val.toLocaleString()}`;
+                                    },
+                                    afterBody: function (items) {
+                                        if (!items || items.length === 0) return '';
+                                        const idx = items[0].dataIndex;
+                                        const item = displayList[idx];
+                                        return item ? `--------------------\nยอดรวม: ฿${item.total.toLocaleString()}` : '';
+                                    }
+                                }
                             },
-                            anchor: 'center',
-                            align: 'center'
+                            datalabels: {
+                                display: function (ctx) {
+                                    const val = ctx.dataset.data[ctx.dataIndex] || 0;
+                                    return val >= 10000;
+                                },
+                                color: '#ffffff',
+                                font: { weight: 'bold', size: 9 },
+                                formatter: (val) => val >= 1000 ? (val / 1000).toFixed(0) + 'k' : val,
+                                anchor: 'center',
+                                align: 'center'
+                            }
                         }
                     }
+                });
+            }
+        }
+
+        let costChartLimit = 10;
+        function setCostChartLimit(limit) {
+            costChartLimit = limit;
+            const btn10 = document.getElementById('btnCostLimit10');
+            const btn20 = document.getElementById('btnCostLimit20');
+            const btnAll = document.getElementById('btnCostLimitAll');
+
+            const activeClasses = ['bg-white', 'dark:bg-slate-700', 'text-teal-600', 'dark:text-teal-400', 'shadow-sm'];
+            const inactiveClasses = ['text-gray-600', 'dark:text-slate-300'];
+
+            [btn10, btn20, btnAll].forEach(b => {
+                if (!b) return;
+                b.classList.remove(...activeClasses);
+                b.classList.add(...inactiveClasses);
+            });
+
+            const activeBtn = limit === 10 ? btn10 : (limit === 20 ? btn20 : btnAll);
+            if (activeBtn) {
+                activeBtn.classList.remove(...inactiveClasses);
+                activeBtn.classList.add(...activeClasses);
+            }
+
+            renderCharts();
+        }
+
+        let recordsSortColumn = null;
+        let recordsSortDirection = 'asc';
+        let recordsColumnFilters = {};
+        let activeFilterColumn = null;
+        let tempColumnFilterSelected = [];
+
+        function getRecordColumnValue(r, col) {
+            if (!r) return '';
+            if (col === 'equipment') return r.equipment_name || '';
+            if (col === 'type') return r.type || '';
+            if (col === 'service_date') return r.service_date || '';
+            if (col === 'cost') return parseFloat(r.maintenance_cost) || 0;
+            if (col === 'provider') return (r.technicians && r.technicians[0]) ? r.technicians[0] : (r.technician || '-');
+            if (col === 'reporter') return r.reporter || '-';
+            if (col === 'status') return r.calendar_status || 'pending';
+            return '';
+        }
+
+        function handleHeaderSort(colKey) {
+            if (recordsSortColumn === colKey) {
+                recordsSortDirection = recordsSortDirection === 'asc' ? 'desc' : 'asc';
+            } else {
+                recordsSortColumn = colKey;
+                recordsSortDirection = (colKey === 'cost' || colKey === 'service_date') ? 'desc' : 'asc';
+            }
+            updateSortHeaderIcons();
+            applyFilters();
+        }
+
+        function updateSortHeaderIcons() {
+            const cols = ['equipment', 'type', 'service_date', 'cost', 'provider', 'reporter', 'status'];
+            cols.forEach(c => {
+                const icon = document.getElementById(`sortIcon_${c}`);
+                if (!icon) return;
+                if (recordsSortColumn === c) {
+                    icon.textContent = recordsSortDirection === 'asc' ? '▲' : '▼';
+                    icon.className = 'text-teal-600 font-bold';
+                } else {
+                    icon.textContent = '↕';
+                    icon.className = 'text-gray-400 font-normal';
                 }
             });
         }
+
+        function getColumnDistinctValues(colKey) {
+            const valMap = new Map();
+            records.forEach(r => {
+                const val = getRecordColumnValue(r, colKey);
+                if (val !== undefined && val !== null && val !== '') {
+                    valMap.set(String(val), (valMap.get(String(val)) || 0) + 1);
+                }
+            });
+            return Array.from(valMap.entries()).sort((a, b) => a[0].localeCompare(b[0], 'th'));
+        }
+
+        function openColumnFilter(event, colKey, colTitle) {
+            if (event) {
+                event.stopPropagation();
+                event.preventDefault();
+            }
+            activeFilterColumn = colKey;
+            const popover = document.getElementById('columnFilterPopover');
+            if (!popover) return;
+
+            document.getElementById('colFilterTitle').textContent = colTitle || colKey;
+            document.getElementById('colFilterSearch').value = '';
+
+            const currentSelected = recordsColumnFilters[colKey];
+            const allDistinct = getColumnDistinctValues(colKey).map(x => x[0]);
+            tempColumnFilterSelected = Array.isArray(currentSelected) && currentSelected.length > 0 ? [...currentSelected] : [...allDistinct];
+
+            const btn = event?.currentTarget || document.getElementById(`filterBtn_${colKey}`);
+            if (btn) {
+                const rect = btn.getBoundingClientRect();
+                let left = rect.left - 240;
+                let top = rect.bottom + 8;
+                if (left < 10) left = 10;
+                if (left + 290 > window.innerWidth) left = window.innerWidth - 300;
+                if (top + 340 > window.innerHeight) top = Math.max(10, rect.top - 350);
+                popover.style.left = `${left}px`;
+                popover.style.top = `${top}px`;
+            }
+
+            renderColumnFilterList();
+            popover.classList.remove('hidden');
+            setTimeout(() => document.getElementById('colFilterSearch')?.focus(), 80);
+        }
+
+        function closeColumnFilter() {
+            const popover = document.getElementById('columnFilterPopover');
+            if (popover) popover.classList.add('hidden');
+            activeFilterColumn = null;
+        }
+
+        function renderColumnFilterList() {
+            const listEl = document.getElementById('colFilterList');
+            if (!listEl || !activeFilterColumn) return;
+
+            const q = (document.getElementById('colFilterSearch')?.value || '').trim().toLowerCase();
+            const entries = getColumnDistinctValues(activeFilterColumn);
+            const filtered = entries.filter(([val]) => !q || val.toLowerCase().includes(q));
+
+            if (filtered.length === 0) {
+                listEl.innerHTML = '<div class="text-center text-gray-400 py-4 italic text-xs">ไม่พบตัวเลือกที่ตรงกับคำค้น</div>';
+                return;
+            }
+
+            listEl.innerHTML = filtered.map(([val, count]) => {
+                const isChecked = tempColumnFilterSelected.includes(val);
+                const safeVal = escapeHtml(val);
+                return `
+                <label class="flex items-center justify-between p-1.5 hover:bg-gray-100 dark:hover:bg-slate-700/60 rounded cursor-pointer select-none">
+                    <div class="flex items-center gap-2 overflow-hidden pr-2">
+                        <input type="checkbox" value="${safeVal}" ${isChecked ? 'checked' : ''} onchange="toggleColumnFilterVal('${safeVal}', this.checked)" class="rounded text-teal-600 focus:ring-teal-500">
+                        <span class="truncate text-gray-700 dark:text-slate-200" title="${safeVal}">${safeVal}</span>
+                    </div>
+                    <span class="text-[10px] text-gray-400 font-medium">(${count})</span>
+                </label>`;
+            }).join('');
+        }
+
+        function toggleColumnFilterVal(val, checked) {
+            if (checked) {
+                if (!tempColumnFilterSelected.includes(val)) tempColumnFilterSelected.push(val);
+            } else {
+                tempColumnFilterSelected = tempColumnFilterSelected.filter(v => v !== val);
+            }
+        }
+
+        function selectAllColumnFilter(selectAll) {
+            const allDistinct = getColumnDistinctValues(activeFilterColumn).map(x => x[0]);
+            tempColumnFilterSelected = selectAll ? [...allDistinct] : [];
+            renderColumnFilterList();
+        }
+
+        function applyColumnFilter() {
+            if (!activeFilterColumn) return;
+            const allDistinct = getColumnDistinctValues(activeFilterColumn).map(x => x[0]);
+            if (tempColumnFilterSelected.length === allDistinct.length || tempColumnFilterSelected.length === 0) {
+                delete recordsColumnFilters[activeFilterColumn];
+            } else {
+                recordsColumnFilters[activeFilterColumn] = [...tempColumnFilterSelected];
+            }
+            closeColumnFilter();
+            applyFilters();
+        }
+
+        function resetThisColumnFilter() {
+            if (!activeFilterColumn) return;
+            delete recordsColumnFilters[activeFilterColumn];
+            closeColumnFilter();
+            applyFilters();
+        }
+
+        function updateColumnFilterHeaderIndicators() {
+            const cols = ['equipment', 'type', 'service_date', 'provider', 'reporter', 'status'];
+            cols.forEach(c => {
+                const btn = document.getElementById(`filterBtn_${c}`);
+                if (!btn) return;
+                const isActive = Array.isArray(recordsColumnFilters[c]) && recordsColumnFilters[c].length > 0;
+                btn.classList.toggle('active', isActive);
+            });
+        }
+
+        document.addEventListener('click', (e) => {
+            const pop = document.getElementById('columnFilterPopover');
+            if (!pop || pop.classList.contains('hidden')) return;
+            if (!pop.contains(e.target) && !e.target.closest('.col-filter-trigger')) {
+                closeColumnFilter();
+            }
+        });
+
+        function clearFilters() {
+            if (document.getElementById('filterSearch')) document.getElementById('filterSearch').value = '';
+            if (document.getElementById('filterType')) document.getElementById('filterType').value = '';
+            if (document.getElementById('filterMonth')) document.getElementById('filterMonth').value = '';
+            if (document.getElementById('filterYear')) document.getElementById('filterYear').value = '';
+            recordsColumnFilters = {};
+            recordsSortColumn = null;
+            recordsSortDirection = 'asc';
+            updateSortHeaderIcons();
+            updateColumnFilterHeaderIndicators();
+            applyFilters();
+        }
+
         function loadRecords() { applyFilters(); }
         function applyFilters() {
-            const s = document.getElementById('filterSearch').value.toLowerCase();
-            const t = document.getElementById('filterType').value;
-            const m = document.getElementById('filterMonth').value;
-            const y = document.getElementById('filterYear').value;
+            const s = (document.getElementById('filterSearch')?.value || '').toLowerCase().trim();
+            const t = document.getElementById('filterType')?.value || '';
+            const m = document.getElementById('filterMonth')?.value || '';
+            const y = document.getElementById('filterYear')?.value || '';
 
             filteredRecords = records.filter(r => {
                 const d = new Date(r.service_date);
                 const matchMonth = m ? (d.getMonth() + 1) == m : true;
                 const matchYear = y ? d.getFullYear() == y : true;
-                return r.equipment_name.toLowerCase().includes(s) && (!t || r.type === t) && matchMonth && matchYear;
+                const matchSearch = !s || (r.equipment_name && r.equipment_name.toLowerCase().includes(s)) || (r.building && r.building.toLowerCase().includes(s)) || (getEquipmentModel(r) && getEquipmentModel(r).toLowerCase().includes(s));
+                const matchType = !t || r.type === t;
+
+                if (!matchMonth || !matchYear || !matchSearch || !matchType) return false;
+
+                for (const [col, selectedVals] of Object.entries(recordsColumnFilters)) {
+                    if (!selectedVals || selectedVals.length === 0) continue;
+                    const val = String(getRecordColumnValue(r, col));
+                    if (!selectedVals.includes(val)) return false;
+                }
+
+                return true;
             });
-            filteredRecords.sort((a, b) => b.id - a.id);
+
+            if (recordsSortColumn) {
+                filteredRecords.sort((a, b) => {
+                    let valA = getRecordColumnValue(a, recordsSortColumn);
+                    let valB = getRecordColumnValue(b, recordsSortColumn);
+
+                    if (recordsSortColumn === 'cost') {
+                        valA = parseFloat(valA) || 0;
+                        valB = parseFloat(valB) || 0;
+                        return recordsSortDirection === 'asc' ? valA - valB : valB - valA;
+                    }
+                    if (recordsSortColumn === 'service_date') {
+                        valA = new Date(valA || 0).getTime();
+                        valB = new Date(valB || 0).getTime();
+                        return recordsSortDirection === 'asc' ? valA - valB : valB - valA;
+                    }
+
+                    const strA = String(valA || '').toLowerCase();
+                    const strB = String(valB || '').toLowerCase();
+                    const cmp = strA.localeCompare(strB, 'th');
+                    return recordsSortDirection === 'asc' ? cmp : -cmp;
+                });
+            } else {
+                filteredRecords.sort((a, b) => (b.id || 0) - (a.id || 0));
+            }
+
             currentPage = 1;
             renderRecordsTable();
+            updateColumnFilterHeaderIndicators();
         }
 
         function renderRecordsTable() {
@@ -2537,10 +3261,13 @@ function renderCharts(data) {
             `;
                 }
 
+                const model = getEquipmentModel(r);
+                const modelTag = model ? `<span class="inline-block text-[10px] font-semibold text-teal-700 bg-teal-50 px-1.5 py-0.5 rounded border border-teal-200 ml-1">🏷️ ${escapeHtml(model)}</span>` : '';
+
                 const tr = document.createElement('tr');
                 tr.className = "group border-b border-gray-100 hover:bg-white/60 transition-colors";
                 tr.innerHTML = `
-            <td class="px-4 py-4 min-w-[220px] break-words whitespace-normal"><div class="font-semibold text-gray-800">${r.equipment_name}</div><div class="text-[10px] text-gray-400 font-bold uppercase tracking-wide">${r.building || 'N/A'}</div></td>
+            <td class="px-4 py-4 min-w-[220px] break-words whitespace-normal"><div class="font-semibold text-gray-800 flex flex-wrap items-center gap-1">${escapeHtml(r.equipment_name)}${modelTag}</div><div class="text-[10px] text-gray-400 font-bold uppercase tracking-wide">📍 ${escapeHtml(r.building || 'N/A')}</div></td>
             <td class="px-4 py-4 min-w-[120px]"><span class="w-2 h-2 rounded-full inline-block mr-2 ${typeColor}"></span><span class="text-sm text-gray-600">${typeLabel}</span></td>
             <td class="px-4 py-4 min-w-[110px] text-gray-500 font-mono text-xs">${r.service_date}</td>
             <td class="px-4 py-4 min-w-[120px] text-right font-medium text-gray-700">฿${formatCurrency(r.maintenance_cost)}</td>
@@ -2715,13 +3442,30 @@ function renderCharts(data) {
 
         function getCarePlusAuditLog() {
             try {
+                if (typeof LabStateBridge !== 'undefined') {
+                    const state = LabStateBridge.getStateInternal();
+                    if (state && Array.isArray(state.auditLogs) && state.auditLogs.length > 0) {
+                        return state.auditLogs;
+                    }
+                }
                 const raw = localStorage.getItem(CAREPLUS_AUDIT_KEY);
                 return raw ? JSON.parse(raw) : [];
             } catch { return []; }
         }
 
         function saveCarePlusAuditLog(logs) {
-            localStorage.setItem(CAREPLUS_AUDIT_KEY, JSON.stringify(logs));
+            try {
+                localStorage.setItem(CAREPLUS_AUDIT_KEY, JSON.stringify(logs));
+                if (typeof LabStateBridge !== 'undefined') {
+                    const prevState = LabStateBridge.getState() || {};
+                    LabStateBridge.saveState({ ...prevState, auditLogs: logs });
+                    if (typeof LabStateBridge.flushSync === 'function') {
+                        LabStateBridge.flushSync();
+                    }
+                }
+            } catch (e) {
+                console.warn("[CarePlus] saveCarePlusAuditLog error:", e);
+            }
         }
 
         function addCarePlusAudit(action, details = '') {
@@ -2737,6 +3481,9 @@ function renderCharts(data) {
             // Keep max 500 entries
             if (logs.length > 500) logs.length = 500;
             saveCarePlusAuditLog(logs);
+            if (document.getElementById('carePlusAuditTbody')) {
+                renderCarePlusAudit();
+            }
         }
 
         function renderCarePlusAudit() {
@@ -2790,7 +3537,18 @@ function renderCharts(data) {
         }
         // ========== END AUDIT LOG SYSTEM ==========
 
+        function escapeHtml(str) {
+            if (str === null || str === undefined) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
         function loadSettings() {
+            loadCarePlusState();
             const currentUser = LabAuth.getCurrentUser();
             const purgeSec = document.getElementById('adminPurgeSection');
             if (purgeSec) {
@@ -2811,13 +3569,45 @@ function renderCharts(data) {
         }
 
         function renderAdminUsers() {
-            document.querySelector('#adminUserTable tbody').innerHTML = users.map(u => `
-        <tr class="border-b border-gray-100 hover:bg-gray-50"><td class="p-3 font-medium text-gray-700">${u.username}</td>
-        <td class="p-3 text-gray-500">${u.name}</td><td class="p-3 text-gray-500 uppercase text-xs font-bold">${u.role}</td>
-        <td class="p-3 text-right whitespace-nowrap">
-            <button onclick="adminEditUser('${u.id}')" class="text-blue-500 hover:text-blue-700 mr-3 font-bold">Edit</button>
-            <button onclick="adminDeleteUser('${u.id}')" class="text-red-400 hover:text-red-600 font-bold">✕</button>
-        </td></tr>`).join('');
+            const searchInput = document.getElementById('adminUserSearch');
+            const clearBtn = document.getElementById('btnClearUserSearch');
+            const countEl = document.getElementById('adminUserCount');
+            const q = (searchInput?.value || '').trim().toLowerCase();
+
+            if (clearBtn) {
+                clearBtn.classList.toggle('hidden', !q);
+            }
+
+            const filteredUsers = users.filter(u => {
+                if (!q) return true;
+                const uname = (u.username || '').toLowerCase();
+                const name = (u.name || '').toLowerCase();
+                const role = (u.role || '').toLowerCase();
+                return uname.includes(q) || name.includes(q) || role.includes(q);
+            });
+
+            if (countEl) {
+                countEl.textContent = q ? `${filteredUsers.length} / ${users.length} รายการ` : `${users.length} รายการ`;
+            }
+
+            const tbody = document.querySelector('#adminUserTable tbody');
+            if (!tbody) return;
+
+            if (filteredUsers.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="p-6 text-center text-gray-400 text-xs">ไม่พบข้อมูลผู้ใช้ที่ตรงกับ "${escapeHtml(q)}"</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = filteredUsers.map(u => `
+                <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                    <td class="p-3 font-medium text-gray-700">${escapeHtml(u.username)}</td>
+                    <td class="p-3 text-gray-500">${escapeHtml(u.name)}</td>
+                    <td class="p-3"><span class="px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider ${u.role === 'admin' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'}">${escapeHtml(u.role)}</span></td>
+                    <td class="p-3 text-right whitespace-nowrap">
+                        <button onclick="adminEditUser('${u.id}')" class="text-blue-500 hover:text-blue-700 mr-3 font-bold text-xs">Edit</button>
+                        <button onclick="adminDeleteUser('${u.id}')" class="text-red-400 hover:text-red-600 font-bold text-xs">✕</button>
+                    </td>
+                </tr>`).join('');
         }
 
         function adminEditUser(id) {
@@ -2862,6 +3652,7 @@ function renderCharts(data) {
                     u.password = p;
                     u.role = r;
                 }
+                saveCarePlusState();
                 LabAlert.toast('success', 'แก้ไขข้อมูลผู้ใช้เรียบร้อย');
             } else {
                 if (users.some(x => x.username.toLowerCase() === e.toLowerCase())) {
@@ -2870,9 +3661,9 @@ function renderCharts(data) {
                 }
                 const newId = 'U-' + String(Date.now()).slice(-6);
                 users.push({ id: newId, username: e, name: n, password: p, role: r });
+                saveCarePlusState();
                 LabAlert.toast('success', 'เพิ่มผู้ใช้ใหม่เรียบร้อย');
             }
-            saveCarePlusState();
             renderAdminUsers();
             adminCancelUser();
         }
@@ -2904,7 +3695,7 @@ function renderCharts(data) {
                 LabAlert.error('ไม่สามารถลบบัญชีที่กำลังเข้าสู่ระบบอยู่ได้');
                 return;
             }
-            LabAlert.confirm(`ต้องการลบผู้ใช้ "${u.name}" (${u.username}) หรือไม่?`, 'การดำเนินการนี้ไม่สามารถยกเลิกได้', 'ลบผู้ใช้', 'ยกเลิก').then(confirmed => {
+            LabAlert.confirm(`ต้องการลบผู้ใช้ "${u.name}" (${u.username}) หรือไม่?`, 'การดำเนินการนี้จะบันทึกลงฐานข้อมูล', 'ลบผู้ใช้', 'ยกเลิก').then(confirmed => {
                 if (confirmed) {
                     users = users.filter(x => String(x.id) !== String(id));
                     saveCarePlusState();
@@ -2913,17 +3704,47 @@ function renderCharts(data) {
                 }
             });
         }
+
         function renderAdminLocations() {
-            document.querySelector('#adminLocationTable tbody').innerHTML = buildings.map(b => `
-        <tr class="border-b border-gray-100 hover:bg-gray-50"><td class="p-3 text-gray-700 font-medium">${b.name}</td>
-        <td class="p-3 text-right whitespace-nowrap">
-            <button onclick="adminEditLocation('${b.id}')" class="text-blue-500 hover:text-blue-700 mr-3 font-bold">Edit</button>
-            <button onclick="adminDeleteLocation('${b.id}')" class="text-red-400 font-bold">✕</button>
-        </td></tr>`).join('');
+            const searchInput = document.getElementById('adminLocSearch');
+            const clearBtn = document.getElementById('btnClearLocSearch');
+            const countEl = document.getElementById('adminLocCount');
+            const q = (searchInput?.value || '').trim().toLowerCase();
+
+            if (clearBtn) {
+                clearBtn.classList.toggle('hidden', !q);
+            }
+
+            const filteredLocs = buildings.filter(b => {
+                if (!q) return true;
+                return (b.name || '').toLowerCase().includes(q);
+            });
+
+            if (countEl) {
+                countEl.textContent = q ? `${filteredLocs.length} / ${buildings.length} รายการ` : `${buildings.length} รายการ`;
+            }
+
+            const tbody = document.querySelector('#adminLocationTable tbody');
+            if (!tbody) return;
+
+            if (filteredLocs.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="2" class="p-6 text-center text-gray-400 text-xs">ไม่พบสถานที่ที่ตรงกับ "${escapeHtml(q)}"</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = filteredLocs.map(b => `
+                <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                    <td class="p-3 text-gray-700 font-medium">${escapeHtml(b.name)}</td>
+                    <td class="p-3 text-right whitespace-nowrap">
+                        <button onclick="adminEditLocation('${b.id}')" class="text-blue-500 hover:text-blue-700 mr-3 font-bold text-xs">Edit</button>
+                        <button onclick="adminDeleteLocation('${b.id}')" class="text-red-400 hover:text-red-600 font-bold text-xs">✕</button>
+                    </td>
+                </tr>`).join('');
         }
 
         function adminEditLocation(id) {
-            const b = buildings.find(x => x.id == id);
+            const b = buildings.find(x => String(x.id) === String(id));
+            if (!b) return;
             document.getElementById('adminLocName').value = b.name;
             document.getElementById('adminLocId').value = b.id;
 
@@ -2938,19 +3759,35 @@ function renderCharts(data) {
         }
 
         function adminSaveLocation() {
-            const name = document.getElementById('adminLocName').value;
+            const name = document.getElementById('adminLocName').value.trim();
             const id = document.getElementById('adminLocId').value;
-            if (name) {
-                if (id) {
-                    const b = buildings.find(x => x.id == id);
-                    if (b) b.name = name;
-                } else {
-                    buildings.push({ id: Date.now(), name });
-                    saveCarePlusState();
-                }
-                renderAdminLocations();
-                adminCancelLocation();
+            if (!name) {
+                LabAlert.warning('กรุณากรอกชื่อสถานที่');
+                return;
             }
+            if (id) {
+                const b = buildings.find(x => String(x.id) === String(id));
+                if (b) {
+                    const oldName = b.name;
+                    b.name = name;
+                    records.forEach(r => {
+                        if (r.building === oldName) r.building = name;
+                    });
+                }
+                saveCarePlusState();
+                LabAlert.toast('success', 'แก้ไขข้อมูลสถานที่เรียบร้อย');
+            } else {
+                if (buildings.some(x => (x.name || '').toLowerCase() === name.toLowerCase())) {
+                    LabAlert.error('ชื่อสถานที่นี้มีอยู่ในระบบแล้ว');
+                    return;
+                }
+                buildings.push({ id: Date.now(), name });
+                saveCarePlusState();
+                LabAlert.toast('success', 'เพิ่มสถานที่ใหม่เรียบร้อย');
+            }
+            renderAdminLocations();
+            renderAdminEquipment();
+            adminCancelLocation();
         }
 
         function adminCancelLocation() {
@@ -2962,14 +3799,59 @@ function renderCharts(data) {
             document.getElementById('btnCancelLoc').classList.add('hidden');
         }
 
-        function adminDeleteLocation(id) { buildings = buildings.filter(b => b.id != id); renderAdminLocations(); }
+        function adminDeleteLocation(id) {
+            const b = buildings.find(x => String(x.id) === String(id));
+            if (!b) return;
+            const inUseCount = equipment.filter(e => String(e.building_id) === String(id)).length;
+            const msg = inUseCount > 0 
+                ? `ต้องการลบสถานที่ "${b.name}" หรือไม่?\n(มีเครื่องมืออยู่ในสถานที่นี้ ${inUseCount} รายการ)` 
+                : `ต้องการลบสถานที่ "${b.name}" หรือไม่?`;
+            LabAlert.confirm(msg, 'การดำเนินการนี้จะบันทึกลงฐานข้อมูล', 'ลบสถานที่', 'ยกเลิก').then(confirmed => {
+                if (confirmed) {
+                    buildings = buildings.filter(x => String(x.id) !== String(id));
+                    saveCarePlusState();
+                    renderAdminLocations();
+                    renderAdminEquipment();
+                    LabAlert.toast('success', 'ลบสถานที่เรียบร้อย');
+                }
+            });
+        }
+
         function renderAdminCompanies() {
-            document.querySelector('#adminCompanyTable tbody').innerHTML = technicians.map(t => `
-        <tr class="border-b border-gray-100 hover:bg-gray-50"><td class="p-3 text-gray-700 font-medium">${t}</td>
-        <td class="p-3 text-right whitespace-nowrap">
-            <button onclick="adminEditCompany('${t}')" class="text-blue-500 hover:text-blue-700 mr-3 font-bold">Edit</button>
-            <button onclick="adminDeleteCompany('${t}')" class="text-red-400 font-bold">✕</button>
-        </td></tr>`).join('');
+            const searchInput = document.getElementById('adminCompSearch');
+            const clearBtn = document.getElementById('btnClearCompSearch');
+            const countEl = document.getElementById('adminCompCount');
+            const q = (searchInput?.value || '').trim().toLowerCase();
+
+            if (clearBtn) {
+                clearBtn.classList.toggle('hidden', !q);
+            }
+
+            const filteredComps = technicians.filter(t => {
+                if (!q) return true;
+                return (t || '').toLowerCase().includes(q);
+            });
+
+            if (countEl) {
+                countEl.textContent = q ? `${filteredComps.length} / ${technicians.length} รายการ` : `${technicians.length} รายการ`;
+            }
+
+            const tbody = document.querySelector('#adminCompanyTable tbody');
+            if (!tbody) return;
+
+            if (filteredComps.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="2" class="p-6 text-center text-gray-400 text-xs">ไม่พบผู้ให้บริการที่ตรงกับ "${escapeHtml(q)}"</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = filteredComps.map(t => `
+                <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                    <td class="p-3 text-gray-700 font-medium">${escapeHtml(t)}</td>
+                    <td class="p-3 text-right whitespace-nowrap">
+                        <button onclick="adminEditCompany(decodeURIComponent('${encodeURIComponent(t)}'))" class="text-blue-500 hover:text-blue-700 mr-3 font-bold text-xs">Edit</button>
+                        <button onclick="adminDeleteCompany(decodeURIComponent('${encodeURIComponent(t)}'))" class="text-red-400 hover:text-red-600 font-bold text-xs">✕</button>
+                    </td>
+                </tr>`).join('');
         }
 
         function adminEditCompany(name) {
@@ -2987,24 +3869,35 @@ function renderCharts(data) {
         }
 
         function adminSaveCompany() {
-            const name = document.getElementById('adminCompName').value;
-            const oldName = document.getElementById('adminCompOldName').value;
-            if (name) {
-                if (oldName) {
-                    const index = technicians.indexOf(oldName);
-                    if (index !== -1) { technicians[index] = name; saveCarePlusState(); }
-                    records.forEach(r => {
-                        if (r.technicians.includes(oldName)) {
-                            r.technicians = [name];
-                        }
-                    });
-                } else {
-                    technicians.push(name);
-                    saveCarePlusState();
-                }
-                renderAdminCompanies();
-                adminCancelCompany();
+            const name = document.getElementById('adminCompName').value.trim();
+            const oldName = document.getElementById('adminCompOldName').value.trim();
+            if (!name) {
+                LabAlert.warning('กรุณากรอกชื่อผู้ให้บริการ / บริษัท');
+                return;
             }
+            if (oldName) {
+                const index = technicians.indexOf(oldName);
+                if (index !== -1) {
+                    technicians[index] = name;
+                }
+                records.forEach(r => {
+                    if (Array.isArray(r.technicians) && r.technicians.includes(oldName)) {
+                        r.technicians = r.technicians.map(t => t === oldName ? name : t);
+                    }
+                });
+                saveCarePlusState();
+                LabAlert.toast('success', 'แก้ไขผู้ให้บริการเรียบร้อย');
+            } else {
+                if (technicians.some(t => t.toLowerCase() === name.toLowerCase())) {
+                    LabAlert.error('ชื่อผู้ให้บริการนี้มีอยู่ในระบบแล้ว');
+                    return;
+                }
+                technicians.push(name);
+                saveCarePlusState();
+                LabAlert.toast('success', 'เพิ่มผู้ให้บริการใหม่เรียบร้อย');
+            }
+            renderAdminCompanies();
+            adminCancelCompany();
         }
 
         function adminCancelCompany() {
@@ -3016,46 +3909,113 @@ function renderCharts(data) {
             document.getElementById('btnCancelComp').classList.add('hidden');
         }
 
-        function adminDeleteCompany(name) { technicians = technicians.filter(t => t !== name); renderAdminCompanies(); }
+        function adminDeleteCompany(name) {
+            LabAlert.confirm(`ต้องการลบผู้ให้บริการ "${name}" หรือไม่?`, 'การดำเนินการนี้จะบันทึกลงฐานข้อมูล', 'ลบผู้ให้บริการ', 'ยกเลิก').then(confirmed => {
+                if (confirmed) {
+                    technicians = technicians.filter(t => t !== name);
+                    saveCarePlusState();
+                    renderAdminCompanies();
+                    LabAlert.toast('success', 'ลบผู้ให้บริการเรียบร้อย');
+                }
+            });
+        }
+
         function renderAdminEquipment() {
             const locSelect = document.getElementById('adminEquipLoc');
-            locSelect.innerHTML = buildings.map(b => `<option value="${b.id}">${b.name}</option>`).join('');
+            if (locSelect) {
+                const currentVal = locSelect.value;
+                locSelect.innerHTML = buildings.map(b => `<option value="${b.id}">${escapeHtml(b.name)}</option>`).join('');
+                if (currentVal && buildings.some(b => String(b.id) === String(currentVal))) {
+                    locSelect.value = currentVal;
+                }
+            }
 
-            document.querySelector('#adminEquipmentTable tbody').innerHTML = equipment.map(e => `
-        <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-            <td class="p-3 font-medium text-gray-700">${e.name}</td>
-            <td class="p-3 text-gray-500 text-xs">${e.model || '-'}</td>
-            <td class="p-3 text-gray-500 text-xs uppercase tracking-wide">${buildings.find(b => b.id == e.building_id)?.name || '-'}</td>
-            <td class="p-3 text-right whitespace-nowrap">
-                <button onclick="viewEquipmentHistory('${e.name}')" class="text-teal-600 hover:text-teal-800 mr-3 font-bold bg-teal-50 px-2 py-1 rounded text-xs">History</button>
-                <button onclick="adminEditEquipment('${e.id}')" class="text-blue-500 hover:text-blue-700 mr-3 font-bold">Edit</button>
-                <button onclick="adminDeleteEquipment('${e.id}')" class="text-red-400 hover:text-red-600 font-bold">✕</button>
-            </td>
-        </tr>`).join('');
+            const searchInput = document.getElementById('adminEquipSearch');
+            const clearBtn = document.getElementById('btnClearEquipSearch');
+            const countEl = document.getElementById('adminEquipCount');
+            const q = (searchInput?.value || '').trim().toLowerCase();
+
+            if (clearBtn) {
+                clearBtn.classList.toggle('hidden', !q);
+            }
+
+            const filteredEquip = equipment.filter(e => {
+                if (!q) return true;
+                const eqName = (e.name || '').toLowerCase();
+                const eqModel = (e.model || '').toLowerCase();
+                const bName = (buildings.find(b => String(b.id) === String(e.building_id))?.name || '').toLowerCase();
+                return eqName.includes(q) || eqModel.includes(q) || bName.includes(q);
+            });
+
+            if (countEl) {
+                countEl.textContent = q ? `${filteredEquip.length} / ${equipment.length} รายการ` : `${equipment.length} รายการ`;
+            }
+
+            const tbody = document.querySelector('#adminEquipmentTable tbody');
+            if (!tbody) return;
+
+            if (filteredEquip.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="p-6 text-center text-gray-400 text-xs">ไม่พบเครื่องมือที่ตรงกับ "${escapeHtml(q)}"</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = filteredEquip.map(e => `
+                <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                    <td class="p-3 font-medium text-gray-700">${escapeHtml(e.name)}</td>
+                    <td class="p-3 text-gray-500 text-xs">${escapeHtml(e.model || '-')}</td>
+                    <td class="p-3 text-gray-500 text-xs uppercase tracking-wide">${escapeHtml(buildings.find(b => String(b.id) === String(e.building_id))?.name || '-')}</td>
+                    <td class="p-3 text-right whitespace-nowrap">
+                        <button onclick="viewEquipmentHistory(decodeURIComponent('${encodeURIComponent(e.name)}'))" class="text-teal-600 hover:text-teal-800 mr-3 font-bold bg-teal-50 px-2 py-1 rounded text-xs">History</button>
+                        <button onclick="adminEditEquipment('${e.id}')" class="text-blue-500 hover:text-blue-700 mr-3 font-bold text-xs">Edit</button>
+                        <button onclick="adminDeleteEquipment('${e.id}')" class="text-red-400 hover:text-red-600 font-bold text-xs">✕</button>
+                    </td>
+                </tr>`).join('');
         }
+
         function adminSaveEquipment() {
             const name = document.getElementById('adminEquipName').value.trim();
-            const model = (document.getElementById('adminEquipModel')?.value || '').trim();
-            const bid = parseInt(document.getElementById('adminEquipLoc').value);
+            const modelVal = (document.getElementById('adminEquipModel')?.value || '').trim();
+            const model = modelVal || '-';
+            const bidVal = document.getElementById('adminEquipLoc').value;
+            const bid = parseInt(bidVal) || bidVal;
             const id = document.getElementById('adminEquipId').value;
-            if (name && bid) {
-                if (id) {
-                    const index = equipment.findIndex(x => String(x.id) === String(id));
-                    if (index !== -1) {
-                        equipment[index].name = name;
-                        equipment[index].model = model || '-';
-                        equipment[index].building_id = bid;
-                        saveCarePlusState();
-                    }
-                } else {
-                    const newId = 'EQ-' + String(Date.now()).slice(-6);
-                    equipment.push({ id: newId, name: name, model: model || '-', building_id: bid, serial: 'N/A', custodian: 'Admin' });
-                    saveCarePlusState();
-                }
-                LabAlert.toast('success', 'บันทึกข้อมูลเครื่องมือเรียบร้อย');
-                renderAdminEquipment(); renderAdminLocations(); adminCancelEquipment();
+            if (!name) {
+                LabAlert.warning('กรุณากรอกชื่อเครื่องมือ');
+                return;
             }
+            if (!bid) {
+                LabAlert.warning('กรุณาเลือกสถานที่ของเครื่องมือ');
+                return;
+            }
+            if (id) {
+                const index = equipment.findIndex(x => String(x.id) === String(id));
+                if (index !== -1) {
+                    const oldName = equipment[index].name;
+                    equipment[index].name = name;
+                    equipment[index].model = model;
+                    equipment[index].building_id = bid;
+                    // Keep records in sync with updated name and model
+                    records.forEach(r => {
+                        if (r.equipment_name === oldName || String(r.equipment_id) === String(id)) {
+                            if (oldName !== name) r.equipment_name = name;
+                            if (model && model !== '-') r.model = model;
+                        }
+                    });
+                    saveCarePlusState();
+                    addCarePlusAudit('Update Equipment', `แก้ไขเครื่องมือ ${name} (รุ่น: ${model})`);
+                }
+            } else {
+                const newId = 'EQ-' + String(Date.now()).slice(-6);
+                equipment.push({ id: newId, name: name, model: model, building_id: bid, serial: 'N/A', custodian: 'Admin' });
+                saveCarePlusState();
+                addCarePlusAudit('Add Equipment', `เพิ่มเครื่องมือใหม่ ${name} (รุ่น: ${model})`);
+            }
+            LabAlert.toast('success', 'บันทึกข้อมูลเครื่องมือเรียบร้อย');
+            renderAdminEquipment();
+            renderAdminLocations();
+            adminCancelEquipment();
         }
+
         function adminEditEquipment(id) {
             const e = equipment.find(x => String(x.id) === String(id));
             if (!e) return;
@@ -3075,6 +4035,7 @@ function renderCharts(data) {
             if (targetEl) targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
             setTimeout(() => document.getElementById('adminEquipName')?.focus(), 250);
         }
+
         function adminCancelEquipment() {
             document.getElementById('adminEquipName').value = '';
             if (document.getElementById('adminEquipModel')) {
@@ -3086,11 +4047,15 @@ function renderCharts(data) {
             btn.classList.replace('bg-orange-500', 'bg-blue-600');
             document.getElementById('btnCancelEquip').classList.add('hidden');
         }
+
         function adminDeleteEquipment(id) {
-            LabAlert.confirm('ต้องการลบเครื่องมือ?', 'ข้อมูลจะถูกลบออกจากระบบทันที', 'ลบเครื่องมือ', 'ยกเลิก').then(confirmed => {
+            const e = equipment.find(x => String(x.id) === String(id));
+            const name = e ? e.name : '';
+            LabAlert.confirm(`ต้องการลบเครื่องมือ "${name || id}"?`, 'ข้อมูลจะถูกบันทึกลงฐานข้อมูลทันที', 'ลบเครื่องมือ', 'ยกเลิก').then(confirmed => {
                 if (confirmed) {
-                    equipment = equipment.filter(e => String(e.id) !== String(id));
+                    equipment = equipment.filter(item => String(item.id) !== String(id));
                     saveCarePlusState();
+                    addCarePlusAudit('Delete Equipment', `ลบเครื่องมือ ${name || id}`);
                     renderAdminEquipment();
                     renderAdminLocations();
                     LabAlert.toast('success', 'ลบเครื่องมือเรียบร้อย');
@@ -3099,30 +4064,42 @@ function renderCharts(data) {
         }
 
         function renderAdminReporters() {
-            document.querySelector('#adminReporterTable tbody').innerHTML = reporters.map(r => `
-        <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-            <td class="p-3 text-gray-700 font-medium">${r}</td>
-            <td class="p-3 text-right">
-                <button onclick="adminEditReporter('${r}')" class="text-blue-500 hover:text-blue-700 mr-3 font-bold">Edit</button>
-                <button onclick="adminDeleteReporter('${r}')" class="text-red-400 hover:text-red-600 font-bold">✕</button>
-            </td>
-        </tr>`).join('');
-        }
-        function adminSaveReporter() {
-            const name = document.getElementById('adminReporterName').value;
-            const oldName = document.getElementById('adminReporterOldName').value;
-            if (name) {
-                if (oldName) {
-                    const index = reporters.indexOf(oldName);
-                    if (index !== -1) { reporters[index] = name; saveCarePlusState(); }
-                    records.forEach(r => { if (r.reporter === oldName) r.reporter = name; });
-                } else {
-                    reporters.push(name);
-                    saveCarePlusState();
-                }
-                renderAdminReporters(); adminCancelReporter();
+            const searchInput = document.getElementById('adminReporterSearch');
+            const clearBtn = document.getElementById('btnClearReporterSearch');
+            const countEl = document.getElementById('adminReporterCount');
+            const q = (searchInput?.value || '').trim().toLowerCase();
+
+            if (clearBtn) {
+                clearBtn.classList.toggle('hidden', !q);
             }
+
+            const filteredReps = reporters.filter(r => {
+                if (!q) return true;
+                return (r || '').toLowerCase().includes(q);
+            });
+
+            if (countEl) {
+                countEl.textContent = q ? `${filteredReps.length} / ${reporters.length} รายการ` : `${reporters.length} รายการ`;
+            }
+
+            const tbody = document.querySelector('#adminReporterTable tbody');
+            if (!tbody) return;
+
+            if (filteredReps.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="2" class="p-6 text-center text-gray-400 text-xs">ไม่พบผู้รายงานที่ตรงกับ "${escapeHtml(q)}"</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = filteredReps.map(r => `
+                <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                    <td class="p-3 text-gray-700 font-medium">${escapeHtml(r)}</td>
+                    <td class="p-3 text-right whitespace-nowrap">
+                        <button onclick="adminEditReporter(decodeURIComponent('${encodeURIComponent(r)}'))" class="text-blue-500 hover:text-blue-700 mr-3 font-bold text-xs">Edit</button>
+                        <button onclick="adminDeleteReporter(decodeURIComponent('${encodeURIComponent(r)}'))" class="text-red-400 hover:text-red-600 font-bold text-xs">✕</button>
+                    </td>
+                </tr>`).join('');
         }
+
         function adminEditReporter(name) {
             document.getElementById('adminReporterName').value = name;
             document.getElementById('adminReporterOldName').value = name;
@@ -3135,6 +4112,36 @@ function renderCharts(data) {
             if (targetEl) targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
             setTimeout(() => document.getElementById('adminReporterName')?.focus(), 250);
         }
+
+        function adminSaveReporter() {
+            const name = document.getElementById('adminReporterName').value.trim();
+            const oldName = document.getElementById('adminReporterOldName').value.trim();
+            if (!name) {
+                LabAlert.warning('กรุณากรอกชื่อผู้รายงาน');
+                return;
+            }
+            if (oldName) {
+                const index = reporters.indexOf(oldName);
+                if (index !== -1) {
+                    reporters[index] = name;
+                }
+                // Cascade update records
+                records.forEach(r => { if (r.reporter === oldName) r.reporter = name; });
+                saveCarePlusState();
+                LabAlert.toast('success', 'แก้ไขข้อมูลผู้รายงานเรียบร้อย');
+            } else {
+                if (reporters.some(r => r.toLowerCase() === name.toLowerCase())) {
+                    LabAlert.error('ชื่อผู้รายงานนี้มีอยู่ในระบบแล้ว');
+                    return;
+                }
+                reporters.push(name);
+                saveCarePlusState();
+                LabAlert.toast('success', 'เพิ่มผู้รายงานใหม่เรียบร้อย');
+            }
+            renderAdminReporters();
+            adminCancelReporter();
+        }
+
         function adminCancelReporter() {
             document.getElementById('adminReporterName').value = '';
             document.getElementById('adminReporterOldName').value = '';
@@ -3143,7 +4150,17 @@ function renderCharts(data) {
             btn.classList.replace('bg-orange-500', 'bg-blue-600');
             document.getElementById('btnCancelReporter').classList.add('hidden');
         }
-        function adminDeleteReporter(name) { reporters = reporters.filter(r => r !== name); renderAdminReporters(); }
+
+        function adminDeleteReporter(name) {
+            LabAlert.confirm(`ต้องการลบผู้รายงาน "${name}" หรือไม่?`, 'การดำเนินการนี้จะบันทึกลงฐานข้อมูล', 'ลบผู้รายงาน', 'ยกเลิก').then(confirmed => {
+                if (confirmed) {
+                    reporters = reporters.filter(r => r !== name);
+                    saveCarePlusState();
+                    renderAdminReporters();
+                    LabAlert.toast('success', 'ลบผู้รายงานเรียบร้อย');
+                }
+            });
+        }
 
 function loadEditForm(id) {
             const r = records.find(x => x.id === id);
@@ -3225,6 +4242,16 @@ function loadEditForm(id) {
             tSel.innerHTML = '<option value="">Select Provider</option>' + technicians.map(t => `<option value="${t}">${t}</option>`).join('');
             const rSel = document.getElementById('reporterSelect');
             rSel.innerHTML = '<option value="">Select Reporter</option>' + reporters.map(r => `<option value="${r}">${r}</option>`).join('');
+
+            // Smart Defaults: Pre-fill today's date and active reporter
+            const sDate = document.getElementById('serviceDate');
+            if (sDate && !sDate.value) {
+                sDate.value = LabSmart.getTodayDateString();
+            }
+            if (typeof currentUser !== 'undefined' && currentUser && currentUser.name && rSel) {
+                const matchRep = reporters.find(r => r.toLowerCase() === currentUser.name.toLowerCase());
+                if (matchRep) rSel.value = matchRep;
+            }
         }
 
         function updateEquipmentOptions() {
@@ -3242,8 +4269,10 @@ function loadEditForm(id) {
             const editId = document.getElementById('editRecordId').value;
             const bSel = document.getElementById('buildingSelect');
             const buildingName = bSel.options[bSel.selectedIndex].text;
+            const selectedEqVal = document.getElementById('equipmentSelect').value;
+            const eqObjPre = equipment.find(eq => eq.name === selectedEqVal || String(eq.id) === String(selectedEqVal));
             const recordData = {
-                equipment_name: document.getElementById('equipmentSelect').value,
+                equipment_name: selectedEqVal,
                 building: buildingName,
                 type: document.getElementById('serviceType').value,
                 service_date: document.getElementById('serviceDate').value,
@@ -3251,7 +4280,8 @@ function loadEditForm(id) {
                 maintenance_cost: document.getElementById('maintenanceCost').value,
                 technicians: [document.getElementById('technicianSelect').value],
                 reporter: document.getElementById('reporterSelect').value,
-                calendar_status: document.getElementById('recordStatus').value
+                calendar_status: document.getElementById('recordStatus').value,
+                model: (eqObjPre && eqObjPre.model && eqObjPre.model !== '-') ? eqObjPre.model : '-'
             };
 
             const proceedSave = () => {
@@ -3623,6 +4653,35 @@ function loadEditForm(id) {
             </div>
             <div id="upcomingModalContent" class="p-5 flex-1 overflow-y-auto custom-scroll space-y-3 bg-gray-50/50">
             </div>
+        </div>
+    </div>
+
+    <!-- Column Filter Popover Modal -->
+    <div id="columnFilterPopover" class="col-filter-popover hidden shadow-2xl">
+        <div class="p-3 border-b border-gray-100 dark:border-slate-800 flex items-center justify-between bg-gray-50/70 dark:bg-slate-800/70">
+            <div class="flex items-center gap-1.5 font-bold text-xs text-gray-700 dark:text-slate-200">
+                <i class="fa-solid fa-filter text-teal-600 dark:text-teal-400"></i>
+                <span id="colFilterTitle">Filter Column</span>
+            </div>
+            <button type="button" onclick="closeColumnFilter()" class="w-6 h-6 rounded-full hover:bg-gray-200 dark:hover:bg-slate-700 text-gray-400 hover:text-gray-600 flex items-center justify-center text-xs">✕</button>
+        </div>
+        <div class="p-2.5 border-b border-gray-100 dark:border-slate-800">
+            <div class="relative">
+                <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+                <input type="text" id="colFilterSearch" placeholder="ค้นหาตัวเลือก..." oninput="renderColumnFilterList()"
+                    class="w-full pl-7 pr-3 py-1.5 text-xs rounded-lg glass-input border border-gray-200 dark:border-slate-700">
+            </div>
+            <div class="flex justify-between items-center mt-2 px-0.5">
+                <button type="button" onclick="selectAllColumnFilter(true)" class="text-[11px] font-semibold text-teal-600 dark:text-teal-400 hover:underline">เลือกทั้งหมด</button>
+                <button type="button" onclick="selectAllColumnFilter(false)" class="text-[11px] font-semibold text-gray-500 hover:underline">ล้างการเลือก</button>
+            </div>
+        </div>
+        <div id="colFilterList" class="p-2 max-h-52 overflow-y-auto custom-scroll space-y-1 text-xs">
+            <!-- Checkbox options dynamically inserted -->
+        </div>
+        <div class="p-2.5 bg-gray-50/90 dark:bg-slate-800/90 border-t border-gray-100 dark:border-slate-800 flex justify-between items-center gap-2">
+            <button type="button" onclick="resetThisColumnFilter()" class="px-3 py-1.5 text-xs text-gray-500 hover:bg-gray-200 dark:hover:bg-slate-700 rounded-lg font-medium transition">ล้างตัวกรองนี้</button>
+            <button type="button" onclick="applyColumnFilter()" class="px-4 py-1.5 text-xs bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-lg shadow-sm transition">ตกลง</button>
         </div>
     </div>
 </body>

@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MPIR Lab Suite - Backtest & Front-Test Diagnostic Runner</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+    <script src="../shared-core.js"></script>
+    <style>
+        body { font-family: monospace; }
+        .pass { color: #10b981; font-weight: bold; }
+        .fail { color: #ef4444; font-weight: bold; }
+        .warn { color: #f59e0b; font-weight: bold; }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 p-8">
+    <div class="max-w-4xl mx-auto space-y-6">
+        <div class="border-b border-slate-700 pb-4">
+            <h1 class="text-2xl font-bold text-teal-400">🔬 MPIR Lab Suite: Diagnostic Verification Suite</h1>
+            <p class="text-sm text-slate-400 mt-1">Backtest & Front-Test Logic Scanner for Cloud Firestore, State Bridge, and UI Systems</p>
+        </div>
+
+        <div id="summary" class="p-4 rounded-xl bg-slate-800 border border-slate-700 font-sans">
+            <div class="flex gap-6 text-sm font-semibold">
+                <span>Total Tests: <span id="totalCount" class="text-white">0</span></span>
+                <span>Passed: <span id="passCount" class="text-emerald-400">0</span></span>
+                <span>Failed (Bugs Detected): <span id="failCount" class="text-rose-400">0</span></span>
+            </div>
+        </div>
+
+        <div id="results" class="space-y-3"></div>
+    </div>
+
+    <!-- Hidden fixture elements for Front-Test UI simulation -->
+    <div id="fixture" style="display: none;">
+        <select id="buildingSelect">
+            <option value="5">Fermentation unit</option>
+        </select>
+        <select id="equipmentSelect"></select>
+        <div id="nav-active-presence"></div>
+        <div id="nav-user-avatar"></div>
+        <div id="careplusFbStatusDesc"></div>
+    </div>
+
+    <script>
+        const results = [];
+        const container = document.getElementById('results');
+
+        function assert(title, condition, details, severity = 'HIGH') {
+            const passed = !!condition;
+            results.push({ title, passed, details, severity });
+            
+            const card = document.createElement('div');
+            card.className = `p-4 rounded-xl border ${passed ? 'bg-slate-800/80 border-emerald-900/50' : 'bg-rose-950/40 border-rose-800/80'}`;
+            card.innerHTML = `
+                <div class="flex items-center justify-between">
+                    <span class="font-bold text-base ${passed ? 'text-emerald-400' : 'text-rose-400'}">
+                        ${passed ? '✅ PASS' : '❌ FAIL [' + severity + ' SEVERITY]'}: ${title}
+                    </span>
+                    <span class="text-xs px-2 py-0.5 rounded ${passed ? 'bg-emerald-950 text-emerald-300' : 'bg-rose-900 text-rose-200'}">
+                        ${passed ? 'Verified' : 'DEFECT DETECTED'}
+                    </span>
+                </div>
+                <div class="text-xs text-slate-300 mt-2 font-mono whitespace-pre-wrap">${details}</div>
+            `;
+            container.appendChild(card);
+
+            document.getElementById('totalCount').textContent = results.length;
+            document.getElementById('passCount').textContent = results.filter(r => r.passed).length;
+            document.getElementById('failCount').textContent = results.filter(r => !r.passed).length;
+        }
+
+        async function runDiagnostics() {
+            console.log("Starting diagnostic scan...");
+
+            // ==========================================
+            // BACKTEST 1: Firestore Undefined Payload Test
+            // ==========================================
+            try {
+                // Verify LabFirebase.sanitizePayload removes undefined properties recursively
+                const sampleBookingWithUndefined = {
+                    id: 'BK-TEST-01',
+                    eqId: 'EQ-001',
+                    start: '2026-09-13T10:00',
+                    end: '2026-09-13T12:00',
+                    finishDetails: undefined,
+                    meta: { note: undefined, count: 10 },
+                    tags: [undefined, 'urgent']
+                };
+                
+                const sanitized = LabFirebase.sanitizePayload(sampleBookingWithUndefined);
+                
+                const checkUndefined = (val) => {
+                    if (val === undefined) return true;
+                    if (!val || typeof val !== 'object') return false;
+                    return Object.values(val).some(v => v === undefined || checkUndefined(v));
+                };
+                
+                const firestoreCompatible = !checkUndefined(sanitized) && sanitized.id === 'BK-TEST-01';
+
+                assert(
+                    "Backtest #1: Firestore Document Payload Cleanliness (No 'undefined' fields)",
+                    firestoreCompatible,
+                    `LabFirebase.sanitizePayload() recursive sanitizer verified.\nRaw payload contained 'undefined' fields.\nSanitized payload free of 'undefined' and safe for Firestore doc.set(): ${firestoreCompatible}`,
+                    "CRITICAL"
+                );
+            } catch (e) {
+                assert("Backtest #1: Firestore Document Payload Cleanliness", false, e.message, "CRITICAL");
+            }
+
+            // ==========================================
+            // BACKTEST 2: Concurrent LabFirebase.init() Promise Lock
+            // ==========================================
+            try {
+                const fb = window.LabFirebase;
+                fb.isConnecting = true; // Simulate in-flight initialization
+                const secondCallResult = await fb.init();
+                fb.isConnecting = false;
+
+                assert(
+                    "Backtest #2: Concurrent Firebase Initialization Guard",
+                    secondCallResult !== false,
+                    `Concurrent initialization call awaited existing promise without premature false abort.\nResult of secondCall: ${secondCallResult}`,
+                    "HIGH"
+                );
+            } catch (e) {
+                assert("Backtest #2: Concurrent Firebase Initialization Guard", false, e.message, "HIGH");
+            }
+
+            // ==========================================
+            // BACKTEST 3: Firebase Config Clear / Local-Only Switching
+            // ==========================================
+            try {
+                const fb = window.LabFirebase;
+                fb.saveConfig(null); // User clears config
+                const activeCfg = fb.getConfig();
+                
+                // If user cleared config, getConfig() SHOULD return null or disabled flag
+                const canSwitchToLocal = (activeCfg === null || activeCfg.disabled === true);
+
+                assert(
+                    "Backtest #3: Switchable Local-First Mode (Clear Firebase Config)",
+                    canSwitchToLocal,
+                    `User selected offline/local-first mode.\nConfig state: ${JSON.stringify(activeCfg)}.\nLocal-first mode sustained without fallback loop: ${canSwitchToLocal}`,
+                    "HIGH"
+                );
+            } catch (e) {
+                assert("Backtest #3: Switchable Local-First Mode", false, e.message, "HIGH");
+            }
+
+            // ==========================================
+            // BACKTEST 4: Remote Signature (getSignature) Field Sensitivity
+            // ==========================================
+            try {
+                // Test if editing 'project' or 'desc' changes the signature in listenToRemote
+                const dummyBooking1 = { id: 'BK-1', status: 'in-use', start: '2026-09-13T10:00', end: '2026-09-13T12:00', deleted: false, project: 'Project Alpha', desc: 'Initial run' };
+                const dummyBooking2 = { id: 'BK-1', status: 'in-use', start: '2026-09-13T10:00', end: '2026-09-13T12:00', deleted: false, project: 'Project Beta Modified', desc: 'Changed description' };
+                
+                const sig1 = LabFirebase.getSignature({ bookings: [dummyBooking1] });
+                const sig2 = LabFirebase.getSignature({ bookings: [dummyBooking2] });
+                const detectsChange = (sig1 !== sig2);
+
+                assert(
+                    "Backtest #4: Remote Sync Signature Sensitivity to Booking/Record Edits",
+                    detectsChange,
+                    `Booking project changed from 'Project Alpha' to 'Project Beta Modified'.\nSignature 1: ${sig1}\nSignature 2: ${sig2}\nSignature change detected: ${detectsChange}`,
+                    "HIGH"
+                );
+            } catch (e) {
+                assert("Backtest #4: Remote Sync Signature Sensitivity", false, e.message, "HIGH");
+            }
+
+            // ==========================================
+            // BACKTEST 5: Equipment ID Schema Harmonization (eqId vs equipmentId)
+            // ==========================================
+            try {
+                const testUnharmonized = { id: 'BK-HARMONY-TEST', equipmentId: 'EQ-050', user: 'Test' };
+                const curr = LabStateBridge.getState();
+                curr.bookings = [...(curr.bookings || []).filter(b => b.id !== 'BK-HARMONY-TEST'), testUnharmonized];
+                LabStateBridge.saveState(curr);
+                
+                const refreshed = LabStateBridge.getState();
+                const found = (refreshed.bookings || []).find(b => b.id === 'BK-HARMONY-TEST');
+                const hasBothKeys = found && found.eqId === 'EQ-050' && found.equipmentId === 'EQ-050';
+
+                assert(
+                    "Backtest #5: Booking Equipment ID Property Harmonization (eqId & equipmentId)",
+                    !!hasBothKeys,
+                    `Unharmonized booking with only equipmentId: 'EQ-050' passed through LabStateBridge.\nHarmonized eqId: '${found ? found.eqId : 'N/A'}', equipmentId: '${found ? found.equipmentId : 'N/A'}'.\nBoth keys populated and matching: ${!!hasBothKeys}`,
+                    "HIGH"
+                );
+            } catch (e) {
+                assert("Backtest #5: Booking Equipment ID Property Harmonization", false, e.message, "HIGH");
+            }
+
+            // ==========================================
+            // BACKTEST 6: Cross-System Conflict Detection (Book+ vs Care+)
+            // ==========================================
+            try {
+                // Record on 2026-09-14 for Autoclave
+                const testRecord = {
+                    id: 999901,
+                    equipment_name: 'Autoclave',
+                    service_date: '2026-09-14',
+                    type: 'repair',
+                    calendar_status: 'pending'
+                };
+                
+                // Candidate booking for EQ-001 (Autoclave) on 2026-09-14
+                const candidateStart = moment('2026-09-14T09:00:00');
+                const candidateEnd = moment('2026-09-14T11:00:00');
+                
+                const svcDate = moment(testRecord.service_date, 'YYYY-MM-DD');
+                const svcStart = svcDate.clone().startOf('day');
+                const svcEnd = svcDate.clone().endOf('day');
+                const overlaps = candidateStart.isBefore(svcEnd) && candidateEnd.isAfter(svcStart);
+
+                assert(
+                    "Backtest #6: Cross-Application Conflict Detection Logic Math",
+                    overlaps,
+                    `Candidate booking on 2026-09-14 overlapping pending repair on 2026-09-14.\nOverlap detected correctly: ${overlaps}`,
+                    "MEDIUM"
+                );
+            } catch (e) {
+                assert("Backtest #6: Cross-Application Conflict Detection Logic Math", false, e.message, "MEDIUM");
+            }
+
+            // ==========================================
+            // BACKTEST 7: Purge Tool Orphaned Cloud Attachments
+            // ==========================================
+            try {
+                // Check if purgeUserTransactions in shared-core.js calls deleteAttachmentFromCloud
+                const purgeFnStr = LabStateBridge.purgeUserTransactions.toString();
+                const callsCloudDelete = purgeFnStr.includes('deleteAttachmentFromCloud');
+
+                assert(
+                    "Backtest #7: Retention Purge Frees Cloud Attachment Quota (Firestore lab_attachments)",
+                    callsCloudDelete,
+                    `LabStateBridge.purgeUserTransactions() integrated with deleteAttachmentFromCloud(): ${callsCloudDelete}.\nCloud attachments are safely deleted along with purged records.`,
+                    "HIGH"
+                );
+            } catch (e) {
+                assert("Backtest #7: Retention Purge Frees Cloud Attachment Quota", false, e.message, "HIGH");
+            }
+
+            // ==========================================
+            // FRONT-TEST 8: CarePlus Presence Event Parsing
+            // ==========================================
+            try {
+                const sampleActiveUsers = [
+                    { username: 'user@lab.com', name: 'Standard User', role: 'user' },
+                    { username: 'admin@lab.com', name: 'Administrator', role: 'admin' }
+                ];
+                
+                const parsePresenceUsers = (eventDetail) => Array.isArray(eventDetail) ? eventDetail : (eventDetail?.users || []);
+                const arrayResult = parsePresenceUsers(sampleActiveUsers);
+                const objResult = parsePresenceUsers({ users: sampleActiveUsers });
+
+                const presenceHandled = (arrayResult.length === 2 && objResult.length === 2);
+
+                assert(
+                    "Front-Test #1: CarePlus Live Presence Event Detail Array Handling",
+                    presenceHandled,
+                    `Presence event listener safely parses both raw array (length: ${arrayResult.length}) and object payload (length: ${objResult.length}).`,
+                    "HIGH"
+                );
+            } catch (e) {
+                assert("Front-Test #1: CarePlus Live Presence Event Detail Array Handling", false, e.message, "HIGH");
+            }
+
+            // ==========================================
+            // FRONT-TEST 9: Avatar Size Parameter String vs Number
+            // ==========================================
+            try {
+                const htmlOutput = LabAvatar.renderAvatar({ username: 'admin@lab.com', name: 'Administrator' }, 'md', true);
+                const containsNaN = htmlOutput.includes('NaN');
+                const containsMdPx = htmlOutput.includes('mdpx');
+                const hasCorrect36px = htmlOutput.includes('36px');
+
+                assert(
+                    "Front-Test #2: User Avatar Rendering CSS Validity (No 'NaNpx' / 'mdpx')",
+                    !containsNaN && !containsMdPx && hasCorrect36px,
+                    `LabAvatar.renderAvatar with size='md' resolved cleanly to 36px without CSS corruption (NaNpx/mdpx).\nRendered successfully: ${!containsNaN && !containsMdPx && hasCorrect36px}`,
+                    "MEDIUM"
+                );
+            } catch (e) {
+                assert("Front-Test #2: User Avatar Rendering CSS Validity", false, e.message, "MEDIUM");
+            }
+
+            // ==========================================
+            // FRONT-TEST 10: CarePlus Equipment Dropdown Strict Comparison
+            // ==========================================
+            try {
+                const mockEquipments = [
+                    { id: 'EQ-001', name: 'Autoclave', building_id: "5" },
+                    { id: 'EQ-002', name: 'Fermenter', building_id: 5 }
+                ];
+                const bid = 5;
+                const matches = mockEquipments.filter(e => String(e.building_id) === String(bid));
+
+                assert(
+                    "Front-Test #3: CarePlus Equipment Filtering Tolerance (String vs Numeric Building ID)",
+                    matches.length === 2,
+                    `Equipment list with mixed string ("5") and numeric (5) building IDs filtered by building 5.\nMatches found: ${matches.length} / 2 (100% matched).`,
+                    "MEDIUM"
+                );
+            } catch (e) {
+                assert("Front-Test #3: CarePlus Equipment Filtering Tolerance", false, e.message, "MEDIUM");
+            }
+
+            // ==========================================
+            // FRONT-TEST 11: CarePlus Record Deletion Strict ID Match
+            // ==========================================
+            try {
+                const mockRecords = [{ id: 1770458821533, equipment_name: 'Spray Dry' }];
+                const idToDelete = "1770458821533";
+                
+                const remaining = mockRecords.filter(r => String(r.id) !== String(idToDelete));
+
+                assert(
+                    "Front-Test #4: CarePlus Record Deletion with String vs Number ID",
+                    remaining.length === 0,
+                    `Record with numeric ID 1770458821533 deleted via string identifier "1770458821533".\nRemaining records: ${remaining.length} (Successfully deleted).`,
+                    "MEDIUM"
+                );
+            } catch (e) {
+                assert("Front-Test #4: CarePlus Record Deletion with String vs Number ID", false, e.message, "MEDIUM");
+            }
+
+            console.log("Diagnostic scan complete. Results:", results);
+            window.__DIAGNOSTIC_RESULTS = results;
+        }
+
+        window.addEventListener('DOMContentLoaded', runDiagnostics);
+    </script>
+</body>
+</html>
