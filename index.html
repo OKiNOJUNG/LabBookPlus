@@ -1804,7 +1804,7 @@
 
         <div id="login-view">
             <div style="position: absolute; top: 1.5rem; right: 1.5rem; display: flex; gap: 0.75rem; z-index: 50;">
-                <a href="CarePlus.html" class="login-switch-pill" onclick="LabAuth.syncSession()" title="สลับไปใช้งาน MPIR Lab Care+">
+                <a href="CarePlus.html" class="login-switch-pill" onclick="LabAuth.syncSession()" title="Switch to MPIR Lab Care+">
                     <i class="fa-solid fa-screwdriver-wrench" style="color: #0284c7;"></i>
                     <span>Lab Care+</span>
                     <i class="fa-solid fa-arrow-right text-xs opacity-60"></i>
@@ -1826,21 +1826,21 @@
 
                 <form id="login-form" onsubmit="app.login(event)">
                     <div class="form-group">
-                        <label for="login-user">ชื่อผู้ใช้ / อีเมลองค์กร</label>
+                        <label for="login-user">Username / Organization Email</label>
                         <div class="login-input-group">
                             <i class="fa-solid fa-user login-input-icon"></i>
-                            <input type="text" id="login-user" required placeholder="admin@lab.com หรือชื่อผู้ใช้" autocomplete="username">
+                            <input type="text" id="login-user" required placeholder="admin@lab.com or username" autocomplete="username">
                         </div>
                     </div>
 
                     <div class="form-group" style="margin-top: 1rem;">
                         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.4rem;">
-                            <label for="login-pass" style="margin: 0;">รหัสผ่าน</label>
+                            <label for="login-pass" style="margin: 0;">Password</label>
                         </div>
                         <div class="login-input-group">
                             <i class="fa-solid fa-lock login-input-icon"></i>
                             <input type="password" id="login-pass" required placeholder="••••••••" autocomplete="current-password">
-                            <button type="button" class="login-password-toggle" onclick="LabSmart.togglePassword('login-pass', this)" title="แสดง/ซ่อนรหัสผ่าน">
+                            <button type="button" class="login-password-toggle" onclick="LabSmart.togglePassword('login-pass', this)" title="Show/Hide Password">
                                 <i class="fa-solid fa-eye"></i>
                             </button>
                         </div>
@@ -1848,7 +1848,7 @@
 
                     <button type="submit" class="btn btn-shimmer" id="btn-login-submit">
                         <i class="fa-solid fa-right-to-bracket"></i>
-                        <span>เข้าสู่ระบบ (Sign In)</span>
+                        <span>Sign In</span>
                     </button>
                 </form>
 
@@ -4081,7 +4081,7 @@
                     this.state.user = authRes.user;
                     if (err) err.classList.add('hidden');
                     this.saveState();
-                    LabAlert.toast('success', `ยินดีต้อนรับคุณ ${authRes.user.name}`);
+                    LabAlert.toast('success', `Welcome, ${authRes.user.name}`);
                     this.updateUI();
                     this.handleRouting();
                 } else {

@@ -674,7 +674,7 @@
 
     <div id="loginPage" class="min-h-screen flex items-center justify-center p-4 relative login-bg">
         <div style="position: absolute; top: 1.5rem; right: 1.5rem; display: flex; gap: 0.75rem; z-index: 50;">
-            <a href="index.html" class="login-switch-pill" onclick="LabAuth.syncSession()" title="สลับไปใช้งาน MPIR Lab Book+">
+            <a href="index.html" class="login-switch-pill" onclick="LabAuth.syncSession()" title="Switch to MPIR Lab Book+">
                 <i class="fa-solid fa-book" style="color: #0F766E;"></i>
                 <span>Lab Book+</span>
                 <i class="fa-solid fa-arrow-right text-xs opacity-60"></i>
@@ -694,23 +694,23 @@
                 </div>
             </div>
 
-            <form id="loginForm">
+            <form id="loginForm" onsubmit="handleLogin(event)">
                 <div class="form-group">
-                    <label for="loginEmail">ชื่อผู้ใช้ / อีเมลองค์กร</label>
+                    <label for="loginEmail">Username / Organization Email</label>
                     <div class="login-input-group">
                         <i class="fa-solid fa-user login-input-icon"></i>
-                        <input type="text" id="loginEmail" required placeholder="admin@lab.com หรือชื่อผู้ใช้" autocomplete="username">
+                        <input type="text" id="loginEmail" required placeholder="admin@lab.com or username" autocomplete="username">
                     </div>
                 </div>
 
                 <div class="form-group" style="margin-top: 1rem;">
                     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.4rem;">
-                        <label for="loginPassword" style="margin: 0;">รหัสผ่าน</label>
+                        <label for="loginPassword" style="margin: 0;">Password</label>
                     </div>
                     <div class="login-input-group">
                         <i class="fa-solid fa-lock login-input-icon"></i>
                         <input type="password" id="loginPassword" required placeholder="••••••••" autocomplete="current-password">
-                        <button type="button" class="login-password-toggle" onclick="LabSmart.togglePassword('loginPassword', this)" title="แสดง/ซ่อนรหัสผ่าน">
+                        <button type="button" class="login-password-toggle" onclick="LabSmart.togglePassword('loginPassword', this)" title="Show/Hide Password">
                             <i class="fa-solid fa-eye"></i>
                         </button>
                     </div>
@@ -718,7 +718,7 @@
 
                 <button type="submit" class="btn btn-shimmer btn-shimmer-sky" id="btn-login-submit-cp">
                     <i class="fa-solid fa-right-to-bracket"></i>
-                    <span>เข้าสู่ระบบ (Sign In)</span>
+                    <span>Sign In</span>
                 </button>
             </form>
 
@@ -1095,6 +1095,7 @@
                         <table class="w-full glass-table text-left border-collapse">
                             <thead>
                                 <tr class="text-xs font-bold tracking-wider uppercase border-b border-gray-200/50">
+                                    <th class="px-3 py-3.5 text-center w-12 text-gray-500 font-bold">#</th>
                                     <th class="px-4 py-3.5">
                                         <div class="flex items-center justify-between">
                                             <span class="col-sort-btn" onclick="handleHeaderSort('equipment')" title="คลิกเพื่อเรียงลำดับ">
@@ -1788,7 +1789,7 @@
             try {
                 const _initState = LabStateBridge.getState() || {};
                 if (Array.isArray(_initState.users) && _initState.users.length > 0) users = _initState.users;
-                if (Array.isArray(_initState.records)) records = _initState.records;
+                if (Array.isArray(_initState.records) && _initState.records.length > 0) records = _initState.records;
                 if (Array.isArray(_initState.technicians) && _initState.technicians.length > 0) technicians = _initState.technicians;
                 if (Array.isArray(_initState.reporters) && _initState.reporters.length > 0) reporters = _initState.reporters;
                 if (Array.isArray(_initState.equipments) && _initState.equipments.length > 0) equipment = _initState.equipments;
@@ -1802,7 +1803,17 @@
         let idbInst = null;
 
         function initIndexedDB() {
-            return new Promise((resolve, reject) => {
+            return new Promise(async (resolve) => {
+                if (window.LabPoStorage) {
+                    try {
+                        const allFiles = await LabPoStorage.getAll();
+                        if (allFiles && typeof allFiles === 'object') {
+                            Object.assign(poFilesDb, allFiles);
+                        }
+                    } catch(e) {
+                        console.warn("LabPoStorage early getAll error:", e);
+                    }
+                }
                 const req = indexedDB.open(IDB_NAME, 1);
                 req.onupgradeneeded = (e) => {
                     idbInst = e.target.result;
@@ -1812,73 +1823,71 @@
                 };
                 req.onsuccess = (e) => {
                     idbInst = e.target.result;
-                    const tx = idbInst.transaction(IDB_STORE, 'readonly');
-                    const store = tx.objectStore(IDB_STORE);
-                    const reqGetAll = store.getAll();
-                    const reqKeys = store.getAllKeys();
-
-                    reqGetAll.onsuccess = () => {
-                        reqKeys.onsuccess = () => {
-                            reqKeys.result.forEach((k, i) => {
-                                poFilesDb[k] = reqGetAll.result[i];
-                            });
-
-                            const savedState = localStorage.getItem('NoteLabState_Merged');
-                            if (savedState) {
-                                try {
-                                    const state = JSON.parse(savedState);
-                                    if (state.poFilesDb && Object.keys(state.poFilesDb).length > 0) {
-                                        let migrated = false;
-                                        for (const [id, files] of Object.entries(state.poFilesDb)) {
-                                            if (!poFilesDb[id]) {
-                                                poFilesDb[id] = files;
-                                                savePoFileToIDB(id, files);
-                                                migrated = true;
-                                            }
-                                        }
-                                        if (migrated) {
-                                            delete state.poFilesDb;
-                                            localStorage.setItem('NoteLabState_Merged', JSON.stringify(state));
-                                        }
-                                    }
-                                } catch (err) { console.error("Migration error", err); }
+                    try {
+                        const tx = idbInst.transaction(IDB_STORE, 'readonly');
+                        const store = tx.objectStore(IDB_STORE);
+                        const cursorReq = store.openCursor();
+                        cursorReq.onsuccess = (evt) => {
+                            const cursor = evt.target.result;
+                            if (cursor) {
+                                const val = cursor.value;
+                                poFilesDb[String(cursor.key)] = val;
+                                if (!isNaN(Number(cursor.key))) {
+                                    poFilesDb[Number(cursor.key)] = val;
+                                }
+                                cursor.continue();
+                            } else {
+                                resolve();
                             }
-                            resolve();
                         };
-                    };
+                        cursorReq.onerror = () => resolve();
+                    } catch (err) {
+                        resolve();
+                    }
                 };
-                req.onerror = (e) => { console.error("IDB Init error", e); resolve(); }; // Resolve anyway to continue
+                req.onerror = (e) => { console.error("IDB Init error", e); resolve(); };
             });
         }
 
         function savePoFileToIDB(id, files) {
+            const strKey = String(id);
+            poFilesDb[strKey] = files;
+            if (!isNaN(Number(id))) poFilesDb[Number(id)] = files;
+            if (window.LabPoStorage) {
+                LabPoStorage.save(id, files);
+            }
             if (!idbInst) return;
-            const tx = idbInst.transaction(IDB_STORE, 'readwrite');
-            tx.objectStore(IDB_STORE).put(files, id);
+            try {
+                const tx = idbInst.transaction(IDB_STORE, 'readwrite');
+                tx.objectStore(IDB_STORE).put(files, strKey);
+                if (!isNaN(Number(id))) {
+                    tx.objectStore(IDB_STORE).put(files, Number(id));
+                }
+            } catch (e) {}
         }
 
         function deletePoFileFromIDB(id) {
+            delete poFilesDb[String(id)];
+            if (!isNaN(Number(id))) delete poFilesDb[Number(id)];
+            if (window.LabPoStorage) {
+                LabPoStorage.delete(id);
+            }
             if (!idbInst) return;
-            const tx = idbInst.transaction(IDB_STORE, 'readwrite');
-            tx.objectStore(IDB_STORE).delete(id);
+            try {
+                const tx = idbInst.transaction(IDB_STORE, 'readwrite');
+                tx.objectStore(IDB_STORE).delete(String(id));
+                if (!isNaN(Number(id))) tx.objectStore(IDB_STORE).delete(Number(id));
+            } catch (e) {}
         }
 
-        function getAllPoFilesFromIDB() {
-            return new Promise((resolve) => {
-                if (!idbInst) { resolve(poFilesDb); return; }
-                const tx = idbInst.transaction(IDB_STORE, 'readonly');
-                const store = tx.objectStore(IDB_STORE);
-                const reqGetAll = store.getAll();
-                const reqKeys = store.getAllKeys();
-                reqGetAll.onsuccess = () => {
-                    reqKeys.onsuccess = () => {
-                        const res = {};
-                        reqKeys.result.forEach((k, i) => { res[k] = reqGetAll.result[i]; });
-                        resolve(res);
-                    };
-                };
-                reqGetAll.onerror = () => resolve(poFilesDb);
-            });
+        async function getAllPoFilesFromIDB() {
+            if (window.LabPoStorage) {
+                try {
+                    const idbData = await LabPoStorage.getAll();
+                    return { ...poFilesDb, ...idbData };
+                } catch(e) {}
+            }
+            return poFilesDb;
         }
 
         let currentCalendarMonth = new Date();
@@ -1905,7 +1914,11 @@
             try {
                 const state = LabStateBridge.getState() || {};
                 if (Array.isArray(state.users) && state.users.length > 0) users = state.users;
-                if (Array.isArray(state.records)) records = state.records;
+                if (Array.isArray(state.records) && state.records.length > 0) {
+                    records = state.records;
+                } else if ((!records || records.length === 0) && Array.isArray(_backupData.records) && _backupData.records.length > 0) {
+                    records = JSON.parse(JSON.stringify(_backupData.records));
+                }
                 if (Array.isArray(state.technicians) && state.technicians.length > 0) technicians = state.technicians;
                 if (Array.isArray(state.reporters) && state.reporters.length > 0) reporters = state.reporters;
                 if (Array.isArray(state.equipments) && state.equipments.length > 0) equipment = state.equipments;
@@ -2224,8 +2237,8 @@ function openUpcomingModal() {
                 loadCarePlusState();
                 currentUser = { ...authRes.user, email: authRes.user.username };
                 initApp();
-                addCarePlusAudit('Login', `เข้าสู่ระบบ Care+ โดย ${authRes.user.name}`);
-                LabAlert.toast('success', `ยินดีต้อนรับคุณ ${authRes.user.name}`);
+                addCarePlusAudit('Login', `Sign in to Care+ by ${authRes.user.name}`);
+                LabAlert.toast('success', `Welcome, ${authRes.user.name}`);
             } else {
                 LabSmart.setInlineError(pInput, authRes.message);
                 LabAlert.toast('error', authRes.message, 2500);
@@ -3267,6 +3280,7 @@ function renderCharts(data) {
                 const tr = document.createElement('tr');
                 tr.className = "group border-b border-gray-100 hover:bg-white/60 transition-colors";
                 tr.innerHTML = `
+            <td class="px-3 py-4 text-center font-mono text-xs text-gray-400 font-semibold">${start + i + 1}</td>
             <td class="px-4 py-4 min-w-[220px] break-words whitespace-normal"><div class="font-semibold text-gray-800 flex flex-wrap items-center gap-1">${escapeHtml(r.equipment_name)}${modelTag}</div><div class="text-[10px] text-gray-400 font-bold uppercase tracking-wide">📍 ${escapeHtml(r.building || 'N/A')}</div></td>
             <td class="px-4 py-4 min-w-[120px]"><span class="w-2 h-2 rounded-full inline-block mr-2 ${typeColor}"></span><span class="text-sm text-gray-600">${typeLabel}</span></td>
             <td class="px-4 py-4 min-w-[110px] text-gray-500 font-mono text-xs">${r.service_date}</td>
@@ -3300,19 +3314,26 @@ function renderCharts(data) {
             }
         }
         async function backupData() {
+            saveCarePlusState();
             await LabStateBridge.exportCombinedBackup();
             addCarePlusAudit('Backup', 'สำรองข้อมูลทั้ง 2 ระบบ');
         }
 
         function importData(input) {
             if (!input || !input.files || !input.files[0]) return;
-            LabStateBridge.importCombinedBackup(input.files[0], (newState) => {
+            LabStateBridge.importCombinedBackup(input.files[0], async (newState) => {
                 records = newState.records || [];
                 users = newState.users || [];
                 buildings = newState.buildings || [];
                 equipment = newState.equipments || newState.equipment || [];
                 technicians = newState.technicians || [];
                 reporters = newState.reporters || [];
+                if (window.LabPoStorage) {
+                    try {
+                        const idbFiles = await LabPoStorage.getAll();
+                        poFilesDb = { ...idbFiles };
+                    } catch(e) {}
+                }
                 loadSettings();
                 loadDashboard();
                 loadRecords();
@@ -4006,10 +4027,12 @@ function renderCharts(data) {
                 }
             } else {
                 const newId = 'EQ-' + String(Date.now()).slice(-6);
-                equipment.push({ id: newId, name: name, model: model, building_id: bid, serial: 'N/A', custodian: 'Admin' });
+                equipment.unshift({ id: newId, name: name, model: model, building_id: bid, serial: 'N/A', custodian: 'Admin' });
                 saveCarePlusState();
                 addCarePlusAudit('Add Equipment', `เพิ่มเครื่องมือใหม่ ${name} (รุ่น: ${model})`);
             }
+            const sInput = document.getElementById('adminEquipSearch');
+            if (sInput) sInput.value = '';
             LabAlert.toast('success', 'บันทึกข้อมูลเครื่องมือเรียบร้อย');
             renderAdminEquipment();
             renderAdminLocations();
@@ -4432,14 +4455,28 @@ function loadEditForm(id) {
             sidebar.innerHTML = '';
             preview.innerHTML = '<div class="flex items-center justify-center h-full text-gray-400">กำลังเตรียมเอกสาร...</div>';
 
+            // Ensure poFilesDb has this record's attachments from memory, IDB, or Cloud
+            let files = poFilesDb[id] || poFilesDb[String(id)] || poFilesDb[Number(id)];
+            if ((!files || files.length === 0) && window.LabPoStorage) {
+                try {
+                    const allIdb = await LabPoStorage.getAll();
+                    if (allIdb && (allIdb[id] || allIdb[String(id)] || allIdb[Number(id)])) {
+                        poFilesDb = { ...allIdb, ...poFilesDb };
+                        files = poFilesDb[id] || poFilesDb[String(id)] || poFilesDb[Number(id)];
+                    }
+                } catch(e) {}
+            }
+
             // Pre-fetch from Firebase Cloud if missing locally
-            if ((!poFilesDb[id] || poFilesDb[id].length === 0) && window.LabFirebase && LabFirebase.isConfigured()) {
+            if ((!files || files.length === 0) && window.LabFirebase && LabFirebase.isConfigured()) {
                 try {
                     const cloudFiles = await LabFirebase.fetchAttachmentFromCloud(id);
                     if (cloudFiles && Array.isArray(cloudFiles) && cloudFiles.length > 0) {
                         if (typeof poFilesDb === 'undefined') window.poFilesDb = {};
                         poFilesDb[id] = cloudFiles;
+                        poFilesDb[String(id)] = cloudFiles;
                         savePoFileToIDB(id, cloudFiles);
+                        files = cloudFiles;
                     }
                 } catch (e) {
                     console.warn("Pre-fetch cloud error:", e);
@@ -4447,12 +4484,14 @@ function loadEditForm(id) {
             }
 
             let filesList = [];
-            if (r.po_files && r.po_files.length > 0) {
+            if (Array.isArray(files) && files.length > 0) {
+                filesList = files.map((f, i) => ({ name: f.name || `Attachment ${i + 1}.pdf`, index: i }));
+            } else if (r.po_files && r.po_files.length > 0) {
                 filesList = r.po_files.map((name, i) => ({ name, index: i }));
             } else if (r.po_file) {
                 filesList = [{ name: r.po_file, index: 0 }];
-            } else if (poFilesDb[id] && poFilesDb[id].length > 0) {
-                filesList = poFilesDb[id].map((f, i) => ({ name: f.name, index: i }));
+            } else if (r.additional_files && r.additional_files.length > 0) {
+                filesList = r.additional_files.map((name, i) => ({ name, index: i }));
             }
 
             if (filesList.length === 0) {
@@ -4483,10 +4522,20 @@ function loadEditForm(id) {
             }
 
             const preview = document.getElementById('poPdfPreviewArea');
-            let files = poFilesDb[id];
+            let files = poFilesDb[id] || poFilesDb[String(id)] || poFilesDb[Number(id)];
+
+            if ((!files || files.length === 0) && window.LabPoStorage) {
+                try {
+                    const allIdb = await LabPoStorage.getAll();
+                    if (allIdb && (allIdb[id] || allIdb[String(id)] || allIdb[Number(id)])) {
+                        poFilesDb = { ...allIdb, ...poFilesDb };
+                        files = poFilesDb[id] || poFilesDb[String(id)] || poFilesDb[Number(id)];
+                    }
+                } catch (e) {}
+            }
 
             // If file is missing locally, attempt on-demand fetch from Firebase Cloud
-            if ((!files || !files[index]) && window.LabFirebase && LabFirebase.isConfigured()) {
+            if ((!files || files.length === 0) && window.LabFirebase && LabFirebase.isConfigured()) {
                 preview.innerHTML = `
                     <div style="display:flex; justify-content:center; align-items:center; height:100%; font-family:sans-serif; color:#2563eb; background:#f0f9ff; flex-direction:column; border-radius:12px; border:2px dashed #93c5fd;">
                         <svg class="animate-spin" style="width:36px;height:36px;margin-bottom:12px;" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
@@ -4499,6 +4548,7 @@ function loadEditForm(id) {
                     if (cloudFiles && Array.isArray(cloudFiles) && cloudFiles.length > 0) {
                         if (typeof poFilesDb === 'undefined') window.poFilesDb = {};
                         poFilesDb[id] = cloudFiles;
+                        poFilesDb[String(id)] = cloudFiles;
                         savePoFileToIDB(id, cloudFiles);
                         files = cloudFiles;
                     }
@@ -4507,17 +4557,24 @@ function loadEditForm(id) {
                 }
             }
 
-            if (files && files[index]) {
-                const target = files[index];
+            let target = null;
+            if (Array.isArray(files) && files.length > 0) {
+                target = files.find(f => f && f.name === fileName) || files[index] || files[0];
+            }
+
+            if (target) {
                 try {
                     let dataUrl = '';
-                    if (window.LabCompressor) {
+                    if (window.LabCompressor && target.compressed) {
                         dataUrl = await LabCompressor.decompressToDataUrl(target);
                     } else {
                         dataUrl = target.data || '';
                     }
 
-                    if (dataUrl && dataUrl.startsWith('data:')) {
+                    if (dataUrl) {
+                        if (!dataUrl.startsWith('data:')) {
+                            dataUrl = `data:${target.mimeType || 'application/pdf'};base64,${dataUrl}`;
+                        }
                         preview.innerHTML = `<iframe src="${dataUrl}" width="100%" height="100%" style="border:none;border-radius:12px;"></iframe>`;
                         return;
                     }
@@ -4530,7 +4587,7 @@ function loadEditForm(id) {
                 <div style="display:flex; justify-content:center; align-items:center; height:100%; font-family:sans-serif; color:#666; background:#f9fafb; flex-direction:column; border-radius:12px; border:2px dashed #d1d5db;">
                     <svg style="width:48px;height:48px;margin-bottom:16px;color:#9ca3af;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     <h2 style="margin:0 0 8px;font-size:20px;color:#374151;">File Preview Not Available</h2>
-                    <p style="margin:0;font-size:14px;">The actual file data for <strong>${fileName}</strong> was not found in the local or cloud database.</p>
+                    <p style="margin:0;font-size:14px;">The actual file data for <strong>${escapeHtml(fileName)}</strong> was not found in the local or cloud database.</p>
                     <p style="margin:8px 0 0;font-size:12px;color:#9ca3af;">(Demo data or file has not been synced to Cloud yet)</p>
                 </div>
             `;

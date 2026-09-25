@@ -337,20 +337,42 @@
                 try {
                     const tx = db.transaction(this.IDB_STORE, 'readonly');
                     const store = tx.objectStore(this.IDB_STORE);
-                    const reqGetAll = store.getAll();
-                    const reqKeys = store.getAllKeys();
-                    reqGetAll.onsuccess = () => {
-                        reqKeys.onsuccess = () => {
-                            const res = {};
-                            (reqKeys.result || []).forEach((k, i) => { res[k] = reqGetAll.result[i]; });
+                    const res = {};
+                    const req = store.openCursor();
+                    req.onsuccess = (e) => {
+                        const cursor = e.target.result;
+                        if (cursor) {
+                            const val = cursor.value;
+                            res[String(cursor.key)] = val;
+                            if (!isNaN(Number(cursor.key))) {
+                                res[Number(cursor.key)] = val;
+                            }
+                            cursor.continue();
+                        } else {
                             resolve(res);
-                        };
+                        }
                     };
-                    reqGetAll.onerror = () => resolve({});
+                    req.onerror = () => resolve({});
                 } catch (e) {
                     resolve({});
                 }
             });
+        },
+
+        async save(id, files) {
+            if (!id || !files) return;
+            const db = await this.open();
+            if (!db) return;
+            try {
+                const tx = db.transaction(this.IDB_STORE, 'readwrite');
+                const store = tx.objectStore(this.IDB_STORE);
+                store.put(files, String(id));
+                if (!isNaN(Number(id))) {
+                    store.put(files, Number(id));
+                }
+            } catch (e) {
+                console.warn('LabPoStorage.save error:', e);
+            }
         },
 
         async saveMany(dict) {
@@ -361,11 +383,28 @@
                 const tx = db.transaction(this.IDB_STORE, 'readwrite');
                 const store = tx.objectStore(this.IDB_STORE);
                 for (const [k, v] of Object.entries(dict)) {
-                    const keyVal = isNaN(Number(k)) ? k : Number(k);
-                    store.put(v, keyVal);
+                    store.put(v, String(k));
+                    if (!isNaN(Number(k))) {
+                        store.put(v, Number(k));
+                    }
                 }
             } catch (e) {
                 console.warn('LabPoStorage.saveMany error:', e);
+            }
+        },
+
+        async delete(id) {
+            const db = await this.open();
+            if (!db) return;
+            try {
+                const tx = db.transaction(this.IDB_STORE, 'readwrite');
+                const store = tx.objectStore(this.IDB_STORE);
+                store.delete(String(id));
+                if (!isNaN(Number(id))) {
+                    store.delete(Number(id));
+                }
+            } catch (e) {
+                console.warn('LabPoStorage.delete error:', e);
             }
         },
 
@@ -433,7 +472,7 @@
                 state.equipments = eqList;
                 state.equipment = eqList; // keep synonym in sync
 
-                if (!Array.isArray(state.records)) {
+                if (!Array.isArray(state.records) || state.records.length === 0) {
                     state.records = JSON.parse(JSON.stringify(SEED_DATA.records || []));
                     modified = true;
                 }
@@ -589,7 +628,7 @@
                     }
                 }
 
-                // Also merge any bookings, records, or attachments stored in Cloud Firebase
+                // Also merge any bookings, records, master data, or attachments stored in Cloud Firebase
                 if (window.LabFirebase && LabFirebase.isConfigured()) {
                     try {
                         const cloudState = await LabFirebase.fetchStateFromCloud();
@@ -614,6 +653,22 @@
                                 });
                                 state.records = curRecords;
                             }
+                            const cloudEquip = Array.isArray(cloudState.equipments) ? cloudState.equipments : (Array.isArray(cloudState.equipment) ? cloudState.equipment : null);
+                            if (cloudEquip && cloudEquip.length > 0) {
+                                const curEq = state.equipments || state.equipment || [];
+                                const eqMap = new Map();
+                                curEq.forEach(e => { if (e && e.id) eqMap.set(String(e.id), e); });
+                                cloudEquip.forEach(e => { if (e && e.id && !eqMap.has(String(e.id))) eqMap.set(String(e.id), e); });
+                                state.equipments = Array.from(eqMap.values());
+                                state.equipment = state.equipments;
+                            }
+                            if (Array.isArray(cloudState.auditLogs) && cloudState.auditLogs.length > 0) {
+                                const curAud = state.auditLogs || [];
+                                const audMap = new Map();
+                                curAud.forEach(a => { if (a && a.id) audMap.set(String(a.id), a); });
+                                cloudState.auditLogs.forEach(a => { if (a && a.id) audMap.set(String(a.id), a); });
+                                state.auditLogs = Array.from(audMap.values()).sort((x, y) => new Date(y.timestamp) - new Date(x.timestamp));
+                            }
                         }
                         const cloudAttachments = await LabFirebase.fetchAllAttachmentsFromCloud();
                         poFilesDb = { ...cloudAttachments, ...poFilesDb };
@@ -633,6 +688,10 @@
                     serial: eq.serial || '-',
                     custodian: eq.custodian || '-'
                 }));
+
+                const auditData = (Array.isArray(state.auditLogs) && state.auditLogs.length > 0)
+                    ? state.auditLogs
+                    : (() => { try { return JSON.parse(localStorage.getItem('carePlusAuditLog') || '[]'); } catch { return []; } })();
 
                 const backupPayload = {
                     metadata: {
@@ -658,10 +717,12 @@
                     // User Transactions
                     bookings: state.bookings || [],
                     records: state.records || [],
-                    // Care+ Audit Log
-                    carePlusAuditLog: (() => { try { return JSON.parse(localStorage.getItem('carePlusAuditLog') || '[]'); } catch { return []; } })(),
-                    // Compressed Attachments from IndexedDB & Cloud
-                    poFilesDb: poFilesDb || {}
+                    // Care+ Audit Log (saved under both keys for maximum compatibility)
+                    carePlusAuditLog: auditData,
+                    auditLogs: auditData,
+                    // Compressed Attachments from IndexedDB & Cloud (saved under both keys)
+                    poFilesDb: poFilesDb || {},
+                    poFiles: poFilesDb || {}
                 };
 
                 const jsonStr = JSON.stringify(backupPayload, null, 2);
@@ -727,11 +788,21 @@
                 }
 
                 // 2. Normalize Equipments
-                let importedEquip = payload.equipments || payload.equipment || currentState.equipments || [];
+                let rawImportedEquip = payload.equipments || payload.equipment || [];
+                let importedEquip = [];
+                if (Array.isArray(rawImportedEquip) && rawImportedEquip.length > 0) {
+                    importedEquip = rawImportedEquip;
+                } else if (Array.isArray(currentState.equipments) && currentState.equipments.length > 0) {
+                    importedEquip = currentState.equipments;
+                } else if (Array.isArray(currentState.equipment) && currentState.equipment.length > 0) {
+                    importedEquip = currentState.equipment;
+                }
                 importedEquip.forEach((eq, i) => {
                     if (!eq.id) eq.id = 'EQ-' + String(i + 1).padStart(3, '0');
                     else eq.id = String(eq.id);
                     if (eq.model === undefined || eq.model === null || String(eq.model).trim() === '') eq.model = '-';
+                    if (!eq.serial) eq.serial = '-';
+                    if (!eq.custodian) eq.custodian = 'Admin';
                 });
 
                 // 3. Buildings, Techs, Reporters
@@ -756,6 +827,11 @@
                     importedRecords = currentState.records;
                 }
 
+                // 4.5 Audit Log
+                const importedAudit = Array.isArray(payload.auditLogs) && payload.auditLogs.length > 0
+                    ? payload.auditLogs
+                    : (Array.isArray(payload.carePlusAuditLog) ? payload.carePlusAuditLog : (currentState.auditLogs || []));
+
                 // 5. Build merged state
                 const newState = {
                     ...currentState,
@@ -768,7 +844,8 @@
                     timeSlots: importedTimeSlots,
                     dynamicFields: importedDynFields,
                     bookings: importedBookings,
-                    records: importedRecords
+                    records: importedRecords,
+                    auditLogs: importedAudit
                 };
 
                 // Save to central localStorage
@@ -797,8 +874,8 @@
                 LabHaptic.success();
 
                 // Restore Care+ Audit Log if present in backup
-                if (Array.isArray(payload.carePlusAuditLog) && payload.carePlusAuditLog.length > 0) {
-                    localStorage.setItem('carePlusAuditLog', JSON.stringify(payload.carePlusAuditLog));
+                if (Array.isArray(importedAudit) && importedAudit.length > 0) {
+                    localStorage.setItem('carePlusAuditLog', JSON.stringify(importedAudit));
                 }
 
                 LabAlert.toast('success', `นำเข้าข้อมูลเรียบร้อยแล้ว (การจอง: ${importedBookings.length} รายการ, การซ่อม: ${importedRecords.length} รายการ)`);
@@ -995,7 +1072,7 @@
         },
 
         login(identifier, password) {
-            if (!identifier || !password) return { success: false, message: 'กรุณากรอก Username และ Password' };
+            if (!identifier || !password) return { success: false, message: 'Please enter Username and Password' };
 
             const trimmedId = identifier.trim().toLowerCase();
             const trimmedPass = password.trim();
@@ -1023,7 +1100,7 @@
                 return { success: true, user };
             }
 
-            return { success: false, message: 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง' };
+            return { success: false, message: 'Invalid username or password' };
         },
 
         logout() {
@@ -1819,16 +1896,25 @@
                                 });
                                 const finalRecords = Array.from(mergedRecordsMap.values());
 
-                                // Smart merge equipments to preserve model
-                                const rawRemEquip = Array.isArray(remoteData.equipments) ? remoteData.equipments : (Array.isArray(remoteData.equipment) ? remoteData.equipment : null);
+                                // Smart merge equipments using Map so newly added local equipments are never dropped
+                                const rawRemEquip = Array.isArray(remoteData.equipments) ? remoteData.equipments : (Array.isArray(remoteData.equipment) ? remoteData.equipment : []);
                                 const curEquip = current.equipments || current.equipment || [];
-                                const mergedEquip = rawRemEquip ? rawRemEquip.map(re => {
-                                    const matchCur = curEquip.find(ce => String(ce.id) === String(re.id) || ce.name === re.name);
-                                    return {
-                                        ...re,
-                                        model: (re.model && re.model !== '-') ? re.model : (matchCur?.model || re.model || '-')
-                                    };
-                                }) : curEquip;
+                                const mergedEquipMap = new Map();
+                                curEquip.forEach(ce => {
+                                    if (ce && ce.id) mergedEquipMap.set(String(ce.id), ce);
+                                });
+                                rawRemEquip.forEach(re => {
+                                    if (re && re.id) {
+                                        const key = String(re.id);
+                                        const existing = mergedEquipMap.get(key) || {};
+                                        mergedEquipMap.set(key, {
+                                            ...existing,
+                                            ...re,
+                                            model: (re.model && re.model !== '-') ? re.model : (existing?.model || re.model || '-')
+                                        });
+                                    }
+                                });
+                                const mergedEquip = Array.from(mergedEquipMap.values());
 
                                 // Smart merge auditLogs
                                 const curAudit = Array.isArray(current.auditLogs) ? current.auditLogs : [];
