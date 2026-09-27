@@ -1,4 +1,4 @@
-﻿# MPIR Lab Suite: System Architecture & Design Specification
+# MPIR Lab Suite: System Architecture & Design Specification
 **Systems**: Lab Book+ (Lab Equipment LogBook) & Lab Care+ (MPIR Lab Care+)  
 **Version**: 2.2 Enterprise Production Release  
 **Deploy URL**: `https://labbookplus.netlify.app/`  
@@ -132,7 +132,7 @@ const LabFirebase = {
 
     // ค่าคอนฟิกเริ่มต้นประจำองค์กร - เชื่อมต่อให้อัตโนมัติสำหรับทุกคน
     DEFAULT_CONFIG: {
-        apiKey: "AIzaSyCo00njz18BSvRl6LGhNhRbUQ7AZOmqbRo",
+        apiKey: "YOUR_FIREBASE_API_KEY",
         authDomain: "mpir-lab-suite.firebaseapp.com",
         projectId: "mpir-lab-suite",
         storageBucket: "mpir-lab-suite.firebasestorage.app",

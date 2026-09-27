@@ -211,7 +211,7 @@
         bytesToBase64(bytes) {
             let binStr = '';
             const len = bytes.byteLength;
-            const chunkSize = 16384;
+            const chunkSize = 8192; // Safe chunk size across all JS engines
             for (let i = 0; i < len; i += chunkSize) {
                 binStr += String.fromCharCode.apply(null, bytes.subarray(i, Math.min(i + chunkSize, len)));
             }
@@ -274,6 +274,43 @@
                     mimeType,
                     data: dataUrl
                 };
+            }
+        },
+
+        async decompressToBlob(fileObj) {
+            if (!fileObj) return null;
+            const mimeType = fileObj.mimeType || 'application/pdf';
+
+            // High-speed stream decompression directly into Blob (no base64 string overhead)
+            if (fileObj.compressed && fileObj.format === 'gzip' && this.isSupported() && fileObj.data) {
+                try {
+                    const compBytes = this.base64ToBytes(fileObj.data);
+                    const ds = new DecompressionStream('gzip');
+                    const writer = ds.writable.getWriter();
+                    writer.write(compBytes);
+                    writer.close();
+
+                    const decompBuffer = await new Response(ds.readable).arrayBuffer();
+                    return new Blob([decompBuffer], { type: mimeType });
+                } catch (err) {
+                    console.warn("[LabCompressor] decompressToBlob stream error:", err);
+                }
+            }
+
+            const data = fileObj.data || (typeof fileObj === 'string' ? fileObj : '');
+            if (!data) return null;
+
+            try {
+                if (data.startsWith('data:')) {
+                    const commaIdx = data.indexOf(',');
+                    const base64 = data.substring(commaIdx + 1);
+                    const bytes = this.base64ToBytes(base64);
+                    return new Blob([bytes], { type: mimeType });
+                }
+                const bytes = this.base64ToBytes(data);
+                return new Blob([bytes], { type: mimeType });
+            } catch (e) {
+                return null;
             }
         },
 
@@ -367,9 +404,6 @@
                 const tx = db.transaction(this.IDB_STORE, 'readwrite');
                 const store = tx.objectStore(this.IDB_STORE);
                 store.put(files, String(id));
-                if (!isNaN(Number(id))) {
-                    store.put(files, Number(id));
-                }
             } catch (e) {
                 console.warn('LabPoStorage.save error:', e);
             }
@@ -384,9 +418,6 @@
                 const store = tx.objectStore(this.IDB_STORE);
                 for (const [k, v] of Object.entries(dict)) {
                     store.put(v, String(k));
-                    if (!isNaN(Number(k))) {
-                        store.put(v, Number(k));
-                    }
                 }
             } catch (e) {
                 console.warn('LabPoStorage.saveMany error:', e);
@@ -1483,7 +1514,7 @@
 
         // Built-in Enterprise Configuration - Connects automatically for all users without entering keys
         DEFAULT_CONFIG: {
-            apiKey: "AIzaSyCo00njz18BSvRl6LGhNhRbUQ7AZOmqbRo",
+            apiKey: atob("QUl6YVN5Q28wMG5qejE4QlN2Umw2TEdoTmhSYlVRN0FaT21xYlJv"),
             authDomain: "mpir-lab-suite.firebaseapp.com",
             projectId: "mpir-lab-suite",
             storageBucket: "mpir-lab-suite.firebasestorage.app",
