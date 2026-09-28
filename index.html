@@ -3399,7 +3399,23 @@
                 LabStateBridge.listen((newState, key) => {
                     this.loadState();
                     this.updateUI();
-                    this.handleRouting();
+
+                    const adminVisible = !document.getElementById('admin-view')?.classList.contains('hidden');
+                    const equipVisible = !document.getElementById('equipment-view')?.classList.contains('hidden');
+                    const dtVisible = !document.getElementById('data-table-view')?.classList.contains('hidden');
+                    const dashVisible = !document.getElementById('dashboard-view')?.classList.contains('hidden');
+
+                    if (adminVisible) {
+                        this.renderAdminData();
+                    } else if (equipVisible) {
+                        this.renderEquipmentGrid();
+                    } else if (dtVisible) {
+                        this.renderDataTable();
+                    } else if (dashVisible) {
+                        this.initCalendar();
+                        this.renderCharts();
+                        this.updateDashboardMetrics();
+                    }
                 });
 
                 // Real-time remote cloud sync listener
@@ -3409,13 +3425,13 @@
                     this.initCalendar();
                     this.renderCharts();
                     this.updateDashboardMetrics();
-                    if (window.location.hash === '#equipment' || this.previousView === 'equipment-view') {
+                    if (window.location.hash === '#equipment' || this.previousView === 'equipment-view' || !document.getElementById('equipment-view')?.classList.contains('hidden')) {
                         this.renderEquipmentGrid();
                     }
-                    if (window.location.hash === '#datatable' || this.previousView === 'data-table-view') {
+                    if (window.location.hash === '#datatable' || this.previousView === 'data-table-view' || !document.getElementById('data-table-view')?.classList.contains('hidden')) {
                         this.renderDataTable();
                     }
-                    if (window.location.hash === '#admin' || this.previousView === 'admin-view') {
+                    if (window.location.hash === '#admin' || this.previousView === 'admin-view' || !document.getElementById('admin-view')?.classList.contains('hidden')) {
                         this.renderAdminData();
                     }
                 });
@@ -3436,7 +3452,9 @@
             },
 
             loadState() {
-                this.state = LabStateBridge.getState();
+                this.state = LabStateBridge.getState() || {};
+                this.state.equipments = this.state.equipments || this.state.equipment || [];
+                this.state.equipment = this.state.equipments;
                 if (this.state.users) {
                     this.state.users.forEach(u => { if (u.activeSession) delete u.activeSession; });
                 }
@@ -3449,15 +3467,23 @@
             },
 
             saveState() {
-                const currentState = LabStateBridge.getState();
+                const currentState = LabStateBridge.getState() || {};
+                this.state.equipment = this.state.equipments;
                 const merged = {
                     ...currentState,
                     ...this.state,
+                    equipments: this.state.equipments,
+                    equipment: this.state.equipments,
                     records: currentState.records || []
                 };
                 const saved = LabStateBridge.saveState(merged);
                 if (saved) {
                     this.state = saved;
+                    this.state.equipments = saved.equipments || saved.equipment || [];
+                    this.state.equipment = this.state.equipments;
+                }
+                if (typeof LabStateBridge.flushSync === 'function') {
+                    LabStateBridge.flushSync();
                 }
             },
 
@@ -3559,6 +3585,7 @@
                     this.renderDataTable();
                 }
                 if (viewId === 'admin-view') {
+                    window.location.hash = 'admin';
                     this.renderAdminData();
                 }
             },
@@ -3921,9 +3948,51 @@
                 document.getElementById('btnCancelEq').classList.add('hidden');
             },
             adminDeleteEquipment(id) {
-                this.state.equipments = this.state.equipments.filter(e => e.id !== id);
-                this.saveState();
-                this.renderAdminEquipments();
+                const eq = (this.state.equipments || []).find(e => String(e.id) === String(id));
+                const eqName = eq ? eq.name : '';
+
+                const executeDelete = () => {
+                    const targetId = String(id).trim();
+                    const targetName = (eqName || '').trim().toLowerCase();
+                    const targetNum = targetId.replace(/\D/g, '');
+
+                    this.state.equipments = (this.state.equipments || []).filter(e => {
+                        if (!e) return false;
+                        if (String(e.id) === targetId) return false;
+                        if (targetName && e.name && e.name.trim().toLowerCase() === targetName) return false;
+                        const idNum = String(e.id).replace(/\D/g, '');
+                        if (idNum && targetNum && idNum === targetNum) return false;
+                        return true;
+                    });
+                    this.state.equipment = this.state.equipments;
+
+                    if (!Array.isArray(this.state.deletedEquipmentIds)) {
+                        this.state.deletedEquipmentIds = [];
+                    }
+                    if (targetId && !this.state.deletedEquipmentIds.includes(targetId)) {
+                        this.state.deletedEquipmentIds.push(targetId);
+                    }
+                    if (eqName && !this.state.deletedEquipmentIds.includes(eqName)) {
+                        this.state.deletedEquipmentIds.push(eqName);
+                    }
+
+                    this.saveState();
+                    if (typeof LabStateBridge.flushSync === 'function') {
+                        LabStateBridge.flushSync();
+                    }
+                    this.renderAdminEquipments();
+                    if (window.LabAlert) {
+                        LabAlert.toast('success', `ลบเครื่องมือ "${eqName || id}" เรียบร้อย`);
+                    }
+                };
+
+                if (window.LabAlert) {
+                    LabAlert.confirm(`ต้องการลบเครื่องมือ "${eqName || id}"?`, 'ข้อมูลจะถูกลบออกจากทั้งสองระบบทันที', 'ลบเครื่องมือ', 'ยกเลิก').then(confirmed => {
+                        if (confirmed) executeDelete();
+                    });
+                } else if (confirm(`ต้องการลบเครื่องมือ "${eqName || id}"?`)) {
+                    executeDelete();
+                }
             },
 
             renderAdminUsers() {
@@ -6147,23 +6216,67 @@
             },
 
             deleteEquipment() {
-                Swal.fire({
-                    title: 'Delete Equipment?',
-                    text: "This action cannot be undone.",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#EF4444',
-                    confirmButtonText: 'Yes, delete it!'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        const id = document.getElementById('admin-eq-id').value;
-                        this.state.equipments = this.state.equipments.filter(e => e.id !== id);
-                        this.saveState();
-                        this.closeModal('eq');
-                        this.renderAdminData();
-                        Swal.fire('Deleted!', 'Equipment has been deleted.', 'success');
+                const id = document.getElementById('admin-eq-id').value;
+                const eq = (this.state.equipments || []).find(e => String(e.id) === String(id));
+                const eqName = eq ? eq.name : '';
+
+                const executeDelete = () => {
+                    const targetId = String(id).trim();
+                    const targetName = (eqName || '').trim().toLowerCase();
+                    const targetNum = targetId.replace(/\D/g, '');
+
+                    this.state.equipments = (this.state.equipments || []).filter(e => {
+                        if (!e) return false;
+                        if (String(e.id) === targetId) return false;
+                        if (targetName && e.name && e.name.trim().toLowerCase() === targetName) return false;
+                        const idNum = String(e.id).replace(/\D/g, '');
+                        if (idNum && targetNum && idNum === targetNum) return false;
+                        return true;
+                    });
+                    this.state.equipment = this.state.equipments;
+
+                    if (!Array.isArray(this.state.deletedEquipmentIds)) {
+                        this.state.deletedEquipmentIds = [];
                     }
-                });
+                    if (targetId && !this.state.deletedEquipmentIds.includes(targetId)) {
+                        this.state.deletedEquipmentIds.push(targetId);
+                    }
+                    if (eqName && !this.state.deletedEquipmentIds.includes(eqName)) {
+                        this.state.deletedEquipmentIds.push(eqName);
+                    }
+
+                    this.saveState();
+                    if (typeof LabStateBridge.flushSync === 'function') {
+                        LabStateBridge.flushSync();
+                    }
+                    this.closeModal('eq');
+                    this.renderAdminData();
+                    if (window.LabAlert) {
+                        LabAlert.toast('success', `ลบเครื่องมือ "${eqName || id}" เรียบร้อย`);
+                    } else if (typeof Swal !== 'undefined') {
+                        Swal.fire('Deleted!', 'ลบเครื่องมือเรียบร้อยแล้ว', 'success');
+                    }
+                };
+
+                if (window.LabAlert) {
+                    LabAlert.confirm(`ต้องการลบเครื่องมือ "${eqName || id}"?`, 'ข้อมูลจะถูกลบออกจากทั้งสองระบบทันที', 'ลบเครื่องมือ', 'ยกเลิก').then(confirmed => {
+                        if (confirmed) executeDelete();
+                    });
+                } else if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        title: `ต้องการลบเครื่องมือ "${eqName || id}"?`,
+                        text: "ข้อมูลจะถูกลบออกจากทั้งสองระบบทันที",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#EF4444',
+                        confirmButtonText: 'ลบเครื่องมือ',
+                        cancelButtonText: 'ยกเลิก'
+                    }).then((result) => {
+                        if (result.isConfirmed) executeDelete();
+                    });
+                } else if (confirm(`ต้องการลบเครื่องมือ "${eqName || id}"?`)) {
+                    executeDelete();
+                }
             },
 
             showAdminHistory(username) {

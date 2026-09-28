@@ -585,13 +585,32 @@
                 const merged = Object.assign({}, current, partialOrFull);
 
                 // Ensure equipment synonym stays bidirectional
-                if (partialOrFull.equipments) merged.equipment = partialOrFull.equipments;
-                if (partialOrFull.equipment) merged.equipments = partialOrFull.equipment;
+                if (partialOrFull.equipments && !partialOrFull.equipment) {
+                    merged.equipment = partialOrFull.equipments;
+                } else if (partialOrFull.equipment && !partialOrFull.equipments) {
+                    merged.equipments = partialOrFull.equipment;
+                } else if (partialOrFull.equipments && partialOrFull.equipment) {
+                    merged.equipments = partialOrFull.equipments;
+                    merged.equipment = partialOrFull.equipments;
+                }
 
                 // Never store massive blobs into localStorage
                 delete merged.poFilesDb;
 
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
+
+                // Dispatch local event for same-window / iframe listeners
+                try {
+                    window.dispatchEvent(new CustomEvent('labStateChange', { detail: merged }));
+                } catch (e) {}
+
+                // Broadcast across tabs/windows immediately
+                if (typeof BroadcastChannel !== 'undefined') {
+                    try {
+                        if (!this._bc) this._bc = new BroadcastChannel('lab_state_sync');
+                        this._bc.postMessage({ type: 'state_updated' });
+                    } catch (e) {}
+                }
 
                 // Auto-sync to Firebase Cloud
                 if (!skipCloud && window.LabFirebase && LabFirebase.isConfigured()) {
@@ -627,6 +646,19 @@
                     callback(this.getState(), e.key);
                 }
             });
+            window.addEventListener('labStateChange', (e) => {
+                callback(this.getState(), STORAGE_KEY);
+            });
+            if (typeof BroadcastChannel !== 'undefined') {
+                try {
+                    if (!this._bc) this._bc = new BroadcastChannel('lab_state_sync');
+                    this._bc.onmessage = (msg) => {
+                        if (msg && msg.data && msg.data.type === 'state_updated') {
+                            callback(this.getState(), STORAGE_KEY);
+                        }
+                    };
+                } catch (e) {}
+            }
         },
 
         // --- Unified Backup: Exports complete state from both Lab Book+ and Lab Care+ ---
@@ -1927,15 +1959,18 @@
                                 });
                                 const finalRecords = Array.from(mergedRecordsMap.values());
 
-                                // Smart merge equipments using Map so newly added local equipments are never dropped
+                                // Smart merge equipments using Map and respect deletedEquipmentIds
+                                const deletedEqSet = new Set((current.deletedEquipmentIds || []).concat(remoteData.deletedEquipmentIds || []).map(String));
                                 const rawRemEquip = Array.isArray(remoteData.equipments) ? remoteData.equipments : (Array.isArray(remoteData.equipment) ? remoteData.equipment : []);
                                 const curEquip = current.equipments || current.equipment || [];
                                 const mergedEquipMap = new Map();
                                 curEquip.forEach(ce => {
-                                    if (ce && ce.id) mergedEquipMap.set(String(ce.id), ce);
+                                    if (ce && ce.id && !deletedEqSet.has(String(ce.id)) && !deletedEqSet.has(String(ce.name))) {
+                                        mergedEquipMap.set(String(ce.id), ce);
+                                    }
                                 });
                                 rawRemEquip.forEach(re => {
-                                    if (re && re.id) {
+                                    if (re && re.id && !deletedEqSet.has(String(re.id)) && !deletedEqSet.has(String(re.name))) {
                                         const key = String(re.id);
                                         const existing = mergedEquipMap.get(key) || {};
                                         mergedEquipMap.set(key, {
