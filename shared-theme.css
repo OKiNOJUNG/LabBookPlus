@@ -1453,7 +1453,7 @@ div[id$="Modal"].hidden {
 }
 
 .modal-close-btn:hover,
-.modal-header .btn-outline:hover {
+.modal-header .btn-icon-only:hover {
     background: #FEE2E2 !important;
     color: #EF4444 !important;
     border-color: #FECACA !important;

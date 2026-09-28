@@ -1567,8 +1567,13 @@
                 border-color: #cbd5e1 !important;
             }
 
+            .eq-qr-trigger-wrap {
+                display: none !important;
+            }
+
             /* QR Container: exactly like web, white rounded box with soft border */
-            .eq-qr-container {
+            .eq-qr-container,
+            .eq-qr-container.print-only {
                 margin: 0 auto 3mm auto !important;
                 padding: 2.5mm !important;
                 border: 1px solid #e2e8f0 !important;
@@ -1864,22 +1869,21 @@
                     <h2 class="text-2xl font-extrabold text-gray-800 dark:text-slate-100 flex items-center gap-2">
                         <i class="fa-solid fa-chart-line text-teal-600 dark:text-teal-400"></i> Dashboard & Calendar
                     </h2>
-                    <p class="text-xs text-gray-500 dark:text-slate-400 mt-1">ภาพรวมการใช้งานเครื่องมือวิทยาศาสตร์
-                        ตารางจอง และสถิติวิเคราะห์แบบเรียลไทม์</p>
+                    <p class="text-xs text-gray-500 dark:text-slate-400 mt-1">Real-time overview of scientific equipment usage, booking schedules, and analytics.</p>
                 </div>
                 <div class="flex items-center gap-2 flex-wrap text-xs font-semibold">
-                    <span class="text-gray-400 dark:text-slate-500 mr-1">สถานะ:</span>
+                    <span class="text-gray-400 dark:text-slate-500 mr-1">Status:</span>
                     <span
                         class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 border border-blue-200 dark:border-blue-800/50">
-                        <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span> Advance (จองล่วงหน้า)
+                        <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span> Advance
                     </span>
                     <span
                         class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300 border border-amber-200 dark:border-amber-800/50">
-                        <span class="w-2 h-2 rounded-full bg-amber-500"></span> In Use (กำลังใช้งาน)
+                        <span class="w-2 h-2 rounded-full bg-amber-500"></span> In Use
                     </span>
                     <span
                         class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/50">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Finished (เสร็จสิ้น)
+                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Finished
                     </span>
                 </div>
             </div>
@@ -1895,7 +1899,7 @@
                             Total Equipments</p>
                         <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-800 dark:text-slate-100" id="dashKpiEquip">0</h2>
                         <p class="text-[10px] sm:text-[11px] text-teal-600 dark:text-teal-400 font-semibold mt-0.5" id="dashKpiEquipSub">
-                            พร้อมใช้งาน 100%</p>
+                            Available 100%</p>
                     </div>
                     <div
                         class="w-10 h-10 bg-teal-100/80 dark:bg-teal-900/40 rounded-xl flex items-center justify-center text-xl shadow-xs text-teal-600 dark:text-teal-400">
@@ -1912,7 +1916,7 @@
                         <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-800 dark:text-slate-100" id="dashKpiBookings">0
                         </h2>
                         <p class="text-[10px] sm:text-[11px] text-blue-600 dark:text-blue-400 font-semibold mt-0.5"
-                            id="dashKpiBookingsSub">ในเงื่อนไขตัวกรอง</p>
+                            id="dashKpiBookingsSub">Under current filter</p>
                     </div>
                     <div
                         class="w-10 h-10 bg-blue-100/80 dark:bg-blue-900/40 rounded-xl flex items-center justify-center text-xl shadow-xs text-blue-600 dark:text-blue-400">
@@ -1928,7 +1932,7 @@
                             Active Today</p>
                         <h2 class="text-2xl sm:text-3xl font-extrabold text-amber-600 dark:text-amber-400" id="dashKpiToday">0</h2>
                         <p class="text-[10px] sm:text-[11px] text-amber-600 dark:text-amber-400 font-semibold mt-0.5"
-                            id="dashKpiTodaySub">คิวการใช้งานวันนี้</p>
+                            id="dashKpiTodaySub">Today's booking queue</p>
                     </div>
                     <div
                         class="w-10 h-10 bg-amber-100/80 dark:bg-amber-900/40 rounded-xl flex items-center justify-center text-xl shadow-xs text-amber-600 dark:text-amber-400">
@@ -1945,7 +1949,7 @@
                         <h2 class="text-2xl sm:text-3xl font-extrabold text-emerald-600 dark:text-emerald-400" id="dashKpiHours">0h
                         </h2>
                         <p class="text-[10px] sm:text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold mt-0.5"
-                            id="dashKpiHoursSub">ชั่วโมงรวมสะสม</p>
+                            id="dashKpiHoursSub">Cumulative hours</p>
                     </div>
                     <div
                         class="w-10 h-10 bg-emerald-100/80 dark:bg-emerald-900/40 rounded-xl flex items-center justify-center text-xl shadow-xs text-emerald-600 dark:text-emerald-400">
@@ -1962,7 +1966,7 @@
                         <h2 class="text-2xl sm:text-3xl font-extrabold text-purple-600 dark:text-purple-400" id="dashKpiUtil">0%
                         </h2>
                         <p class="text-[10px] sm:text-[11px] text-purple-600 dark:text-purple-400 font-semibold mt-0.5"
-                            id="dashKpiUtilSub">อัตราการใช้งาน</p>
+                            id="dashKpiUtilSub">Utilization rate</p>
                     </div>
                     <div
                         class="w-10 h-10 bg-purple-100/80 dark:bg-purple-900/40 rounded-xl flex items-center justify-center text-xl shadow-xs text-purple-600 dark:text-purple-400">
@@ -1990,7 +1994,7 @@
                             <i class="fa-solid fa-building mr-1 text-teal-500"></i> Area / Location
                         </label>
                         <select id="cal-filter-loc" onchange="app.updateCalendarFilters()" class="glass-input w-full">
-                            <option value="">All Areas (ทุกพื้นที่)</option>
+                            <option value="">All Areas</option>
                         </select>
                     </div>
                     <div>
@@ -1999,7 +2003,7 @@
                             <i class="fa-solid fa-cubes mr-1 text-teal-500"></i> Equipment
                         </label>
                         <select id="cal-filter-eq" onchange="app.updateCalendarFilters()" class="glass-input w-full">
-                            <option value="">All Equipments (ทุกเครื่องมือ)</option>
+                            <option value="">All Equipments</option>
                         </select>
                     </div>
                     <div>
@@ -2009,10 +2013,10 @@
                         </label>
                         <select id="cal-filter-status" onchange="app.updateCalendarFilters()"
                             class="glass-input w-full">
-                            <option value="">All Status (ทุกสถานะ)</option>
-                            <option value="booked">Advance (จองล่วงหน้า)</option>
-                            <option value="inuse">In Use (กำลังใช้งาน)</option>
-                            <option value="finished">Finished (เสร็จสิ้น)</option>
+                            <option value="">All Status</option>
+                            <option value="booked">Advance</option>
+                            <option value="inuse">In Use</option>
+                            <option value="finished">Finished</option>
                         </select>
                     </div>
                     <div>
@@ -2021,10 +2025,10 @@
                             <i class="fa-solid fa-calendar-days mr-1 text-teal-500"></i> Time Scope
                         </label>
                         <select id="cal-filter-time" onchange="app.updateCalendarFilters()" class="glass-input w-full">
-                            <option value="all">All Time (ทั้งหมด)</option>
-                            <option value="today">Today (เฉพาะวันนี้)</option>
-                            <option value="month" selected>This Month (เดือนปัจจุบัน)</option>
-                            <option value="upcoming">Upcoming Only (การจองในอนาคต)</option>
+                            <option value="all">All Time</option>
+                            <option value="today">Today</option>
+                            <option value="month" selected>This Month</option>
+                            <option value="upcoming">Upcoming Only</option>
                         </select>
                     </div>
                 </div>
@@ -2056,7 +2060,7 @@
                             class="flex items-center gap-1 sm:gap-1.5 bg-gray-100/70 dark:bg-slate-800/70 p-1 rounded-xl backdrop-blur-sm border border-gray-200/50 dark:border-slate-700/50">
                             <button onclick="app.goToTodayCalendar()"
                                 class="px-2.5 py-1 text-xs font-bold hover:bg-white dark:hover:bg-slate-700 hover:shadow-sm rounded-lg transition text-teal-600 dark:text-teal-400 bg-white/60 dark:bg-slate-800/60 border border-teal-200/50 dark:border-teal-800/40"
-                                title="ไปยังเดือนปัจจุบัน">
+                                title="Go to current month">
                                 <i class="fa-solid fa-calendar-day mr-1"></i> Today
                             </button>
                             <button onclick="app.previousCalendarMonth()"
@@ -2090,22 +2094,24 @@
             <!-- Visualization Grid -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div class="glass ios-card p-6">
-                    <div class="flex justify-between items-center mb-4">
+                    <div class="flex justify-between items-center mb-1">
                         <h3 class="text-base font-bold text-gray-800 dark:text-slate-100 flex items-center gap-2">
-                            <i class="fa-solid fa-chart-column text-teal-600"></i> Monthly Usage by Equipment (นาที)
+                            <i class="fa-solid fa-chart-column text-teal-600"></i> Monthly Usage by Equipment (Minutes)
                         </h3>
-                        <span class="text-xs text-gray-400 font-medium">Top 10 เครื่องมือ</span>
+                        <span class="text-xs text-gray-400 font-medium">Top 10 Equipment</span>
                     </div>
+                    <p class="text-xs text-gray-500 dark:text-slate-400 mb-3">Total operational minutes logged across top equipment for the active period.</p>
                     <div style="height: 280px;"><canvas id="chart-monthly"></canvas></div>
                 </div>
 
                 <div class="glass ios-card p-6">
-                    <div class="flex justify-between items-center mb-4">
+                    <div class="flex justify-between items-center mb-1">
                         <h3 class="text-base font-bold text-gray-800 dark:text-slate-100 flex items-center gap-2">
                             <i class="fa-solid fa-chart-pie text-sky-600"></i> Booking Status & Availability
                         </h3>
-                        <span class="text-xs text-gray-400 font-medium">สัดส่วนสถานะการใช้งาน</span>
+                        <span class="text-xs text-gray-400 font-medium">Usage Status Distribution</span>
                     </div>
+                    <p class="text-xs text-gray-500 dark:text-slate-400 mb-3">Operational breakdown across Finished, In Use, and Advance bookings.</p>
                     <div style="height: 280px; display: flex; justify-content: center;"><canvas
                             id="chart-status"></canvas></div>
                 </div>
@@ -2113,24 +2119,33 @@
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="glass ios-card p-6">
-                    <h3 class="text-base font-bold text-gray-800 dark:text-slate-100 mb-4 flex items-center gap-2">
-                        <i class="fa-solid fa-building text-emerald-600"></i> Usage by Lab Area
-                    </h3>
+                    <div class="flex justify-between items-center mb-1">
+                        <h3 class="text-base font-bold text-gray-800 dark:text-slate-100 flex items-center gap-2">
+                            <i class="fa-solid fa-building text-emerald-600"></i> Usage by Lab Area
+                        </h3>
+                    </div>
+                    <p class="text-xs text-gray-500 dark:text-slate-400 mb-3">Workload and booking frequency distributed across lab facilities.</p>
                     <div style="height: 240px;"><canvas id="chart-area"></canvas></div>
                 </div>
 
                 <div class="glass ios-card p-6">
-                    <h3 class="text-base font-bold text-gray-800 dark:text-slate-100 mb-4 flex items-center gap-2">
-                        <i class="fa-solid fa-users text-purple-600"></i> Top Active Researchers
-                    </h3>
+                    <div class="flex justify-between items-center mb-1">
+                        <h3 class="text-base font-bold text-gray-800 dark:text-slate-100 flex items-center gap-2">
+                            <i class="fa-solid fa-users text-purple-600"></i> Top Active Researchers
+                        </h3>
+                    </div>
+                    <p class="text-xs text-gray-500 dark:text-slate-400 mb-3">Ranking of most frequent lab users and research investigators.</p>
                     <div style="height: 240px; display: flex; justify-content: center;"><canvas
                             id="chart-users"></canvas></div>
                 </div>
 
                 <div class="glass ios-card p-6">
-                    <h3 class="text-base font-bold text-gray-800 dark:text-slate-100 mb-4 flex items-center gap-2">
-                        <i class="fa-solid fa-compass-drafting text-amber-600"></i> Project Classification
-                    </h3>
+                    <div class="flex justify-between items-center mb-1">
+                        <h3 class="text-base font-bold text-gray-800 dark:text-slate-100 flex items-center gap-2">
+                            <i class="fa-solid fa-compass-drafting text-amber-600"></i> Project Classification
+                        </h3>
+                    </div>
+                    <p class="text-xs text-gray-500 dark:text-slate-400 mb-3">Equipment time allocation grouped by research project codes.</p>
                     <div style="height: 240px; display: flex; justify-content: center;"><canvas
                             id="chart-time"></canvas></div>
                 </div>
@@ -2139,21 +2154,21 @@
             <!-- Recommended Visualize & Smart Recommendations Section -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div class="glass ios-card p-6">
-                    <div class="flex justify-between items-center mb-4">
+                    <div class="flex justify-between items-center mb-1">
                         <h3 class="text-base font-bold text-gray-800 dark:text-slate-100 flex items-center gap-2">
                             <i class="fa-solid fa-clock-rotate-left text-indigo-600"></i> Peak Usage Hours Heatmap
-                            (ช่วงเวลาใช้งาน)
                         </h3>
                         <span
                             class="text-xs bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 px-2.5 py-1 rounded-full font-bold">Smart
                             Analysis</span>
                     </div>
+                    <p class="text-xs text-gray-500 dark:text-slate-400 mb-3">Hourly booking concentration identifying high-demand lab time windows.</p>
                     <div style="height: 260px;"><canvas id="chart-hourly"></canvas></div>
                 </div>
 
                 <div class="glass ios-card p-6 flex flex-col justify-between">
                     <div>
-                        <div class="flex justify-between items-center mb-4">
+                        <div class="flex justify-between items-center mb-1">
                             <h3 class="text-base font-bold text-gray-800 dark:text-slate-100 flex items-center gap-2">
                                 <i class="fa-solid fa-wand-magic-sparkles text-amber-500"></i> Smart Equipment
                                 Recommendations
@@ -2162,6 +2177,7 @@
                                 class="text-xs bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 px-2.5 py-1 rounded-full font-bold">Live
                                 AI Advisor</span>
                         </div>
+                        <p class="text-xs text-gray-500 dark:text-slate-400 mb-3">AI-driven equipment scheduling recommendations and availability optimization.</p>
                         <div class="space-y-3" id="dashSmartRecs">
                             <!-- Populated dynamically based on live data -->
                         </div>
@@ -2169,7 +2185,7 @@
                     <div
                         class="mt-4 pt-3 border-t border-gray-100 dark:border-slate-800/80 flex items-center justify-between text-xs text-gray-400">
                         <span><i class="fa-solid fa-bolt text-teal-500 mr-1"></i>
-                            ปรับปรุงคำแนะนำอัตโนมัติตามตัวกรอง</span>
+                            Auto-updated based on active filters</span>
                         <span class="font-bold text-teal-600 dark:text-teal-400">Lab Book+ AI Engine</span>
                     </div>
                 </div>
@@ -2183,8 +2199,7 @@
                     <h2 class="text-2xl font-extrabold text-gray-800 dark:text-slate-100 flex items-center gap-2">
                         <i class="fa-solid fa-cubes text-teal-600 dark:text-teal-400"></i> Equipments Inventory
                     </h2>
-                    <p class="text-xs text-gray-500 dark:text-slate-400 mt-1">รายการเครื่องมือวิทยาศาสตร์ทั้งหมด ค้นหา
-                        สแกน QR และดูประวัติการใช้งาน</p>
+                    <p class="text-xs text-gray-500 dark:text-slate-400 mt-1">Browse all scientific equipment, search, view QR codes, and check usage history.</p>
                 </div>
                 <div class="flex flex-wrap items-center gap-2.5 w-full md:w-auto">
                     <button
@@ -2201,19 +2216,19 @@
                     </div>
                     <select id="equipment-filter-status" onchange="app.filterEquipments()"
                         class="glass-input px-3 py-2 rounded-xl text-xs md:text-sm min-w-[130px]"
-                        title="กรองสถานะเครื่องมือ">
-                        <option value="">ทุกสถานะ (All Status)</option>
-                        <option value="avail">🟢 ว่าง (Available)</option>
-                        <option value="busy">🟠 กำลังใช้งาน (In Use)</option>
+                        title="Filter by status">
+                        <option value="">All Statuses</option>
+                        <option value="avail">🟢 Available</option>
+                        <option value="busy">🟠 In Use</option>
                     </select>
                     <select id="equipment-filter-loc" onchange="app.filterEquipments()"
                         class="glass-input px-3 py-2 rounded-xl text-xs md:text-sm min-w-[150px]"
-                        title="กรองสถานที่จัดวาง">
-                        <option value="">ทุกสถานที่ (All Locations)</option>
+                        title="Filter by location">
+                        <option value="">All Locations</option>
                     </select>
                     <button type="button" id="btn-clear-eq-filter" onclick="app.clearEquipmentFilters()"
                         class="ios-btn bg-white/80 dark:bg-slate-800 text-gray-700 dark:text-slate-200 border border-slate-200/80 dark:border-slate-700 px-3 py-2 text-xs md:text-sm hover:shadow flex items-center gap-1.5 whitespace-nowrap"
-                        title="ล้างตัวกรองทั้งหมด (Clear Filters)">
+                        title="Clear all filters">
                         <i class="fa-solid fa-filter-circle-xmark text-teal-600 dark:text-teal-400"></i> Clear Filter
                     </button>
                 </div>
@@ -2230,7 +2245,7 @@
                         <i class="fa-solid fa-table text-teal-600 dark:text-teal-400"></i> All Data & Logs
                     </h2>
                     <p class="text-xs text-gray-500 dark:text-slate-400 mt-1">
-                        ประวัติบันทึกการจองและการใช้งานเครื่องมือทั้งหมดในระบบ</p>
+                        Complete history and usage records of all laboratory equipment.</p>
                 </div>
                 <div class="flex gap-3">
                     <button onclick="app.exportToPDF()"
@@ -2254,10 +2269,10 @@
                 </div>
                 <select id="log-filter-status" onchange="app.renderDataTable(true)"
                     class="glass-input px-3 py-2 rounded-xl text-sm min-w-[140px]">
-                    <option value="">All Status (ทุกสถานะ)</option>
-                    <option value="booked">Advance (จองล่วงหน้า)</option>
-                    <option value="inuse">In Use (กำลังใช้งาน)</option>
-                    <option value="finished">Finished (เสร็จสิ้น)</option>
+                    <option value="">All Status</option>
+                    <option value="booked">Advance</option>
+                    <option value="inuse">In Use</option>
+                    <option value="finished">Finished</option>
                 </select>
                 <select id="log-filter-eq" onchange="app.renderDataTable(true)"
                     class="glass-input px-3 py-2 rounded-xl text-sm min-w-[160px]">
@@ -2781,34 +2796,120 @@
             </div>
 
             <div id="admin-sec-bookings" class="glass-card" style="padding: 1.5rem; border-radius: 16px;">
-                <div class="header-actions" style="margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
-                    <h3
-                        style="font-size: 1.15rem; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 0.5rem; margin: 0;">
-                        <span style="width: 8px; height: 8px; border-radius: 50%; background: #6366f1;"></span> All
-                        Bookings (Audit Log)
-                    </h3>
-                    <input type="text" id="admin-bookings-search" class="glass-input" placeholder="🔍 ค้นหารายการจอง (ID, ผู้จอง, เครื่องมือ, สถานะ)..." oninput="app.renderAdminBookings(true)" style="font-size: 0.8rem; padding: 0.4rem 0.75rem; width: 300px; max-width: 100%;">
+                <div class="header-actions" style="margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+                    <div>
+                        <h3
+                            style="font-size: 1.15rem; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 0.5rem; margin: 0;">
+                            <span style="width: 8px; height: 8px; border-radius: 50%; background: #6366f1;"></span>
+                            Audit Log (ประวัติรายการจองและกิจกรรม)
+                        </h3>
+                        <p style="font-size: 0.75rem; color: var(--text-muted); margin: 0.25rem 0 0 0;">
+                            บันทึกการจองและกิจกรรมระบบทั้งหมด สามารถฟิลเตอร์รายเดือน/ปี หรือลบข้อมูลเก่าเพื่อคืนพื้นที่
+                        </p>
+                    </div>
+
+                    <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+                        <button type="button" class="btn btn-outline text-danger" onclick="app.openAdminAuditPurgeModal()" style="font-size: 0.8rem; padding: 0.4rem 0.75rem; display: flex; align-items: center; gap: 0.4rem;">
+                            <i class="fa-solid fa-trash-can"></i> ลบข้อมูล Audit Log (รายเดือน/ปี)
+                        </button>
+                    </div>
                 </div>
-                <div class="table-container" style="max-height: 400px; overflow-y: auto;">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Date</th>
-                                <th>Equipment</th>
-                                <th>User</th>
-                                <th>Status</th>
-                                <th style="text-align: right;">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="admin-bookings-tbody"></tbody>
-                    </table>
+
+                <!-- Subtabs: Bookings Audit & System Activity Log -->
+                <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">
+                    <button type="button" id="tab-btn-audit-bookings" class="btn btn-sm" onclick="app.switchAdminAuditTab('bookings')" style="font-size: 0.8rem; padding: 0.35rem 0.85rem; border-radius: 8px;">
+                        <i class="fa-solid fa-calendar-check"></i> รายการจอง (Bookings Audit)
+                    </button>
+                    <button type="button" id="tab-btn-audit-activity" class="btn btn-outline btn-sm" onclick="app.switchAdminAuditTab('activity')" style="font-size: 0.8rem; padding: 0.35rem 0.85rem; border-radius: 8px;">
+                        <i class="fa-solid fa-clock-rotate-left"></i> ประวัติกิจกรรมระบบ (System Activity Log)
+                    </button>
                 </div>
-                <div class="flex items-center justify-between flex-wrap gap-2" style="margin-top: 0.75rem;">
-                    <span style="font-size: 0.75rem; color: var(--text-muted);" id="admin-bookings-info">0 records</span>
-                    <div class="flex gap-2">
-                        <button onclick="app.bookingAuditPage(-1)" class="btn btn-outline" style="font-size: 0.75rem; padding: 0.35rem 0.75rem;" id="admin-bookings-prev" disabled>← Previous</button>
-                        <button onclick="app.bookingAuditPage(1)" class="btn btn-outline" style="font-size: 0.75rem; padding: 0.35rem 0.75rem;" id="admin-bookings-next">Next →</button>
+
+                <!-- Filter Controls Toolbar -->
+                <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin-bottom: 1rem; padding: 0.75rem; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); border-radius: 12px;">
+                    <div style="display: flex; align-items: center; gap: 0.35rem;">
+                        <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">เดือน:</span>
+                        <select id="admin-audit-filter-month" class="glass-input" onchange="app.handleAdminAuditFilterChange()" style="font-size: 0.8rem; padding: 0.35rem 0.6rem; min-width: 140px;">
+                            <option value="all">📅 ทุกเดือน (All Months)</option>
+                            <option value="1">01 - มกราคม (Jan)</option>
+                            <option value="2">02 - กุมภาพันธ์ (Feb)</option>
+                            <option value="3">03 - มีนาคม (Mar)</option>
+                            <option value="4">04 - เมษายน (Apr)</option>
+                            <option value="5">05 - พฤษภาคม (May)</option>
+                            <option value="6">06 - มิถุนายน (Jun)</option>
+                            <option value="7">07 - กรกฎาคม (Jul)</option>
+                            <option value="8">08 - สิงหาคม (Aug)</option>
+                            <option value="9">09 - กันยายน (Sep)</option>
+                            <option value="10">10 - ตุลาคม (Oct)</option>
+                            <option value="11">11 - พฤศจิกายน (Nov)</option>
+                            <option value="12">12 - ธันวาคม (Dec)</option>
+                        </select>
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 0.35rem;">
+                        <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">ปี:</span>
+                        <select id="admin-audit-filter-year" class="glass-input" onchange="app.handleAdminAuditFilterChange()" style="font-size: 0.8rem; padding: 0.35rem 0.6rem; min-width: 110px;">
+                            <option value="all">🗓️ ทุกปี (All Years)</option>
+                        </select>
+                    </div>
+
+                    <div style="flex: 1; min-width: 220px;">
+                        <input type="text" id="admin-bookings-search" class="glass-input" placeholder="🔍 ค้นหา (ID, ผู้ใช้งาน, เครื่องมือ, สถานะ, รายละเอียด)..." oninput="app.handleAdminAuditFilterChange()" style="font-size: 0.8rem; padding: 0.35rem 0.75rem; width: 100%;">
+                    </div>
+
+                    <button type="button" class="btn btn-outline" onclick="app.resetAdminAuditFilter()" style="font-size: 0.75rem; padding: 0.35rem 0.65rem;" title="ล้างตัวกรอง">
+                        <i class="fa-solid fa-rotate-left"></i> ล้างตัวกรอง
+                    </button>
+                </div>
+
+                <!-- Tab 1: Bookings Audit Table -->
+                <div id="admin-audit-view-bookings">
+                    <div class="table-container" style="max-height: 400px; overflow-y: auto;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Date</th>
+                                    <th>Equipment</th>
+                                    <th>User</th>
+                                    <th>Status</th>
+                                    <th style="text-align: right;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-bookings-tbody"></tbody>
+                        </table>
+                    </div>
+                    <div class="flex items-center justify-between flex-wrap gap-2" style="margin-top: 0.75rem;">
+                        <span style="font-size: 0.75rem; color: var(--text-muted);" id="admin-bookings-info">0 records</span>
+                        <div class="flex gap-2">
+                            <button onclick="app.bookingAuditPage(-1)" class="btn btn-outline" style="font-size: 0.75rem; padding: 0.35rem 0.75rem;" id="admin-bookings-prev" disabled>← Previous</button>
+                            <button onclick="app.bookingAuditPage(1)" class="btn btn-outline" style="font-size: 0.75rem; padding: 0.35rem 0.75rem;" id="admin-bookings-next">Next →</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 2: System Activity Log Table -->
+                <div id="admin-audit-view-activity" style="display: none;">
+                    <div class="table-container" style="max-height: 400px; overflow-y: auto;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th style="width: 50px;">#</th>
+                                    <th>Timestamp</th>
+                                    <th>User</th>
+                                    <th>Action</th>
+                                    <th>Details</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-activity-tbody"></tbody>
+                        </table>
+                    </div>
+                    <div class="flex items-center justify-between flex-wrap gap-2" style="margin-top: 0.75rem;">
+                        <span style="font-size: 0.75rem; color: var(--text-muted);" id="admin-activity-info">0 records</span>
+                        <div class="flex gap-2">
+                            <button onclick="app.activityAuditPage(-1)" class="btn btn-outline" style="font-size: 0.75rem; padding: 0.35rem 0.75rem;" id="admin-activity-prev" disabled>← Previous</button>
+                            <button onclick="app.activityAuditPage(1)" class="btn btn-outline" style="font-size: 0.75rem; padding: 0.35rem 0.75rem;" id="admin-activity-next">Next →</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -2884,15 +2985,20 @@
     <div id="modal-cal-day" class="modal hidden">
         <div class="modal-content wide">
             <div class="modal-header">
-                <h3><i class="fa-solid fa-calendar-day text-teal-600"></i> <span id="cal-day-modal-title">Daily
-                        Bookings</span></h3>
-                <button class="btn-outline btn-icon-only" style="border:none;" onclick="app.closeModal('cal-day')">
+                <div class="flex items-center justify-between flex-wrap gap-2 w-full mr-3">
+                    <h3 style="margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fa-solid fa-calendar-day text-teal-600"></i>
+                        <span id="cal-day-modal-title">Daily Bookings</span>
+                    </h3>
+                    <div id="cal-day-header-action"></div>
+                </div>
+                <button class="btn-outline btn-icon-only modal-close-btn" style="border:none;" onclick="app.closeModal('cal-day')">
                     <i class="fa-solid fa-times"></i>
                 </button>
             </div>
             <div id="cal-day-modal-content" class="space-y-2 mt-3 max-h-[60vh] overflow-y-auto"></div>
             <div class="flex justify-end gap-2 mt-4 pt-3 border-t border-gray-100 dark:border-slate-800">
-                <button type="button" class="btn btn-outline" onclick="app.closeModal('cal-day')">ปิด</button>
+                <button type="button" class="btn btn-outline" onclick="app.closeModal('cal-day')">Close</button>
             </div>
         </div>
     </div>
@@ -2936,11 +3042,11 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Usage Details (รายละเอียดการใช้งาน)</label>
+                    <label>Usage Details</label>
                     <textarea id="finish-details" rows="3" required></textarea>
                 </div>
                 <div class="form-group">
-                    <label>Remarks (หมายเหตุ)</label>
+                    <label>Remarks</label>
                     <textarea id="finish-remarks" rows="2"></textarea>
                 </div>
 
@@ -2982,8 +3088,14 @@
     <div id="modal-admin-history" class="modal hidden">
         <div class="modal-content wide">
             <div class="modal-header">
-                <h3><i class="fa-solid fa-history"></i> Warning History: <span id="admin-history-username"></span></h3>
-                <button class="btn-outline btn-icon-only" style="border:none;"
+                <div class="flex items-center justify-between gap-2.5 w-full mr-2 min-w-0">
+                    <h3 class="truncate text-sm sm:text-base font-bold text-slate-800 dark:text-slate-100 flex items-center gap-1.5 min-w-0" style="margin: 0;">
+                        <i class="fa-solid fa-clock-rotate-left shrink-0 text-slate-500"></i>
+                        <span class="truncate">Warning History: <span id="admin-history-username" class="text-teal-600 dark:text-teal-400"></span></span>
+                    </h3>
+                    <div id="admin-history-modal-actions" class="shrink-0 flex items-center" style="white-space: nowrap;"></div>
+                </div>
+                <button class="btn-outline btn-icon-only modal-close-btn" style="border:none;"
                     onclick="app.closeModal('admin-history')"><i class="fa-solid fa-times"></i></button>
             </div>
             <div class="table-container">
@@ -2993,10 +3105,36 @@
                             <th>Date Warned</th>
                             <th>Equipment</th>
                             <th>Booking ID</th>
+                            <th style="text-align: right; width: 70px;">Action</th>
                         </tr>
                     </thead>
                     <tbody id="admin-history-tbody"></tbody>
                 </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Equipment QR Code View Modal (On-demand fast load) -->
+    <div id="modal-eq-qr" class="modal hidden" style="z-index: 1100;">
+        <div class="modal-content text-center" style="max-width: 360px; border-radius: 24px; padding: 1.75rem 1.5rem;">
+            <div class="flex justify-between items-center mb-2">
+                <span class="text-[11px] font-extrabold uppercase tracking-wider text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-900/30 px-2.5 py-1 rounded-full border border-teal-200/50 dark:border-teal-800/40">Equipment QR Code</span>
+                <button type="button" class="btn-outline btn-icon-only modal-close-btn" style="border:none;" onclick="app.closeModal('eq-qr')">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            </div>
+            <h3 id="modal-eq-qr-name" class="font-extrabold text-base sm:text-lg text-slate-800 dark:text-slate-100 mb-1 leading-snug"></h3>
+            <p id="modal-eq-qr-meta" class="text-xs text-slate-500 dark:text-slate-400 mb-4"></p>
+            <div class="p-3.5 bg-white rounded-2xl shadow-inner border border-slate-200/80 inline-block mx-auto mb-4">
+                <div id="modal-eq-qr-display" class="flex justify-center items-center" style="width: 200px; height: 200px;"></div>
+            </div>
+            <div class="flex gap-2 justify-center">
+                <button type="button" class="ios-btn bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 text-xs font-bold rounded-xl shadow transition flex items-center gap-1.5" onclick="app.downloadEqQr()">
+                    <i class="fa-solid fa-download"></i> Save Image
+                </button>
+                <button type="button" class="ios-btn bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-slate-200 px-4 py-2 text-xs font-semibold rounded-xl transition" onclick="app.closeModal('eq-qr')">
+                    Close
+                </button>
             </div>
         </div>
     </div>
@@ -3011,10 +3149,9 @@
                         <i class="fa-solid fa-bell" style="color: var(--danger, #ef4444); font-size: 1.1rem;"></i>
                     </div>
                     <div>
-                        <h3 style="margin: 0; font-size: 1.15rem; font-weight: 800;">ศูนย์การแจ้งเตือน (Notifications &
-                            Alerts)</h3>
+                        <h3 style="margin: 0; font-size: 1.15rem; font-weight: 800;">Notifications & Alerts</h3>
                         <p style="margin: 0; font-size: 0.8rem; color: var(--text-muted);">
-                            รายการจองค้างส่งคืนและการใช้งานประจำวัน</p>
+                            Overdue returns and today's equipment schedule</p>
                     </div>
                 </div>
                 <button class="btn-outline btn-icon-only" style="border:none; font-size: 1.2rem;"
@@ -3026,7 +3163,7 @@
                     <h4
                         style="font-size: 0.95rem; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 0.5rem;">
                         <i class="fa-solid fa-triangle-exclamation" style="color: var(--danger, #ef4444);"></i>
-                        รายการค้างส่งคืน (Overdue Bookings)
+                        Overdue Bookings
                     </h4>
                     <span id="notify-overdue-count" class="badge badge-danger">0</span>
                 </div>
@@ -3040,7 +3177,7 @@
                     <h4
                         style="font-size: 0.95rem; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 0.5rem;">
                         <i class="fa-solid fa-calendar-day" style="color: var(--primary, #0f766e);"></i>
-                        รายการใช้งานวันนี้ (Today's Bookings)
+                        Today's Bookings
                     </h4>
                     <span id="notify-today-count" class="badge badge-booked">0</span>
                 </div>
@@ -3052,8 +3189,8 @@
             <div class="flex justify-between items-center mt-4"
                 style="border-top: 1px solid var(--border-color); padding-top: 1rem;">
                 <span style="font-size: 0.75rem; color: var(--text-muted);"><i class="fa-solid fa-circle-info"></i>
-                    คลิกรายการเพื่อดูรายละเอียดหรือจัดการ</span>
-                <button class="btn btn-outline" onclick="app.closeModal('user-warnings')">ปิดหน้าต่าง</button>
+                    Click any item to view details or manage</span>
+                <button class="btn btn-outline" onclick="app.closeModal('user-warnings')">Close</button>
             </div>
         </div>
     </div>
@@ -3117,7 +3254,7 @@
         <div class="modal-content" style="max-width: 440px; padding: 1.5rem; border-radius: 20px;">
             <div class="modal-header" style="padding-bottom: 0.75rem; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between;">
                 <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 0.5rem; margin: 0;">
-                    <i class="fa-solid fa-key" style="color: var(--primary);"></i> เปลี่ยนรหัสผ่าน (Change Password)
+                    <i class="fa-solid fa-key" style="color: var(--primary);"></i> Change Password
                 </h3>
                 <button type="button" class="btn-outline btn-icon-only" style="border:none;" onclick="app.closeModal('change-password')">
                     <i class="fa-solid fa-times"></i>
@@ -3125,31 +3262,31 @@
             </div>
             <form onsubmit="app.submitChangePassword(event)" style="padding-top: 1rem; display: flex; flex-direction: column; gap: 0.85rem;">
                 <div class="form-group">
-                    <label style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 0.25rem;">รหัสผ่านเดิม (Current Password)</label>
+                    <label style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 0.25rem;">Current Password</label>
                     <div style="position: relative; display: flex; align-items: center;">
-                        <input type="password" id="cp-old-password" class="glass-input" required style="width: 100%; padding-right: 2.5rem;" autocomplete="current-password" placeholder="กรอกรหัสผ่านปัจจุบัน">
+                        <input type="password" id="cp-old-password" class="glass-input" required style="width: 100%; padding-right: 2.5rem;" autocomplete="current-password" placeholder="Enter current password">
                         <i class="fa-solid fa-eye" onclick="app.togglePasswordVisibility('cp-old-password', this)" style="position: absolute; right: 0.75rem; cursor: pointer; color: var(--text-muted);"></i>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 0.25rem;">รหัสผ่านใหม่ (New Password)</label>
+                    <label style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 0.25rem;">New Password</label>
                     <div style="position: relative; display: flex; align-items: center;">
-                        <input type="password" id="cp-new-password" class="glass-input" required minlength="4" style="width: 100%; padding-right: 2.5rem;" autocomplete="new-password" placeholder="ตั้งรหัสผ่านใหม่ (อย่างน้อย 4 ตัว)">
+                        <input type="password" id="cp-new-password" class="glass-input" required minlength="4" style="width: 100%; padding-right: 2.5rem;" autocomplete="new-password" placeholder="Enter new password (min. 4 chars)">
                         <i class="fa-solid fa-eye" onclick="app.togglePasswordVisibility('cp-new-password', this)" style="position: absolute; right: 0.75rem; cursor: pointer; color: var(--text-muted);"></i>
                     </div>
-                    <span style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.2rem; display: block;">ความยาวอย่างน้อย 4 ตัวอักษร</span>
+                    <span style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.2rem; display: block;">Minimum 4 characters</span>
                 </div>
                 <div class="form-group">
-                    <label style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 0.25rem;">ยืนยันรหัสผ่านใหม่ (Confirm New Password)</label>
+                    <label style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 0.25rem;">Confirm New Password</label>
                     <div style="position: relative; display: flex; align-items: center;">
-                        <input type="password" id="cp-confirm-password" class="glass-input" required minlength="4" style="width: 100%; padding-right: 2.5rem;" autocomplete="new-password" placeholder="กรอกรหัสผ่านใหม่อีกครั้ง">
+                        <input type="password" id="cp-confirm-password" class="glass-input" required minlength="4" style="width: 100%; padding-right: 2.5rem;" autocomplete="new-password" placeholder="Re-enter new password">
                         <i class="fa-solid fa-eye" onclick="app.togglePasswordVisibility('cp-confirm-password', this)" style="position: absolute; right: 0.75rem; cursor: pointer; color: var(--text-muted);"></i>
                     </div>
                 </div>
                 <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 0.5rem; padding-top: 0.75rem; border-top: 1px solid var(--border-color);">
-                    <button type="button" class="btn btn-outline" onclick="app.closeModal('change-password')">ยกเลิก</button>
+                    <button type="button" class="btn btn-outline" onclick="app.closeModal('change-password')">Cancel</button>
                     <button type="submit" class="btn" style="background: var(--primary); color: white;">
-                        <i class="fa-solid fa-check"></i> บันทึกรหัสผ่านใหม่
+                        <i class="fa-solid fa-check"></i> Update Password
                     </button>
                 </div>
             </form>
@@ -3209,6 +3346,17 @@
     </div>
 
     <script>
+        window.escapeHtml = window.escapeHtml || function (str) {
+            if (str === null || str === undefined) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        };
+        const escapeHtml = window.escapeHtml;
+
         const app = {
             state: { user: null, equipments: [], bookings: [], users: [], buildings: [] },
             calendar: null,
@@ -3328,7 +3476,7 @@
 
             openChangePasswordModal() {
                 if (!this.state.user) {
-                    return Swal.fire('กรุณาเข้าสู่ระบบ', 'ต้องเข้าสู่ระบบก่อนเปลี่ยนรหัสผ่าน', 'warning');
+                    return Swal.fire('Please Sign In', 'You must be signed in to change your password', 'warning');
                 }
                 const oldInp = document.getElementById('cp-old-password');
                 const newInp = document.getElementById('cp-new-password');
@@ -3360,16 +3508,16 @@
                 const confirmPass = document.getElementById('cp-confirm-password')?.value;
 
                 if (!oldPass || !newPass || !confirmPass) {
-                    return Swal.fire('ข้อมูลไม่ครบถ้วน', 'กรุณากรอกข้อมูลให้ครบทุกช่อง', 'warning');
+                    return Swal.fire('Incomplete Information', 'Please fill in all required fields', 'warning');
                 }
                 if (newPass !== confirmPass) {
-                    return Swal.fire('รหัสผ่านไม่ตรงกัน', 'กรุณากรอกรหัสผ่านใหม่และการยืนยันให้ตรงกัน', 'error');
+                    return Swal.fire('Passwords Do Not Match', 'New password and confirmation must match', 'error');
                 }
                 if (newPass.length < 4) {
-                    return Swal.fire('รหัสผ่านสั้นเกินไป', 'รหัสผ่านใหม่ต้องมีความยาวอย่างน้อย 4 ตัวอักษร', 'warning');
+                    return Swal.fire('Password Too Short', 'New password must be at least 4 characters long', 'warning');
                 }
                 if (oldPass === newPass) {
-                    return Swal.fire('รหัสผ่านซ้ำ', 'รหัสผ่านใหม่ต้องไม่เหมือนกับรหัสผ่านเดิม', 'warning');
+                    return Swal.fire('Password Identical', 'New password must not be identical to the current password', 'warning');
                 }
 
                 const res = await LabAuth.changePassword(oldPass, newPass);
@@ -3378,13 +3526,13 @@
                     this.closeModal('change-password');
                     Swal.fire({
                         icon: 'success',
-                        title: 'เปลี่ยนรหัสผ่านสำเร็จ',
-                        text: 'รหัสผ่านของคุณถูกอัปเดตเรียบร้อยแล้ว',
+                        title: 'Password Changed Successfully',
+                        text: 'Your password has been updated successfully.',
                         timer: 2000,
                         showConfirmButton: false
                     });
                 } else {
-                    Swal.fire('เกิดข้อผิดพลาด', (res && res.message) || 'ไม่สามารถเปลี่ยนรหัสผ่านได้', 'error');
+                    Swal.fire('Error', (res && res.message) || 'Failed to update password', 'error');
                 }
             },
 
@@ -3616,7 +3764,7 @@
                 const now = new Date();
 
                 const globalWarnings = (this.state.bookings || []).filter(b => {
-                    return !b.deleted && !b.finishDetails && now > new Date(b.end);
+                    return !b.deleted && !b.finishDetails && !b.warningDismissed && now > new Date(b.end);
                 });
 
                 let stateChanged = false;
@@ -3706,10 +3854,10 @@
                         list.innerHTML = `
                         <div style="background: rgba(16, 185, 129, 0.1); border-left: 4px solid var(--success, #10b981); padding: 12px 16px; border-radius: 8px;">
                             <div style="font-weight: 700; color: #10B981; display: flex; align-items: center; gap: 0.5rem;">
-                                <i class="fa-solid fa-circle-check"></i> ไม่พบรายการจองค้างส่งคืน (All Clear)
+                                <i class="fa-solid fa-circle-check"></i> No overdue returns (All Clear)
                             </div>
                             <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">
-                                ผู้ใช้งานทุกคนส่งมอบเครื่องมือตามกำหนดเวลาเรียบร้อยแล้ว
+                                All users have returned equipment on schedule.
                             </div>
                         </div>`;
                     }
@@ -3731,15 +3879,15 @@
                             <div>
                                 <strong style="color: var(--text-main); font-size: 0.95rem;">${eqName}</strong>
                                 <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.2rem;">
-                                    📍 สถานที่: <span style="font-weight: 600; color: var(--text-main);">${locName}</span> &bull; ผู้จอง: <span style="font-weight: 600; color: var(--text-main);">${b.user}</span>
+                                    📍 Location: <span style="font-weight: 600; color: var(--text-main);">${locName}</span> &bull; Booked by: <span style="font-weight: 600; color: var(--text-main);">${b.user}</span>
                                 </div>
                             </div>
-                            <span class="badge ${isMe ? 'badge-danger' : 'badge-warning'}" style="font-size: 0.7rem; white-space: nowrap;">${isMe ? 'รายการของคุณ' : 'ผู้ใช้อื่น'}</span>
+                            <span class="badge ${isMe ? 'badge-danger' : 'badge-warning'}" style="font-size: 0.7rem; white-space: nowrap;">${isMe ? 'Your Booking' : 'Other User'}</span>
                         </div>
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem; font-size: 0.75rem; color: var(--text-muted);">
-                            <span><i class="fa-regular fa-clock"></i> สิ้นสุด: ${moment(b.end).format('DD/MM/YYYY HH:mm')}</span>
+                            <span><i class="fa-regular fa-clock"></i> Ended: ${moment(b.end).format('DD/MM/YYYY HH:mm')}</span>
                             <button type="button" onclick="event.stopPropagation(); app.manageOverdueBooking('${b.id}')" class="px-2.5 py-1 text-xs font-bold rounded bg-red-600 hover:bg-red-700 text-white shadow-xs transition inline-flex items-center gap-1 cursor-pointer">
-                                <span>คลิกเพื่อจัดการ</span> <i class="fa-solid fa-arrow-right"></i>
+                                <span>Manage</span> <i class="fa-solid fa-arrow-right"></i>
                             </button>
                         </div>
                     </li>`;
@@ -3752,7 +3900,7 @@
                     if (todayCount) todayCount.textContent = todayBookings.length;
 
                     if (todayBookings.length === 0) {
-                        todayList.innerHTML = `<li style="font-size: 0.85rem; color: var(--text-muted); padding: 0.5rem; text-align: center;">ไม่มีรายการจองในวันนี้</li>`;
+                        todayList.innerHTML = `<li style="font-size: 0.85rem; color: var(--text-muted); padding: 0.5rem; text-align: center;">No bookings scheduled for today.</li>`;
                     } else {
                         todayList.innerHTML = todayBookings.map(b => {
                             const eq = (this.state.equipments || []).find(e => String(e.id) === String(b.eqId || b.equipmentId));
@@ -4016,11 +4164,15 @@
                     (this.state.bookings || []).forEach(b => {
                         const isMatch = (b.user && (b.user === u.username || b.user === u.name || b.user === u.email)) ||
                             (b.creatorUsername && (b.creatorUsername === u.username || b.creatorUsername === u.email));
-                        if (isMatch && !b.deleted && (b.status === 'InUse' || b.status === 'Booked') && new Date(b.end) < now) {
+                        if (isMatch && !b.deleted && !b.warningDismissed && (b.status === 'InUse' || b.status === 'Booked') && new Date(b.end) < now) {
                             wCount++;
                         }
                     });
-                    const wBadge = wCount > 0 ? `<span class="badge badge-danger font-bold cursor-pointer" onclick="app.showAdminHistory('${u.username}')">${wCount} Warnings</span>` : '<span class="text-muted">0</span>';
+                    const isAdmin = this.state.user && this.state.user.role === 'admin';
+                    const clearBtn = (isAdmin && wCount > 0)
+                        ? `<button type="button" class="btn btn-outline btn-icon-only text-danger" style="margin-left: 0.35rem; width: 22px; height: 22px; font-size: 0.65rem; border-radius: 6px; vertical-align: middle; display: inline-flex; align-items: center; justify-content: center;" onclick="event.stopPropagation(); app.adminClearUserWarnings('${u.id || u.username}')" title="ลบ Warnings ของ ${escapeHtml(u.name || u.username)}"><i class="fa-solid fa-trash-can"></i></button>`
+                        : '';
+                    const wBadge = wCount > 0 ? `<span class="badge badge-danger font-bold cursor-pointer" onclick="app.showAdminHistory('${u.username}')" title="คลิกดูประวัติ Warnings">${wCount} Warnings</span>${clearBtn}` : '<span class="text-muted">0</span>';
                     return `
                 <tr style="border-bottom: 1px solid var(--border-color);">
                     <td>${u.id || ''}</td>
@@ -4232,7 +4384,7 @@
                 const eqSelect = document.getElementById('cal-filter-eq');
 
                 if (locSelect && locSelect.options.length <= 1) {
-                    locSelect.innerHTML = '<option value="">All Areas (ทุกพื้นที่)</option>';
+                    locSelect.innerHTML = '<option value="">All Areas</option>';
                     (this.state.buildings || []).forEach(a => {
                         const name = typeof a === 'object' ? a.name : a;
                         const val = typeof a === 'object' ? a.id : a;
@@ -4240,7 +4392,7 @@
                     });
                 }
                 if (eqSelect && eqSelect.options.length <= 1) {
-                    eqSelect.innerHTML = '<option value="">All Equipments (ทุกเครื่องมือ)</option>';
+                    eqSelect.innerHTML = '<option value="">All Equipments</option>';
                     (this.state.equipments || []).forEach(e => eqSelect.add(new Option(e.name, e.id)));
                 }
             },
@@ -4409,7 +4561,7 @@
 
                     let html = `
                     <div class="flex justify-between items-center mb-1">
-                        <button type="button" class="add-booking-btn text-[10px] text-teal-600 dark:text-teal-400 hover:text-teal-800 dark:hover:text-teal-200 font-bold px-1 rounded hover:bg-teal-50 dark:hover:bg-teal-900/40 transition" title="จองเครื่องมือในวันนี้ (${dateStr})" onclick="event.stopPropagation(); app.openAddEntry(null, '${dateStr}');">
+                        <button type="button" class="add-booking-btn text-[10px] text-teal-600 dark:text-teal-400 hover:text-teal-800 dark:hover:text-teal-200 font-bold px-1 rounded hover:bg-teal-50 dark:hover:bg-teal-900/40 transition" title="Book equipment for this date (${dateStr})" onclick="event.stopPropagation(); app.openAddEntry(null, '${dateStr}');">
                             <i class="fa-solid fa-plus"></i>
                         </button>
                         <span class="text-right text-[10px] sm:text-xs font-bold ${isToday ? 'text-teal-600 dark:text-teal-400 font-extrabold' : 'text-gray-400 dark:text-slate-400'}">${day}</span>
@@ -4431,7 +4583,7 @@
                         }
                         const durStr = totalMins >= 60 ? `${Math.floor(totalMins / 60)}h ${totalMins % 60 ? (totalMins % 60) + 'm' : ''}` : `${totalMins}m`;
 
-                        html += `<div class="cal-event-chip ${bgClass} whitespace-normal break-words leading-tight py-1 px-1.5 mb-1 border border-black/5 rounded text-[9px] sm:text-[11px] shadow-xs cursor-pointer hover:opacity-90 transition" onclick="event.stopPropagation(); app.showBookingDetails('${b.id}')" title="${eqName} | ผู้จอง: ${b.user} | สถานที่: ${locName} | เวลา: ${timeStr} | ระยะเวลา: ${durStr}">
+                        html += `<div class="cal-event-chip ${bgClass} whitespace-normal break-words leading-tight py-1 px-1.5 mb-1 border border-black/5 rounded text-[9px] sm:text-[11px] shadow-xs cursor-pointer hover:opacity-90 transition" onclick="event.stopPropagation(); app.showBookingDetails('${b.id}')" title="${eqName} | Booked by: ${b.user} | Location: ${locName} | Time: ${timeStr} | Duration: ${durStr}">
                             <div class="flex justify-between items-center gap-1 font-bold">
                                 <span class="truncate">${eqName}</span>
                                 <span class="text-[8px] opacity-90 whitespace-nowrap">${durStr}</span>
@@ -4446,22 +4598,18 @@
                     });
 
                     if (items.length > maxVisible) {
-                        html += `<div class="text-[8px] sm:text-[10px] font-bold text-teal-700 dark:text-teal-300 bg-teal-50 dark:bg-teal-900/50 hover:bg-teal-100 rounded px-1.5 py-0.5 text-center mt-1 cursor-pointer transition shadow-2xs" onclick="event.stopPropagation(); app.openCalendarDay('${dateStr}');" title="คลิกดูรายการทั้งหมด ${items.length} รายการ">
-                            +${items.length - maxVisible} รายการเพิ่มเติม
+                        html += `<div class="text-[8px] sm:text-[10px] font-bold text-teal-700 dark:text-teal-300 bg-teal-50 dark:bg-teal-900/50 hover:bg-teal-100 rounded px-1.5 py-0.5 text-center mt-1 cursor-pointer transition shadow-2xs" onclick="event.stopPropagation(); app.openCalendarDay('${dateStr}');" title="Click to view all ${items.length} bookings">
+                            +${items.length - maxVisible} more
                         </div>`;
                     } else if (items.length === 0) {
-                        html += `<div class="text-[8px] sm:text-[9px] text-gray-300 dark:text-slate-600 text-center py-2 select-none pointer-events-none">+ ว่าง</div>`;
+                        html += `<div class="text-[8px] sm:text-[9px] text-gray-300 dark:text-slate-600 text-center py-2 select-none pointer-events-none">+ Available</div>`;
                     }
 
                     const div = document.createElement('div');
                     div.className = `calendar-day ${isToday ? 'today' : ''} cursor-pointer hover:bg-teal-50/30 dark:hover:bg-teal-950/20 transition`;
                     div.innerHTML = html;
                     div.onclick = () => {
-                        if (items.length === 0) {
-                            app.openAddEntry(null, dateStr);
-                        } else {
-                            app.openCalendarDay(dateStr, items);
-                        }
+                        app.openCalendarDay(dateStr, items);
                     };
                     calendar.appendChild(div);
                 }
@@ -4492,7 +4640,7 @@
                                 }
                                 const durHours = Math.floor(totalMins / 60);
                                 const durRemMins = totalMins % 60;
-                                const durStr = durHours > 0 ? `${durHours} ชม. ${durRemMins > 0 ? durRemMins + ' นาที' : ''}` : `${durRemMins} นาที`;
+                                const durStr = durHours > 0 ? `${durHours} hr ${durRemMins > 0 ? durRemMins + ' min' : ''}` : `${durRemMins} min`;
 
                                 listHtml += `
                                 <div class="bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700/60 rounded-xl p-3 flex justify-between items-center hover:shadow-md transition cursor-pointer" onclick="app.showBookingDetails('${b.id}')">
@@ -4519,25 +4667,37 @@
                 if (!items) {
                     items = this.getBookingsForDate(dateStr);
                 }
-                if (!items || items.length === 0) {
-                    this.openAddEntry(null, dateStr);
-                    return;
-                }
+                items = items || [];
 
                 const titleEl = document.getElementById('cal-day-modal-title');
+                const actionEl = document.getElementById('cal-day-header-action');
                 const contentEl = document.getElementById('cal-day-modal-content');
                 if (titleEl) {
-                    titleEl.innerHTML = `
-                    <div class="flex items-center justify-between flex-wrap gap-2 w-full pr-4">
-                        <span><i class="fa-solid fa-calendar-day text-teal-600"></i> รายการจองวันที่ ${moment(dateStr).format('DD MMMM YYYY')} <span class="text-xs font-normal text-gray-500">(${items.length} รายการ)</span></span>
-                        <button type="button" class="btn btn-outline text-xs px-2.5 py-1 text-teal-700 dark:text-teal-300 font-bold" onclick="app.closeModal('cal-day'); app.openAddEntry(null, '${dateStr}');">
-                            <i class="fa-solid fa-plus mr-1"></i> จองเครื่องมือในวันนี้
-                        </button>
-                    </div>`;
+                    titleEl.innerHTML = `Bookings on ${moment(dateStr).format('D MMMM YYYY')} <span class="text-xs font-normal text-gray-500">(${items.length} ${items.length === 1 ? 'item' : 'items'})</span>`;
+                }
+                if (actionEl) {
+                    actionEl.innerHTML = `
+                    <button type="button" class="cal-day-add-btn px-3 py-1.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-500 hover:to-emerald-500 shadow-sm hover:shadow transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 flex items-center gap-1.5 cursor-pointer" onclick="app.closeModal('cal-day'); app.openAddEntry(null, '${dateStr}');">
+                        <i class="fa-solid fa-plus text-[11px]"></i>
+                        <span>+ Book Equipment for This Date</span>
+                    </button>`;
                 }
 
                 if (contentEl) {
-                    contentEl.innerHTML = items.map(b => {
+                    if (items.length === 0) {
+                        contentEl.innerHTML = `
+                        <div class="py-10 flex flex-col items-center justify-center text-center text-gray-400 dark:text-slate-500">
+                            <div class="w-14 h-14 rounded-2xl bg-teal-50 dark:bg-slate-800 flex items-center justify-center text-teal-600 dark:text-teal-400 mb-3 shadow-inner">
+                                <i class="fa-regular fa-calendar-check text-2xl"></i>
+                            </div>
+                            <p class="font-bold text-gray-700 dark:text-slate-200 text-sm">No bookings scheduled for this date</p>
+                            <p class="text-xs text-gray-500 dark:text-slate-400 mt-1 mb-4">Click below to reserve equipment on this date</p>
+                            <button type="button" class="btn btn-primary text-xs px-4 py-2" onclick="app.closeModal('cal-day'); app.openAddEntry(null, '${dateStr}');">
+                                <i class="fa-solid fa-plus mr-1.5"></i> + Book Equipment for This Date
+                            </button>
+                        </div>`;
+                    } else {
+                        contentEl.innerHTML = items.map(b => {
                         const eq = (this.state.equipments || []).find(e => String(e.id) === String(b.eqId || b.equipmentId));
                         const eqName = eq ? eq.name : 'Unknown Equipment';
                         const locName = eq ? (this.getLocName(eq.building_id, this.state.buildings || []) || '-') : '-';
@@ -4551,35 +4711,36 @@
                         }
                         const durHours = Math.floor(totalMins / 60);
                         const durRemMins = totalMins % 60;
-                        const durStr = durHours > 0 ? `${durHours} ชม. ${durRemMins > 0 ? durRemMins + ' นาที' : ''}` : `${durRemMins} นาที`;
+                        const durStr = durHours > 0 ? `${durHours} hr ${durRemMins > 0 ? durRemMins + ' mins' : ''}` : `${durRemMins} mins`;
 
                         return `
                         <div class="p-3.5 bg-gray-50/90 dark:bg-slate-800/90 border border-gray-200/70 dark:border-slate-700/70 rounded-xl flex flex-col sm:flex-row justify-between sm:items-center gap-3 hover:shadow-sm transition">
                             <div class="space-y-1">
                                 <div class="flex items-center gap-2 flex-wrap">
-                                    <strong class="text-gray-900 dark:text-slate-100 text-sm sm:text-base font-bold">${eqName}</strong>
+                                    <strong class="text-gray-900 dark:text-slate-100 text-sm sm:text-base font-bold">${escapeHtml(eqName)}</strong>
                                     ${badge}
                                 </div>
                                 <div class="text-xs text-gray-600 dark:text-slate-300 flex flex-wrap gap-x-3 gap-y-1">
-                                    <span>📍 <strong>สถานที่:</strong> ${locName}</span>
-                                    <span>👤 <strong>ผู้จอง:</strong> ${b.user || '-'}</span>
+                                    <span>📍 <strong>Location:</strong> ${escapeHtml(locName)}</span>
+                                    <span>👤 <strong>Booked by:</strong> ${escapeHtml(b.user || '-')}</span>
                                 </div>
                                 <div class="text-xs text-gray-600 dark:text-slate-300 flex flex-wrap gap-x-3 gap-y-1">
-                                    <span>⏰ <strong>เวลาที่จอง:</strong> ${moment(b.start).format('HH:mm')} - ${moment(b.end).format('HH:mm')}</span>
-                                    <span>⏳ <strong>ระยะเวลาจอง:</strong> <span class="font-bold text-teal-700 dark:text-teal-300">${durStr}</span></span>
+                                    <span>⏰ <strong>Time:</strong> ${moment(b.start).format('HH:mm')} - ${moment(b.end).format('HH:mm')}</span>
+                                    <span>⏳ <strong>Duration:</strong> <span class="font-bold text-teal-700 dark:text-teal-300">${durStr}</span></span>
                                 </div>
-                                ${b.project ? `<div class="text-xs text-teal-700 dark:text-teal-300"><i class="fa-solid fa-diagram-project mr-1"></i> <strong>โครงการ:</strong> ${b.project}</div>` : ''}
-                                ${(b.desc || b.purpose) ? `<div class="text-xs text-gray-500 dark:text-slate-400">📝 <strong>วัตถุประสงค์:</strong> ${b.desc || b.purpose}</div>` : ''}
+                                ${b.project ? `<div class="text-xs text-teal-700 dark:text-teal-300"><i class="fa-solid fa-diagram-project mr-1"></i> <strong>Project:</strong> ${escapeHtml(b.project)}</div>` : ''}
+                                ${(b.desc || b.purpose) ? `<div class="text-xs text-gray-500 dark:text-slate-400">📝 <strong>Purpose:</strong> ${escapeHtml(b.desc || b.purpose)}</div>` : ''}
                             </div>
                             <button type="button" class="btn btn-outline text-xs px-3 py-2 self-end sm:self-center whitespace-nowrap flex items-center gap-1.5" onclick="app.closeModal('cal-day'); app.showBookingDetails('${b.id}')">
-                                <i class="fa-solid fa-eye text-teal-600"></i> ดูรายละเอียด
+                                <i class="fa-solid fa-eye text-teal-600"></i> View Details
                             </button>
                         </div>`;
                     }).join('');
                 }
+            }
 
-                this.openModal('cal-day');
-            },
+            this.openModal('cal-day');
+        },
 
             renderCharts() {
                 if (!window.Chart) return;
@@ -4627,12 +4788,12 @@
                 }
 
                 // 2. Status Breakdown
-                const statusCounts = { 'Advance (จองล่วงหน้า)': 0, 'In Use (กำลังใช้งาน)': 0, 'Finished (เสร็จสิ้น)': 0 };
+                const statusCounts = { 'Advance': 0, 'In Use': 0, 'Finished': 0 };
                 filtered.forEach(b => {
                     const st = this.getBookingStatus(b);
-                    if (st === 'Booked') statusCounts['Advance (จองล่วงหน้า)']++;
-                    else if (st === 'InUse') statusCounts['In Use (กำลังใช้งาน)']++;
-                    else if (st === 'Finished') statusCounts['Finished (เสร็จสิ้น)']++;
+                    if (st === 'Booked') statusCounts['Advance']++;
+                    else if (st === 'InUse') statusCounts['In Use']++;
+                    else if (st === 'Finished') statusCounts['Finished']++;
                 });
                 const ctxStatus = resetCanvas('chart-status');
                 if (ctxStatus) {
@@ -4719,7 +4880,7 @@
                     this.charts['chart-time'] = new Chart(ctxTime, {
                         type: 'polarArea',
                         data: {
-                            labels: ['Internal (ภายใน)', 'External (ภายนอก)'],
+                            labels: ['Internal', 'External'],
                             datasets: [{
                                 data: [typeCounts['Internal'], typeCounts['External']],
                                 backgroundColor: ['rgba(15, 118, 110, 0.7)', 'rgba(245, 158, 11, 0.7)']
@@ -4762,7 +4923,7 @@
                         data: {
                             labels: Object.keys(hourBuckets),
                             datasets: [{
-                                label: 'จำนวนครั้งที่ใช้งาน (Bookings)',
+                                label: 'Booking Sessions',
                                 data: Object.values(hourBuckets),
                                 backgroundColor: '#6366F1',
                                 borderRadius: 6
@@ -4789,7 +4950,7 @@
                 const elEquipSub = document.getElementById('dashKpiEquipSub');
                 if (elEquip) elEquip.innerText = totalEquips;
                 const activeNowCount = (this.state.equipments || []).filter(e => this.isEquipmentInUse(e.id)).length;
-                if (elEquipSub) elEquipSub.innerText = `กำลังใช้งาน ${activeNowCount} เครื่อง (ว่าง ${Math.max(0, totalEquips - activeNowCount)})`;
+                if (elEquipSub) elEquipSub.innerText = `${activeNowCount} in use (${Math.max(0, totalEquips - activeNowCount)} available)`;
 
                 // 2. Total Bookings
                 const elBookings = document.getElementById('dashKpiBookings');
@@ -4797,7 +4958,7 @@
                 if (elBookings) elBookings.innerText = filtered.length;
                 if (elBookingsSub) {
                     const finishedCount = filtered.filter(b => this.getBookingStatus(b) === 'Finished').length;
-                    elBookingsSub.innerText = `เสร็จสิ้นแล้ว ${finishedCount} รายการ`;
+                    elBookingsSub.innerText = `${finishedCount} completed bookings`;
                 }
 
                 // 3. Active Today
@@ -4807,7 +4968,7 @@
                 if (elToday) elToday.innerText = todayBookings.length;
                 if (elTodaySub) {
                     const upcomingToday = todayBookings.filter(b => new Date(b.start) > now).length;
-                    elTodaySub.innerText = `รอคิววันนี้ ${upcomingToday} คิว`;
+                    elTodaySub.innerText = `${upcomingToday} upcoming today`;
                 }
 
                 // 4. Usage Hours
@@ -4816,7 +4977,7 @@
                 const elHours = document.getElementById('dashKpiHours');
                 const elHoursSub = document.getElementById('dashKpiHoursSub');
                 if (elHours) elHours.innerText = `${totalHours}h`;
-                if (elHoursSub) elHoursSub.innerText = `เฉลี่ย ${filtered.length ? Math.round(totalMins / filtered.length) : 0} นาที/ครั้ง`;
+                if (elHoursSub) elHoursSub.innerText = `Avg. ${filtered.length ? Math.round(totalMins / filtered.length) : 0} mins/session`;
 
                 // 5. Utilization Rate
                 const standardCapacityHours = Math.max(1, totalEquips * 176);
@@ -4824,7 +4985,7 @@
                 const elUtil = document.getElementById('dashKpiUtil');
                 const elUtilSub = document.getElementById('dashKpiUtilSub');
                 if (elUtil) elUtil.innerText = `${utilRate}%`;
-                if (elUtilSub) elUtilSub.innerText = utilRate > 75 ? '🔥 High Demand ช่วงเร่งด่วน' : '🟢 ปกติ พร้อมรองรับงานวิจัย';
+                if (elUtilSub) elUtilSub.innerText = utilRate > 75 ? '🔥 High Demand Period' : '🟢 Normal Availability';
 
                 // 6. Smart Recommendations Card
                 const elRecs = document.getElementById('dashSmartRecs');
@@ -4839,27 +5000,27 @@
                         <div class="p-3.5 rounded-xl bg-teal-50/70 dark:bg-teal-950/40 border border-teal-200/60 dark:border-teal-800/40 flex items-start gap-3">
                             <span class="text-xl">💡</span>
                             <div>
-                                <h4 class="text-xs font-bold text-teal-800 dark:text-teal-300">เครื่องมือยอดนิยม (High Demand)</h4>
+                                <h4 class="text-xs font-bold text-teal-800 dark:text-teal-300">High Demand Equipment</h4>
                                 <p class="text-xs text-gray-600 dark:text-slate-300 mt-0.5">
-                                    ${topEq ? `<strong>${topEq.name}</strong> มีคิวใช้งานสูงสุด แนะนำจองล่วงหน้าอย่างน้อย 2 วัน` : 'ข้อมูลการจองเพียงพอต่อการวิเคราะห์แนวโน้ม'}
+                                    ${topEq ? `<strong>${topEq.name}</strong> has highest bookings. Recommend booking at least 2 days in advance.` : 'Sufficient booking data to forecast utilization trends.'}
                                 </p>
                             </div>
                         </div>
                         <div class="p-3.5 rounded-xl bg-blue-50/70 dark:bg-blue-950/40 border border-blue-200/60 dark:border-blue-800/40 flex items-start gap-3">
                             <span class="text-xl">⚡</span>
                             <div>
-                                <h4 class="text-xs font-bold text-blue-800 dark:text-blue-300">แนะนำช่วงเวลาและเครื่องว่าง</h4>
+                                <h4 class="text-xs font-bold text-blue-800 dark:text-blue-300">Available Units & Recommendation</h4>
                                 <p class="text-xs text-gray-600 dark:text-slate-300 mt-0.5">
-                                    ${availEq ? `เครื่อง <strong>${availEq.name}</strong> ว่างพร้อมใช้งานทันที สามารถเริ่มสแกน QR ใช้งานได้เลย` : 'เครื่องมือทุกตัวมีคิวใช้งานเต็มความจุในขณะนี้'}
+                                    ${availEq ? `Equipment <strong>${availEq.name}</strong> is available immediately. Ready to book or scan QR.` : 'All equipment currently fully booked.'}
                                 </p>
                             </div>
                         </div>
                         <div class="p-3.5 rounded-xl bg-amber-50/70 dark:bg-amber-950/40 border border-amber-200/60 dark:border-amber-800/40 flex items-start gap-3">
                             <span class="text-xl">🛠️</span>
                             <div>
-                                <h4 class="text-xs font-bold text-amber-800 dark:text-amber-300">การเชื่อมโยงระบบ Lab Care+</h4>
+                                <h4 class="text-xs font-bold text-amber-800 dark:text-amber-300">Lab Care+ Maintenance Sync</h4>
                                 <p class="text-xs text-gray-600 dark:text-slate-300 mt-0.5">
-                                    บันทึกการใช้งานจะถูกซิงก์นับชั่วโมงการทำงานเพื่อประเมินรอบสอบเทียบ (Calibration) และซ่อมบำรุงอัตโนมัติ
+                                    Usage hours are synchronized to automatically evaluate preventive maintenance and calibration schedules.
                                 </p>
                             </div>
                         </div>
@@ -4883,12 +5044,12 @@
 
                 doc.setFontSize(22);
                 doc.setTextColor(15, 118, 110);
-                doc.text('รายงานบันทึกการใช้งานเครื่องมือวิทยาศาสตร์ (Lab LogBook Report)', 14, 20);
+                doc.text('Laboratory Equipment Usage Log Report', 14, 20);
                 doc.setFontSize(14);
                 doc.setTextColor(100);
-                doc.text(`วันที่ออกรายงาน: ${new Date().toLocaleString('th-TH')}`, 14, 28);
+                doc.text(`Generated on: ${moment().format('DD/MM/YYYY HH:mm')}`, 14, 28);
 
-                const tableColumn = ["วัน-เวลา (Date/Time)", "เครื่องมือ (Equipment)", "ผู้ใช้งาน (User)", "ระยะเวลา (Duration)", "รหัสโครงการ (Project)", "ประเภท (Type)", "สถานะ (Status)"];
+                const tableColumn = ["Date/Time", "Equipment", "User", "Duration", "Project", "Type", "Status"];
 
                 const sorted = [...this.state.bookings].filter(b => !b.deleted).sort((a, b) => new Date(b.start) - new Date(a.start));
                 const tableRows = sorted.map(b => {
@@ -4903,7 +5064,7 @@
                         durStr,
                         b.project || '-',
                         b.type || 'Internal',
-                        status === 'Booked' ? 'จองล่วงหน้า' : (status === 'InUse' ? 'กำลังใช้งาน' : 'เสร็จสิ้น')
+                        status === 'Booked' ? 'Advance' : (status === 'InUse' ? 'In Use' : 'Finished')
                     ];
                 });
 
@@ -4916,7 +5077,7 @@
                     styles: { font: "THSarabunNew", fontSize: 12, cellPadding: 3.5 }
                 });
                 doc.save(`Lab_LogBook_Report_${moment().format('YYYYMMDD_HHmm')}.pdf`);
-                LabAlert.toast('success', 'ส่งออกไฟล์ PDF เรียบร้อยแล้ว');
+                LabAlert.toast('success', 'PDF exported successfully');
             },
 
             exportToExcel() {
@@ -4946,7 +5107,7 @@
                 const wb = XLSX.utils.book_new();
                 XLSX.utils.book_append_sheet(wb, ws, "LogBook_Records");
                 XLSX.writeFile(wb, `Lab_LogBook_Data_${moment().format('YYYYMMDD_HHmm')}.xlsx`);
-                LabAlert.toast('success', 'ส่งออกไฟล์ Excel เรียบร้อยแล้ว');
+                LabAlert.toast('success', 'Excel exported successfully');
             },
 
             renderEquipmentGrid() {
@@ -4987,11 +5148,10 @@
                     container.innerHTML = `
                         <div class="p-12 text-center text-gray-400 dark:text-slate-500 w-full col-span-full">
                             <i class="fa-solid fa-magnifying-glass text-4xl mb-3 opacity-40"></i>
-                            <p class="text-base font-semibold">ไม่พบข้อมูลเครื่องมือที่ตรงกับเงื่อนไขการค้นหา</p>
-                            <p class="text-xs text-gray-400 dark:text-slate-400 mt-1">ลองปรับเปลี่ยนตัวกรอง หรือล้างคำค้นหาเพื่อแสดงรายการทั้งหมด</p>
+                            <p class="text-base font-semibold">No equipment found matching criteria.</p>
+                            <p class="text-xs text-gray-400 dark:text-slate-400 mt-1">Try adjusting your filters or clearing search terms.</p>
                         </div>
                     `;
-                    this.pendingQRPromises = [];
                     return;
                 }
 
@@ -5002,15 +5162,13 @@
                     grouped[locName].push(eq);
                 });
 
-                const qrPromises = [];
-
                 Object.keys(grouped).sort().forEach(loc => {
                     const groupDiv = document.createElement('div');
                     groupDiv.className = 'location-group';
 
                     const header = document.createElement('div');
                     header.className = 'location-header';
-                    header.innerHTML = `<i class="fa-solid fa-building"></i> ${loc}`;
+                    header.innerHTML = `<i class="fa-solid fa-building"></i> ${escapeHtml(loc)}`;
                     groupDiv.appendChild(header);
 
                     const grid = document.createElement('div');
@@ -5035,37 +5193,25 @@
                         card.innerHTML = `
                         <div class="eq-card-status-badge">${statusBadge}</div>
                         <button class="btn-history" onclick="event.stopPropagation(); app.showEqHistoryModal('${eq.id}')" title="View History"><i class="fa-solid fa-clock-rotate-left"></i></button>
-                        <div id="qr-${eq.id}" class="eq-qr-container"></div>
-                        <div class="eq-title">${eq.name}</div>
-                        <div class="eq-detail"><i class="fa-solid fa-microchip"></i> Model: ${eq.model || '-'}</div>
-                        <div class="eq-detail"><i class="fa-solid fa-barcode"></i> SN: ${eq.serial}</div>
-                        <div class="eq-detail"><i class="fa-solid fa-user-shield"></i> ${eq.custodian}</div>
-                        <div class="eq-detail" style="font-size: 0.8rem;"><i class="fa-solid fa-map-pin"></i> ${this.getLocName(eq.building_id, this.state.buildings)}</div>
+                        <div class="eq-qr-trigger-wrap" style="display:flex; justify-content:center; align-items:center; margin: 1.25rem 0 0.75rem 0;">
+                            <button type="button" class="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-xl bg-teal-50 text-teal-700 hover:bg-teal-100 dark:bg-teal-950/40 dark:text-teal-400 dark:hover:bg-teal-900/50 border border-teal-200/80 dark:border-teal-800/60 transition-all shadow-xs" onclick="event.stopPropagation(); app.showEqQrModal('${eq.id}');">
+                                <i class="fa-solid fa-qrcode text-sm"></i>
+                                <span>View QR Code</span>
+                            </button>
+                        </div>
+                        <div id="qr-${eq.id}" class="eq-qr-container print-only hidden"></div>
+                        <div class="eq-title">${escapeHtml(eq.name)}</div>
+                        <div class="eq-detail"><i class="fa-solid fa-microchip"></i> Model: ${escapeHtml(eq.model || '-')}</div>
+                        <div class="eq-detail"><i class="fa-solid fa-barcode"></i> SN: ${escapeHtml(eq.serial)}</div>
+                        <div class="eq-detail"><i class="fa-solid fa-user-shield"></i> ${escapeHtml(eq.custodian)}</div>
+                        <div class="eq-detail" style="font-size: 0.8rem;"><i class="fa-solid fa-map-pin"></i> ${escapeHtml(this.getLocName(eq.building_id, this.state.buildings))}</div>
                     `;
                         grid.appendChild(card);
-
-                        qrPromises.push(() => {
-                            const qrDiv = document.getElementById(`qr-${eq.id}`);
-                            if (qrDiv) {
-                                qrDiv.innerHTML = '';
-                                const targetUrl = `${window.location.origin}${window.location.pathname}#add?eq=${eq.id}`;
-                                new QRCode(qrDiv, {
-                                    text: targetUrl, width: 160, height: 160,
-                                    colorDark: "#0f172a", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.M
-                                });
-                            }
-                        });
                     });
 
                     groupDiv.appendChild(grid);
                     container.appendChild(groupDiv);
                 });
-
-                this.pendingQRPromises = qrPromises;
-                this.qrTimeout = setTimeout(() => {
-                    qrPromises.forEach(fn => fn());
-                    this.pendingQRPromises = [];
-                }, 50);
             },
             filterEquipments() { this.renderEquipmentGrid(); },
             clearEquipmentFilters() {
@@ -5082,26 +5228,75 @@
                 const locSelect = document.getElementById('equipment-filter-loc');
                 if (!locSelect) return;
                 const currentVal = locSelect.value;
-                locSelect.innerHTML = '<option value="">ทุกสถานที่ (All Locations)</option>' +
-                    (this.state.buildings || []).map(b => `<option value="${b.id}">${b.name}</option>`).join('');
+                locSelect.innerHTML = '<option value="">All Locations</option>' +
+                    (this.state.buildings || []).map(b => `<option value="${b.id}">${escapeHtml(b.name)}</option>`).join('');
                 if (currentVal) locSelect.value = currentVal;
+            },
+
+            showEqQrModal(eqId) {
+                if (window.LabAudio) LabAudio.playClick();
+                const eq = (this.state.equipments || []).find(e => String(e.id) === String(eqId));
+                if (!eq) return;
+
+                const nameEl = document.getElementById('modal-eq-qr-name');
+                const metaEl = document.getElementById('modal-eq-qr-meta');
+                const displayEl = document.getElementById('modal-eq-qr-display');
+                if (nameEl) nameEl.textContent = eq.name;
+                if (metaEl) metaEl.textContent = `SN: ${eq.serial} | Model: ${eq.model || '-'}`;
+
+                if (displayEl) {
+                    displayEl.innerHTML = '';
+                    const targetUrl = `${window.location.origin}${window.location.pathname}#add?eq=${eq.id}`;
+                    new QRCode(displayEl, {
+                        text: targetUrl, width: 190, height: 190,
+                        colorDark: "#0f172a", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.M
+                    });
+                    this._currentQrEq = eq;
+                }
+
+                this.openModal('eq-qr');
+            },
+
+            downloadEqQr() {
+                if (window.LabAudio) LabAudio.playClick();
+                const displayEl = document.getElementById('modal-eq-qr-display');
+                if (!displayEl) return;
+                const canvas = displayEl.querySelector('canvas');
+                const img = displayEl.querySelector('img');
+                const src = canvas ? canvas.toDataURL('image/png') : (img ? img.src : null);
+                if (!src) return;
+
+                const eq = this._currentQrEq || { name: 'equipment', serial: 'qr' };
+                const a = document.createElement('a');
+                a.href = src;
+                a.download = `QR_${(eq.name || 'equipment').replace(/\s+/g, '_')}_${eq.serial || 'code'}.png`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                if (window.LabAlert) LabAlert.toast('success', 'QR code saved successfully');
             },
 
             printA4Stickers() {
                 this.renderEquipmentGrid();
 
-                if (this.pendingQRPromises && this.pendingQRPromises.length > 0) {
-                    if (this.qrTimeout) clearTimeout(this.qrTimeout);
-                    this.pendingQRPromises.forEach(fn => fn());
-                    this.pendingQRPromises = [];
-                }
+                const qrContainers = document.querySelectorAll('#equipment-content .eq-qr-container');
+                qrContainers.forEach(container => {
+                    const id = container.id.replace('qr-', '');
+                    if (id && container.children.length === 0) {
+                        const targetUrl = `${window.location.origin}${window.location.pathname}#add?eq=${id}`;
+                        new QRCode(container, {
+                            text: targetUrl, width: 160, height: 160,
+                            colorDark: "#0f172a", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.M
+                        });
+                    }
+                });
 
                 const cards = document.querySelectorAll('#equipment-content .eq-card');
                 if (!cards || cards.length === 0) {
                     if (window.LabAlert) {
-                        LabAlert.toast('warning', 'ไม่พบรายการเครื่องมือที่ตรงกับตัวกรองเพื่อพิมพ์สติ๊กเกอร์');
+                        LabAlert.toast('warning', 'No equipment found matching criteria to print stickers.');
                     } else {
-                        alert('ไม่พบรายการเครื่องมือที่ตรงกับตัวกรองเพื่อพิมพ์สติ๊กเกอร์');
+                        alert('No equipment found matching criteria to print stickers.');
                     }
                     return;
                 }
@@ -5167,7 +5362,7 @@
                 const paged = filtered.slice(startIndex, startIndex + pageSize);
 
                 if (paged.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="7" class="text-center text-muted py-6">ไม่พบข้อมูลการจอง (No matching records)</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="7" class="text-center text-muted py-6">No matching booking records found.</td></tr>`;
                 } else {
                     paged.forEach(b => {
                         const eqName = this.getBookingEquipmentName(b);
@@ -5698,7 +5893,7 @@
                 }
                 const durHours = Math.floor(totalMins / 60);
                 const durRemMins = totalMins % 60;
-                const durStr = durHours > 0 ? `${durHours} ชม. ${durRemMins > 0 ? durRemMins + ' นาที' : ''}` : `${durRemMins} นาที`;
+                const durStr = durHours > 0 ? `${durHours} hr ${durRemMins > 0 ? durRemMins + ' min' : ''}` : `${durRemMins} min`;
 
                 let html = `
                 <div style="display:flex; justify-content:space-between; margin-bottom:1rem; align-items:center; flex-wrap:wrap; gap:0.5rem;">
@@ -5743,7 +5938,7 @@
                         <span style="font-weight:600;">${h.action}</span> 
                         <br><small style="color:var(--text-muted);">by <span style="color:var(--primary);">${h.by || 'System'}</span> &bull; <i class="fa-solid fa-clock"></i> ${moment(h.timestamp).format('DD MMM YYYY HH:mm:ss')}</small>
                     </div>
-                    `).join('') : '<div class="text-muted text-xs p-2">ไม่มีประวัติการแก้ไข (Initial Booking)</div>';
+                    `).join('') : '<div class="text-muted text-xs p-2">No modification history (Initial Booking)</div>';
                 }
 
                 const actions = document.getElementById('booking-actions');
@@ -6096,6 +6291,7 @@
                 this.renderAdminEquipments();
                 this.renderAdminUsers();
                 this.renderAdminBookings();
+                this.renderAdminActivityAudit();
                 this.updateFirebaseStatusUI();
 
                 const purgeSec = document.getElementById('index-admin-purge-section');
@@ -6111,6 +6307,133 @@
                 if (listCusts) listCusts.innerHTML = [...new Set((this.state.equipments || []).map(e => e.custodian))].map(n => `<option value="${n}">`).join('');
             },
 
+            adminAuditTab: 'bookings',
+            adminActivityAuditPage_: 0,
+
+            switchAdminAuditTab(tab) {
+                this.adminAuditTab = tab;
+                const btnBookings = document.getElementById('tab-btn-audit-bookings');
+                const btnActivity = document.getElementById('tab-btn-audit-activity');
+                const viewBookings = document.getElementById('admin-audit-view-bookings');
+                const viewActivity = document.getElementById('admin-audit-view-activity');
+
+                if (tab === 'bookings') {
+                    if (btnBookings) { btnBookings.className = 'btn btn-sm'; }
+                    if (btnActivity) { btnActivity.className = 'btn btn-outline btn-sm'; }
+                    if (viewBookings) viewBookings.style.display = 'block';
+                    if (viewActivity) viewActivity.style.display = 'none';
+                    this.renderAdminBookings(true);
+                } else {
+                    if (btnBookings) { btnBookings.className = 'btn btn-outline btn-sm'; }
+                    if (btnActivity) { btnActivity.className = 'btn btn-sm'; }
+                    if (viewBookings) viewBookings.style.display = 'none';
+                    if (viewActivity) viewActivity.style.display = 'block';
+                    this.renderAdminActivityAudit(true);
+                }
+            },
+
+            handleAdminAuditFilterChange() {
+                if (this.adminAuditTab === 'activity') {
+                    this.renderAdminActivityAudit(true);
+                } else {
+                    this.renderAdminBookings(true);
+                }
+            },
+
+            resetAdminAuditFilter() {
+                const m = document.getElementById('admin-audit-filter-month');
+                const y = document.getElementById('admin-audit-filter-year');
+                const s = document.getElementById('admin-bookings-search');
+                if (m) m.value = 'all';
+                if (y) y.value = 'all';
+                if (s) s.value = '';
+                this.renderAdminBookings(true);
+                this.renderAdminActivityAudit(true);
+            },
+
+            renderAdminAuditYears() {
+                const yearSelect = document.getElementById('admin-audit-filter-year');
+                if (!yearSelect) return;
+                const currentVal = yearSelect.value || 'all';
+                const nowYear = new Date().getFullYear();
+                const years = new Set([nowYear, nowYear - 1]);
+
+                (this.state.bookings || []).forEach(b => {
+                    if (b.start) {
+                        const yr = new Date(b.start).getFullYear();
+                        if (!isNaN(yr)) years.add(yr);
+                    }
+                });
+                (this.state.auditLogs || []).forEach(l => {
+                    if (l.timestamp) {
+                        const yr = new Date(l.timestamp).getFullYear();
+                        if (!isNaN(yr)) years.add(yr);
+                    }
+                });
+
+                const sorted = Array.from(years).sort((a, b) => b - a);
+                yearSelect.innerHTML = `<option value="all">🗓️ ทุกปี (All Years)</option>` +
+                    sorted.map(y => `<option value="${y}" ${String(y) === String(currentVal) ? 'selected' : ''}>ปี ${y}</option>`).join('');
+            },
+
+            renderAdminAuditMonths() {
+                const monthSelect = document.getElementById('admin-audit-filter-month');
+                const yearSelect = document.getElementById('admin-audit-filter-year');
+                if (!monthSelect) return;
+
+                const curMonth = monthSelect.value || 'all';
+                const curYear = yearSelect ? yearSelect.value : 'all';
+
+                const monthNames = [
+                    '01 - มกราคม (Jan)', '02 - กุมภาพันธ์ (Feb)', '03 - มีนาคม (Mar)',
+                    '04 - เมษายน (Apr)', '05 - พฤษภาคม (May)', '06 - มิถุนายน (Jun)',
+                    '07 - กรกฎาคม (Jul)', '08 - สิงหาคม (Aug)', '09 - กันยายน (Sep)',
+                    '10 - ตุลาคม (Oct)', '11 - พฤศจิกายน (Nov)', '12 - ธันวาคม (Dec)'
+                ];
+                const mCounts = Array(13).fill(0);
+                let totalYearItems = 0;
+
+                if (this.adminAuditTab === 'activity') {
+                    let logs = this.state.auditLogs;
+                    if (!Array.isArray(logs) || logs.length === 0) {
+                        try {
+                            const raw = localStorage.getItem('carePlusAuditLog');
+                            logs = raw ? JSON.parse(raw) : [];
+                        } catch (e) { logs = []; }
+                    }
+                    (logs || []).forEach(l => {
+                        if (l.timestamp) {
+                            const d = new Date(l.timestamp);
+                            if (!isNaN(d.getTime())) {
+                                if (curYear === 'all' || d.getFullYear() === parseInt(curYear)) {
+                                    mCounts[d.getMonth() + 1]++;
+                                    totalYearItems++;
+                                }
+                            }
+                        }
+                    });
+                } else {
+                    (this.state.bookings || []).forEach(b => {
+                        if (b.start) {
+                            const d = new Date(b.start);
+                            if (!isNaN(d.getTime())) {
+                                if (curYear === 'all' || d.getFullYear() === parseInt(curYear)) {
+                                    mCounts[d.getMonth() + 1]++;
+                                    totalYearItems++;
+                                }
+                            }
+                        }
+                    });
+                }
+
+                let html = `<option value="all" ${curMonth === 'all' ? 'selected' : ''}>📅 ทุกเดือน (All Months) (${totalYearItems})</option>`;
+                for (let m = 1; m <= 12; m++) {
+                    const isSel = String(curMonth) === String(m);
+                    html += `<option value="${m}" ${isSel ? 'selected' : ''}>${monthNames[m - 1]} (${mCounts[m]})</option>`;
+                }
+                monthSelect.innerHTML = html;
+            },
+
             renderAdminBookings(resetPage = false) {
                 if (resetPage) {
                     this.bookingAuditPage_ = 0;
@@ -6118,15 +6441,33 @@
                 const bkTbody = document.getElementById('admin-bookings-tbody');
                 if (!bkTbody) return;
 
+                this.renderAdminAuditYears();
+                this.renderAdminAuditMonths();
+
+                const monthSelect = document.getElementById('admin-audit-filter-month');
+                const yearSelect = document.getElementById('admin-audit-filter-year');
+                const selectedMonth = monthSelect ? monthSelect.value : 'all';
+                const selectedYear = yearSelect ? yearSelect.value : 'all';
                 const query = (document.getElementById('admin-bookings-search')?.value || '').trim().toLowerCase();
+
                 const allSorted = [...(this.state.bookings || [])].sort((a, b) => new Date(b.start) - new Date(a.start));
 
                 const filtered = allSorted.filter(b => {
-                    if (!query) return true;
-                    const eqName = this.getBookingEquipmentName(b);
-                    const status = this.getBookingStatus(b);
-                    const s = `${b.id || ''} ${moment(b.start).format('DD/MM/YYYY')} ${eqName} ${b.user || b.userName || b.userEmail || ''} ${status}`.toLowerCase();
-                    return s.includes(query);
+                    const bDate = b.start ? new Date(b.start) : null;
+                    if (bDate && !isNaN(bDate.getTime())) {
+                        if (selectedYear !== 'all' && bDate.getFullYear() !== parseInt(selectedYear)) return false;
+                        if (selectedMonth !== 'all' && (bDate.getMonth() + 1) !== parseInt(selectedMonth)) return false;
+                    } else if (selectedYear !== 'all' || selectedMonth !== 'all') {
+                        return false;
+                    }
+
+                    if (query) {
+                        const eqName = this.getBookingEquipmentName(b);
+                        const status = this.getBookingStatus(b);
+                        const s = `${b.id || ''} ${moment(b.start).format('DD/MM/YYYY')} ${eqName} ${b.user || b.userName || b.userEmail || ''} ${status}`.toLowerCase();
+                        if (!s.includes(query)) return false;
+                    }
+                    return true;
                 });
 
                 const total = filtered.length;
@@ -6161,7 +6502,7 @@
                 const infoEl = document.getElementById('admin-bookings-info');
                 const prevBtn = document.getElementById('admin-bookings-prev');
                 const nextBtn = document.getElementById('admin-bookings-next');
-                if (infoEl) infoEl.textContent = `${total} records | Page ${this.bookingAuditPage_ + 1}/${maxPage + 1}`;
+                if (infoEl) infoEl.textContent = `${total} รายการ (จากทั้งหมด ${(this.state.bookings || []).length}) | หน้า ${this.bookingAuditPage_ + 1}/${maxPage + 1}`;
                 if (prevBtn) prevBtn.disabled = this.bookingAuditPage_ <= 0;
                 if (nextBtn) nextBtn.disabled = this.bookingAuditPage_ >= maxPage;
             },
@@ -6169,6 +6510,340 @@
             bookingAuditPage(dir) {
                 this.bookingAuditPage_ = (this.bookingAuditPage_ || 0) + dir;
                 this.renderAdminBookings(false);
+            },
+
+            renderAdminActivityAudit(resetPage = false) {
+                if (resetPage) {
+                    this.adminActivityAuditPage_ = 0;
+                }
+                const tbody = document.getElementById('admin-activity-tbody');
+                const infoEl = document.getElementById('admin-activity-info');
+                const prevBtn = document.getElementById('admin-activity-prev');
+                const nextBtn = document.getElementById('admin-activity-next');
+                if (!tbody) return;
+
+                this.renderAdminAuditYears();
+                this.renderAdminAuditMonths();
+
+                let logs = this.state.auditLogs;
+                if (!Array.isArray(logs) || logs.length === 0) {
+                    try {
+                        const raw = localStorage.getItem('carePlusAuditLog');
+                        logs = raw ? JSON.parse(raw) : [];
+                    } catch (e) { logs = []; }
+                }
+
+                const monthSelect = document.getElementById('admin-audit-filter-month');
+                const yearSelect = document.getElementById('admin-audit-filter-year');
+                const selectedMonth = monthSelect ? monthSelect.value : 'all';
+                const selectedYear = yearSelect ? yearSelect.value : 'all';
+                const query = (document.getElementById('admin-bookings-search')?.value || '').trim().toLowerCase();
+
+                const filtered = (logs || []).filter(log => {
+                    const d = log.timestamp ? new Date(log.timestamp) : null;
+                    if (d && !isNaN(d.getTime())) {
+                        if (selectedYear !== 'all' && d.getFullYear() !== parseInt(selectedYear)) return false;
+                        if (selectedMonth !== 'all' && (d.getMonth() + 1) !== parseInt(selectedMonth)) return false;
+                    } else if (selectedYear !== 'all' || selectedMonth !== 'all') {
+                        return false;
+                    }
+
+                    if (query) {
+                        const s = `${log.user || ''} ${log.action || ''} ${log.details || ''} ${log.timestamp || ''}`.toLowerCase();
+                        if (!s.includes(query)) return false;
+                    }
+                    return true;
+                });
+
+                const total = filtered.length;
+                const perPage = 10;
+                const maxPage = Math.max(0, Math.ceil(total / perPage) - 1);
+                if (this.adminActivityAuditPage_ > maxPage) this.adminActivityAuditPage_ = maxPage;
+                if (this.adminActivityAuditPage_ < 0) this.adminActivityAuditPage_ = 0;
+
+                const start = this.adminActivityAuditPage_ * perPage;
+                const page = filtered.slice(start, start + perPage);
+
+                if (page.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted py-6">ไม่พบประวัติกิจกรรมที่ตรงกับเงื่อนไขค้นหา</td></tr>`;
+                } else {
+                    const esc = (txt) => String(txt || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+                    tbody.innerHTML = page.map((log, i) => `<tr>
+                        <td style="color: var(--text-muted); font-size: 0.75rem;">${start + i + 1}</td>
+                        <td style="white-space: nowrap; font-size: 0.75rem;">${new Date(log.timestamp).toLocaleString('th-TH', { dateStyle: 'short', timeStyle: 'short' })}</td>
+                        <td style="font-weight: 600; font-size: 0.8rem;">${esc(log.user)}</td>
+                        <td><span style="display: inline-block; padding: 2px 8px; border-radius: 9999px; font-size: 0.7rem; font-weight: 700; background: rgba(99, 102, 241, 0.15); color: #6366f1;">${esc(log.action)}</span></td>
+                        <td style="max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.75rem; color: var(--text-muted);" title="${esc(log.details)}">${esc(log.details || '-')}</td>
+                    </tr>`).join('');
+                }
+
+                if (infoEl) infoEl.textContent = `${total} รายการ (จากทั้งหมด ${(logs || []).length}) | หน้า ${this.adminActivityAuditPage_ + 1}/${maxPage + 1}`;
+                if (prevBtn) prevBtn.disabled = this.adminActivityAuditPage_ <= 0;
+                if (nextBtn) nextBtn.disabled = this.adminActivityAuditPage_ >= maxPage;
+            },
+
+            activityAuditPage(dir) {
+                this.adminActivityAuditPage_ = (this.adminActivityAuditPage_ || 0) + dir;
+                this.renderAdminActivityAudit(false);
+            },
+
+            openAdminAuditPurgeModal() {
+                const user = this.state.user || LabAuth.getCurrentUser();
+                if (!user || user.role !== 'admin') {
+                    LabAlert.error('คุณไม่มีสิทธิ์ล้างข้อมูล Audit Log (เฉพาะ Admin เท่านั้น)', 'สิทธิ์ไม่เพียงพอ');
+                    return;
+                }
+
+                const bookings = this.state.bookings || [];
+                const auditLogs = this.state.auditLogs || (typeof LabStateBridge !== 'undefined' ? LabStateBridge.getStateInternal().auditLogs : []) || [];
+                const nowYear = new Date().getFullYear();
+
+                const years = new Set([nowYear, nowYear - 1, nowYear - 2]);
+                bookings.forEach(b => {
+                    if (b.start) {
+                        const yr = new Date(b.start).getFullYear();
+                        if (!isNaN(yr)) years.add(yr);
+                    }
+                });
+                auditLogs.forEach(l => {
+                    if (l.timestamp) {
+                        const yr = new Date(l.timestamp).getFullYear();
+                        if (!isNaN(yr)) years.add(yr);
+                    }
+                });
+                const sortedYears = Array.from(years).sort((a, b) => b - a);
+
+                const months = [
+                    { val: 1, name: 'มกราคม (Jan)' },
+                    { val: 2, name: 'กุมภาพันธ์ (Feb)' },
+                    { val: 3, name: 'มีนาคม (Mar)' },
+                    { val: 4, name: 'เมษายน (Apr)' },
+                    { val: 5, name: 'พฤษภาคม (May)' },
+                    { val: 6, name: 'มิถุนายน (Jun)' },
+                    { val: 7, name: 'กรกฎาคม (Jul)' },
+                    { val: 8, name: 'สิงหาคม (Aug)' },
+                    { val: 9, name: 'กันยายน (Sep)' },
+                    { val: 10, name: 'ตุลาคม (Oct)' },
+                    { val: 11, name: 'พฤศจิกายน (Nov)' },
+                    { val: 12, name: 'ธันวาคม (Dec)' }
+                ];
+
+                const html = `
+                    <div style="text-align: left; font-size: 0.825rem; line-height: 1.5;">
+                        <p style="color: var(--text-main); margin-bottom: 0.75rem;">
+                            เลือกขอบเขตและรูปแบบการล้างข้อมูล Audit Log เพื่อคืนพื้นที่และลดความหน่วงของระบบ:
+                        </p>
+
+                        <div style="background: rgba(255, 255, 255, 0.05); padding: 0.75rem; border-radius: 10px; border: 1px solid var(--border-color); margin-bottom: 0.75rem;">
+                            <label style="font-weight: 700; display: block; margin-bottom: 0.35rem; color: var(--text-main);">1. เลือกขอบเขตข้อมูลที่ต้องการล้าง:</label>
+                            <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.75rem;">
+                                <label style="display: flex; align-items: center; gap: 0.35rem; cursor: pointer;">
+                                    <input type="radio" name="idxPurgeScope" value="bookings" checked onchange="window.updateIdxPurgePreview()">
+                                    <span>📅 รายการจอง (Bookings)</span>
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 0.35rem; cursor: pointer;">
+                                    <input type="radio" name="idxPurgeScope" value="activity" onchange="window.updateIdxPurgePreview()">
+                                    <span>🛡️ กิจกรรมระบบ (System Logs)</span>
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 0.35rem; cursor: pointer;">
+                                    <input type="radio" name="idxPurgeScope" value="both" onchange="window.updateIdxPurgePreview()">
+                                    <span>🔄 ทั้งหมด (Both)</span>
+                                </label>
+                            </div>
+
+                            <label style="font-weight: 700; display: block; margin-bottom: 0.35rem; color: var(--text-main);">2. เลือกเงื่อนไขเวลา:</label>
+                            <div style="display: flex; flex-direction: column; gap: 0.4rem;">
+                                <label style="display: flex; align-items: center; gap: 0.35rem; cursor: pointer;">
+                                    <input type="radio" name="idxPurgeMode" value="month" checked onchange="window.updateIdxPurgePreview()">
+                                    <span>ลบเฉพาะเดือนและปีที่ระบุ</span>
+                                </label>
+                                <div id="idxPurgeMonthFields" style="display: flex; gap: 0.5rem; margin-left: 1.5rem;">
+                                    <select id="idxPurgeMonthSelect" class="glass-input" style="padding: 0.35rem 0.5rem; font-size: 0.8rem; flex: 1;" onchange="window.updateIdxPurgePreview()">
+                                        ${months.map(m => `<option value="${m.val}">${m.name}</option>`).join('')}
+                                    </select>
+                                    <select id="idxPurgeYearSelect" class="glass-input" style="padding: 0.35rem 0.5rem; font-size: 0.8rem; width: 100px;" onchange="window.updateIdxPurgePreview()">
+                                        ${sortedYears.map(y => `<option value="${y}">ปี ${y}</option>`).join('')}
+                                    </select>
+                                </div>
+
+                                <label style="display: flex; align-items: center; gap: 0.35rem; cursor: pointer; margin-top: 0.35rem;">
+                                    <input type="radio" name="idxPurgeMode" value="year" onchange="window.updateIdxPurgePreview()">
+                                    <span>ลบข้อมูลทั้งปีที่ระบุ (ทั้ง 12 เดือน)</span>
+                                </label>
+                                <div id="idxPurgeYearFields" style="display: none; margin-left: 1.5rem;">
+                                    <select id="idxPurgeOnlyYearSelect" class="glass-input" style="padding: 0.35rem 0.5rem; font-size: 0.8rem; width: 100%;" onchange="window.updateIdxPurgePreview()">
+                                        ${sortedYears.map(y => `<option value="${y}">ปี ${y}</option>`).join('')}
+                                    </select>
+                                </div>
+
+                                <label style="display: flex; align-items: center; gap: 0.35rem; cursor: pointer; margin-top: 0.35rem;">
+                                    <input type="radio" name="idxPurgeMode" value="older_than" onchange="window.updateIdxPurgePreview()">
+                                    <span>ลบข้อมูลที่เก่ากว่าช่วงเวลาที่กำหนด</span>
+                                </label>
+                                <div id="idxPurgeOlderFields" style="display: none; margin-left: 1.5rem;">
+                                    <select id="idxPurgeOlderSelect" class="glass-input" style="padding: 0.35rem 0.5rem; font-size: 0.8rem; width: 100%;" onchange="window.updateIdxPurgePreview()">
+                                        <option value="1_month">เก่ากว่า 1 เดือน (> 30 วันที่ผ่านมา)</option>
+                                        <option value="3_months" selected>เก่ากว่า 3 เดือน (> 90 วันที่ผ่านมา)</option>
+                                        <option value="6_months">เก่ากว่า 6 เดือน (> 180 วันที่ผ่านมา)</option>
+                                        <option value="1_year">เก่ากว่า 1 ปี (> 365 วันที่ผ่านมา)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="idxPurgePreviewBox" style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); padding: 0.6rem; border-radius: 8px; font-weight: 600; color: #d97706; margin-bottom: 0.5rem;">
+                            กำลังคำนวณจำนวนรายการ...
+                        </div>
+
+                        <p style="font-size: 0.75rem; color: #ef4444; font-weight: 700; margin: 0;">
+                            ⚠️ ข้อมูลที่ถูกลบจะไม่สามารถกู้คืนได้ แนะนำให้กดดาวน์โหลด Backup ก่อนดำเนินการ
+                        </p>
+                    </div>
+                `;
+
+                Swal.fire({
+                    title: '🗑️ ลบ Audit Log รายเดือน / รายปี',
+                    html: html,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    showDenyButton: true,
+                    confirmButtonText: 'ยืนยันการลบ',
+                    denyButtonText: '💾 แบ็คอัพก่อนลบ',
+                    cancelButtonText: 'ยกเลิก',
+                    confirmButtonColor: '#EF4444',
+                    denyButtonColor: '#10B981',
+                    cancelButtonColor: '#6B7280',
+                    didOpen: () => {
+                        window.updateIdxPurgePreview = () => {
+                            const scope = document.querySelector('input[name="idxPurgeScope"]:checked')?.value || 'bookings';
+                            const mode = document.querySelector('input[name="idxPurgeMode"]:checked')?.value || 'month';
+                            const mBox = document.getElementById('idxPurgeMonthFields');
+                            const yBox = document.getElementById('idxPurgeYearFields');
+                            const oBox = document.getElementById('idxPurgeOlderFields');
+                            const prevBox = document.getElementById('idxPurgePreviewBox');
+
+                            if (mBox) mBox.style.display = mode === 'month' ? 'flex' : 'none';
+                            if (yBox) yBox.style.display = mode === 'year' ? 'block' : 'none';
+                            if (oBox) oBox.style.display = mode === 'older_than' ? 'block' : 'none';
+
+                            const curBookings = this.state.bookings || [];
+                            const curLogs = this.state.auditLogs || [];
+
+                            let countBookings = 0;
+                            let countLogs = 0;
+
+                            const checkMatch = (d) => {
+                                if (!d || isNaN(d.getTime())) return false;
+                                if (mode === 'month') {
+                                    const m = parseInt(document.getElementById('idxPurgeMonthSelect')?.value || '1');
+                                    const y = parseInt(document.getElementById('idxPurgeYearSelect')?.value || nowYear);
+                                    return (d.getMonth() + 1) === m && d.getFullYear() === y;
+                                } else if (mode === 'year') {
+                                    const y = parseInt(document.getElementById('idxPurgeOnlyYearSelect')?.value || nowYear);
+                                    return d.getFullYear() === y;
+                                } else if (mode === 'older_than') {
+                                    const period = document.getElementById('idxPurgeOlderSelect')?.value || '3_months';
+                                    let days = 90;
+                                    if (period === '1_month') days = 30;
+                                    else if (period === '6_months') days = 180;
+                                    else if (period === '1_year') days = 365;
+                                    const cutoff = new Date(Date.now() - (days * 24 * 60 * 60 * 1000));
+                                    return d < cutoff;
+                                }
+                                return false;
+                            };
+
+                            if (scope === 'bookings' || scope === 'both') {
+                                countBookings = curBookings.filter(b => checkMatch(b.start ? new Date(b.start) : null)).length;
+                            }
+                            if (scope === 'activity' || scope === 'both') {
+                                countLogs = curLogs.filter(l => checkMatch(l.timestamp ? new Date(l.timestamp) : null)).length;
+                            }
+
+                            if (prevBox) {
+                                let txt = '';
+                                if (scope === 'bookings') txt = `รายการจองที่จะถูกลบ: <strong>${countBookings}</strong> จาก ${curBookings.length} รายการ`;
+                                else if (scope === 'activity') txt = `กิจกรรมระบบที่จะถูกลบ: <strong>${countLogs}</strong> จาก ${curLogs.length} รายการ`;
+                                else txt = `จะลบรายการจอง: <strong>${countBookings}</strong> รายการ | กิจกรรมระบบ: <strong>${countLogs}</strong> รายการ`;
+                                prevBox.innerHTML = txt;
+                            }
+                        };
+                        window.updateIdxPurgePreview();
+                    }
+                }).then(async (result) => {
+                    if (result.isDenied) {
+                        await LabStateBridge.exportCombinedBackup();
+                        setTimeout(() => this.openAdminAuditPurgeModal(), 800);
+                    } else if (result.isConfirmed) {
+                        const scope = document.querySelector('input[name="idxPurgeScope"]:checked')?.value || 'bookings';
+                        const mode = document.querySelector('input[name="idxPurgeMode"]:checked')?.value || 'month';
+
+                        const checkMatch = (d) => {
+                            if (!d || isNaN(d.getTime())) return false;
+                            if (mode === 'month') {
+                                const m = parseInt(document.getElementById('idxPurgeMonthSelect')?.value || '1');
+                                const y = parseInt(document.getElementById('idxPurgeYearSelect')?.value || nowYear);
+                                return (d.getMonth() + 1) === m && d.getFullYear() === y;
+                            } else if (mode === 'year') {
+                                const y = parseInt(document.getElementById('idxPurgeOnlyYearSelect')?.value || nowYear);
+                                return d.getFullYear() === y;
+                            } else if (mode === 'older_than') {
+                                const period = document.getElementById('idxPurgeOlderSelect')?.value || '3_months';
+                                let days = 90;
+                                if (period === '1_month') days = 30;
+                                else if (period === '6_months') days = 180;
+                                else if (period === '1_year') days = 365;
+                                const cutoff = new Date(Date.now() - (days * 24 * 60 * 60 * 1000));
+                                return d < cutoff;
+                            }
+                            return false;
+                        };
+
+                        let delBk = 0;
+                        let delAct = 0;
+
+                        if (scope === 'bookings' || scope === 'both') {
+                            const before = (this.state.bookings || []).length;
+                            this.state.bookings = (this.state.bookings || []).filter(b => !checkMatch(b.start ? new Date(b.start) : null));
+                            delBk = before - this.state.bookings.length;
+                        }
+
+                        if (scope === 'activity' || scope === 'both') {
+                            const curLogs = this.state.auditLogs || [];
+                            const before = curLogs.length;
+                            this.state.auditLogs = curLogs.filter(l => !checkMatch(l.timestamp ? new Date(l.timestamp) : null));
+                            delAct = before - this.state.auditLogs.length;
+                            try {
+                                localStorage.setItem('carePlusAuditLog', JSON.stringify(this.state.auditLogs));
+                            } catch (e) {}
+                        }
+
+                        const totalDel = delBk + delAct;
+                        if (totalDel === 0) {
+                            LabAlert.toast('info', 'ไม่พบรายการที่ตรงกับเงื่อนไขที่เลือก (ไม่มีข้อมูลถูกลบ)');
+                            return;
+                        }
+
+                        this.saveState();
+                        this.flushSync();
+                        this.renderAdminBookings(true);
+                        this.renderAdminActivityAudit(true);
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'ลบ Audit Log สำเร็จ!',
+                            html: `
+                                <div style="text-align: left; font-size: 0.85rem;">
+                                    <p>คืนพื้นที่จัดเก็บเรียบร้อยแล้ว:</p>
+                                    <ul style="margin-left: 1.25rem; list-style: disc; line-height: 1.6;">
+                                        ${delBk > 0 ? `<li>ลบรายการจอง Lab Book+: <strong>${delBk}</strong> รายการ</li>` : ''}
+                                        ${delAct > 0 ? `<li>ลบกิจกรรมระบบ (Audit Log): <strong>${delAct}</strong> รายการ</li>` : ''}
+                                    </ul>
+                                </div>
+                            `
+                        });
+                    }
+                });
             },
 
             editEquipment(id) {
@@ -6283,12 +6958,13 @@
                 if (window.LabAudio) LabAudio.playClick();
                 const user = (this.state.users || []).find(u => String(u.username) === String(username) || String(u.id) === String(username) || String(u.email) === String(username));
                 if (!user) {
-                    LabAlert.toast('info', 'ไม่พบข้อมูลผู้ใช้งาน');
+                    LabAlert.toast('info', 'User not found');
                     return;
                 }
                 const nameEl = document.getElementById('admin-history-username');
                 if (nameEl) nameEl.innerText = user.name || user.username;
                 const tbody = document.getElementById('admin-history-tbody');
+                const actionsBox = document.getElementById('admin-history-modal-actions');
                 if (!tbody) return;
 
                 const warnings = [...(user.warnings || [])];
@@ -6296,28 +6972,112 @@
                 (this.state.bookings || []).forEach(b => {
                     const isMatch = (b.user && (b.user === user.username || b.user === user.name || b.user === user.email)) ||
                         (b.creatorUsername && (b.creatorUsername === user.username || b.creatorUsername === user.email));
-                    if (isMatch && !b.deleted && (b.status === 'InUse' || b.status === 'Booked') && new Date(b.end) < now) {
+                    if (isMatch && !b.deleted && !b.warningDismissed && (b.status === 'InUse' || b.status === 'Booked') && new Date(b.end) < now) {
                         const eq = (this.state.equipments || []).find(e => String(e.id) === String(b.eqId || b.equipmentId));
                         warnings.push({
                             warnedAt: b.end,
                             eqName: eq ? eq.name : 'Unknown Equipment',
-                            bookingId: b.id + ' (ค้างส่งคืน)'
+                            bookingId: b.id + ' (Overdue)'
                         });
                     }
                 });
 
+                const isAdmin = this.state.user && this.state.user.role === 'admin';
+                if (actionsBox) {
+                    actionsBox.innerHTML = (isAdmin && warnings.length > 0)
+                        ? `<button type="button" class="btn btn-outline btn-icon-only text-danger shrink-0 inline-flex items-center justify-center" onclick="app.adminClearUserWarnings('${user.id || user.username}')" style="width: 32px; height: 32px; font-size: 0.85rem; border-radius: 8px;" title="Clear All Warnings"><i class="fa-solid fa-trash-can"></i></button>`
+                        : '';
+                }
+
                 if (warnings.length > 0) {
-                    tbody.innerHTML = warnings.map(w => {
+                    tbody.innerHTML = warnings.map((w, idx) => {
+                        const delBtn = isAdmin
+                            ? `<button type="button" class="btn btn-outline btn-icon-only text-danger" style="width: 22px; height: 22px; font-size: 0.65rem; border-radius: 4px;" onclick="app.adminDeleteSingleWarning('${user.id || user.username}', ${idx})" title="Delete Warning"><i class="fa-solid fa-trash-can"></i></button>`
+                            : '';
                         return `<tr>
                         <td>${moment(w.warnedAt).format('DD/MM/YYYY HH:mm')}</td>
-                        <td>${w.eqName || '-'}</td>
-                        <td>${w.bookingId || '-'}</td>
+                        <td>${escapeHtml(w.eqName || '-')}</td>
+                        <td>${escapeHtml(w.bookingId || '-')}</td>
+                        <td style="text-align: right;">${delBtn}</td>
                     </tr>`;
                     }).join('');
                 } else {
-                    tbody.innerHTML = '<tr><td colspan="3" class="text-center text-muted py-4">No warnings on record.</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted py-4">No warnings on record.</td></tr>';
                 }
                 this.openModal('admin-history');
+            },
+
+            adminClearUserWarnings(userIdOrUsername) {
+                if (!this.state.user || this.state.user.role !== 'admin') {
+                    LabAlert.error('Only administrators can clear warnings.', 'Permission Denied');
+                    return;
+                }
+                const user = (this.state.users || []).find(u => String(u.id) === String(userIdOrUsername) || String(u.username) === String(userIdOrUsername));
+                if (!user) {
+                    LabAlert.toast('info', 'User not found');
+                    return;
+                }
+
+                const doClear = () => {
+                    user.warnings = [];
+                    // Dismiss overdue warnings on bookings belonging to this user
+                    (this.state.bookings || []).forEach(b => {
+                        const isMatch = (b.user && (b.user === user.username || b.user === user.name || b.user === user.email)) ||
+                            (b.creatorUsername && (b.creatorUsername === user.username || b.creatorUsername === user.email));
+                        if (isMatch) {
+                            b.warningDismissed = true;
+                        }
+                    });
+                    this.saveState();
+                    this.flushSync();
+                    this.renderAdminUsers();
+                    this.checkWarnings();
+                    this.closeModal('admin-history');
+                    LabAlert.toast('success', `Cleared warnings for ${user.name || user.username}`);
+                };
+
+                if (window.LabAlert && typeof LabAlert.confirm === 'function') {
+                    LabAlert.confirm(`Clear warning history for "${user.name || user.username}"?`, 'This will permanently remove all warning records for this user.', 'Clear Warnings', 'Cancel').then(confirmed => {
+                        if (confirmed) doClear();
+                    });
+                } else if (confirm(`Clear warning history for "${user.name || user.username}"?`)) {
+                    doClear();
+                }
+            },
+
+            adminDeleteSingleWarning(userIdOrUsername, warningIndex) {
+                if (!this.state.user || this.state.user.role !== 'admin') {
+                    LabAlert.error('Only administrators can delete warnings.', 'Permission Denied');
+                    return;
+                }
+                const user = (this.state.users || []).find(u => String(u.id) === String(userIdOrUsername) || String(u.username) === String(userIdOrUsername));
+                if (!user) return;
+
+                const storedLen = (user.warnings || []).length;
+                if (warningIndex < storedLen) {
+                    user.warnings.splice(warningIndex, 1);
+                } else {
+                    const overdueIndex = warningIndex - storedLen;
+                    const now = new Date();
+                    let curIdx = 0;
+                    (this.state.bookings || []).forEach(b => {
+                        const isMatch = (b.user && (b.user === user.username || b.user === user.name || b.user === user.email)) ||
+                            (b.creatorUsername && (b.creatorUsername === user.username || b.creatorUsername === user.email));
+                        if (isMatch && !b.deleted && !b.warningDismissed && (b.status === 'InUse' || b.status === 'Booked') && new Date(b.end) < now) {
+                            if (curIdx === overdueIndex) {
+                                b.warningDismissed = true;
+                            }
+                            curIdx++;
+                        }
+                    });
+                }
+
+                this.saveState();
+                this.flushSync();
+                this.renderAdminUsers();
+                this.checkWarnings();
+                this.showAdminHistory(user.username);
+                LabAlert.toast('success', 'ลบรายการ Warning เรียบร้อยแล้ว');
             },
 
             editUser(id) {

@@ -944,7 +944,7 @@
                             <div class="flex items-center gap-1 sm:gap-1.5 bg-gray-100/70 dark:bg-slate-800/70 p-1 rounded-xl backdrop-blur-sm border border-gray-200/50 dark:border-slate-700/50">
                                 <button onclick="goToTodayCalendar()"
                                     class="px-2.5 py-1 text-xs font-bold hover:bg-white dark:hover:bg-slate-700 hover:shadow-sm rounded-lg transition text-teal-600 dark:text-teal-400 bg-white/60 dark:bg-slate-800/60 border border-teal-200/50 dark:border-teal-800/40"
-                                    title="ไปยังเดือนปัจจุบัน">
+                                    title="Go to current month">
                                     <i class="fa-solid fa-calendar-day mr-1"></i> Today
                                 </button>
                                 <button onclick="previousMonth()"
@@ -976,16 +976,40 @@
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div class="glass ios-card p-6 lg:col-span-2">
-                        <h3 class="text-lg font-bold text-gray-800 mb-6">Monthly Activity</h3>
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-800 dark:text-slate-100 flex items-center gap-2">
+                                <span class="w-2 h-5 bg-blue-500 rounded-full inline-block"></span>
+                                Monthly Activity
+                            </h3>
+                            <p class="text-xs text-gray-500 dark:text-slate-400 mt-0.5 mb-4">
+                                Total maintenance, calibration, and repair activities logged per month over the year.
+                            </p>
+                        </div>
                         <div class="h-72"><canvas id="monthlyChart"></canvas></div>
                     </div>
                     <div class="glass ios-card p-6">
-                        <h3 class="text-lg font-bold text-gray-800 mb-6">Type Split</h3>
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-800 dark:text-slate-100 flex items-center gap-2">
+                                <span class="w-2 h-5 bg-indigo-500 rounded-full inline-block"></span>
+                                Type Split
+                            </h3>
+                            <p class="text-xs text-gray-500 dark:text-slate-400 mt-0.5 mb-4">
+                                Proportion of task categories: Calibration, Preventive Maintenance, and Repair.
+                            </p>
+                        </div>
                         <div class="h-72 flex justify-center"><canvas id="typeChart"></canvas></div>
                     </div>
                 </div>
                 <div class="glass ios-card p-6">
-                    <h3 class="text-lg font-bold text-gray-800 mb-6">Location Distribution</h3>
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800 dark:text-slate-100 flex items-center gap-2">
+                            <span class="w-2 h-5 bg-emerald-500 rounded-full inline-block"></span>
+                            Location Distribution
+                        </h3>
+                        <p class="text-xs text-gray-500 dark:text-slate-400 mt-0.5 mb-4">
+                            Distribution of service records across laboratory facilities and buildings.
+                        </p>
+                    </div>
                     <div class="h-64"><canvas id="locationChart"></canvas></div>
                 </div>
 
@@ -997,33 +1021,33 @@
                                 Visualize Maintenance Cost by Equipment
                             </h3>
                             <p class="text-xs text-gray-500 dark:text-slate-400 mt-0.5">
-                                สรุปยอดรวมค่าใช้จ่ายซ่อมบำรุงและสอบเทียบ แยกตามเครื่องมือและประเภทงาน (เรียงตามยอดรวมจากมากไปน้อย)
+                                Summary of maintenance and calibration expenses by equipment and service type (ranked from highest to lowest).
                             </p>
                         </div>
                         <div class="flex items-center gap-1.5 bg-gray-100/80 dark:bg-slate-800/80 p-1 rounded-xl self-stretch sm:self-auto justify-end">
-                            <span class="text-[10px] font-bold uppercase text-gray-400 px-2 hidden sm:inline">แสดงผล:</span>
+                            <span class="text-[10px] font-bold uppercase text-gray-400 px-2 hidden sm:inline">Display:</span>
                             <button id="btnCostLimit10" onclick="setCostChartLimit(10)" class="px-2.5 py-1 text-xs font-bold rounded-lg bg-white dark:bg-slate-700 text-teal-600 dark:text-teal-400 shadow-sm transition">Top 10</button>
                             <button id="btnCostLimit20" onclick="setCostChartLimit(20)" class="px-2.5 py-1 text-xs font-bold rounded-lg text-gray-600 dark:text-slate-300 hover:text-teal-600 transition">Top 20</button>
-                            <button id="btnCostLimitAll" onclick="setCostChartLimit(0)" class="px-2.5 py-1 text-xs font-bold rounded-lg text-gray-600 dark:text-slate-300 hover:text-teal-600 transition">ทั้งหมด (All)</button>
+                            <button id="btnCostLimitAll" onclick="setCostChartLimit(0)" class="px-2.5 py-1 text-xs font-bold rounded-lg text-gray-600 dark:text-slate-300 hover:text-teal-600 transition">All Items</button>
                         </div>
                     </div>
 
                     <!-- Quick Summary Stat Badges -->
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
                         <div class="bg-white/60 dark:bg-slate-800/60 p-3 rounded-xl border border-gray-100 dark:border-slate-700">
-                            <div class="text-[10px] uppercase font-bold text-gray-400 dark:text-slate-400">ยอดรวมค่าใช้จ่าย</div>
+                            <div class="text-[10px] uppercase font-bold text-gray-400 dark:text-slate-400">Total Expenses</div>
                             <div class="text-base sm:text-lg font-extrabold text-teal-600 dark:text-teal-400 mt-0.5" id="costStatTotal">฿0</div>
                         </div>
                         <div class="bg-white/60 dark:bg-slate-800/60 p-3 rounded-xl border border-gray-100 dark:border-slate-700">
-                            <div class="text-[10px] uppercase font-bold text-gray-400 dark:text-slate-400">เครื่องมือที่ค่าใช้จ่ายสูงสุด</div>
+                            <div class="text-[10px] uppercase font-bold text-gray-400 dark:text-slate-400">Highest Cost Item</div>
                             <div class="text-xs sm:text-sm font-bold text-gray-800 dark:text-slate-200 truncate mt-0.5" id="costStatTopItem">-</div>
                         </div>
                         <div class="bg-white/60 dark:bg-slate-800/60 p-3 rounded-xl border border-gray-100 dark:border-slate-700">
-                            <div class="text-[10px] uppercase font-bold text-gray-400 dark:text-slate-400">จำนวนเครื่องมือที่มีประวัติ</div>
-                            <div class="text-base sm:text-lg font-extrabold text-blue-600 dark:text-blue-400 mt-0.5" id="costStatCount">0 เครื่อง</div>
+                            <div class="text-[10px] uppercase font-bold text-gray-400 dark:text-slate-400">Equipment with Records</div>
+                            <div class="text-base sm:text-lg font-extrabold text-blue-600 dark:text-blue-400 mt-0.5" id="costStatCount">0 units</div>
                         </div>
                         <div class="bg-white/60 dark:bg-slate-800/60 p-3 rounded-xl border border-gray-100 dark:border-slate-700">
-                            <div class="text-[10px] uppercase font-bold text-gray-400 dark:text-slate-400">ค่าเฉลี่ยต่อเครื่อง</div>
+                            <div class="text-[10px] uppercase font-bold text-gray-400 dark:text-slate-400">Average Per Equipment</div>
                             <div class="text-base sm:text-lg font-extrabold text-purple-600 dark:text-purple-400 mt-0.5" id="costStatAvg">฿0</div>
                         </div>
                     </div>
@@ -1553,11 +1577,56 @@
                                 </h4>
                                 <span class="text-[10px] font-bold bg-indigo-100 text-indigo-800 dark:bg-indigo-900/50 dark:text-indigo-300 px-2 py-0.5 rounded-full">Admin Only</span>
                             </div>
+                            <div class="flex items-center gap-2">
+                                <button type="button" onclick="openCarePlusAuditPurgeModal()" class="px-3 py-1.5 rounded-xl bg-red-50 hover:bg-red-100 dark:bg-red-950/50 dark:hover:bg-red-900/60 text-red-600 dark:text-red-300 border border-red-200 dark:border-red-800 text-xs font-bold transition flex items-center gap-1.5 shadow-2xs">
+                                    <i class="fa-solid fa-trash-can"></i> ลบ Audit Log (รายเดือน/ปี)
+                                </button>
+                            </div>
                         </div>
                         <p class="text-xs text-gray-600 dark:text-slate-300 leading-relaxed">
                             <i class="fa-solid fa-shield-halved text-emerald-600 mr-1"></i>
                             บันทึกการดำเนินการทั้งหมดในระบบ Lab Care+ เช่น เพิ่ม/แก้ไข/ลบ เรคอร์ด, เปลี่ยนแปลงข้อมูลผู้ใช้, อุปกรณ์ ฯลฯ
                         </p>
+
+                        <!-- Filter Controls Bar: Month, Year, Search, Reset -->
+                        <div class="p-3 bg-white/70 dark:bg-slate-900/70 rounded-xl border border-indigo-100 dark:border-indigo-900/60 flex flex-wrap items-center gap-2.5">
+                            <div class="flex items-center gap-1.5">
+                                <span class="text-xs font-semibold text-gray-600 dark:text-slate-300">เดือน:</span>
+                                <select id="carePlusAuditMonth" onchange="renderCarePlusAudit(true)" class="px-2.5 py-1.5 text-xs rounded-lg glass-input border border-indigo-200 dark:border-indigo-800 bg-white dark:bg-slate-800 font-medium">
+                                    <option value="all">📅 ทุกเดือน (All Months)</option>
+                                    <option value="1">01 - มกราคม (Jan)</option>
+                                    <option value="2">02 - กุมภาพันธ์ (Feb)</option>
+                                    <option value="3">03 - มีนาคม (Mar)</option>
+                                    <option value="4">04 - เมษายน (Apr)</option>
+                                    <option value="5">05 - พฤษภาคม (May)</option>
+                                    <option value="6">06 - มิถุนายน (Jun)</option>
+                                    <option value="7">07 - กรกฎาคม (Jul)</option>
+                                    <option value="8">08 - สิงหาคม (Aug)</option>
+                                    <option value="9">09 - กันยายน (Sep)</option>
+                                    <option value="10">10 - ตุลาคม (Oct)</option>
+                                    <option value="11">11 - พฤศจิกายน (Nov)</option>
+                                    <option value="12">12 - ธันวาคม (Dec)</option>
+                                </select>
+                            </div>
+
+                            <div class="flex items-center gap-1.5">
+                                <span class="text-xs font-semibold text-gray-600 dark:text-slate-300">ปี:</span>
+                                <select id="carePlusAuditYear" onchange="renderCarePlusAudit(true)" class="px-2.5 py-1.5 text-xs rounded-lg glass-input border border-indigo-200 dark:border-indigo-800 bg-white dark:bg-slate-800 font-medium">
+                                    <option value="all">🗓️ ทุกปี (All Years)</option>
+                                </select>
+                            </div>
+
+                            <div class="relative flex-1 min-w-[200px]">
+                                <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+                                <input type="text" id="carePlusAuditSearch" placeholder="🔍 ค้นหากิจกรรม, ผู้ใช้, หรือรายละเอียด..." oninput="renderCarePlusAudit(true)"
+                                    class="w-full pl-7 pr-3 py-1.5 text-xs rounded-lg glass-input border border-indigo-200 dark:border-indigo-800 bg-white dark:bg-slate-800">
+                            </div>
+
+                            <button type="button" onclick="resetCarePlusAuditFilter()" class="px-3 py-1.5 text-xs rounded-lg border border-gray-300 dark:border-slate-700 text-gray-600 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-800 transition flex items-center gap-1 font-semibold" title="ล้างตัวกรอง">
+                                <i class="fa-solid fa-rotate-left"></i> ล้างตัวกรอง
+                            </button>
+                        </div>
+
                         <div class="table-container" style="max-height: 350px; overflow-y: auto;">
                             <div style="overflow-x: auto;">
                                 <table class="w-full text-sm glass-table" style="min-width: 500px;">
@@ -1624,36 +1693,36 @@
         <div class="glass ios-card rounded-3xl shadow-2xl w-[95%] max-w-md p-6 space-y-4">
             <div class="flex justify-between items-center border-b border-gray-200/50 dark:border-slate-700/50 pb-3">
                 <h3 class="text-base font-bold text-gray-800 dark:text-slate-100 flex items-center gap-2">
-                    <i class="fa-solid fa-key text-teal-600"></i> เปลี่ยนรหัสผ่าน (Change Password)
+                    <i class="fa-solid fa-key text-teal-600"></i> Change Password
                 </h3>
                 <button type="button" onclick="closeChangePasswordModal()" class="w-8 h-8 rounded-full bg-gray-100 dark:bg-slate-700 flex items-center justify-center text-gray-500 hover:text-red-500 text-base font-bold">✕</button>
             </div>
             <form onsubmit="submitChangePassword(event)" class="space-y-3 text-xs">
                 <div>
-                    <label class="font-bold text-gray-600 dark:text-slate-300">รหัสผ่านเดิม (Current Password)</label>
+                    <label class="font-bold text-gray-600 dark:text-slate-300">Current Password</label>
                     <div class="relative flex items-center mt-1">
-                        <input type="password" id="cpOldPassword" required class="w-full glass-input p-2.5 rounded-xl pr-9 text-xs" autocomplete="current-password" placeholder="กรอกรหัสผ่านปัจจุบัน">
+                        <input type="password" id="cpOldPassword" required class="w-full glass-input p-2.5 rounded-xl pr-9 text-xs" autocomplete="current-password" placeholder="Enter current password">
                         <i class="fa-solid fa-eye absolute right-3 text-gray-400 cursor-pointer" onclick="toggleCpPasswordVisibility('cpOldPassword', this)"></i>
                     </div>
                 </div>
                 <div>
-                    <label class="font-bold text-gray-600 dark:text-slate-300">รหัสผ่านใหม่ (New Password)</label>
+                    <label class="font-bold text-gray-600 dark:text-slate-300">New Password</label>
                     <div class="relative flex items-center mt-1">
-                        <input type="password" id="cpNewPassword" required minlength="4" class="w-full glass-input p-2.5 rounded-xl pr-9 text-xs" autocomplete="new-password" placeholder="ตั้งรหัสผ่านใหม่ (อย่างน้อย 4 ตัว)">
+                        <input type="password" id="cpNewPassword" required minlength="4" class="w-full glass-input p-2.5 rounded-xl pr-9 text-xs" autocomplete="new-password" placeholder="Enter new password (minimum 4 characters)">
                         <i class="fa-solid fa-eye absolute right-3 text-gray-400 cursor-pointer" onclick="toggleCpPasswordVisibility('cpNewPassword', this)"></i>
                     </div>
-                    <span class="text-[10px] text-gray-400 mt-1 block">ความยาวอย่างน้อย 4 ตัวอักษร</span>
+                    <span class="text-[10px] text-gray-400 mt-1 block">Minimum 4 characters</span>
                 </div>
                 <div>
-                    <label class="font-bold text-gray-600 dark:text-slate-300">ยืนยันรหัสผ่านใหม่ (Confirm New Password)</label>
+                    <label class="font-bold text-gray-600 dark:text-slate-300">Confirm New Password</label>
                     <div class="relative flex items-center mt-1">
-                        <input type="password" id="cpConfirmPassword" required minlength="4" class="w-full glass-input p-2.5 rounded-xl pr-9 text-xs" autocomplete="new-password" placeholder="กรอกรหัสผ่านใหม่อีกครั้ง">
+                        <input type="password" id="cpConfirmPassword" required minlength="4" class="w-full glass-input p-2.5 rounded-xl pr-9 text-xs" autocomplete="new-password" placeholder="Confirm new password">
                         <i class="fa-solid fa-eye absolute right-3 text-gray-400 cursor-pointer" onclick="toggleCpPasswordVisibility('cpConfirmPassword', this)"></i>
                     </div>
                 </div>
                 <div class="flex justify-end gap-2 pt-3 border-t border-gray-200/50 dark:border-slate-700/50">
-                    <button type="button" onclick="closeChangePasswordModal()" class="px-3.5 py-1.5 rounded-xl text-xs font-semibold text-gray-500 hover:bg-gray-100 dark:hover:bg-slate-700 transition">ยกเลิก</button>
-                    <button type="submit" class="ios-btn bg-teal-600 hover:bg-teal-700 text-white px-4 py-1.5 text-xs font-bold rounded-xl shadow">บันทึกรหัสผ่านใหม่</button>
+                    <button type="button" onclick="closeChangePasswordModal()" class="px-3.5 py-1.5 rounded-xl text-xs font-semibold text-gray-500 hover:bg-gray-100 dark:hover:bg-slate-700 transition">Cancel</button>
+                    <button type="submit" class="ios-btn bg-teal-600 hover:bg-teal-700 text-white px-4 py-1.5 text-xs font-bold rounded-xl shadow">Save New Password</button>
                 </div>
             </form>
         </div>
@@ -1771,6 +1840,15 @@
     </div>
 
     <script>
+        window.escapeHtml = window.escapeHtml || function (str) {
+            if (str === null || str === undefined) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        };
         let _backupData = { "users": { "admin@lab.com": { "password": "admin321", "role": "admin", "name": "Administrator" }, "user@lab.com": { "password": "user123", "role": "user", "name": "Standard User" }, "Saranyap@mitrphol.com": { "password": "user123", "role": "user", "name": "Saranya phaengthai" }, "Waranyan@mitrphol.com": { "password": "user123", "role": "user", "name": "Waranya Natesuntorn" }, "Ratchaniwanj@mitrphol.com": { "password": "user123", "role": "user", "name": "Ratchaniwan Jaemsaeng" }, "Prayooths@mitrphol.com": { "password": "user123", "role": "user", "name": "Prayooth Saothong" }, "Chokchais@mitrphol.com": { "password": "user123", "role": "user", "name": "Chokchai Sompugdee" }, "Atiyat@mitrphol.com": { "password": "user123", "role": "user", "name": "Atiya Techaparin" }, "Kridsanak@mitrphol.com": { "password": "user123", "role": "user", "name": "Kridsana Krisomdee" }, "Jirachayak@mitrphol.com": { "password": "user123", "role": "user", "name": "Jirachaya klinsumalee" } }, "records": [{ "id": 1770458821533, "equipment_name": "Pilot Spray Dry", "building": "Production Trial Unit", "type": "calibration", "service_date": "2024-07-16", "next_service_date": "2026-07-16", "maintenance_cost": "8000", "technicians": ["บริษัท เกรทเทค ไซเบอร์เนติกส์ จำกัด"], "reporter": "Kridsana Krisomdee", "calendar_status": "complete", "po_file": "", "additional_files": ["Demo_Manual_v1.pdf", "Calibration_Cert.pdf"] }, { "id": 1770459393734, "equipment_name": "Water Purifier (Arioso UP900))", "building": "Washing room", "type": "repair", "service_date": "2024-07-24", "next_service_date": "2025-08-07", "maintenance_cost": "15300", "technicians": ["บริษัท เน็กซ์ไบโอ (ประเทศไทย) จำกัด"], "reporter": "Kridsana Krisomdee", "calendar_status": "complete", "po_file": "" }, { "id": 1770459648390, "equipment_name": "Water Purifier (Arioso UP900))", "building": "Washing room", "type": "repair", "service_date": "2025-08-07", "next_service_date": "", "maintenance_cost": "29200", "technicians": ["บริษัท เน็กซ์ไบโอ (ประเทศไทย) จำกัด"], "reporter": "Kridsana Krisomdee", "calendar_status": "complete", "po_file": "" }, { "id": 1770459871942, "equipment_name": "Water Purifier (Arioso UP900))", "building": "Washing room", "type": "repair", "service_date": "2025-03-31", "next_service_date": "", "maintenance_cost": "51100", "technicians": ["บริษัท เน็กซ์ไบโอ (ประเทศไทย) จำกัด"], "reporter": "Kridsana Krisomdee", "calendar_status": "complete", "po_file": "" }, { "id": 1770460540632, "equipment_name": "Water Purifier (Arioso UP900))", "building": "Washing room", "type": "repair", "service_date": "2025-11-17", "next_service_date": "", "maintenance_cost": "6650", "technicians": ["บริษัท เน็กซ์ไบโอ (ประเทศไทย) จำกัด"], "reporter": "Kridsana Krisomdee", "calendar_status": "complete", "po_file": "" }, { "id": 1770460788184, "equipment_name": "Separator (Alfa Laval)", "building": "Production Trial Unit", "type": "calibration", "service_date": "2024-06-18", "next_service_date": "2026-06-18", "maintenance_cost": "93000", "technicians": ["บริษัท อัลฟา ลาวาล (ไทยแลนด์) จำกัด"], "reporter": "Kridsana Krisomdee", "calendar_status": "complete", "po_file": "" }, { "id": 1770461421061, "equipment_name": "Spray dry (ฺB-290)", "building": "Micro Lab", "type": "repair", "service_date": "2025-07-09", "next_service_date": "", "maintenance_cost": "5200", "technicians": ["บริษัท บูชิ (ไทยแลนด์) จำกัด"], "reporter": "Kridsana Krisomdee", "calendar_status": "complete", "po_file": "" }, { "id": 1770461915055, "equipment_name": "Refrigerator, Panasonic", "building": "Micro Lab", "type": "repair", "service_date": "2025-04-03", "next_service_date": "", "maintenance_cost": "3400", "technicians": ["นายปรีชา ภูวโชติธนากุล"], "reporter": "Kridsana Krisomdee", "calendar_status": "complete", "po_file": "" }, { "id": 1770462031456, "equipment_name": "3-Door Refrigerator (4C), Natural (no.2)", "building": "Production Trial Unit", "type": "repair", "service_date": "2025-03-13", "next_service_date": "", "maintenance_cost": "9000", "technicians": ["นายปรีชา ภูวโชติธนากุล"], "reporter": "Kridsana Krisomdee", "calendar_status": "complete", "po_file": "" }, { "id": 1770462398376, "equipment_name": "Centrifuge Floor Type (Lynx4000))", "building": "General Micro Lab", "type": "repair", "service_date": "2024-08-07", "next_service_date": "", "maintenance_cost": "290000", "technicians": ["ห้างหุ้นส่วนจำกัด เอ็น.วาย.อาร์ "], "reporter": "Kridsana Krisomdee", "calendar_status": "complete", "po_file": "" }, { "id": 1770462497841, "equipment_name": "Centrifuge Floor Type (Lynx4000))", "building": "General Micro Lab", "type": "repair", "service_date": "2024-08-09", "next_service_date": "", "maintenance_cost": "349245", "technicians": ["บริษัท เอ็นวิชั่น แล็บซิสเต็ม จำกัด"], "reporter": "Kridsana Krisomdee", "calendar_status": "complete", "po_file": "" }, { "id": 1770462803655, "equipment_name": "Rotary evaporator, Eyela", "building": "Micro Lab", "type": "repair", "service_date": "2024-12-12", "next_service_date": "", "maintenance_cost": "28000", "technicians": ["บริษัท เอส.เอ.(ขอนแก่น) จำกัด"], "reporter": "Kridsana Krisomdee", "calendar_status": "complete", "po_file": "" }, { "id": 1770462917214, "equipment_name": "Rotary evaporator, Eyela", "building": "Micro Lab", "type": "repair", "service_date": "2025-06-19", "next_service_date": "", "maintenance_cost": "14800", "technicians": ["บริษัท เอส.เอ.(ขอนแก่น) จำกัด"], "reporter": "Kridsana Krisomdee", "calendar_status": "complete", "po_file": "" }, { "id": 1770463587072, "equipment_name": "pH & CD meter", "building": "Production Trial Unit", "type": "repair", "service_date": "2025-01-31", "next_service_date": "", "maintenance_cost": "1475", "technicians": ["บริษัท เมทเล่อร์-โทเลโด (ประเทศไทย) จำกัด"], "reporter": "Kridsana Krisomdee", "calendar_status": "complete", "po_file": "" }, { "id": 1770464269413, "equipment_name": "Moisture analyzer", "building": "General Micro Lab", "type": "calibration", "service_date": "2025-10-16", "next_service_date": "2026-10-16", "maintenance_cost": "14590", "technicians": ["บริษัท เมทเล่อร์-โทเลโด (ประเทศไทย) จำกัด"], "reporter": "Kridsana Krisomdee", "calendar_status": "complete", "po_file": "" }, { "id": 1770464690031, "equipment_name": "Pilot Spray Dry", "building": "Production Trial Unit", "type": "calibration", "service_date": "2023-07-06", "next_service_date": "2024-07-06", "maintenance_cost": "16500", "technicians": ["บริษัท เกรทเทค ไซเบอร์เนติกส์ จำกัด"], "reporter": "Kridsana Krisomdee", "calendar_status": "complete", "po_file": "" }, { "id": 1770465149396, "equipment_name": "Separator (Alfa Laval)", "building": "Production Trial Unit", "type": "calibration", "service_date": "2023-02-16", "next_service_date": "2024-02-16", "maintenance_cost": "99278", "technicians": ["บริษัท อัลฟา ลาวาล (ไทยแลนด์) จำกัด"], "reporter": "Kridsana Krisomdee", "calendar_status": "complete", "po_file": "" }], "technicians": ["บริษัท เกรทเทค ไซเบอร์เนติกส์ จำกัด", "บริษัท เน็กซ์ไบโอ (ประเทศไทย) จำกัด", "บริษัท อัลฟา ลาวาล (ไทยแลนด์) จำกัด", "บริษัท บูชิ (ไทยแลนด์) จำกัด", "นายปรีชา ภูวโชติธนากุล", "ห้างหุ้นส่วนจำกัด เอ็น.วาย.อาร์ ", "บริษัท เอ็นวิชั่น แล็บซิสเต็ม จำกัด", "บริษัท เอส.เอ.(ขอนแก่น) จำกัด", "บริษัท เมทเล่อร์-โทเลโด (ประเทศไทย) จำกัด"], "reporters": ["Laboratory Technician", "Administrative Staff", "Saranya Phaengthai", "Waranya Natesuntorn", "Ratchaniwan Jaemsaeng", "Prayooth Saothong", "Chokchai Sompugdee", "Atiya Techaparin", "Kridsana Krisomdee", "Jirachaya Klinsumalee"], "buildings": [{ "id": 5, "name": "Fermentation unit" }, { "id": 6, "name": "Production Trial Unit" }, { "id": 7, "name": "Analytical Lab" }, { "id": 8, "name": "General Micro Lab" }, { "id": 9, "name": "Preparation room" }, { "id": 10, "name": "Utility" }, { "id": 11, "name": "Washing room" }, { "id": 12, "name": "Biosafety Level 2 (BSL2)" }, { "id": 1770461142946, "name": "Micro Lab" }], "equipment": [{ "id": 1, "name": "Autoclave", "building_id": 5 }, { "id": 2, "name": "50L Fermenter", "building_id": 5 }, { "id": 3, "name": "500L Fermenter", "building_id": 5 }, { "id": 4, "name": "750L Hot Air Oven", "building_id": 5 }, { "id": 5, "name": "500L Mixing tank", "building_id": 6 }, { "id": 6, "name": "500L Pretreatment tank", "building_id": 6 }, { "id": 7, "name": "20L Rotary evaporator", "building_id": 6 }, { "id": 8, "name": "Falling Film Evaporator (10L/h)", "building_id": 6 }, { "id": 9, "name": "Mini Spray Dry (Buchi-B290)", "building_id": 6 }, { "id": 10, "name": "Pilot Spray Dry", "building_id": 6 }, { "id": 11, "name": "Separator (Alfa Laval)", "building_id": 6 }, { "id": 12, "name": "Tubular centrifuge", "building_id": 6 }, { "id": 13, "name": "Sequential Simulated Moving Bed (SMB)", "building_id": 6 }, { "id": 14, "name": "Autoclave, Hirayama", "building_id": 6 }, { "id": 15, "name": "Multi-function automatic filling machine", "building_id": 6 }, { "id": 16, "name": "Vacuum packager", "building_id": 6 }, { "id": 17, "name": "Packing machine", "building_id": 6 }, { "id": 18, "name": "Filter press", "building_id": 6 }, { "id": 19, "name": "HPLC (Waters)", "building_id": 7 }, { "id": 20, "name": "Incubator Shaker (Innova)", "building_id": 7 }, { "id": 21, "name": "Tangential Flow Fitration (Merck)", "building_id": 7 }, { "id": 22, "name": "Centrifuge Floor Type (Lynx4000))", "building_id": 8 }, { "id": 23, "name": "Incubator Shaker (InfrosTH))", "building_id": 8 }, { "id": 24, "name": "Incubator (Memmert) No.1", "building_id": 8 }, { "id": 25, "name": "Incubator (Memmert) No.2", "building_id": 8 }, { "id": 26, "name": "Moisture analyzer", "building_id": 8 }, { "id": 27, "name": "Biosafety Cabinet", "building_id": 8 }, { "id": 28, "name": "Spectrophotometer", "building_id": 8 }, { "id": 29, "name": "Fume hood", "building_id": 9 }, { "id": 30, "name": "Thermomixer", "building_id": 9 }, { "id": 31, "name": "UV Auto Dry Desiccator", "building_id": 9 }, { "id": 32, "name": "Boiler", "building_id": 10 }, { "id": 33, "name": "RO Water Unit", "building_id": 10 }, { "id": 34, "name": "Air Supply Unit", "building_id": 10 }, { "id": 35, "name": "Hot Air Oven (Memmert UF260))", "building_id": 11 }, { "id": 36, "name": "Water Purifier (Arioso UP900))", "building_id": 11 }, { "id": 37, "name": "ICE Maker", "building_id": 11 }, { "id": 38, "name": "Freezer -80 C (Eppendorf)", "building_id": 12 }, { "id": 39, "name": "Freezer -20 C (Panasonic)", "building_id": 12 }, { "id": 40, "name": "Autoclave HVA110 (Hirayama)", "building_id": 12 }, { "id": 41, "name": "Refridgerator centrifuge", "building_id": 12 }, { "id": 42, "name": "Spectrophotometer (Jenway)", "building_id": 12 }, { "id": 43, "name": "Incubator shaker (Biosan)", "building_id": 12 }, { "id": 44, "name": "YSI 2900D", "building_id": 12 }, { "id": 45, "name": "Waterless bead bath", "building_id": 12 }, { "id": 46, "name": "BSC (ESCO)", "building_id": 12 }, { "id": 47, "name": "42 L fermenter Techfros", "building_id": 12 }, { "id": 48, "name": "Chiller for techfors", "building_id": 12 }, { "id": 49, "name": "Steam generator", "building_id": 12 }, { "id": 50, "name": "1L Multifros fermenter #1", "building_id": 12 }, { "id": 51, "name": "1L Multifros fermenter #2", "building_id": 12 }, { "id": 52, "name": "1L Multifros fermenter #3", "building_id": 12 }, { "id": 53, "name": "1L Multifros fermenter #4", "building_id": 12 }, { "id": 54, "name": "1L Multifros fermenter #5", "building_id": 12 }, { "id": 55, "name": "1L Multifros fermenter #6", "building_id": 12 }, { "id": 56, "name": "5L Minifros #1", "building_id": 12 }, { "id": 57, "name": "5L Minifros #2", "building_id": 12 }, { "id": 58, "name": "Refrigerator (MITSUBISHI)", "building_id": 7 }, { "id": 59, "name": "Microplate Reader", "building_id": 7 }, { "id": 60, "name": "Gel Doc (BioRad)", "building_id": 7 }, { "id": 61, "name": "Sonicator", "building_id": 7 }, { "id": 62, "name": "Water bath (Lauda)", "building_id": 8 }, { "id": 63, "name": "Water bath (Thermo scientific)", "building_id": 8 }, { "id": 64, "name": "Microwave 1100W", "building_id": 8 }, { "id": 65, "name": "Microcentrifuge (Beckman coulter)", "building_id": 8 }, { "id": 66, "name": "3-Door Refrigerator (4C), Natural (no.1)", "building_id": 6 }, { "id": 67, "name": "3-Door Refrigerator (4C), Natural (no.2)", "building_id": 6 }, { "id": 68, "name": "Refrigerator (-20C), Haier", "building_id": 6 }, { "id": 69, "name": "2-Door Refrigerator (4C), POL-EKO", "building_id": 6 }, { "id": 70, "name": "Water bath, Memmert", "building_id": 6 }, { "id": 71, "name": "Water bath, Memmert from DC", "building_id": 6 }, { "id": 72, "name": "Analytical Balance 60 kg, Mettler-toledo", "building_id": 6 }, { "id": 73, "name": "Centrifuge  from New business, Hermle", "building_id": 6 }, { "id": 74, "name": "Overhead stirrer, IKA Eurostar 200", "building_id": 6 }, { "id": 75, "name": "Air Conditioner, Carrier 60,000 BTU no.1", "building_id": 6 }, { "id": 76, "name": "Air Conditioner, Carrier 60,000 BTU no.2", "building_id": 6 }, { "id": 77, "name": "Air Conditioner, Carrier 60,000 BTU no.3", "building_id": 6 }, { "id": 78, "name": "Peristaltic pump (Lab F6), Shenchen no.1", "building_id": 6 }, { "id": 79, "name": "Peristaltic pump (Lab F6), Shenchen no.2", "building_id": 6 }, { "id": 80, "name": "Peristaltic pump (Lab F6), Shenchen no.3", "building_id": 6 }, { "id": 81, "name": "Peristaltic pump (Lab F6), Shenchen no.4", "building_id": 6 }, { "id": 82, "name": "Peristaltic pump (Lab F6), Shenchen no.5", "building_id": 6 }, { "id": 83, "name": "Peristaltic pump (Lab N3), Shenchen no.1", "building_id": 6 }, { "id": 84, "name": "Peristaltic pump (Lab N3), Shenchen no.2", "building_id": 6 }, { "id": 85, "name": "Peristaltic pump (Lab N3), Shenchen no.3", "building_id": 6 }, { "id": 86, "name": "Peristaltic pump (BT101F) from N'Ae", "building_id": 6 }, { "id": 1770461244134, "name": "Spray dry (ฺB-290)", "building_id": 1770461142946 }, { "id": 1770461661504, "name": "Refrigerator, Panasonic", "building_id": 1770461142946 }, { "id": 1770462688377, "name": "Rotary evaporator, Eyela", "building_id": 1770461142946 }, { "id": 1770463495602, "name": "pH & CD meter", "building_id": 6 }] };
         let users = _backupData.users ? Object.entries(_backupData.users).map(([k, v], i) => ({
             id: 'U-' + String(i + 1).padStart(3, '0'),
@@ -1796,8 +1874,8 @@
                 if (Array.isArray(_initState.records) && _initState.records.length > 0) records = _initState.records;
                 if (Array.isArray(_initState.technicians) && _initState.technicians.length > 0) technicians = _initState.technicians;
                 if (Array.isArray(_initState.reporters) && _initState.reporters.length > 0) reporters = _initState.reporters;
-                if (Array.isArray(_initState.equipments)) equipment = _initState.equipments;
-                else if (Array.isArray(_initState.equipment)) equipment = _initState.equipment;
+                if (Array.isArray(_initState.equipments) && _initState.equipments.length > 0) equipment = _initState.equipments;
+                else if (Array.isArray(_initState.equipment) && _initState.equipment.length > 0) equipment = _initState.equipment;
                 window.equipment = equipment;
                 if (Array.isArray(_initState.buildings) && _initState.buildings.length > 0) buildings = _initState.buildings;
             } catch (e) { console.warn("[CarePlus] early state init notice:", e); }
@@ -1916,18 +1994,45 @@
             if (typeof LabStateBridge === 'undefined') return;
             try {
                 const state = LabStateBridge.getState() || {};
-                if (Array.isArray(state.users) && state.users.length > 0) users = state.users;
+                if (Array.isArray(state.users) && state.users.length > 0) {
+                    users = state.users;
+                } else if ((!users || users.length === 0) && _backupData.users) {
+                    users = Object.entries(_backupData.users).map(([k, v], i) => ({
+                        id: 'U-' + String(i + 1).padStart(3, '0'),
+                        username: k,
+                        password: v.password,
+                        name: v.name,
+                        role: v.role
+                    }));
+                }
                 if (Array.isArray(state.records) && state.records.length > 0) {
                     records = state.records;
                 } else if ((!records || records.length === 0) && Array.isArray(_backupData.records) && _backupData.records.length > 0) {
                     records = JSON.parse(JSON.stringify(_backupData.records));
                 }
-                if (Array.isArray(state.technicians) && state.technicians.length > 0) technicians = state.technicians;
-                if (Array.isArray(state.reporters) && state.reporters.length > 0) reporters = state.reporters;
-                if (Array.isArray(state.equipments)) equipment = state.equipments;
-                else if (Array.isArray(state.equipment)) equipment = state.equipment;
+                if (Array.isArray(state.technicians) && state.technicians.length > 0) {
+                    technicians = state.technicians;
+                } else if ((!technicians || technicians.length === 0) && Array.isArray(_backupData.technicians)) {
+                    technicians = JSON.parse(JSON.stringify(_backupData.technicians));
+                }
+                if (Array.isArray(state.reporters) && state.reporters.length > 0) {
+                    reporters = state.reporters;
+                } else if ((!reporters || reporters.length === 0) && Array.isArray(_backupData.reporters)) {
+                    reporters = JSON.parse(JSON.stringify(_backupData.reporters));
+                }
+                if (Array.isArray(state.equipments) && state.equipments.length > 0) {
+                    equipment = state.equipments;
+                } else if (Array.isArray(state.equipment) && state.equipment.length > 0) {
+                    equipment = state.equipment;
+                } else if ((!equipment || equipment.length === 0) && Array.isArray(_backupData.equipment) && _backupData.equipment.length > 0) {
+                    equipment = JSON.parse(JSON.stringify(_backupData.equipment));
+                }
                 window.equipment = equipment;
-                if (Array.isArray(state.buildings) && state.buildings.length > 0) buildings = state.buildings;
+                if (Array.isArray(state.buildings) && state.buildings.length > 0) {
+                    buildings = state.buildings;
+                } else if ((!buildings || buildings.length === 0) && Array.isArray(_backupData.buildings)) {
+                    buildings = JSON.parse(JSON.stringify(_backupData.buildings));
+                }
                 if (Array.isArray(state.auditLogs)) {
                     localStorage.setItem('carePlusAuditLog', JSON.stringify(state.auditLogs));
                 }
@@ -2150,77 +2255,288 @@
             if (!num) return '-';
             return parseFloat(num).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
         }
+        if (typeof window.formatNumber !== 'function') {
+            window.formatNumber = function(num) { return formatCurrency(num); };
+        }
 
-function openUpcomingModal() {
+        let _upcomingRecordsCache = [];
+        let _upcomingFilterType = 'all';
+        let _upcomingFilterStatus = 'all';
+        let _upcomingSearchQuery = '';
+
+        function openUpcomingModal() {
+            try {
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const next90 = new Date(today);
+                next90.setDate(today.getDate() + 90);
+
+                let recs = [];
+                try {
+                    if (typeof records !== 'undefined' && Array.isArray(records)) {
+                        recs = records;
+                    } else if (typeof LabStateBridge !== 'undefined') {
+                        const st = LabStateBridge.getStateInternal();
+                        if (st && Array.isArray(st.records)) recs = st.records;
+                    }
+                } catch (e) {
+                    recs = [];
+                }
+
+                _upcomingRecordsCache = recs.filter(r => {
+                    let checkDate = null;
+                    if (r.type === 'calibration' && r.next_service_date) checkDate = new Date(r.next_service_date);
+                    else if ((r.type === 'repair' || r.type === 'pm') && r.service_date) checkDate = new Date(r.service_date);
+                    else if (r.next_service_date) checkDate = new Date(r.next_service_date);
+                    else if (r.service_date) checkDate = new Date(r.service_date);
+
+                    if (checkDate && !isNaN(checkDate.getTime())) {
+                        checkDate.setHours(0, 0, 0, 0);
+                        return (checkDate >= today && checkDate <= next90) || (checkDate < today && r.calendar_status !== 'complete');
+                    }
+                    return false;
+                });
+
+                _upcomingRecordsCache.sort((a, b) => {
+                    const getD = (x) => {
+                        const d = (x.type === 'calibration' && x.next_service_date) ? x.next_service_date : (x.service_date || x.next_service_date);
+                        return d ? new Date(d).getTime() : 0;
+                    };
+                    return getD(a) - getD(b);
+                });
+
+                _upcomingFilterType = 'all';
+                _upcomingFilterStatus = 'all';
+                _upcomingSearchQuery = '';
+
+                const searchEl = document.getElementById('upcomingSearchInput');
+                if (searchEl) searchEl.value = '';
+                const statusEl = document.getElementById('upcomingStatusFilter');
+                if (statusEl) statusEl.value = 'all';
+
+                renderUpcomingModalList();
+                const modal = document.getElementById('upcomingModal');
+                if (modal) modal.classList.remove('hidden');
+            } catch (err) {
+                console.error("Error in openUpcomingModal:", err);
+                const modal = document.getElementById('upcomingModal');
+                if (modal) modal.classList.remove('hidden');
+            }
+        }
+
+        function closeUpcomingModal() {
+            document.getElementById('upcomingModal').classList.add('hidden');
+        }
+
+        function setUpcomingFilterType(t) {
+            _upcomingFilterType = t;
+            renderUpcomingModalList();
+        }
+
+        function setUpcomingFilterStatus(s) {
+            _upcomingFilterStatus = s;
+            renderUpcomingModalList();
+        }
+
+        function handleUpcomingSearch(q) {
+            _upcomingSearchQuery = (q || '').trim().toLowerCase();
+            renderUpcomingModalList();
+        }
+
+        function renderUpcomingModalList() {
+            const content = document.getElementById('upcomingModalContent');
+            const chipsEl = document.getElementById('upcomingTypeChips');
+            const summaryEl = document.getElementById('upcomingSummaryText');
+            if (!content) return;
+
             const today = new Date();
             today.setHours(0, 0, 0, 0);
-            const next90 = new Date(today);
-            next90.setDate(today.getDate() + 90);
 
-            let upcomingRecords = records.filter(r => {
-                let checkDate = null;
-                if (r.type === 'calibration' && r.next_service_date) checkDate = new Date(r.next_service_date);
-                else if ((r.type === 'repair' || r.type === 'pm') && r.service_date) checkDate = new Date(r.service_date);
+            // Calculate category counts
+            const totalCount = _upcomingRecordsCache.length;
+            const calibCount = _upcomingRecordsCache.filter(r => r.type === 'calibration').length;
+            const pmCount = _upcomingRecordsCache.filter(r => r.type === 'pm').length;
+            const repairCount = _upcomingRecordsCache.filter(r => r.type === 'repair').length;
 
-                if (checkDate) {
-                    checkDate.setHours(0, 0, 0, 0);
-                    return checkDate >= today && checkDate <= next90;
-                }
-                return false;
-            });
+            if (chipsEl) {
+                const chipData = [
+                    { type: 'all', label: 'All Tasks', count: totalCount, activeClass: 'bg-slate-800 text-white dark:bg-slate-200 dark:text-slate-900 shadow-sm', inactiveClass: 'bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-300 border border-gray-200 dark:border-slate-700 hover:bg-gray-100' },
+                    { type: 'calibration', label: '⚖️ Calibration', count: calibCount, activeClass: 'bg-purple-600 text-white shadow-sm shadow-purple-300', inactiveClass: 'bg-purple-50 text-purple-700 dark:bg-purple-950/40 dark:text-purple-300 border border-purple-200 dark:border-purple-800 hover:bg-purple-100' },
+                    { type: 'pm', label: '🛡️ PM (Preventive)', count: pmCount, activeClass: 'bg-teal-600 text-white shadow-sm shadow-teal-300', inactiveClass: 'bg-teal-50 text-teal-700 dark:bg-teal-950/40 dark:text-teal-300 border border-teal-200 dark:border-teal-800 hover:bg-teal-100' },
+                    { type: 'repair', label: '🔧 Repair', count: repairCount, activeClass: 'bg-amber-600 text-white shadow-sm shadow-amber-300', inactiveClass: 'bg-amber-50 text-amber-800 dark:bg-amber-950/40 dark:text-amber-300 border border-amber-200 dark:border-amber-800 hover:bg-amber-100' }
+                ];
 
-            upcomingRecords.sort((a, b) => {
-                const dateA = new Date(a.type === 'calibration' ? a.next_service_date : a.service_date);
-                const dateB = new Date(b.type === 'calibration' ? b.next_service_date : b.service_date);
-                return dateA - dateB;
-            });
-
-            const content = document.getElementById('upcomingModalContent');
-            if (upcomingRecords.length === 0) {
-                content.innerHTML = `<div class="text-center text-gray-400 py-10 font-bold">No upcoming tasks in the next 90 days.</div>`;
-            } else {
-                content.innerHTML = upcomingRecords.map(r => {
-                    const d = new Date(r.type === 'calibration' ? r.next_service_date : r.service_date);
-                    const dateStr = d.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
-                    const model = getEquipmentModel(r);
-                    const modelBadge = model ? `<span class="inline-flex items-center gap-1 text-[10px] font-semibold text-teal-700 bg-teal-50 dark:bg-teal-900/30 dark:text-teal-300 px-2 py-0.5 rounded border border-teal-200 dark:border-teal-800">🏷️ รุ่น: ${escapeHtml(model)}</span>` : '';
-
-                    let typeIcon = '🔧'; let typeColor = 'text-orange-600 bg-orange-50 border-orange-200';
-                    if (r.type === 'calibration') { typeIcon = '⚖️'; typeColor = 'text-purple-600 bg-purple-50 border-purple-200'; }
-                    else if (r.type === 'pm') { typeIcon = '🛡️'; typeColor = 'text-teal-600 bg-teal-50 border-teal-200'; }
-
-                    const isComplete = r.calendar_status === 'complete';
-                    const statusBadgeClass = isComplete ? 'text-green-700 bg-green-50 border-green-200' : 'text-yellow-700 bg-yellow-50 border-yellow-200';
-                    const opacityClass = isComplete ? 'opacity-60' : 'opacity-100';
-
-                    return `
-            <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition ${opacityClass}">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <div class="text-xs font-bold text-red-500 mb-1 flex items-center gap-1">🗓️ ${dateStr}</div>
-                        <h4 class="font-bold text-gray-800 text-base">${escapeHtml(r.equipment_name)}</h4>
-                        <div class="flex flex-wrap items-center gap-2 mt-1">
-                            ${modelBadge}
-                            <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">📍 ${escapeHtml(r.building || 'N/A')}</span>
-                        </div>
-                    </div>
-                    <div class="flex flex-col items-end gap-1.5">
-                        <span class="px-2 py-1 rounded border ${typeColor} text-[10px] font-bold uppercase shadow-sm">
-                            ${typeIcon} ${r.type}
-                        </span>
-                        <span class="px-2 py-0.5 rounded border ${statusBadgeClass} text-[9px] font-bold uppercase tracking-wide shadow-sm">
-                            ${r.calendar_status}
-                        </span>
-                    </div>
-                </div>
-            </div>`;
+                chipsEl.innerHTML = chipData.map(c => {
+                    const isActive = _upcomingFilterType === c.type;
+                    const cls = isActive ? c.activeClass : c.inactiveClass;
+                    return `<button type="button" onclick="setUpcomingFilterType('${c.type}')" class="px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shrink-0 ${cls}">
+                        <span>${c.label}</span>
+                        <span class="px-1.5 py-0.2 rounded-full text-[10px] ${isActive ? 'bg-white/25 text-white' : 'bg-black/5 dark:bg-white/10'}">${c.count}</span>
+                    </button>`;
                 }).join('');
             }
 
-            document.getElementById('upcomingModal').classList.remove('hidden');
-        }
-        function closeUpcomingModal() {
-            document.getElementById('upcomingModal').classList.add('hidden');
+            // Filter records
+            const filtered = _upcomingRecordsCache.filter(r => {
+                if (_upcomingFilterType !== 'all' && r.type !== _upcomingFilterType) return false;
+
+                const isComplete = r.calendar_status === 'complete';
+                const checkDateStr = (r.type === 'calibration' && r.next_service_date) ? r.next_service_date : (r.service_date || r.next_service_date);
+                const d = checkDateStr ? new Date(checkDateStr) : null;
+                const daysDiff = d ? Math.ceil((d.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)) : 999;
+
+                if (_upcomingFilterStatus === 'complete' && !isComplete) return false;
+                if (_upcomingFilterStatus === 'pending' && isComplete) return false;
+                if (_upcomingFilterStatus === 'urgent') {
+                    if (isComplete) return false;
+                    if (daysDiff > 7) return false;
+                }
+
+                if (_upcomingSearchQuery) {
+                    const model = (getEquipmentModel(r) || '').toLowerCase();
+                    const text = `${r.equipment_name || ''} ${model} ${r.building || ''} ${(r.technicians || []).join(' ')} ${r.reporter || ''} ${r.type || ''}`.toLowerCase();
+                    if (!text.includes(_upcomingSearchQuery)) return false;
+                }
+
+                return true;
+            });
+
+            if (summaryEl) {
+                summaryEl.textContent = `Showing ${filtered.length} of ${totalCount} tasks`;
+            }
+
+            if (filtered.length === 0) {
+                content.innerHTML = `
+                    <div class="text-center py-12 px-4 rounded-2xl bg-white/70 dark:bg-slate-900/70 border border-gray-200/60 dark:border-slate-800">
+                        <div class="w-14 h-14 rounded-2xl bg-gray-100 dark:bg-slate-800 flex items-center justify-center text-3xl mx-auto mb-3 shadow-inner">🔍</div>
+                        <h4 class="font-bold text-gray-700 dark:text-slate-200 text-sm">No tasks matching search criteria</h4>
+                        <p class="text-xs text-gray-500 dark:text-slate-400 mt-1">Try changing task category, adjusting status filter, or clearing search query.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            content.innerHTML = filtered.map(r => {
+                const checkDateStr = (r.type === 'calibration' && r.next_service_date) ? r.next_service_date : (r.service_date || r.next_service_date);
+                const d = checkDateStr ? new Date(checkDateStr) : new Date();
+                const dateStr = d.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
+                const daysDiff = Math.ceil((d.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+
+                const model = getEquipmentModel(r);
+                const modelBadge = model ? `<span class="inline-flex items-center gap-1 text-[11px] font-semibold text-gray-700 dark:text-slate-300 bg-white/80 dark:bg-slate-800/80 px-2 py-0.5 rounded-md border border-gray-200 dark:border-slate-700 shadow-2xs">🏷️ Model: ${escapeHtml(model)}</span>` : '';
+
+                // --- 1. Type Color Palette ---
+                let cardBorderClass = 'border-l-[6px] border-l-blue-500 border-blue-200/60 dark:border-blue-800/40';
+                let cardBgClass = 'bg-gradient-to-r from-blue-50/80 via-white to-white dark:from-blue-950/30 dark:via-slate-900 dark:to-slate-900';
+                let typeBadgeClass = 'bg-blue-600 text-white shadow-xs';
+                let typeIcon = '⚙️';
+                let typeLabel = 'OTHER';
+
+                if (r.type === 'calibration') {
+                    cardBorderClass = 'border-l-[6px] border-l-purple-600 dark:border-l-purple-400 border-purple-200/80 dark:border-purple-800/40';
+                    cardBgClass = 'bg-gradient-to-r from-purple-50/90 via-purple-50/20 to-white dark:from-purple-950/40 dark:via-slate-900 dark:to-slate-900';
+                    typeBadgeClass = 'bg-purple-600 text-white shadow-xs shadow-purple-200';
+                    typeIcon = '⚖️';
+                    typeLabel = 'CALIBRATION';
+                } else if (r.type === 'pm') {
+                    cardBorderClass = 'border-l-[6px] border-l-teal-600 dark:border-l-teal-400 border-teal-200/80 dark:border-teal-800/40';
+                    cardBgClass = 'bg-gradient-to-r from-teal-50/90 via-teal-50/20 to-white dark:from-teal-950/40 dark:via-slate-900 dark:to-slate-900';
+                    typeBadgeClass = 'bg-teal-600 text-white shadow-xs shadow-teal-200';
+                    typeIcon = '🛡️';
+                    typeLabel = 'PREVENTIVE (PM)';
+                } else if (r.type === 'repair') {
+                    cardBorderClass = 'border-l-[6px] border-l-amber-500 dark:border-l-amber-400 border-amber-200/80 dark:border-amber-800/40';
+                    cardBgClass = 'bg-gradient-to-r from-amber-50/90 via-amber-50/20 to-white dark:from-amber-950/40 dark:via-slate-900 dark:to-slate-900';
+                    typeBadgeClass = 'bg-amber-600 text-white shadow-xs shadow-amber-200';
+                    typeIcon = '🔧';
+                    typeLabel = 'REPAIR';
+                }
+
+                // --- 2. Status Color System ---
+                const isComplete = r.calendar_status === 'complete';
+                let statusBadge = '';
+                let countdownText = '';
+                let countdownColor = 'text-gray-500 dark:text-slate-400';
+                let opacityClass = 'opacity-100';
+
+                if (isComplete) {
+                    opacityClass = 'opacity-70 hover:opacity-100';
+                    statusBadge = `<span class="px-2.5 py-1 rounded-xl bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 text-[10px] font-extrabold flex items-center gap-1 shadow-2xs">✓ Complete</span>`;
+                    countdownText = 'Task completed';
+                    countdownColor = 'text-emerald-600 dark:text-emerald-400';
+                } else if (daysDiff < 0) {
+                    const daysAgo = Math.abs(daysDiff);
+                    statusBadge = `<span class="px-2.5 py-1 rounded-xl bg-rose-600 text-white text-[10px] font-extrabold flex items-center gap-1 shadow-sm animate-pulse">⚠️ Overdue by ${daysAgo} day${daysAgo === 1 ? '' : 's'}</span>`;
+                    countdownText = `Overdue by ${daysAgo} day${daysAgo === 1 ? '' : 's'}`;
+                    countdownColor = 'text-rose-600 dark:text-rose-400 font-extrabold';
+                } else if (daysDiff === 0) {
+                    statusBadge = `<span class="px-2.5 py-1 rounded-xl bg-red-500 text-white text-[10px] font-extrabold flex items-center gap-1 shadow-md ring-2 ring-red-300">🚨 Due Today!</span>`;
+                    countdownText = 'Due Today';
+                    countdownColor = 'text-red-600 dark:text-red-400 font-extrabold';
+                } else if (daysDiff <= 7) {
+                    statusBadge = `<span class="px-2.5 py-1 rounded-xl bg-amber-500 text-white text-[10px] font-extrabold flex items-center gap-1 shadow-xs">⚡ Urgent: in ${daysDiff} day${daysDiff === 1 ? '' : 's'}</span>`;
+                    countdownText = `In ${daysDiff} day${daysDiff === 1 ? '' : 's'} (within 7 days)`;
+                    countdownColor = 'text-amber-700 dark:text-amber-400 font-bold';
+                } else if (daysDiff <= 30) {
+                    statusBadge = `<span class="px-2.5 py-1 rounded-xl bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300 border border-sky-300 dark:border-sky-800 text-[10px] font-bold flex items-center gap-1">⏳ Pending (${daysDiff} days left)</span>`;
+                    countdownText = `In ${daysDiff} days (within 30 days)`;
+                    countdownColor = 'text-sky-700 dark:text-sky-400';
+                } else {
+                    statusBadge = `<span class="px-2.5 py-1 rounded-xl bg-indigo-50 text-indigo-800 dark:bg-indigo-950 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 text-[10px] font-medium flex items-center gap-1">🗓️ In ${daysDiff} days</span>`;
+                    countdownText = `In ${daysDiff} days`;
+                    countdownColor = 'text-indigo-600 dark:text-indigo-400';
+                }
+
+                // Techs & Cost
+                const techs = (r.technicians || []).filter(Boolean);
+                const techHtml = techs.length > 0 ? `<span class="flex items-center gap-1"><i class="fa-solid fa-wrench text-gray-400"></i> ${escapeHtml(techs.join(', '))}</span>` : '';
+                const costHtml = r.maintenance_cost && parseFloat(r.maintenance_cost) > 0 ? `<span class="flex items-center gap-1 font-semibold text-emerald-700 dark:text-emerald-400">💰 ${formatCurrency(r.maintenance_cost)} ฿</span>` : '';
+
+                return `
+                <div class="p-4 rounded-2xl shadow-sm border ${cardBorderClass} ${cardBgClass} hover:shadow-md transition ${opacityClass}">
+                    <div class="flex items-center justify-between flex-wrap gap-2 mb-2">
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <span class="px-2.5 py-1 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 ${typeBadgeClass}">
+                                <span>${typeIcon}</span> <span>${typeLabel}</span>
+                            </span>
+                            ${modelBadge}
+                        </div>
+                        <div class="flex items-center gap-2">
+                            ${statusBadge}
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mt-2">
+                        <div class="flex-1">
+                            <h4 class="font-extrabold text-gray-900 dark:text-slate-100 text-base leading-snug">
+                                ${escapeHtml(r.equipment_name)}
+                            </h4>
+                            <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1.5 text-xs text-gray-600 dark:text-slate-300">
+                                <span class="flex items-center gap-1 font-medium"><i class="fa-solid fa-location-dot text-rose-500"></i> ${escapeHtml(r.building || 'N/A')}</span>
+                                ${techHtml}
+                                ${costHtml}
+                            </div>
+                        </div>
+
+                        <div class="sm:text-right shrink-0">
+                            <div class="inline-flex flex-col sm:items-end bg-white/90 dark:bg-slate-800/90 px-3 py-1.5 rounded-xl border border-gray-200/70 dark:border-slate-700 shadow-2xs">
+                                <span class="text-[10px] font-bold text-gray-400 dark:text-slate-400 uppercase tracking-wider">Scheduled Date</span>
+                                <span class="text-xs sm:text-sm font-extrabold text-gray-800 dark:text-slate-100 flex items-center gap-1">
+                                    🗓️ ${dateStr}
+                                </span>
+                                <span class="text-[10px] ${countdownColor}">${countdownText}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-2.5 mt-2.5 border-t border-gray-200/50 dark:border-slate-800/70 flex items-center justify-between text-xs">
+                        <span class="text-gray-400 dark:text-slate-400 text-[11px]">Reporter: <strong class="text-gray-600 dark:text-slate-300 font-medium">${escapeHtml(r.reporter || '-')}</strong></span>
+                        <button type="button" onclick="closeUpcomingModal(); loadEditForm('${r.id}');" class="px-2.5 py-1 rounded-lg text-xs font-bold text-teal-600 dark:text-teal-400 hover:text-teal-700 hover:bg-teal-50 dark:hover:bg-slate-800 transition flex items-center gap-1">
+                            <i class="fa-solid fa-pen-to-square"></i> View / Edit Record →
+                        </button>
+                    </div>
+                </div>`;
+            }).join('');
         }
         function handleLogin(e) {
             e.preventDefault();
@@ -2271,7 +2587,7 @@ function openUpcomingModal() {
 
         function openChangePasswordModal() {
             if (!currentUser && !LabAuth.getCurrentUser()) {
-                return LabAlert.error('กรุณาเข้าสู่ระบบ', 'ต้องเข้าสู่ระบบก่อนเปลี่ยนรหัสผ่าน');
+                return LabAlert.error('Authentication Required', 'Please log in before changing password.');
             }
             const oldInp = document.getElementById('cpOldPassword');
             const newInp = document.getElementById('cpNewPassword');
@@ -2307,16 +2623,16 @@ function openUpcomingModal() {
             const confirmPass = document.getElementById('cpConfirmPassword')?.value;
 
             if (!oldPass || !newPass || !confirmPass) {
-                return LabAlert.error('ข้อมูลไม่ครบถ้วน', 'กรุณากรอกข้อมูลให้ครบทุกช่อง');
+                return LabAlert.error('Incomplete Information', 'Please complete all required fields.');
             }
             if (newPass !== confirmPass) {
-                return LabAlert.error('รหัสผ่านไม่ตรงกัน', 'กรุณากรอกรหัสผ่านใหม่และการยืนยันให้ตรงกัน');
+                return LabAlert.error('Password Mismatch', 'New password and confirmation do not match.');
             }
             if (newPass.length < 4) {
-                return LabAlert.error('รหัสผ่านสั้นเกินไป', 'รหัสผ่านใหม่ต้องมีความยาวอย่างน้อย 4 ตัวอักษร');
+                return LabAlert.error('Password Too Short', 'New password must be at least 4 characters long.');
             }
             if (oldPass === newPass) {
-                return LabAlert.error('รหัสผ่านซ้ำ', 'รหัสผ่านใหม่ต้องไม่เหมือนกับรหัสผ่านเดิม');
+                return LabAlert.error('Same Password', 'New password must be different from current password.');
             }
 
             const res = await LabAuth.changePassword(oldPass, newPass);
@@ -2327,11 +2643,11 @@ function openUpcomingModal() {
                     currentUser.password = newPass;
                 }
 
-                // Record in Audit Log (ประวัติกิจกรรมทั้งหมด)
+                // Record in Audit Log
                 const currentU = (typeof LabAuth !== 'undefined' && LabAuth.getCurrentUser()) || currentUser || {};
                 const uName = currentU.name || currentU.username || 'User';
                 const uEmail = currentU.username || '';
-                addCarePlusAudit('Change Password', `ผู้ใช้ ${uName} (${uEmail}) เปลี่ยนรหัสผ่านสำเร็จ (รหัสใหม่: ${newPass})`);
+                addCarePlusAudit('Change Password', `User ${uName} (${uEmail}) changed password successfully.`);
 
                 // Re-render User Management table immediately so Admin sees updated password
                 if (typeof renderAdminUsers === 'function') {
@@ -2339,9 +2655,9 @@ function openUpcomingModal() {
                 }
 
                 closeChangePasswordModal();
-                LabAlert.toast('success', 'เปลี่ยนรหัสผ่านสำเร็จ เริ่มใช้งานรหัสผ่านใหม่ได้ทันที');
+                LabAlert.toast('success', 'Password updated successfully. You can now use your new password.');
             } else {
-                LabAlert.error('เกิดข้อผิดพลาด', (res && res.message) || 'ไม่สามารถเปลี่ยนรหัสผ่านได้');
+                LabAlert.error('Error', (res && res.message) || 'Unable to change password.');
             }
         }
 
@@ -2631,7 +2947,7 @@ function loadDashboard() {
                     <div class="pr-2">
                         <h4 class="font-bold text-gray-800 text-base leading-tight">${escapeHtml(i.equipment_name)}</h4>
                         <div class="flex flex-wrap items-center gap-1.5 mt-1">
-                            ${model ? `<span class="text-[10px] font-bold text-teal-700 bg-teal-50 border border-teal-200 px-1.5 py-0.5 rounded">🏷️ รุ่น: ${escapeHtml(model)}</span>` : ''}
+                            ${model ? `<span class="text-[10px] font-bold text-teal-700 bg-teal-50 border border-teal-200 px-1.5 py-0.5 rounded">🏷️ Model: ${escapeHtml(model)}</span>` : ''}
                             <span class="text-[10px] font-bold uppercase tracking-wider text-gray-500 flex items-center gap-1 bg-gray-50 px-1.5 py-0.5 rounded">
                                 📍 ${escapeHtml(i.building || 'N/A')}
                             </span>
@@ -2693,7 +3009,7 @@ function loadDashboard() {
 
         function closeCalendarModal() { document.getElementById('calendarModal').classList.add('hidden'); renderCalendar(); }
         function updateCalStatus(id, status) {
-            const r = records.find(r => r.id === id);
+            const r = (records || []).find(r => String(r.id) === String(id));
             if (r) r.calendar_status = status;
             closeCalendarModal();
             loadRecords();
@@ -2856,7 +3172,7 @@ function renderCharts(data) {
 
             if (statTotalEl) statTotalEl.textContent = '฿' + formatCurrency(totalCostSum);
             if (statTopEl) statTopEl.textContent = topItem;
-            if (statCountEl) statCountEl.textContent = totalEquipCount + ' เครื่อง';
+            if (statCountEl) statCountEl.textContent = totalEquipCount + (totalEquipCount === 1 ? ' unit' : ' units');
             if (statAvgEl) statAvgEl.textContent = '฿' + formatCurrency(Math.round(avgCost));
 
             let displayList = equipCostList;
@@ -3529,37 +3845,328 @@ function renderCharts(data) {
             }
         }
 
-        function renderCarePlusAudit() {
+        function renderCarePlusAudit(resetPage = false) {
+            if (resetPage) {
+                carePlusAuditCurrentPage = 0;
+            }
             const tbody = document.getElementById('carePlusAuditTbody');
             const info = document.getElementById('carePlusAuditInfo');
             const prevBtn = document.getElementById('carePlusAuditPrev');
             const nextBtn = document.getElementById('carePlusAuditNext');
+            const yearSelect = document.getElementById('carePlusAuditYear');
+            const monthSelect = document.getElementById('carePlusAuditMonth');
+            const searchInput = document.getElementById('carePlusAuditSearch');
             if (!tbody) return;
 
             const logs = getCarePlusAuditLog();
-            const total = logs.length;
+
+            // Populate Year dropdown dynamically if available
+            if (yearSelect) {
+                const currentVal = yearSelect.value || 'all';
+                const years = new Set();
+                const nowYear = new Date().getFullYear();
+                years.add(nowYear);
+                logs.forEach(l => {
+                    if (l.timestamp) {
+                        const yr = new Date(l.timestamp).getFullYear();
+                        if (!isNaN(yr)) years.add(yr);
+                    }
+                });
+                const sortedYears = Array.from(years).sort((a, b) => b - a);
+                yearSelect.innerHTML = `<option value="all" ${currentVal === 'all' ? 'selected' : ''}>📅 ทุกปี (All Years)</option>` +
+                    sortedYears.map(y => `<option value="${y}" ${String(currentVal) === String(y) ? 'selected' : ''}>ปี ${y}</option>`).join('');
+            }
+
+            const selectedYear = yearSelect ? yearSelect.value : 'all';
+
+            // Populate Month dropdown dynamically with record counts for selected year
+            if (monthSelect) {
+                const curMonthVal = monthSelect.value || 'all';
+                const monthNames = [
+                    '01 - มกราคม (Jan)', '02 - กุมภาพันธ์ (Feb)', '03 - มีนาคม (Mar)',
+                    '04 - เมษายน (Apr)', '05 - พฤษภาคม (May)', '06 - มิถุนายน (Jun)',
+                    '07 - กรกฎาคม (Jul)', '08 - สิงหาคม (Aug)', '09 - กันยายน (Sep)',
+                    '10 - ตุลาคม (Oct)', '11 - พฤศจิกายน (Nov)', '12 - ธันวาคม (Dec)'
+                ];
+                const mCounts = Array(13).fill(0);
+                let totalYearLogs = 0;
+                logs.forEach(l => {
+                    if (l.timestamp) {
+                        const d = new Date(l.timestamp);
+                        if (!isNaN(d.getTime())) {
+                            if (selectedYear === 'all' || d.getFullYear() === parseInt(selectedYear)) {
+                                const m = d.getMonth() + 1;
+                                mCounts[m]++;
+                                totalYearLogs++;
+                            }
+                        }
+                    }
+                });
+
+                let monthOptionsHtml = `<option value="all" ${curMonthVal === 'all' ? 'selected' : ''}>📅 ทุกเดือน (All Months) (${totalYearLogs})</option>`;
+                for (let m = 1; m <= 12; m++) {
+                    const isSel = String(curMonthVal) === String(m);
+                    monthOptionsHtml += `<option value="${m}" ${isSel ? 'selected' : ''}>${monthNames[m - 1]} (${mCounts[m]})</option>`;
+                }
+                monthSelect.innerHTML = monthOptionsHtml;
+            }
+
+            const selectedMonth = monthSelect ? monthSelect.value : 'all';
+            const query = searchInput ? searchInput.value.trim().toLowerCase() : '';
+
+            const filtered = logs.filter(log => {
+                const d = log.timestamp ? new Date(log.timestamp) : null;
+                if (d && !isNaN(d.getTime())) {
+                    if (selectedYear !== 'all' && d.getFullYear() !== parseInt(selectedYear)) return false;
+                    if (selectedMonth !== 'all' && (d.getMonth() + 1) !== parseInt(selectedMonth)) return false;
+                } else if (selectedYear !== 'all' || selectedMonth !== 'all') {
+                    return false;
+                }
+
+                if (query) {
+                    const text = `${log.user || ''} ${log.action || ''} ${log.details || ''} ${log.timestamp || ''}`.toLowerCase();
+                    if (!text.includes(query)) return false;
+                }
+                return true;
+            });
+
+            const total = filtered.length;
             const maxPage = Math.max(0, Math.ceil(total / CAREPLUS_AUDIT_PER_PAGE) - 1);
             carePlusAuditCurrentPage = Math.min(carePlusAuditCurrentPage, maxPage);
             carePlusAuditCurrentPage = Math.max(0, carePlusAuditCurrentPage);
 
             const start = carePlusAuditCurrentPage * CAREPLUS_AUDIT_PER_PAGE;
-            const page = logs.slice(start, start + CAREPLUS_AUDIT_PER_PAGE);
+            const page = filtered.slice(start, start + CAREPLUS_AUDIT_PER_PAGE);
 
             if (page.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" class="text-center text-gray-400 py-6">ยังไม่มีประวัติกิจกรรม</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center text-gray-400 py-6">ไม่พบประวัติกิจกรรมที่ตรงกับเงื่อนไขการค้นหา</td></tr>';
             } else {
-                tbody.innerHTML = page.map((log, i) => `<tr class="border-b border-gray-100 hover:bg-gray-50">
-                    <td class="p-2 text-gray-400 text-xs">${start + i + 1}</td>
-                    <td class="p-2 text-xs text-gray-600 whitespace-nowrap">${new Date(log.timestamp).toLocaleString('th-TH', { dateStyle: 'short', timeStyle: 'short' })}</td>
-                    <td class="p-2 text-xs font-medium text-gray-700">${log.user}</td>
-                    <td class="p-2 text-xs"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${getAuditActionBadge(log.action)}">${log.action}</span></td>
-                    <td class="p-2 text-xs text-gray-500 max-w-[200px] truncate" title="${(log.details || '').replace(/"/g, '&quot;')}">${log.details || '-'}</td>
+                tbody.innerHTML = page.map((log, i) => `<tr class="border-b border-gray-100 hover:bg-gray-50/80 transition">
+                    <td class="p-2.5 text-gray-400 text-xs font-mono">${start + i + 1}</td>
+                    <td class="p-2.5 text-xs text-gray-600 whitespace-nowrap font-medium">${new Date(log.timestamp).toLocaleString('th-TH', { dateStyle: 'short', timeStyle: 'short' })}</td>
+                    <td class="p-2.5 text-xs font-bold text-gray-700 dark:text-slate-200">${escapeHtml(log.user)}</td>
+                    <td class="p-2.5 text-xs"><span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold ${getAuditActionBadge(log.action)}">${escapeHtml(log.action)}</span></td>
+                    <td class="p-2.5 text-xs text-gray-500 max-w-[240px] truncate" title="${(escapeHtml(log.details) || '').replace(/"/g, '&quot;')}">${escapeHtml(log.details || '-')}</td>
                 </tr>`).join('');
             }
 
-            if (info) info.textContent = `${total} records | Page ${carePlusAuditCurrentPage + 1}/${maxPage + 1}`;
+            if (info) info.textContent = `${total} รายการ (จากทั้งหมด ${logs.length}) | หน้า ${carePlusAuditCurrentPage + 1}/${maxPage + 1}`;
             if (prevBtn) prevBtn.disabled = carePlusAuditCurrentPage <= 0;
             if (nextBtn) nextBtn.disabled = carePlusAuditCurrentPage >= maxPage;
+        }
+
+        function resetCarePlusAuditFilter() {
+            const m = document.getElementById('carePlusAuditMonth');
+            const y = document.getElementById('carePlusAuditYear');
+            const s = document.getElementById('carePlusAuditSearch');
+            if (m) m.value = 'all';
+            if (y) y.value = 'all';
+            if (s) s.value = '';
+            renderCarePlusAudit(true);
+        }
+
+        function openCarePlusAuditPurgeModal() {
+            const user = LabAuth.getCurrentUser();
+            if (!user || user.role !== 'admin') {
+                LabAlert.error('คุณไม่มีสิทธิ์ลบข้อมูล Audit Log (เฉพาะ Admin เท่านั้น)', 'สิทธิ์ไม่เพียงพอ');
+                return;
+            }
+
+            const logs = getCarePlusAuditLog();
+            const nowYear = new Date().getFullYear();
+            const years = new Set([nowYear, nowYear - 1, nowYear - 2]);
+            logs.forEach(l => {
+                if (l.timestamp) {
+                    const yr = new Date(l.timestamp).getFullYear();
+                    if (!isNaN(yr)) years.add(yr);
+                }
+            });
+            const sortedYears = Array.from(years).sort((a, b) => b - a);
+
+            const months = [
+                { val: 1, name: 'มกราคม (Jan)' },
+                { val: 2, name: 'กุมภาพันธ์ (Feb)' },
+                { val: 3, name: 'มีนาคม (Mar)' },
+                { val: 4, name: 'เมษายน (Apr)' },
+                { val: 5, name: 'พฤษภาคม (May)' },
+                { val: 6, name: 'มิถุนายน (Jun)' },
+                { val: 7, name: 'กรกฎาคม (Jul)' },
+                { val: 8, name: 'สิงหาคม (Aug)' },
+                { val: 9, name: 'กันยายน (Sep)' },
+                { val: 10, name: 'ตุลาคม (Oct)' },
+                { val: 11, name: 'พฤศจิกายน (Nov)' },
+                { val: 12, name: 'ธันวาคม (Dec)' }
+            ];
+
+            const htmlContent = `
+                <div class="text-left text-xs space-y-3 pt-2">
+                    <p class="text-gray-600 leading-relaxed">
+                        เลือกรูปแบบการล้างข้อมูล <strong>Care+ Audit Log</strong> เพื่อคืนพื้นที่และลดภาระฐานข้อมูล:
+                    </p>
+
+                    <div class="space-y-2 bg-gray-50 p-3 rounded-xl border border-gray-200">
+                        <label class="flex items-center gap-2 cursor-pointer font-semibold text-gray-800">
+                            <input type="radio" name="cpPurgeMode" value="month" checked onchange="updateCpPurgePreview()">
+                            <span>ลบเฉพาะเดือนและปีที่ระบุ</span>
+                        </label>
+                        <div id="cpPurgeMonthFields" class="flex gap-2 pl-6 mt-1">
+                            <select id="cpPurgeMonthSelect" class="p-1.5 rounded-lg border text-xs bg-white flex-1" onchange="updateCpPurgePreview()">
+                                ${months.map(m => `<option value="${m.val}">${m.name}</option>`).join('')}
+                            </select>
+                            <select id="cpPurgeYearSelect" class="p-1.5 rounded-lg border text-xs bg-white w-28" onchange="updateCpPurgePreview()">
+                                ${sortedYears.map(y => `<option value="${y}">ปี ${y}</option>`).join('')}
+                            </select>
+                        </div>
+
+                        <label class="flex items-center gap-2 cursor-pointer font-semibold text-gray-800 pt-2">
+                            <input type="radio" name="cpPurgeMode" value="year" onchange="updateCpPurgePreview()">
+                            <span>ลบข้อมูลทั้งปีที่ระบุ</span>
+                        </label>
+                        <div id="cpPurgeYearFields" class="pl-6 mt-1 hidden">
+                            <select id="cpPurgeOnlyYearSelect" class="p-1.5 rounded-lg border text-xs bg-white w-full" onchange="updateCpPurgePreview()">
+                                ${sortedYears.map(y => `<option value="${y}">ปี ${y} (ทั้งหมด 12 เดือน)</option>`).join('')}
+                            </select>
+                        </div>
+
+                        <label class="flex items-center gap-2 cursor-pointer font-semibold text-gray-800 pt-2">
+                            <input type="radio" name="cpPurgeMode" value="older_than" onchange="updateCpPurgePreview()">
+                            <span>ลบข้อมูลที่เก่ากว่าช่วงเวลาที่กำหนด</span>
+                        </label>
+                        <div id="cpPurgeOlderFields" class="pl-6 mt-1 hidden">
+                            <select id="cpPurgeOlderSelect" class="p-1.5 rounded-lg border text-xs bg-white w-full" onchange="updateCpPurgePreview()">
+                                <option value="1_month">เก่ากว่า 1 เดือน (> 30 วันที่ผ่านมา)</option>
+                                <option value="3_months" selected>เก่ากว่า 3 เดือน (> 90 วันที่ผ่านมา)</option>
+                                <option value="6_months">เก่ากว่า 6 เดือน (> 180 วันที่ผ่านมา)</option>
+                                <option value="1_year">เก่ากว่า 1 ปี (> 365 วันที่ผ่านมา)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="cpPurgePreviewBox" class="p-2.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 font-medium">
+                        กำลังคำนวณจำนวนรายการ...
+                    </div>
+                    <p class="text-[11px] text-red-500 font-bold">⚠️ การลบข้อมูลจะไม่สามารถกู้คืนได้ แนะนำให้ดาวน์โหลด Backup ก่อนดำเนินการ</p>
+                </div>
+            `;
+
+            Swal.fire({
+                title: '🗑️ ลบ Audit Log รายเดือน / รายปี',
+                html: htmlContent,
+                icon: 'warning',
+                showCancelButton: true,
+                showDenyButton: true,
+                confirmButtonText: 'ยืนยันการลบ',
+                denyButtonText: '💾 แบ็คอัพก่อนลบ',
+                cancelButtonText: 'ยกเลิก',
+                confirmButtonColor: '#EF4444',
+                denyButtonColor: '#10B981',
+                cancelButtonColor: '#6B7280',
+                didOpen: () => {
+                    window.updateCpPurgePreview = () => {
+                        const mode = document.querySelector('input[name="cpPurgeMode"]:checked')?.value || 'month';
+                        const mBox = document.getElementById('cpPurgeMonthFields');
+                        const yBox = document.getElementById('cpPurgeYearFields');
+                        const oBox = document.getElementById('cpPurgeOlderFields');
+                        const prevBox = document.getElementById('cpPurgePreviewBox');
+
+                        if (mBox) mBox.classList.toggle('hidden', mode !== 'month');
+                        if (yBox) yBox.classList.toggle('hidden', mode !== 'year');
+                        if (oBox) oBox.classList.toggle('hidden', mode !== 'older_than');
+
+                        const allLogs = getCarePlusAuditLog();
+                        let count = 0;
+
+                        if (mode === 'month') {
+                            const m = parseInt(document.getElementById('cpPurgeMonthSelect')?.value || '1');
+                            const y = parseInt(document.getElementById('cpPurgeYearSelect')?.value || nowYear);
+                            count = allLogs.filter(l => {
+                                if (!l.timestamp) return false;
+                                const d = new Date(l.timestamp);
+                                return !isNaN(d.getTime()) && (d.getMonth() + 1) === m && d.getFullYear() === y;
+                            }).length;
+                        } else if (mode === 'year') {
+                            const y = parseInt(document.getElementById('cpPurgeOnlyYearSelect')?.value || nowYear);
+                            count = allLogs.filter(l => {
+                                if (!l.timestamp) return false;
+                                const d = new Date(l.timestamp);
+                                return !isNaN(d.getTime()) && d.getFullYear() === y;
+                            }).length;
+                        } else if (mode === 'older_than') {
+                            const period = document.getElementById('cpPurgeOlderSelect')?.value || '3_months';
+                            const now = new Date();
+                            let days = 90;
+                            if (period === '1_month') days = 30;
+                            else if (period === '6_months') days = 180;
+                            else if (period === '1_year') days = 365;
+                            const cutoff = new Date(now.getTime() - (days * 24 * 60 * 60 * 1000));
+                            count = allLogs.filter(l => {
+                                if (!l.timestamp) return false;
+                                const d = new Date(l.timestamp);
+                                return !isNaN(d.getTime()) && d < cutoff;
+                            }).length;
+                        }
+
+                        if (prevBox) {
+                            prevBox.innerHTML = `รายการที่จะถูกลบ: <strong class="text-red-600 text-sm">${count}</strong> รายการ (จากทั้งหมด ${allLogs.length} รายการ)`;
+                        }
+                    };
+                    window.updateCpPurgePreview();
+                }
+            }).then(async (result) => {
+                if (result.isDenied) {
+                    await backupData();
+                    setTimeout(() => openCarePlusAuditPurgeModal(), 800);
+                } else if (result.isConfirmed) {
+                    const mode = document.querySelector('input[name="cpPurgeMode"]:checked')?.value || 'month';
+                    const allLogs = getCarePlusAuditLog();
+                    let kept = [];
+                    let deletedCount = 0;
+
+                    if (mode === 'month') {
+                        const m = parseInt(document.getElementById('cpPurgeMonthSelect')?.value || '1');
+                        const y = parseInt(document.getElementById('cpPurgeYearSelect')?.value || nowYear);
+                        kept = allLogs.filter(l => {
+                            if (!l.timestamp) return true;
+                            const d = new Date(l.timestamp);
+                            if (isNaN(d.getTime())) return true;
+                            return !((d.getMonth() + 1) === m && d.getFullYear() === y);
+                        });
+                    } else if (mode === 'year') {
+                        const y = parseInt(document.getElementById('cpPurgeOnlyYearSelect')?.value || nowYear);
+                        kept = allLogs.filter(l => {
+                            if (!l.timestamp) return true;
+                            const d = new Date(l.timestamp);
+                            if (isNaN(d.getTime())) return true;
+                            return d.getFullYear() !== y;
+                        });
+                    } else if (mode === 'older_than') {
+                        const period = document.getElementById('cpPurgeOlderSelect')?.value || '3_months';
+                        const now = new Date();
+                        let days = 90;
+                        if (period === '1_month') days = 30;
+                        else if (period === '6_months') days = 180;
+                        else if (period === '1_year') days = 365;
+                        const cutoff = new Date(now.getTime() - (days * 24 * 60 * 60 * 1000));
+                        kept = allLogs.filter(l => {
+                            if (!l.timestamp) return true;
+                            const d = new Date(l.timestamp);
+                            if (isNaN(d.getTime())) return true;
+                            return d >= cutoff;
+                        });
+                    }
+
+                    deletedCount = allLogs.length - kept.length;
+                    if (deletedCount === 0) {
+                        LabAlert.toast('info', 'ไม่พบรายการที่ตรงกับเงื่อนไขที่เลือก (ไม่มีข้อมูลถูกลบ)');
+                        return;
+                    }
+
+                    saveCarePlusAuditLog(kept);
+                    addCarePlusAudit('Purge Audit Log', `ลบประวัติ Audit Log จำนวน ${deletedCount} รายการ`);
+                    renderCarePlusAudit(true);
+                    LabAlert.success('ลบ Audit Log สำเร็จ', `ลบข้อมูลออกไป ${deletedCount} รายการเรียบร้อยแล้ว คืนพื้นที่สำเร็จ`);
+                }
+            });
         }
 
         function getAuditActionBadge(action) {
@@ -4234,9 +4841,12 @@ function renderCharts(data) {
             });
         }
 
-function loadEditForm(id) {
-            const r = records.find(x => x.id === id);
-            if (!r) return;
+        function loadEditForm(id) {
+            const r = (records || []).find(x => String(x.id) === String(id));
+            if (!r) {
+                if (window.LabAlert) LabAlert.toast('info', 'Record not found');
+                return;
+            }
             loadAddRecordForm(); showPage('addRecord');
             document.getElementById('formTitle').innerText = 'Edit Record';
             document.getElementById('editRecordId').value = r.id;
@@ -4254,10 +4864,10 @@ function loadEditForm(id) {
 
             if (r.po_files && r.po_files.length > 0) {
                 document.getElementById('existingPoLabel').classList.remove('hidden');
-                document.getElementById('existingPoLabel').innerHTML = `✓ แนบไฟล์แล้ว: <span class="text-gray-600">${r.po_files.length} file(s)</span> <button type="button" onclick="deleteAttachedPO(${r.id})" class="ml-3 px-2 py-0.5 bg-red-100 text-red-600 rounded hover:bg-red-200 transition text-[10px] uppercase font-bold tracking-wider">ลบ</button>`;
+                document.getElementById('existingPoLabel').innerHTML = `✓ Attached: <span class="text-gray-600 dark:text-slate-300">${r.po_files.length} file(s)</span> <button type="button" onclick="deleteAttachedPO('${r.id}')" class="ml-3 px-2 py-0.5 bg-red-100 text-red-600 rounded hover:bg-red-200 transition text-[10px] uppercase font-bold tracking-wider">Delete</button>`;
             } else if (r.po_file) {
                 document.getElementById('existingPoLabel').classList.remove('hidden');
-                document.getElementById('existingPoLabel').innerHTML = `✓ แนบไฟล์แล้ว: <span class="text-gray-600">1 file(s)</span> <button type="button" onclick="deleteAttachedPO(${r.id})" class="ml-3 px-2 py-0.5 bg-red-100 text-red-600 rounded hover:bg-red-200 transition text-[10px] uppercase font-bold tracking-wider">ลบ</button>`;
+                document.getElementById('existingPoLabel').innerHTML = `✓ Attached: <span class="text-gray-600 dark:text-slate-300">1 file(s)</span> <button type="button" onclick="deleteAttachedPO('${r.id}')" class="ml-3 px-2 py-0.5 bg-red-100 text-red-600 rounded hover:bg-red-200 transition text-[10px] uppercase font-bold tracking-wider">Delete</button>`;
             } else {
                 document.getElementById('existingPoLabel').classList.add('hidden');
                 document.getElementById('existingPoLabel').innerHTML = '✓ Current file attached';
@@ -4279,6 +4889,8 @@ function loadEditForm(id) {
                 });
             }
         }
+        window.loadEditForm = loadEditForm;
+        window.openEditRecordModal = loadEditForm;
 
         function deleteAttachedPO(recordId) {
             LabAlert.confirm('ต้องการลบไฟล์แนบ PO?', 'การลบไฟล์จะลบออกจากระบบทันที คุณแน่ใจหรือไม่?', 'ลบไฟล์', 'ยกเลิก').then(confirmed => {
@@ -4797,16 +5409,56 @@ function loadEditForm(id) {
         }
     </script>
     <div id="upcomingModal"
-        class="hidden fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center p-4">
+        class="hidden fixed inset-0 bg-black/75 backdrop-blur-md z-50 flex items-center justify-center p-2 sm:p-4">
         <div
-            class="glass glass-dark rounded-3xl shadow-2xl w-[95%] max-w-2xl md:w-full h-[75vh] flex flex-col overflow-hidden page-transition">
-            <div class="p-5 border-b border-gray-100 flex justify-between items-center bg-white/40">
-                <h3 class="text-xl font-bold text-gray-800 flex items-center gap-2"><span class="text-red-500">⏰</span>
-                    Next 90 Days Schedule</h3>
+            class="glass glass-dark rounded-3xl shadow-2xl w-[98%] max-w-4xl h-[88vh] flex flex-col overflow-hidden page-transition border border-white/20 dark:border-slate-700/60">
+            <!-- Modal Header -->
+            <div class="p-4 sm:p-5 border-b border-gray-100 dark:border-slate-800 flex justify-between items-center bg-white/80 dark:bg-slate-800/80 backdrop-blur-md">
+                <div>
+                    <h3 class="text-lg sm:text-xl font-extrabold text-gray-800 dark:text-slate-100 flex items-center gap-2.5">
+                        <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-red-500 to-amber-500 text-white flex items-center justify-center text-sm shadow-sm font-normal">⏰</span>
+                        <span>Next 90 Days Schedule</span>
+                    </h3>
+                    <p class="text-xs text-gray-500 dark:text-slate-400 mt-0.5">
+                        Upcoming maintenance and calibration schedule for the next 90 days (color-coded by type and status).
+                    </p>
+                </div>
                 <button onclick="closeUpcomingModal()"
-                    class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 text-gray-500">✕</button>
+                    class="w-9 h-9 rounded-full bg-gray-100 dark:bg-slate-700 flex items-center justify-center hover:bg-gray-200 dark:hover:bg-slate-600 text-gray-500 dark:text-slate-300 transition text-sm font-bold shadow-xs">✕</button>
             </div>
-            <div id="upcomingModalContent" class="p-5 flex-1 overflow-y-auto custom-scroll space-y-3 bg-gray-50/50">
+
+            <!-- Toolbar: Search + Status Filter + Type Filter Chips -->
+            <div class="px-4 py-3 bg-gray-50/95 dark:bg-slate-900/95 border-b border-gray-100 dark:border-slate-800 flex flex-col gap-2.5">
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
+                    <div class="relative flex-1">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+                        <input type="text" id="upcomingSearchInput" placeholder="🔍 Search equipment, model, location, technician..." oninput="handleUpcomingSearch(this.value)"
+                            class="w-full pl-8 pr-3 py-1.5 text-xs rounded-xl glass-input border border-gray-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800/80 text-gray-800 dark:text-slate-200">
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <select id="upcomingStatusFilter" onchange="setUpcomingFilterStatus(this.value)"
+                            class="px-2.5 py-1.5 text-xs rounded-xl glass-input border border-gray-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800/80 font-bold text-gray-700 dark:text-slate-200">
+                            <option value="all">⚡ All Statuses</option>
+                            <option value="pending">⏳ Pending</option>
+                            <option value="urgent">🚨 Urgent / Due / Overdue</option>
+                            <option value="complete">✓ Complete</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Type Filter Chips (Injected dynamically) -->
+                <div class="flex items-center gap-2 overflow-x-auto custom-scroll pb-1" id="upcomingTypeChips">
+                </div>
+            </div>
+
+            <!-- Content Area -->
+            <div id="upcomingModalContent" class="p-4 sm:p-5 flex-1 overflow-y-auto custom-scroll space-y-3 bg-slate-100/50 dark:bg-slate-950/40">
+            </div>
+
+            <!-- Footer Summary -->
+            <div class="p-3 bg-white/70 dark:bg-slate-900/70 border-t border-gray-100 dark:border-slate-800 flex justify-between items-center text-xs text-gray-500 dark:text-slate-400">
+                <span id="upcomingSummaryText">0 tasks</span>
+                <button onclick="closeUpcomingModal()" class="px-4 py-1.5 bg-gray-200 hover:bg-gray-300 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-xl font-bold text-gray-700 dark:text-slate-200 text-xs transition">Close</button>
             </div>
         </div>
     </div>
