@@ -4821,8 +4821,8 @@ function renderCharts(data) {
         function renderAdminEquipment() {
             const locSelect = document.getElementById('adminEquipLoc');
             if (locSelect) {
-                const currentVal = locSelect.value;
-                locSelect.innerHTML = buildings.map(b => `<option value="${b.id}">${escapeHtml(b.name)}</option>`).join('');
+                const sortedBuildings = [...(buildings || [])].sort((a, b) => (a.name || '').localeCompare(b.name || '', undefined, { numeric: true, sensitivity: 'base' }));
+                locSelect.innerHTML = sortedBuildings.map(b => `<option value="${b.id}">${escapeHtml(b.name)}</option>`).join('');
                 if (currentVal && buildings.some(b => String(b.id) === String(currentVal))) {
                     locSelect.value = currentVal;
                 }
@@ -5165,11 +5165,15 @@ function renderCharts(data) {
             document.getElementById('saveBtn').innerText = 'Save Record';
 
             const bSel = document.getElementById('buildingSelect');
-            bSel.innerHTML = '<option value="">Select location</option>' + buildings.map(b => `<option value="${b.id}">${b.name}</option>`).join('');
+            const sortedBuildings = [...(buildings || [])].sort((a, b) => (a.name || '').localeCompare(b.name || '', undefined, { numeric: true, sensitivity: 'base' }));
+            bSel.innerHTML = '<option value="">Select location</option>' + sortedBuildings.map(b => `<option value="${b.id}">${escapeHtml(b.name)}</option>`).join('');
             const tSel = document.getElementById('technicianSelect');
             tSel.innerHTML = '<option value="">Select Provider</option>' + technicians.map(t => `<option value="${t}">${t}</option>`).join('');
             const rSel = document.getElementById('reporterSelect');
             rSel.innerHTML = '<option value="">Select Reporter</option>' + reporters.map(r => `<option value="${r}">${r}</option>`).join('');
+
+            const eqSel = document.getElementById('equipmentSelect');
+            if (eqSel) eqSel.innerHTML = '<option value="">Select location first</option>';
 
             // Smart Defaults: Pre-fill today's date and active reporter
             const sDate = document.getElementById('serviceDate');
@@ -5185,8 +5189,15 @@ function renderCharts(data) {
         function updateEquipmentOptions() {
             const bid = document.getElementById('buildingSelect').value;
             const eqSel = document.getElementById('equipmentSelect');
+            if (!bid) {
+                eqSel.innerHTML = '<option value="">Select location first</option>';
+                return;
+            }
             eqSel.innerHTML = '<option value="">Select equipment</option>';
-            if (bid) equipment.filter(e => String(e.building_id) === String(bid)).forEach(e => { eqSel.innerHTML += `<option value="${e.name}">${e.name}</option>`; });
+            const sortedEq = equipment
+                .filter(e => String(e.building_id) === String(bid))
+                .sort((a, b) => (a.name || '').localeCompare(b.name || '', undefined, { numeric: true, sensitivity: 'base' }));
+            sortedEq.forEach(e => { eqSel.innerHTML += `<option value="${e.name}">${escapeHtml(e.name)}</option>`; });
         }
         function toggleServiceFields() {
             const t = document.getElementById('serviceType').value;
