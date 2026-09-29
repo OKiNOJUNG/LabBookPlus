@@ -182,6 +182,30 @@
             border: 1px solid rgba(244, 63, 94, 0.3);
         }
 
+        .eq-status-calib {
+            background: rgba(59, 130, 246, 0.12);
+            color: #2563eb;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .eq-status-pm {
+            background: rgba(13, 148, 136, 0.12);
+            color: #0d9488;
+            border: 1px solid rgba(13, 148, 136, 0.3);
+        }
+
+        .eq-status-spare {
+            background: rgba(234, 88, 12, 0.12);
+            color: #ea580c;
+            border: 1px solid rgba(234, 88, 12, 0.3);
+        }
+
+        .eq-status-maint {
+            background: rgba(239, 68, 68, 0.12);
+            color: #dc2626;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
         .hidden {
             display: none !important;
         }
@@ -1434,6 +1458,133 @@
             transform: scale(1.02);
         }
 
+        /* Care+ & Booking Calendar Color Gradients */
+        .bg-repair {
+            background: linear-gradient(135deg, #e11d48, #f43f5e) !important;
+        }
+
+        .bg-calib {
+            background: linear-gradient(135deg, #2563eb, #3b82f6) !important;
+        }
+
+        .bg-pm {
+            background: linear-gradient(135deg, #0d9488, #2dd4bf) !important;
+        }
+
+        .bg-spare {
+            background: linear-gradient(135deg, #ea580c, #f97316) !important;
+        }
+
+        .bg-booking-booked {
+            background: linear-gradient(135deg, #0284c7, #0ea5e9) !important;
+        }
+
+        .bg-booking-inuse {
+            background: linear-gradient(135deg, #d97706, #f59e0b) !important;
+        }
+
+        .bg-booking-finished {
+            background: linear-gradient(135deg, #059669, #10b981) !important;
+        }
+
+        /* Multi-day Spanning Bar for Monthly Calendar */
+        .cal-multiday-bar {
+            position: relative;
+            z-index: 5;
+            height: 22px;
+            line-height: 22px;
+            font-size: 10px;
+            font-weight: 600;
+            padding: 0 6px;
+            display: flex;
+            align-items: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            margin-bottom: 3px;
+            cursor: pointer;
+            transition: filter 0.15s ease, transform 0.15s ease;
+        }
+
+        .cal-multiday-bar:hover {
+            filter: brightness(1.08);
+            z-index: 10;
+        }
+
+        .cal-multiday-bar.span-start {
+            border-top-left-radius: 6px;
+            border-bottom-left-radius: 6px;
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+            margin-right: -7px;
+        }
+
+        .cal-multiday-bar.span-middle {
+            border-radius: 0;
+            margin-left: -7px;
+            margin-right: -7px;
+        }
+
+        .cal-multiday-bar.span-end {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+            border-top-right-radius: 6px;
+            border-bottom-right-radius: 6px;
+            margin-left: -7px;
+        }
+
+        .cal-multiday-bar.span-single {
+            border-radius: 6px;
+            margin-left: 0;
+            margin-right: 0;
+        }
+
+        .cal-multiday-bar.row-start {
+            border-top-left-radius: 6px !important;
+            border-bottom-left-radius: 6px !important;
+            margin-left: 0 !important;
+        }
+
+        .cal-multiday-bar.row-end {
+            border-top-right-radius: 6px !important;
+            border-bottom-right-radius: 6px !important;
+            margin-right: 0 !important;
+        }
+
+        @media (min-width: 640px) {
+            .cal-multiday-bar {
+                height: 24px;
+                line-height: 24px;
+                font-size: 11px;
+                padding: 0 8px;
+                margin-bottom: 4px;
+            }
+            .cal-multiday-bar.span-start {
+                margin-right: -9px;
+            }
+            .cal-multiday-bar.span-middle {
+                margin-left: -9px;
+                margin-right: -9px;
+            }
+            .cal-multiday-bar.span-end {
+                margin-left: -9px;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .cal-multiday-bar.span-start {
+                margin-right: -13px;
+            }
+            .cal-multiday-bar.span-middle {
+                margin-left: -13px;
+                margin-right: -13px;
+            }
+            .cal-multiday-bar.span-end {
+                margin-left: -13px;
+            }
+        }
+
         @media print {
             @page {
                 size: A4 portrait;
@@ -2220,6 +2371,11 @@
                         <option value="">All Statuses</option>
                         <option value="avail">🟢 Available</option>
                         <option value="busy">🟠 In Use</option>
+                        <option value="care">🔧 Maintenance (Care+)</option>
+                        <option value="repair">🔴 Repair</option>
+                        <option value="calibration">🔵 Calibration</option>
+                        <option value="pm">🟢 PM</option>
+                        <option value="spare">🟠 Spare parts</option>
                     </select>
                     <select id="equipment-filter-loc" onchange="app.filterEquipments()"
                         class="glass-input px-3 py-2 rounded-xl text-xs md:text-sm min-w-[150px]"
@@ -2278,6 +2434,11 @@
                     class="glass-input px-3 py-2 rounded-xl text-sm min-w-[160px]">
                     <option value="">All Equipments</option>
                 </select>
+                <button type="button" id="btn-clear-log-filters" onclick="app.clearDataTableFilters()"
+                    class="ios-btn bg-white/80 dark:bg-slate-800 text-gray-700 dark:text-slate-200 border border-slate-200/80 dark:border-slate-700 px-3 py-2 text-xs md:text-sm hover:shadow flex items-center gap-1.5 whitespace-nowrap"
+                    title="Clear all filters">
+                    <i class="fa-solid fa-filter-circle-xmark text-teal-600 dark:text-teal-400"></i> Clear Filter
+                </button>
             </div>
 
             <div class="glass rounded-2xl overflow-hidden border border-white/60 dark:border-slate-800/60 shadow-sm">
@@ -4014,9 +4175,9 @@
                 if (page.length === 0) {
                     tbody.innerHTML = `<tr><td colspan="7" class="text-center text-muted py-6">ไม่พบเครื่องมือที่ตรงกับเงื่อนไขค้นหา</td></tr>`;
                 } else {
-                    tbody.innerHTML = page.map(eq => `
+                    tbody.innerHTML = page.map((eq, idx) => `
                     <tr style="border-bottom: 1px solid var(--border-color);">
-                        <td>${eq.id}</td>
+                        <td style="font-weight: 600; color: #64748b;">${start + idx + 1}</td>
                         <td style="font-weight: 600;">${eq.name}</td>
                         <td><span class="badge" style="font-size: 0.75rem; background: rgba(15, 118, 110, 0.1); color: #0F766E;">${eq.model || '-'}</span></td>
                         <td>${eq.serial || '-'}</td>
@@ -4159,7 +4320,7 @@
                     return;
                 }
 
-                tbody.innerHTML = filtered.map(u => {
+                tbody.innerHTML = filtered.map((u, idx) => {
                     let wCount = u.warnings ? u.warnings.length : 0;
                     (this.state.bookings || []).forEach(b => {
                         const isMatch = (b.user && (b.user === u.username || b.user === u.name || b.user === u.email)) ||
@@ -4175,7 +4336,7 @@
                     const wBadge = wCount > 0 ? `<span class="badge badge-danger font-bold cursor-pointer" onclick="app.showAdminHistory('${u.username}')" title="คลิกดูประวัติ Warnings">${wCount} Warnings</span>${clearBtn}` : '<span class="text-muted">0</span>';
                     return `
                 <tr style="border-bottom: 1px solid var(--border-color);">
-                    <td>${u.id || ''}</td>
+                    <td style="font-weight: 600; color: #64748b;">${idx + 1}</td>
                     <td>${u.username}</td>
                     <td>${u.name}</td>
                     <td>${u.role}</td>
@@ -4365,18 +4526,55 @@
                 );
             },
 
-            isEquipmentInMaintenance(eqName, eqId) {
-                const todayStr = moment().format('YYYY-MM-DD');
+            getEquipmentCareRecord(eqName, eqId, targetDateStr = null) {
+                const checkDate = targetDateStr || moment().format('YYYY-MM-DD');
                 const allState = LabStateBridge.getState() || {};
                 const records = allState.records || this.state.records || [];
-                return records.some(r => {
+                return records.find(r => {
+                    if (r.deleted) return false;
                     const matchEq = (r.equipment_name && eqName && r.equipment_name.trim().toLowerCase() === eqName.trim().toLowerCase()) ||
                                    (r.equipment_id && eqId && String(r.equipment_id) === String(eqId));
                     if (!matchEq) return false;
-                    const isToday = r.service_date === todayStr || (r.type === 'calibration' && r.next_service_date === todayStr);
-                    const isPending = r.calendar_status !== 'complete';
-                    return isToday && isPending;
+                    if (r.calendar_status === 'complete' || r.status === 'completed') return false;
+
+                    const sDate = r.service_date;
+                    const eDate = r.end_date || r.service_date;
+                    if (sDate && eDate) {
+                        if (checkDate >= sDate && checkDate <= eDate) return true;
+                    } else if (sDate && checkDate === sDate) {
+                        return true;
+                    }
+
+                    if (r.type === 'calibration' && r.next_service_date === checkDate) {
+                        return true;
+                    }
+
+                    // If in_progress and service_date <= checkDate and not finished
+                    if (r.calendar_status === 'in_progress' && sDate && checkDate >= sDate) {
+                        if (!r.end_date || checkDate <= r.end_date) return true;
+                    }
+
+                    return false;
                 });
+            },
+
+            getCareStatusInfo(record) {
+                if (!record) return { label: 'Available', type: 'avail', badgeClass: 'eq-status-avail', dotClass: 'bg-emerald-500', textClass: 'text-emerald-600', icon: 'fa-check' };
+                const t = (record.type || '').toLowerCase();
+                if (t === 'repair') {
+                    return { label: 'Repair', type: 'repair', badgeClass: 'eq-status-repair', dotClass: 'bg-rose-500', textClass: 'text-rose-600', icon: 'fa-wrench' };
+                } else if (t === 'calibration') {
+                    return { label: 'Calibration', type: 'calibration', badgeClass: 'eq-status-calib', dotClass: 'bg-blue-500', textClass: 'text-blue-600', icon: 'fa-scale-balanced' };
+                } else if (t === 'pm') {
+                    return { label: 'PM', type: 'pm', badgeClass: 'eq-status-pm', dotClass: 'bg-teal-500', textClass: 'text-teal-600', icon: 'fa-sliders' };
+                } else if (t.includes('spare')) {
+                    return { label: 'Spare parts', type: 'spare_parts', badgeClass: 'eq-status-spare', dotClass: 'bg-orange-500', textClass: 'text-orange-600', icon: 'fa-gears' };
+                }
+                return { label: 'Maintenance', type: 'repair', badgeClass: 'eq-status-repair', dotClass: 'bg-rose-500', textClass: 'text-rose-600', icon: 'fa-screwdriver-wrench' };
+            },
+
+            isEquipmentInMaintenance(eqName, eqId, targetDateStr = null) {
+                return !!this.getEquipmentCareRecord(eqName, eqId, targetDateStr);
             },
 
             populateCalendarDropdowns() {
@@ -4511,10 +4709,40 @@
 
             getBookingsForDate(dateStr) {
                 const filtered = this.getFilteredBookings();
-                return filtered.filter(b => {
+                const bookings = filtered.filter(b => {
                     if (!b.start) return false;
-                    return b.start.startsWith(dateStr) || b.start.substring(0, 10) === dateStr;
+                    const bStart = b.start.substring(0, 10);
+                    const bEnd = b.end ? b.end.substring(0, 10) : bStart;
+                    return dateStr >= bStart && dateStr <= bEnd;
                 });
+
+                const allState = LabStateBridge.getState() || {};
+                const careRecords = allState.records || this.state.records || [];
+                const locFilter = document.getElementById('cal-filter-loc')?.value;
+                const eqFilter = document.getElementById('cal-filter-eq')?.value;
+                const statusFilter = document.getElementById('cal-filter-status')?.value;
+
+                const matchedCare = careRecords.filter(r => {
+                    if (r.deleted) return false;
+                    const matchEq = (this.state.equipments || []).find(e =>
+                        (r.equipment_name && e.name && e.name.trim().toLowerCase() === r.equipment_name.trim().toLowerCase()) ||
+                        (r.equipment_id && String(e.id) === String(r.equipment_id))
+                    );
+                    if (locFilter && matchEq && String(matchEq.building_id) !== String(locFilter)) return false;
+                    if (eqFilter && matchEq && String(matchEq.id) !== String(eqFilter)) return false;
+                    if (statusFilter && statusFilter !== 'care' && statusFilter !== r.type) return false;
+
+                    const sDate = r.service_date;
+                    const eDate = r.end_date || r.service_date;
+                    const inRange = sDate && (dateStr >= sDate && dateStr <= eDate);
+                    const isNextCalib = r.type === 'calibration' && r.next_service_date === dateStr;
+                    return inRange || isNextCalib;
+                }).map(r => ({
+                    ...r,
+                    isCareRecord: true
+                }));
+
+                return [...bookings, ...matchedCare];
             },
 
             initCalendar() {
@@ -4529,6 +4757,8 @@
 
                 const firstDay = new Date(year, month, 1).getDay();
                 const daysInMonth = new Date(year, month + 1, 0).getDate();
+                const monthStartStr = `${year}-${String(month + 1).padStart(2, '0')}-01`;
+                const monthEndStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(daysInMonth).padStart(2, '0')}`;
 
                 const calendar = document.getElementById('calendar');
                 const listContainer = document.getElementById('listContainer');
@@ -4537,24 +4767,141 @@
                 calendar.innerHTML = '';
                 if (listContainer) listContainer.innerHTML = '';
 
+                // Collect filtered bookings
                 const filtered = this.getFilteredBookings();
-                const monthBookings = [];
+                const allEvents = [];
+
+                filtered.forEach(b => {
+                    if (!b.start) return;
+                    const sDate = b.start.substring(0, 10);
+                    const eDate = b.end ? b.end.substring(0, 10) : sDate;
+                    const eq = this.findEquipment(b);
+                    const eqName = this.getBookingEquipmentName(b);
+                    const locName = eq ? (this.getLocName(eq.building_id, this.state.buildings || []) || '-') : '-';
+                    const status = this.getBookingStatus(b);
+
+                    allEvents.push({
+                        id: 'bk-' + b.id,
+                        source: 'booking',
+                        equipment_name: eqName,
+                        locName: locName,
+                        status: status,
+                        startDate: sDate,
+                        endDate: eDate,
+                        isMultiDay: sDate < eDate,
+                        raw: b
+                    });
+                });
+
+                // Collect synced Care+ maintenance records
+                const allState = LabStateBridge.getState() || {};
+                const careRecords = allState.records || this.state.records || [];
+                const locFilter = document.getElementById('cal-filter-loc')?.value;
+                const eqFilter = document.getElementById('cal-filter-eq')?.value;
+                const statusFilter = document.getElementById('cal-filter-status')?.value;
+
+                careRecords.forEach(r => {
+                    if (r.deleted) return;
+                    const matchEq = (this.state.equipments || []).find(e =>
+                        (r.equipment_name && e.name && e.name.trim().toLowerCase() === r.equipment_name.trim().toLowerCase()) ||
+                        (r.equipment_id && String(e.id) === String(r.equipment_id))
+                    );
+                    if (locFilter && matchEq && String(matchEq.building_id) !== String(locFilter)) return;
+                    if (eqFilter && matchEq && String(matchEq.id) !== String(eqFilter)) return;
+                    if (statusFilter && statusFilter !== 'care' && statusFilter !== r.type) return;
+
+                    const sDate = r.service_date;
+                    const eDate = r.end_date || r.service_date;
+                    const eqName = matchEq ? matchEq.name : (r.equipment_name || 'Equipment');
+                    const locName = matchEq ? (this.getLocName(matchEq.building_id, this.state.buildings || []) || '-') : (r.building || '-');
+                    const careInfo = this.getCareStatusInfo(r);
+
+                    if (sDate) {
+                        allEvents.push({
+                            id: 'care-' + r.id,
+                            source: 'care',
+                            careType: (r.type || '').toLowerCase(),
+                            careLabel: careInfo.label,
+                            equipment_name: eqName,
+                            locName: locName,
+                            startDate: sDate,
+                            endDate: eDate,
+                            isMultiDay: sDate < eDate,
+                            calendar_status: r.calendar_status,
+                            raw: { ...r, isCareRecord: true }
+                        });
+                    }
+                    if (r.type === 'calibration' && r.next_service_date && r.next_service_date !== sDate) {
+                        allEvents.push({
+                            id: 'care-due-' + r.id,
+                            source: 'care',
+                            careType: 'calibration',
+                            careLabel: 'Due: Calibration',
+                            equipment_name: eqName,
+                            locName: locName,
+                            startDate: r.next_service_date,
+                            endDate: r.next_service_date,
+                            isMultiDay: false,
+                            isNextDue: true,
+                            calendar_status: r.calendar_status,
+                            raw: { ...r, isCareRecord: true }
+                        });
+                    }
+                });
+
+                // Filter events that intersect with this month
+                const activeEvents = allEvents.filter(e => e.startDate <= monthEndStr && e.endDate >= monthStartStr);
+
+                // Multi-day vs single-day
+                const multiDayEvents = activeEvents.filter(e => e.startDate < e.endDate);
+                const singleDayEvents = activeEvents.filter(e => e.startDate >= e.endDate);
+
+                // Sort multi-day by duration (descending), then startDate
+                multiDayEvents.sort((a, b) => {
+                    const durA = new Date(a.endDate) - new Date(a.startDate);
+                    const durB = new Date(b.endDate) - new Date(b.startDate);
+                    if (durB !== durA) return durB - durA;
+                    return a.startDate.localeCompare(b.startDate);
+                });
+
+                // Allocate multi-day horizontal tracks
+                const dayTracks = {};
+                for (let d = 1; d <= daysInMonth; d++) {
+                    dayTracks[d] = [];
+                }
+
+                multiDayEvents.forEach(evt => {
+                    const sDay = evt.startDate < monthStartStr ? 1 : parseInt(evt.startDate.split('-')[2]);
+                    const eDay = evt.endDate > monthEndStr ? daysInMonth : parseInt(evt.endDate.split('-')[2]);
+
+                    let track = 0;
+                    while (true) {
+                        let fits = true;
+                        for (let d = sDay; d <= eDay; d++) {
+                            if (dayTracks[d][track]) { fits = false; break; }
+                        }
+                        if (fits) break;
+                        track++;
+                    }
+                    for (let d = sDay; d <= eDay; d++) {
+                        dayTracks[d][track] = evt;
+                    }
+                });
 
                 for (let i = 0; i < firstDay; i++) {
                     calendar.innerHTML += `<div class="opacity-0 pointer-events-none"></div>`;
                 }
 
                 const todayStr = moment().format('YYYY-MM-DD');
+                const monthBookings = [];
 
                 for (let day = 1; day <= daysInMonth; day++) {
                     const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                    const items = filtered.filter(b => {
-                        if (!b.start) return false;
-                        return b.start.startsWith(dateStr) || b.start.substring(0, 10) === dateStr;
-                    });
+                    const dow = (firstDay + day - 1) % 7; // 0=Sun, 6=Sat
 
-                    if (items.length > 0) {
-                        monthBookings.push({ date: dateStr, items: items });
+                    const dayAllItems = activeEvents.filter(e => dateStr >= e.startDate && dateStr <= e.endDate);
+                    if (dayAllItems.length > 0) {
+                        monthBookings.push({ date: dateStr, items: dayAllItems.map(x => x.raw) });
                     }
 
                     const isToday = todayStr === dateStr;
@@ -4567,41 +4914,108 @@
                         <span class="text-right text-[10px] sm:text-xs font-bold ${isToday ? 'text-teal-600 dark:text-teal-400 font-extrabold' : 'text-gray-400 dark:text-slate-400'}">${day}</span>
                     </div>`;
 
-                    const maxVisible = 2;
-                    items.slice(0, maxVisible).forEach(b => {
-                        const eq = this.findEquipment(b);
-                        const eqName = this.getBookingEquipmentName(b);
-                        const locName = eq ? (this.getLocName(eq.building_id, this.state.buildings || []) || '-') : '-';
-                        const status = this.getBookingStatus(b);
-                        const bgClass = status === 'InUse' ? 'bg-amber-500/90 text-white' : (status === 'Booked' ? 'bg-sky-600/90 text-white' : 'bg-emerald-600/90 text-white');
-                        const timeStr = `${moment(b.start).format('HH:mm')}-${moment(b.end).format('HH:mm')}`;
+                    // Render multi-day tracks
+                    const tracksForDay = dayTracks[day] || [];
+                    const maxTracksToShow = Math.min(2, Math.max(tracksForDay.length, 0));
+                    let renderedMultiCount = 0;
 
-                        let totalMins = Number(b.durationMins);
-                        if (isNaN(totalMins) || totalMins <= 0) {
-                            const diff = new Date(b.end) - new Date(b.start);
-                            totalMins = !isNaN(diff) && diff > 0 ? Math.round(diff / 60000) : 0;
+                    for (let t = 0; t < maxTracksToShow; t++) {
+                        const evt = tracksForDay[t];
+                        if (evt) {
+                            renderedMultiCount++;
+                            const isStart = dateStr === evt.startDate;
+                            const isEnd = dateStr === evt.endDate;
+                            const isRowStart = dow === 0;
+                            const isRowEnd = dow === 6;
+
+                            let spanClass = 'span-middle';
+                            if (isStart && isEnd) spanClass = 'span-single';
+                            else if (isStart) spanClass = 'span-start';
+                            else if (isEnd) spanClass = 'span-end';
+
+                            if (isRowStart && !isStart) spanClass += ' row-start';
+                            if (isRowEnd && !isEnd) spanClass += ' row-end';
+
+                            if (evt.source === 'care') {
+                                const bgClass = evt.careType === 'repair' ? 'bg-repair' :
+                                               (evt.careType === 'pm' ? 'bg-pm' :
+                                               (evt.careType === 'spare_parts' ? 'bg-spare' : 'bg-calib'));
+                                const opacity = evt.calendar_status === 'complete' ? 'opacity-60' : 'opacity-100';
+                                const labelText = (isStart || isRowStart)
+                                    ? `🔧 ${escapeHtml(evt.equipment_name)}`
+                                    : (isEnd ? `✓ ${escapeHtml(evt.equipment_name)}` : `→ ${escapeHtml(evt.equipment_name)}`);
+                                const tooltip = `[Lab Care+] ${evt.equipment_name} (${evt.careLabel}) ${evt.startDate} ถึง ${evt.endDate}`;
+
+                                html += `<div class="cal-multiday-bar ${bgClass} ${spanClass} ${opacity} text-white cursor-pointer select-none" onclick="event.stopPropagation(); app.openCalendarDay('${dateStr}')" title="${escapeHtml(tooltip)}">
+                                    <span class="truncate">${labelText}</span>
+                                </div>`;
+                            } else {
+                                const bgClass = evt.status === 'InUse' ? 'bg-booking-inuse' :
+                                               (evt.status === 'Booked' ? 'bg-booking-booked' : 'bg-booking-finished');
+                                const labelText = (isStart || isRowStart)
+                                    ? `${escapeHtml(evt.equipment_name)} &bull; ${escapeHtml(evt.raw.user || '')}`
+                                    : (isEnd ? `✓ ${escapeHtml(evt.equipment_name)}` : `→ ${escapeHtml(evt.equipment_name)}`);
+                                const tooltip = `${evt.equipment_name} | Booked by: ${evt.raw.user} (${evt.startDate} ถึง ${evt.endDate})`;
+
+                                html += `<div class="cal-multiday-bar ${bgClass} ${spanClass} text-white cursor-pointer select-none" onclick="event.stopPropagation(); app.showBookingDetails('${evt.raw.id}')" title="${escapeHtml(tooltip)}">
+                                    <span class="truncate">${labelText}</span>
+                                </div>`;
+                            }
+                        } else if (tracksForDay.some((_, idx) => idx > t && tracksForDay[idx])) {
+                            html += `<div class="h-[22px] sm:h-[24px] mb-[3px] sm:mb-[4px] pointer-events-none"></div>`;
                         }
-                        const durStr = totalMins >= 60 ? `${Math.floor(totalMins / 60)}h ${totalMins % 60 ? (totalMins % 60) + 'm' : ''}` : `${totalMins}m`;
+                    }
 
-                        html += `<div class="cal-event-chip ${bgClass} whitespace-normal break-words leading-tight py-1 px-1.5 mb-1 border border-black/5 rounded text-[9px] sm:text-[11px] shadow-xs cursor-pointer hover:opacity-90 transition" onclick="event.stopPropagation(); app.showBookingDetails('${b.id}')" title="${eqName} | Booked by: ${b.user} | Location: ${locName} | Time: ${timeStr} | Duration: ${durStr}">
-                            <div class="flex justify-between items-center gap-1 font-bold">
-                                <span class="truncate">${eqName}</span>
-                                <span class="text-[8px] opacity-90 whitespace-nowrap">${durStr}</span>
-                            </div>
-                            <div class="text-[8px] sm:text-[9px] opacity-90 mt-0.5 border-t border-white/20 pt-0.5 truncate">
-                                ⏰ ${timeStr} &bull; 👤 ${b.user}
-                            </div>
-                            <div class="text-[8px] opacity-85 truncate hidden sm:block">
-                                📍 ${locName}
-                            </div>
-                        </div>`;
+                    // Render single-day events
+                    const singleOnDay = singleDayEvents.filter(e => e.startDate === dateStr);
+                    const remainingSlots = Math.max(0, 2 - renderedMultiCount);
+                    singleOnDay.slice(0, remainingSlots).forEach(i => {
+                        if (i.source === 'care') {
+                            const bgClass = i.careType === 'repair' ? 'bg-repair text-white' :
+                                           (i.careType === 'pm' ? 'bg-pm text-white' :
+                                           (i.careType === 'spare_parts' ? 'bg-spare text-white' : 'bg-calib text-white'));
+                            const prefix = i.isNextDue ? '⚖️ Due: ' : '🔧 ';
+                            html += `<div class="cal-event-chip ${bgClass} whitespace-normal break-words leading-tight py-1 px-1.5 mb-1 border border-black/5 rounded text-[9px] sm:text-[11px] shadow-xs cursor-pointer hover:opacity-90 transition" onclick="event.stopPropagation(); app.openCalendarDay('${dateStr}')" title="[Lab Care+] ${escapeHtml(i.equipment_name)} (${i.careLabel})">
+                                <div class="flex justify-between items-center gap-1 font-bold">
+                                    <span class="truncate">${prefix}${escapeHtml(i.equipment_name)}</span>
+                                    <span class="text-[8px] opacity-90 whitespace-nowrap">${i.careLabel}</span>
+                                </div>
+                            </div>`;
+                        } else {
+                            const b = i.raw;
+                            const eq = this.findEquipment(b);
+                            const eqName = this.getBookingEquipmentName(b);
+                            const locName = eq ? (this.getLocName(eq.building_id, this.state.buildings || []) || '-') : '-';
+                            const status = this.getBookingStatus(b);
+                            const bgClass = status === 'InUse' ? 'bg-amber-500/90 text-white' : (status === 'Booked' ? 'bg-sky-600/90 text-white' : 'bg-emerald-600/90 text-white');
+                            const timeStr = `${moment(b.start).format('HH:mm')}-${moment(b.end).format('HH:mm')}`;
+
+                            let totalMins = Number(b.durationMins);
+                            if (isNaN(totalMins) || totalMins <= 0) {
+                                const diff = new Date(b.end) - new Date(b.start);
+                                totalMins = !isNaN(diff) && diff > 0 ? Math.round(diff / 60000) : 0;
+                            }
+                            const durStr = totalMins >= 60 ? `${Math.floor(totalMins / 60)}h ${totalMins % 60 ? (totalMins % 60) + 'm' : ''}` : `${totalMins}m`;
+
+                            html += `<div class="cal-event-chip ${bgClass} whitespace-normal break-words leading-tight py-1 px-1.5 mb-1 border border-black/5 rounded text-[9px] sm:text-[11px] shadow-xs cursor-pointer hover:opacity-90 transition" onclick="event.stopPropagation(); app.showBookingDetails('${b.id}')" title="${eqName} | Booked by: ${b.user} | Location: ${locName} | Time: ${timeStr} | Duration: ${durStr}">
+                                <div class="flex justify-between items-center gap-1 font-bold">
+                                    <span class="truncate">${eqName}</span>
+                                    <span class="text-[8px] opacity-90 whitespace-nowrap">${durStr}</span>
+                                </div>
+                                <div class="text-[8px] sm:text-[9px] opacity-90 mt-0.5 border-t border-white/20 pt-0.5 truncate">
+                                    ⏰ ${timeStr} &bull; 👤 ${b.user}
+                                </div>
+                            </div>`;
+                        }
                     });
 
-                    if (items.length > maxVisible) {
-                        html += `<div class="text-[8px] sm:text-[10px] font-bold text-teal-700 dark:text-teal-300 bg-teal-50 dark:bg-teal-900/50 hover:bg-teal-100 rounded px-1.5 py-0.5 text-center mt-1 cursor-pointer transition shadow-2xs" onclick="event.stopPropagation(); app.openCalendarDay('${dateStr}');" title="Click to view all ${items.length} bookings">
-                            +${items.length - maxVisible} more
+                    const totalItemsToday = dayAllItems.length;
+                    const shownItemsToday = renderedMultiCount + Math.min(singleOnDay.length, remainingSlots);
+                    if (totalItemsToday > shownItemsToday) {
+                        html += `<div class="text-[8px] sm:text-[10px] font-bold text-teal-700 dark:text-teal-300 bg-teal-50 dark:bg-teal-900/50 hover:bg-teal-100 rounded px-1.5 py-0.5 text-center mt-1 cursor-pointer transition shadow-2xs" onclick="event.stopPropagation(); app.openCalendarDay('${dateStr}');" title="Click to view all ${totalItemsToday} events">
+                            +${totalItemsToday - shownItemsToday} more
                         </div>`;
-                    } else if (items.length === 0) {
+                    } else if (totalItemsToday === 0) {
                         html += `<div class="text-[8px] sm:text-[9px] text-gray-300 dark:text-slate-600 text-center py-2 select-none pointer-events-none">+ Available</div>`;
                     }
 
@@ -4609,14 +5023,14 @@
                     div.className = `calendar-day ${isToday ? 'today' : ''} cursor-pointer hover:bg-teal-50/30 dark:hover:bg-teal-950/20 transition`;
                     div.innerHTML = html;
                     div.onclick = () => {
-                        app.openCalendarDay(dateStr, items);
+                        app.openCalendarDay(dateStr);
                     };
                     calendar.appendChild(div);
                 }
 
                 if (listContainer) {
                     if (monthBookings.length === 0) {
-                        listContainer.innerHTML = `<div class="text-center text-gray-400 py-10 font-bold">No bookings scheduled for this month.</div>`;
+                        listContainer.innerHTML = `<div class="text-center text-gray-400 py-10 font-bold">No events scheduled for this month.</div>`;
                     } else {
                         monthBookings.forEach(group => {
                             const dateObj = new Date(group.date);
@@ -4627,6 +5041,27 @@
                                 <div class="space-y-2">`;
 
                             group.items.forEach(b => {
+                                if (b.isCareRecord) {
+                                    const careInfo = this.getCareStatusInfo(b);
+                                    const dateRangeStr = (b.end_date && b.end_date !== b.service_date) ? `${b.service_date} ~ ${b.end_date}` : b.service_date;
+                                    listHtml += `
+                                    <div class="bg-white dark:bg-slate-800 border border-rose-100 dark:border-rose-900/40 rounded-xl p-3 flex justify-between items-center hover:shadow-md transition cursor-pointer" onclick="app.openCalendarDay('${group.date}')">
+                                        <div class="flex items-center gap-3 overflow-hidden">
+                                            <div class="text-xl text-rose-500 dark:text-rose-400 opacity-90"><i class="fa-solid fa-wrench"></i></div>
+                                            <div>
+                                                <div class="font-bold text-gray-800 dark:text-slate-100 text-sm truncate">🔧 ${escapeHtml(b.equipment_name || 'Equipment')}</div>
+                                                <div class="text-xs text-gray-400 dark:text-slate-400 flex items-center gap-2 mt-0.5">
+                                                    <span>${dateRangeStr}</span>
+                                                    <span>&bull;</span>
+                                                    <span class="text-rose-600 dark:text-rose-400 font-medium">${careInfo.label} (Lab Care+)</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <span class="badge ${careInfo.badgeClass}">${careInfo.label}</span>
+                                    </div>`;
+                                    return;
+                                }
+
                                 const eq = (this.state.equipments || []).find(e => String(e.id) === String(b.eqId || b.equipmentId));
                                 const eqName = eq ? eq.name : 'Unknown';
                                 const locName = eq ? (this.getLocName(eq.building_id, this.state.buildings || []) || '-') : '-';
@@ -4673,7 +5108,7 @@
                 const actionEl = document.getElementById('cal-day-header-action');
                 const contentEl = document.getElementById('cal-day-modal-content');
                 if (titleEl) {
-                    titleEl.innerHTML = `Bookings on ${moment(dateStr).format('D MMMM YYYY')} <span class="text-xs font-normal text-gray-500">(${items.length} ${items.length === 1 ? 'item' : 'items'})</span>`;
+                    titleEl.innerHTML = `Events on ${moment(dateStr).format('D MMMM YYYY')} <span class="text-xs font-normal text-gray-500">(${items.length} ${items.length === 1 ? 'item' : 'items'})</span>`;
                 }
                 if (actionEl) {
                     actionEl.innerHTML = `
@@ -4690,7 +5125,7 @@
                             <div class="w-14 h-14 rounded-2xl bg-teal-50 dark:bg-slate-800 flex items-center justify-center text-teal-600 dark:text-teal-400 mb-3 shadow-inner">
                                 <i class="fa-regular fa-calendar-check text-2xl"></i>
                             </div>
-                            <p class="font-bold text-gray-700 dark:text-slate-200 text-sm">No bookings scheduled for this date</p>
+                            <p class="font-bold text-gray-700 dark:text-slate-200 text-sm">No events or bookings scheduled for this date</p>
                             <p class="text-xs text-gray-500 dark:text-slate-400 mt-1 mb-4">Click below to reserve equipment on this date</p>
                             <button type="button" class="btn btn-primary text-xs px-4 py-2" onclick="app.closeModal('cal-day'); app.openAddEntry(null, '${dateStr}');">
                                 <i class="fa-solid fa-plus mr-1.5"></i> + Book Equipment for This Date
@@ -4698,49 +5133,77 @@
                         </div>`;
                     } else {
                         contentEl.innerHTML = items.map(b => {
-                        const eq = (this.state.equipments || []).find(e => String(e.id) === String(b.eqId || b.equipmentId));
-                        const eqName = eq ? eq.name : 'Unknown Equipment';
-                        const locName = eq ? (this.getLocName(eq.building_id, this.state.buildings || []) || '-') : '-';
-                        const status = this.getBookingStatus(b);
-                        const badge = this.getBadgeHTML(status);
+                            if (b.isCareRecord) {
+                                const careInfo = this.getCareStatusInfo(b);
+                                const dateRangeStr = (b.end_date && b.end_date !== b.service_date) ? `${b.service_date} ~ ${b.end_date}` : b.service_date;
+                                const provider = (b.technicians && b.technicians[0]) ? b.technicians[0] : (b.service_provider || '-');
+                                return `
+                                <div class="p-3.5 bg-rose-50/70 dark:bg-rose-950/20 border border-rose-200/80 dark:border-rose-800/60 rounded-xl flex flex-col sm:flex-row justify-between sm:items-center gap-3 hover:shadow-sm transition">
+                                    <div class="space-y-1">
+                                        <div class="flex items-center gap-2 flex-wrap">
+                                            <strong class="text-gray-900 dark:text-slate-100 text-sm sm:text-base font-bold">🔧 ${escapeHtml(b.equipment_name || 'Equipment')}</strong>
+                                            <span class="badge ${careInfo.badgeClass}"><i class="fa-solid ${careInfo.icon} mr-1"></i> ${careInfo.label}</span>
+                                            <span class="text-xs px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-semibold">Lab Care+</span>
+                                        </div>
+                                        <div class="text-xs text-gray-600 dark:text-slate-300 flex flex-wrap gap-x-3 gap-y-1">
+                                            <span>📍 <strong>Location:</strong> ${escapeHtml(b.building || '-')}</span>
+                                            <span>👤 <strong>Reporter:</strong> ${escapeHtml(b.reporter || '-')}</span>
+                                            <span>🛠️ <strong>Provider:</strong> ${escapeHtml(provider)}</span>
+                                        </div>
+                                        <div class="text-xs text-gray-600 dark:text-slate-300 flex flex-wrap gap-x-3 gap-y-1">
+                                            <span>📅 <strong>Service Dates:</strong> <span class="font-bold text-rose-700 dark:text-rose-400">${dateRangeStr}</span></span>
+                                            <span>📌 <strong>Status:</strong> <span class="font-semibold">${escapeHtml(b.calendar_status || 'Pending')}</span></span>
+                                        </div>
+                                    </div>
+                                    <a href="CarePlus.html" class="btn btn-outline text-xs px-3 py-2 self-end sm:self-center whitespace-nowrap flex items-center gap-1.5 text-rose-600 border-rose-200 hover:bg-rose-50" title="Open in Lab Care+">
+                                        <i class="fa-solid fa-screwdriver-wrench"></i> Open in Care+
+                                    </a>
+                                </div>`;
+                            }
 
-                        let totalMins = Number(b.durationMins);
-                        if (isNaN(totalMins) || totalMins <= 0) {
-                            const diff = new Date(b.end) - new Date(b.start);
-                            totalMins = !isNaN(diff) && diff > 0 ? Math.round(diff / 60000) : 0;
-                        }
-                        const durHours = Math.floor(totalMins / 60);
-                        const durRemMins = totalMins % 60;
-                        const durStr = durHours > 0 ? `${durHours} hr ${durRemMins > 0 ? durRemMins + ' mins' : ''}` : `${durRemMins} mins`;
+                            const eq = (this.state.equipments || []).find(e => String(e.id) === String(b.eqId || b.equipmentId));
+                            const eqName = eq ? eq.name : 'Unknown Equipment';
+                            const locName = eq ? (this.getLocName(eq.building_id, this.state.buildings || []) || '-') : '-';
+                            const status = this.getBookingStatus(b);
+                            const badge = this.getBadgeHTML(status);
 
-                        return `
-                        <div class="p-3.5 bg-gray-50/90 dark:bg-slate-800/90 border border-gray-200/70 dark:border-slate-700/70 rounded-xl flex flex-col sm:flex-row justify-between sm:items-center gap-3 hover:shadow-sm transition">
-                            <div class="space-y-1">
-                                <div class="flex items-center gap-2 flex-wrap">
-                                    <strong class="text-gray-900 dark:text-slate-100 text-sm sm:text-base font-bold">${escapeHtml(eqName)}</strong>
-                                    ${badge}
+                            let totalMins = Number(b.durationMins);
+                            if (isNaN(totalMins) || totalMins <= 0) {
+                                const diff = new Date(b.end) - new Date(b.start);
+                                totalMins = !isNaN(diff) && diff > 0 ? Math.round(diff / 60000) : 0;
+                            }
+                            const durHours = Math.floor(totalMins / 60);
+                            const durRemMins = totalMins % 60;
+                            const durStr = durHours > 0 ? `${durHours} hr ${durRemMins > 0 ? durRemMins + ' mins' : ''}` : `${durRemMins} mins`;
+
+                            return `
+                            <div class="p-3.5 bg-gray-50/90 dark:bg-slate-800/90 border border-gray-200/70 dark:border-slate-700/70 rounded-xl flex flex-col sm:flex-row justify-between sm:items-center gap-3 hover:shadow-sm transition">
+                                <div class="space-y-1">
+                                    <div class="flex items-center gap-2 flex-wrap">
+                                        <strong class="text-gray-900 dark:text-slate-100 text-sm sm:text-base font-bold">${escapeHtml(eqName)}</strong>
+                                        ${badge}
+                                    </div>
+                                    <div class="text-xs text-gray-600 dark:text-slate-300 flex flex-wrap gap-x-3 gap-y-1">
+                                        <span>📍 <strong>Location:</strong> ${escapeHtml(locName)}</span>
+                                        <span>👤 <strong>Booked by:</strong> ${escapeHtml(b.user || '-')}</span>
+                                    </div>
+                                    <div class="text-xs text-gray-600 dark:text-slate-300 flex flex-wrap gap-x-3 gap-y-1">
+                                        <span>⏰ <strong>Time:</strong> ${moment(b.start).format('HH:mm')} - ${moment(b.end).format('HH:mm')}</span>
+                                        <span>⏳ <strong>Duration:</strong> <span class="font-bold text-teal-700 dark:text-teal-300">${durStr}</span></span>
+                                    </div>
+                                    ${b.project ? `<div class="text-xs text-teal-700 dark:text-teal-300"><i class="fa-solid fa-diagram-project mr-1"></i> <strong>Project:</strong> ${escapeHtml(b.project)}</div>` : ''}
+                                    ${(b.desc || b.purpose) ? `<div class="text-xs text-gray-500 dark:text-slate-400">📝 <strong>Purpose:</strong> ${escapeHtml(b.desc || b.purpose)}</div>` : ''}
                                 </div>
-                                <div class="text-xs text-gray-600 dark:text-slate-300 flex flex-wrap gap-x-3 gap-y-1">
-                                    <span>📍 <strong>Location:</strong> ${escapeHtml(locName)}</span>
-                                    <span>👤 <strong>Booked by:</strong> ${escapeHtml(b.user || '-')}</span>
-                                </div>
-                                <div class="text-xs text-gray-600 dark:text-slate-300 flex flex-wrap gap-x-3 gap-y-1">
-                                    <span>⏰ <strong>Time:</strong> ${moment(b.start).format('HH:mm')} - ${moment(b.end).format('HH:mm')}</span>
-                                    <span>⏳ <strong>Duration:</strong> <span class="font-bold text-teal-700 dark:text-teal-300">${durStr}</span></span>
-                                </div>
-                                ${b.project ? `<div class="text-xs text-teal-700 dark:text-teal-300"><i class="fa-solid fa-diagram-project mr-1"></i> <strong>Project:</strong> ${escapeHtml(b.project)}</div>` : ''}
-                                ${(b.desc || b.purpose) ? `<div class="text-xs text-gray-500 dark:text-slate-400">📝 <strong>Purpose:</strong> ${escapeHtml(b.desc || b.purpose)}</div>` : ''}
-                            </div>
-                            <button type="button" class="btn btn-outline text-xs px-3 py-2 self-end sm:self-center whitespace-nowrap flex items-center gap-1.5" onclick="app.closeModal('cal-day'); app.showBookingDetails('${b.id}')">
-                                <i class="fa-solid fa-eye text-teal-600"></i> View Details
-                            </button>
-                        </div>`;
-                    }).join('');
+                                <button type="button" class="btn btn-outline text-xs px-3 py-2 self-end sm:self-center whitespace-nowrap flex items-center gap-1.5" onclick="app.closeModal('cal-day'); app.showBookingDetails('${b.id}')">
+                                    <i class="fa-solid fa-eye text-teal-600"></i> View Details
+                                </button>
+                            </div>`;
+                        }).join('');
+                    }
                 }
-            }
 
-            this.openModal('cal-day');
-        },
+                this.openModal('cal-day');
+            },
 
             renderCharts() {
                 if (!window.Chart) return;
@@ -5133,8 +5596,14 @@
 
                     if (statusFilter) {
                         const isBusy = this.isEquipmentInUse(eq.id);
-                        if (statusFilter === 'avail' && isBusy) return false;
-                        if (statusFilter === 'busy' && !isBusy) return false;
+                        const careRec = this.getEquipmentCareRecord(eq.name, eq.id);
+                        if (statusFilter === 'avail' && (isBusy || careRec)) return false;
+                        if (statusFilter === 'busy' && (!isBusy || careRec)) return false;
+                        if (statusFilter === 'care' && !careRec) return false;
+                        if (statusFilter === 'repair' && (!careRec || (careRec.type || '').toLowerCase() !== 'repair')) return false;
+                        if (statusFilter === 'calibration' && (!careRec || (careRec.type || '').toLowerCase() !== 'calibration')) return false;
+                        if (statusFilter === 'pm' && (!careRec || (careRec.type || '').toLowerCase() !== 'pm')) return false;
+                        if (statusFilter === 'spare' && (!careRec || !(careRec.type || '').toLowerCase().includes('spare'))) return false;
                     }
 
                     if (locFilter && String(eq.building_id) !== String(locFilter)) {
@@ -5179,11 +5648,13 @@
                         card.className = 'eq-card';
                         card.onclick = () => { window.location.hash = `#add?eq=${eq.id}`; };
 
-                        const isMaintenance = this.isEquipmentInMaintenance(eq.name, eq.id);
+                        const careRecord = this.getEquipmentCareRecord(eq.name, eq.id);
                         const isBusy = this.isEquipmentInUse(eq.id);
                         let statusBadge = '';
-                        if (isMaintenance) {
-                            statusBadge = `<span class="eq-card-status-pill eq-status-repair"><span class="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"></span> Maintenance</span>`;
+                        if (careRecord) {
+                            const careInfo = this.getCareStatusInfo(careRecord);
+                            const rangeStr = (careRecord.end_date && careRecord.end_date !== careRecord.service_date) ? `${careRecord.service_date} ~ ${careRecord.end_date}` : (careRecord.service_date || '');
+                            statusBadge = `<span class="eq-card-status-pill ${careInfo.badgeClass}" title="Lab Care+: ${careInfo.label} (${rangeStr})"><span class="w-1.5 h-1.5 rounded-full ${careInfo.dotClass} animate-pulse"></span> ${careInfo.label}</span>`;
                         } else if (isBusy) {
                             statusBadge = `<span class="eq-card-status-pill eq-status-busy"><span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span> In Use</span>`;
                         } else {
@@ -5313,6 +5784,17 @@
                 if (window.LabAudio) LabAudio.playClick();
                 this.dataTablePage = (this.dataTablePage || 1) + delta;
                 this.renderDataTable(false);
+            },
+
+            clearDataTableFilters() {
+                const sInput = document.getElementById('log-search-input');
+                const sStatus = document.getElementById('log-filter-status');
+                const sEq = document.getElementById('log-filter-eq');
+                if (sInput) sInput.value = '';
+                if (sStatus) sStatus.value = '';
+                if (sEq) sEq.value = '';
+                if (window.LabAudio) LabAudio.playClick();
+                this.renderDataTable(true);
             },
 
             renderDataTable(resetPage = false) {
@@ -5675,10 +6157,14 @@
                             if (!matchEq) return false;
                             if (r.calendar_status === 'complete') return false;
 
-                            const svcDate = moment(r.service_date, 'YYYY-MM-DD');
-                            const svcStart = svcDate.clone().startOf('day');
-                            const svcEnd = svcDate.clone().endOf('day');
-                            const overlapsSvc = currentStart.isBefore(svcEnd) && currentEnd.isAfter(svcStart);
+                            const sDateStr = r.service_date;
+                            const eDateStr = r.end_date || r.service_date;
+                            let overlapsSvc = false;
+                            if (sDateStr) {
+                                const svcStart = moment(sDateStr, 'YYYY-MM-DD').startOf('day');
+                                const svcEnd = moment(eDateStr, 'YYYY-MM-DD').endOf('day');
+                                overlapsSvc = currentStart.isBefore(svcEnd) && currentEnd.isAfter(svcStart);
+                            }
 
                             let overlapsNext = false;
                             if (r.type === 'calibration' && r.next_service_date) {
@@ -5689,9 +6175,13 @@
                         });
 
                         if (conflictingMaintenance) {
-                            const typeThai = conflictingMaintenance.type === 'repair' ? 'ซ่อมแซม (Repair)' :
-                                            (conflictingMaintenance.type === 'calibration' ? 'สอบเทียบ (Calibration)' : 'บำรุงรักษาเชิงป้องกัน (PM)');
-                            const targetDate = conflictingMaintenance.service_date || conflictingMaintenance.next_service_date;
+                            const cType = (conflictingMaintenance.type || '').toLowerCase();
+                            const typeThai = cType === 'repair' ? 'ซ่อมแซม (Repair)' :
+                                            (cType === 'calibration' ? 'สอบเทียบ (Calibration)' :
+                                            (cType === 'pm' ? 'บำรุงรักษาเชิงป้องกัน (PM)' : 'เบิก/เปลี่ยนอะไหล่ (Spare parts)'));
+                            const targetDate = (conflictingMaintenance.end_date && conflictingMaintenance.end_date !== conflictingMaintenance.service_date)
+                                ? `${conflictingMaintenance.service_date} ถึง ${conflictingMaintenance.end_date}`
+                                : (conflictingMaintenance.service_date || conflictingMaintenance.next_service_date || '-');
                             const provider = (conflictingMaintenance.technicians && conflictingMaintenance.technicians[0]) ? conflictingMaintenance.technicians[0] : '-';
                             const reporter = conflictingMaintenance.reporter || '-';
 

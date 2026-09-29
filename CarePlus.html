@@ -650,6 +650,100 @@
             background: linear-gradient(135deg, #0d9488, #2dd4bf);
         }
 
+        .bg-spare {
+            background: linear-gradient(135deg, #ea580c, #f97316);
+        }
+
+        /* Multi-day Spanning Bar for Monthly Calendar */
+        .cal-multiday-bar {
+            position: relative;
+            z-index: 5;
+            height: 22px;
+            line-height: 22px;
+            font-size: 10px;
+            font-weight: 600;
+            padding: 0 6px;
+            display: flex;
+            align-items: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            margin-bottom: 3px;
+            cursor: pointer;
+            transition: filter 0.15s ease, transform 0.15s ease;
+        }
+        .cal-multiday-bar:hover {
+            filter: brightness(1.08);
+            z-index: 10;
+        }
+        .cal-multiday-bar.span-start {
+            border-top-left-radius: 6px;
+            border-bottom-left-radius: 6px;
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+            margin-right: -7px;
+        }
+        .cal-multiday-bar.span-middle {
+            border-radius: 0;
+            margin-left: -7px;
+            margin-right: -7px;
+        }
+        .cal-multiday-bar.span-end {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+            border-top-right-radius: 6px;
+            border-bottom-right-radius: 6px;
+            margin-left: -7px;
+        }
+        .cal-multiday-bar.span-single {
+            border-radius: 6px;
+            margin-left: 0;
+            margin-right: 0;
+        }
+        .cal-multiday-bar.row-start {
+            border-top-left-radius: 6px !important;
+            border-bottom-left-radius: 6px !important;
+            margin-left: 0 !important;
+        }
+        .cal-multiday-bar.row-end {
+            border-top-right-radius: 6px !important;
+            border-bottom-right-radius: 6px !important;
+            margin-right: 0 !important;
+        }
+
+        @media (min-width: 640px) {
+            .cal-multiday-bar {
+                height: 24px;
+                line-height: 24px;
+                font-size: 11px;
+                padding: 0 8px;
+                margin-bottom: 4px;
+            }
+            .cal-multiday-bar.span-start {
+                margin-right: -9px;
+            }
+            .cal-multiday-bar.span-middle {
+                margin-left: -9px;
+                margin-right: -9px;
+            }
+            .cal-multiday-bar.span-end {
+                margin-left: -9px;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .cal-multiday-bar.span-start {
+                margin-right: -13px;
+            }
+            .cal-multiday-bar.span-middle {
+                margin-left: -13px;
+                margin-right: -13px;
+            }
+            .cal-multiday-bar.span-end {
+                margin-left: -13px;
+            }
+        }
 </style>
     
     <style>
@@ -1252,9 +1346,15 @@
                                 </select>
                             </div>
                             <div class="space-y-1">
-                                <label class="text-xs font-bold text-gray-500 uppercase ml-1">Date</label>
+                                <label class="text-xs font-bold text-gray-500 uppercase ml-1">Start Date / วันที่เริ่มต้น</label>
                                 <input type="date" id="serviceDate" required
-                                    class="w-full glass-input px-4 py-3 rounded-xl">
+                                    class="w-full glass-input px-4 py-3 rounded-xl"
+                                    onchange="if(document.getElementById('serviceEndDate') && !document.getElementById('serviceEndDate').value) document.getElementById('serviceEndDate').value = this.value;">
+                            </div>
+                            <div class="space-y-1">
+                                <label class="text-xs font-bold text-gray-500 uppercase ml-1">End Date / วันที่สิ้นสุด (ถ้ามากกว่า 1 วัน)</label>
+                                <input type="date" id="serviceEndDate"
+                                    class="w-full glass-input px-4 py-3 rounded-xl" placeholder="ปล่อยว่างหากเสร็จในวันเดียว">
                             </div>
                             <div id="nextServiceDateContainer" class="hidden space-y-1">
                                 <label class="text-xs font-bold text-blue-500 uppercase ml-1">Next Calibration
@@ -2787,40 +2887,169 @@ function loadDashboard() {
             const sourceRecords = data || records;
             let monthRecords = [];
 
+            const monthStartStr = `${year}-${String(month + 1).padStart(2, '0')}-01`;
+            const monthEndStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(daysInMonth).padStart(2, '0')}`;
+
+            // Normalize records into calendar events
+            const calEvents = [];
+            sourceRecords.forEach(r => {
+                const sDate = r.service_date || '';
+                const eDate = r.end_date || r.service_date || '';
+                if (sDate) {
+                    calEvents.push({
+                        id: r.id,
+                        equipment_name: r.equipment_name,
+                        building: r.building,
+                        type: r.type,
+                        startDate: sDate,
+                        endDate: eDate >= sDate ? eDate : sDate,
+                        calendar_status: r.calendar_status,
+                        maintenance_cost: r.maintenance_cost,
+                        technicians: r.technicians,
+                        reporter: r.reporter,
+                        model: r.model,
+                        isNextDue: false,
+                        raw: r
+                    });
+                }
+                // Next calibration due reminder
+                if (r.type === 'calibration' && r.next_service_date && r.next_service_date !== sDate) {
+                    calEvents.push({
+                        id: 'due-' + r.id,
+                        equipment_name: r.equipment_name,
+                        building: r.building,
+                        type: 'calibration',
+                        startDate: r.next_service_date,
+                        endDate: r.next_service_date,
+                        calendar_status: r.calendar_status,
+                        maintenance_cost: r.maintenance_cost,
+                        technicians: r.technicians,
+                        reporter: r.reporter,
+                        model: r.model,
+                        isNextDue: true,
+                        raw: r
+                    });
+                }
+            });
+
+            // Filter events that touch this month
+            const activeEvents = calEvents.filter(e => e.startDate <= monthEndStr && e.endDate >= monthStartStr);
+
+            // Separate multi-day events and single-day events
+            const multiDayEvents = activeEvents.filter(e => e.startDate < e.endDate);
+            const singleDayEvents = activeEvents.filter(e => e.startDate >= e.endDate);
+
+            // Sort multi-day by duration (descending), then startDate
+            multiDayEvents.sort((a, b) => {
+                const durA = new Date(a.endDate) - new Date(a.startDate);
+                const durB = new Date(b.endDate) - new Date(b.startDate);
+                if (durB !== durA) return durB - durA;
+                return a.startDate.localeCompare(b.startDate);
+            });
+
+            // Assign tracks for multi-day events
+            const dayTracks = {};
+            for (let d = 1; d <= daysInMonth; d++) {
+                dayTracks[d] = [];
+            }
+
+            multiDayEvents.forEach(evt => {
+                const sDay = evt.startDate < monthStartStr ? 1 : parseInt(evt.startDate.split('-')[2]);
+                const eDay = evt.endDate > monthEndStr ? daysInMonth : parseInt(evt.endDate.split('-')[2]);
+                
+                let track = 0;
+                while (true) {
+                    let fits = true;
+                    for (let d = sDay; d <= eDay; d++) {
+                        if (dayTracks[d][track]) { fits = false; break; }
+                    }
+                    if (fits) break;
+                    track++;
+                }
+                for (let d = sDay; d <= eDay; d++) {
+                    dayTracks[d][track] = evt;
+                }
+            });
+
             for (let i = 0; i < firstDay; i++) calendar.innerHTML += `<div class="opacity-0 pointer-events-none"></div>`;
+
+            const todayStr = new Date().toISOString().split('T')[0];
 
             for (let day = 1; day <= daysInMonth; day++) {
                 const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                const items = sourceRecords.filter(r => (r.type !== 'calibration' && r.service_date === dateStr) || (r.type === 'calibration' && r.next_service_date === dateStr));
+                const dow = (firstDay + day - 1) % 7; // 0=Sun, 6=Sat
 
-                if (items.length > 0) {
-                    monthRecords.push({ date: dateStr, items: items });
+                // All events active on dateStr
+                const dayItems = activeEvents.filter(e => dateStr >= e.startDate && dateStr <= e.endDate);
+
+                if (dayItems.length > 0) {
+                    monthRecords.push({ date: dateStr, items: dayItems.map(x => x.raw) });
                 }
 
-                const isToday = new Date().toISOString().split('T')[0] === dateStr;
+                const isToday = todayStr === dateStr;
 
                 let html = `<div class="text-right text-[10px] sm:text-xs font-bold ${isToday ? 'text-blue-600 dark:text-blue-400 font-extrabold' : 'text-gray-400 dark:text-slate-400'} mb-1">${day}</div>`;
 
-                items.slice(0, 3).forEach(i => {
-                    const bgClass = i.type === 'repair' ? 'bg-repair' : (i.type === 'pm' ? 'bg-pm' : 'bg-calib');
-                    const opacity = i.calendar_status === 'complete' ? 'opacity-50' : 'opacity-100';
-                    const model = getEquipmentModel(i);
-                    const modelSnippet = model ? ` <span class="opacity-90 font-normal">(${escapeHtml(model)})</span>` : '';
+                // Render multi-day tracks first
+                const tracksForDay = dayTracks[day] || [];
+                const maxTracksToShow = Math.min(2, Math.max(tracksForDay.length, 0));
+                let renderedMultiCount = 0;
 
-                    html += `<div class="cal-event-chip ${bgClass} ${opacity} whitespace-normal break-words leading-tight py-0.5 sm:py-1 px-1 sm:px-1.5 mb-0.5 sm:mb-1 border border-black/5 rounded text-[9px] sm:text-[11px] shadow-xs cursor-pointer">
-                        <span class="block truncate font-semibold">${escapeHtml(i.equipment_name)}${modelSnippet}</span>
-                        <span class="hidden sm:block text-[8px] sm:text-[9px] opacity-90 mt-0.5 border-t border-white/20 pt-0.5 truncate">${model ? '🏷️ ' + escapeHtml(model) + ' | ' : ''}📍 ${escapeHtml(i.building || 'N/A')}</span>
+                for (let t = 0; t < maxTracksToShow; t++) {
+                    const evt = tracksForDay[t];
+                    if (evt) {
+                        renderedMultiCount++;
+                        const isStart = dateStr === evt.startDate;
+                        const isEnd = dateStr === evt.endDate;
+                        const isRowStart = dow === 0;
+                        const isRowEnd = dow === 6;
+
+                        let spanClass = 'span-middle';
+                        if (isStart && isEnd) spanClass = 'span-single';
+                        else if (isStart) spanClass = 'span-start';
+                        else if (isEnd) spanClass = 'span-end';
+
+                        if (isRowStart && !isStart) spanClass += ' row-start';
+                        if (isRowEnd && !isEnd) spanClass += ' row-end';
+
+                        const bgClass = evt.type === 'repair' ? 'bg-repair' : (evt.type === 'pm' ? 'bg-pm' : (evt.type === 'spare_parts' ? 'bg-spare' : 'bg-calib'));
+                        const opacity = evt.calendar_status === 'complete' ? 'opacity-60' : 'opacity-100';
+                        const labelText = (isStart || isRowStart)
+                            ? `${escapeHtml(evt.equipment_name)}`
+                            : (isEnd ? `✓ ${escapeHtml(evt.equipment_name)}` : `→ ${escapeHtml(evt.equipment_name)}`);
+
+                        html += `<div class="cal-multiday-bar ${bgClass} ${spanClass} ${opacity} text-white cursor-pointer select-none" onclick="event.stopPropagation(); openCalendarDay('${dateStr}', ${JSON.stringify([evt.raw]).replace(/"/g, '&quot;')})" title="${escapeHtml(evt.equipment_name)} (${evt.startDate} ถึง ${evt.endDate})">
+                            <span class="truncate">${labelText}</span>
+                        </div>`;
+                    } else if (tracksForDay.some((_, idx) => idx > t && tracksForDay[idx])) {
+                        // Empty slot to maintain vertical grid alignment across cells if a higher track is present
+                        html += `<div class="h-[22px] sm:h-[24px] mb-[3px] sm:mb-[4px] pointer-events-none"></div>`;
+                    }
+                }
+
+                // Render single-day events
+                const singleOnDay = singleDayEvents.filter(e => e.startDate === dateStr);
+                const remainingSlots = Math.max(0, 3 - renderedMultiCount);
+                singleOnDay.slice(0, remainingSlots).forEach(i => {
+                    const bgClass = i.type === 'repair' ? 'bg-repair' : (i.type === 'pm' ? 'bg-pm' : (i.type === 'spare_parts' ? 'bg-spare' : 'bg-calib'));
+                    const opacity = i.calendar_status === 'complete' ? 'opacity-60' : 'opacity-100';
+                    const duePrefix = i.isNextDue ? '⚖️ Due: ' : '';
+
+                    html += `<div class="cal-event-chip ${bgClass} ${opacity} whitespace-normal break-words leading-tight py-0.5 sm:py-1 px-1 sm:px-1.5 mb-0.5 sm:mb-1 border border-black/5 rounded text-[9px] sm:text-[11px] shadow-xs cursor-pointer" onclick="event.stopPropagation(); openCalendarDay('${dateStr}', ${JSON.stringify([i.raw]).replace(/"/g, '&quot;')})" title="${escapeHtml(i.equipment_name)}">
+                        <span class="block truncate font-semibold">${duePrefix}${escapeHtml(i.equipment_name)}</span>
                      </div>`;
                 });
 
-                if (items.length > 3) {
-                    html += `<div class="text-[8px] sm:text-[10px] font-bold text-blue-600 dark:text-blue-400 text-center sm:text-left leading-none">+${items.length - 3} more</div>`;
+                const totalItemsToday = dayItems.length;
+                const shownItemsToday = renderedMultiCount + Math.min(singleOnDay.length, remainingSlots);
+                if (totalItemsToday > shownItemsToday) {
+                    html += `<div class="text-[8px] sm:text-[10px] font-bold text-blue-600 dark:text-blue-400 text-center sm:text-left leading-none cursor-pointer" onclick="event.stopPropagation(); openCalendarDay('${dateStr}', ${JSON.stringify(dayItems.map(x=>x.raw)).replace(/"/g, '&quot;')})">+${totalItemsToday - shownItemsToday} more</div>`;
                 }
 
                 const div = document.createElement('div');
                 div.className = `calendar-day ${isToday ? 'today' : ''} cursor-pointer`;
                 div.innerHTML = html;
-                div.onclick = () => openCalendarDay(dateStr, items);
+                div.onclick = () => openCalendarDay(dateStr, dayItems.map(x => x.raw));
                 calendar.appendChild(div);
             }
 
@@ -2843,6 +3072,11 @@ function loadDashboard() {
                         let typeIcon = '🔧'; let typeText = 'text-orange-600';
                         if (i.type === 'calibration') { typeIcon = '⚖️'; typeText = 'text-purple-600'; }
                         else if (i.type === 'pm') { typeIcon = '🛡️'; typeText = 'text-teal-600'; }
+                        else if (i.type === 'spare_parts') { typeIcon = '⚙️'; typeText = 'text-amber-600'; }
+
+                        const dateRangeLabel = (i.end_date && i.end_date !== i.service_date)
+                            ? `<span class="text-[10px] text-blue-600 font-semibold bg-blue-50 px-1.5 py-0.5 rounded ml-1">📅 ${i.service_date} ~ ${i.end_date}</span>`
+                            : '';
 
                         listHtml += `
                     <div class="bg-white border border-gray-100 rounded-xl p-3 flex justify-between items-center hover:shadow-md transition cursor-pointer" onclick="openCalendarDay('${group.date}', ${JSON.stringify(group.items).replace(/"/g, '&quot;')})">
@@ -2852,6 +3086,7 @@ function loadDashboard() {
                                 <div class="font-bold text-gray-800 text-sm flex flex-wrap items-center gap-1.5">
                                     <span>${escapeHtml(i.equipment_name)}</span>
                                     ${model ? `<span class="text-[10px] font-semibold text-teal-700 bg-teal-50 px-1.5 py-0.2 rounded border border-teal-200">🏷️ ${escapeHtml(model)}</span>` : ''}
+                                    ${dateRangeLabel}
                                 </div>
                                 <div class="text-[10px] text-gray-500 font-medium">📍 ${escapeHtml(i.building || 'N/A')} | 🏢 ${escapeHtml(i.technicians[0] || '-')}</div>
                             </div>
@@ -2887,10 +3122,13 @@ function loadDashboard() {
             }
         }
         function openCalendarDay(dateStr, items) {
-            if (items.length === 0) {
+            if (!items || items.length === 0) {
                 showPage('addRecord');
                 setTimeout(() => {
-                    document.getElementById('serviceDate').value = dateStr;
+                    const s = document.getElementById('serviceDate');
+                    const e = document.getElementById('serviceEndDate');
+                    if (s) s.value = dateStr;
+                    if (e) e.value = dateStr;
                 }, 50);
                 return;
             }
@@ -2927,6 +3165,9 @@ function loadDashboard() {
                 } else if (i.type === 'pm') {
                     typeIcon = '🛡️';
                     typeStyle = 'text-teal-600 bg-teal-50';
+                } else if (i.type === 'spare_parts') {
+                    typeIcon = '⚙️';
+                    typeStyle = 'text-amber-600 bg-amber-50';
                 }
 
                 const poFilesCount = (i.po_files && i.po_files.length) || (i.po_file ? 1 : 0) || (poFilesDb[i.id] && poFilesDb[i.id].length) || 0;
@@ -3617,11 +3858,12 @@ function renderCharts(data) {
 
                 const tr = document.createElement('tr');
                 tr.className = "group border-b border-gray-100 hover:bg-white/60 transition-colors";
+                const dateDisplay = (r.end_date && r.end_date !== r.service_date) ? `${r.service_date} ~ ${r.end_date}` : r.service_date;
                 tr.innerHTML = `
             <td class="px-3 py-4 text-center font-mono text-xs text-gray-400 font-semibold">${start + i + 1}</td>
             <td class="px-4 py-4 min-w-[220px] break-words whitespace-normal"><div class="font-semibold text-gray-800 flex flex-wrap items-center gap-1">${escapeHtml(r.equipment_name)}${modelTag}</div><div class="text-[10px] text-gray-400 font-bold uppercase tracking-wide">📍 ${escapeHtml(r.building || 'N/A')}</div></td>
             <td class="px-4 py-4 min-w-[120px]"><span class="w-2 h-2 rounded-full inline-block mr-2 ${typeColor}"></span><span class="text-sm text-gray-600">${typeLabel}</span></td>
-            <td class="px-4 py-4 min-w-[110px] text-gray-500 font-mono text-xs">${r.service_date}</td>
+            <td class="px-4 py-4 min-w-[120px] text-gray-500 font-mono text-xs">${dateDisplay}</td>
             <td class="px-4 py-4 min-w-[120px] text-right font-medium text-gray-700">฿${formatCurrency(r.maintenance_cost)}</td>
             <td class="px-4 py-4 min-w-[180px] break-words whitespace-normal text-gray-600 text-xs">${r.technicians[0] || '-'}</td>
             <td class="px-4 py-4 min-w-[150px] break-words whitespace-normal text-gray-600 text-xs">${r.reporter || '-'}</td>
@@ -4856,6 +5098,7 @@ function renderCharts(data) {
             if (bObj) { document.getElementById('buildingSelect').value = bObj.id; updateEquipmentOptions(); document.getElementById('equipmentSelect').value = r.equipment_name; }
             document.getElementById('serviceType').value = r.type; toggleServiceFields();
             document.getElementById('serviceDate').value = r.service_date;
+            if (document.getElementById('serviceEndDate')) document.getElementById('serviceEndDate').value = r.end_date || r.service_date || '';
             if (r.next_service_date) document.getElementById('nextServiceDate').value = r.next_service_date;
             document.getElementById('maintenanceCost').value = r.maintenance_cost;
             document.getElementById('technicianSelect').value = r.technicians[0] || '';
@@ -4914,6 +5157,7 @@ function renderCharts(data) {
         function loadAddRecordForm() {
             document.getElementById('addRecordForm').reset();
             document.getElementById('editRecordId').value = '';
+            if (document.getElementById('serviceEndDate')) document.getElementById('serviceEndDate').value = '';
             tempPoFiles = [];
             document.getElementById('poFilesList').innerHTML = '';
             document.getElementById('existingPoLabel').classList.add('hidden');
@@ -4955,11 +5199,14 @@ function renderCharts(data) {
             const buildingName = bSel.options[bSel.selectedIndex].text;
             const selectedEqVal = document.getElementById('equipmentSelect').value;
             const eqObjPre = equipment.find(eq => eq.name === selectedEqVal || String(eq.id) === String(selectedEqVal));
+            const sDateVal = document.getElementById('serviceDate').value;
+            const eDateVal = document.getElementById('serviceEndDate')?.value || sDateVal;
             const recordData = {
                 equipment_name: selectedEqVal,
                 building: buildingName,
                 type: document.getElementById('serviceType').value,
-                service_date: document.getElementById('serviceDate').value,
+                service_date: sDateVal,
+                end_date: eDateVal >= sDateVal ? eDateVal : sDateVal,
                 next_service_date: document.getElementById('nextServiceDate').value,
                 maintenance_cost: document.getElementById('maintenanceCost').value,
                 technicians: [document.getElementById('technicianSelect').value],
