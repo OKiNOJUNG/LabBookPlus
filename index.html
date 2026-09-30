@@ -2430,6 +2430,10 @@
                     <option value="inuse">In Use</option>
                     <option value="finished">Finished</option>
                 </select>
+                <select id="log-filter-loc" onchange="app.renderDataTable(true)"
+                    class="glass-input px-3 py-2 rounded-xl text-sm min-w-[150px]">
+                    <option value="">All Areas</option>
+                </select>
                 <select id="log-filter-eq" onchange="app.renderDataTable(true)"
                     class="glass-input px-3 py-2 rounded-xl text-sm min-w-[160px]">
                     <option value="">All Equipments</option>
@@ -3883,14 +3887,7 @@
                 }
                 if (viewId === 'data-table-view') {
                     window.location.hash = 'datatable';
-
-                    const eqSelect = document.getElementById('log-filter-eq');
-                    if (eqSelect.options.length <= 1) {
-                        this.state.equipments.forEach(e => {
-                            eqSelect.add(new Option(e.name, e.id));
-                        });
-                    }
-
+                    this.populateDataTableFilters();
                     this.renderDataTable();
                 }
                 if (viewId === 'admin-view') {
@@ -4150,7 +4147,12 @@
                 this.eqAdminPage_ = this.eqAdminPage_ || 0;
                 const locSelect = document.getElementById('adminEqLoc');
                 if (locSelect) {
-                    locSelect.innerHTML = '<option value="">--Select Location--</option>' + (this.state.buildings || []).map(b => `<option value="${b.id}">${b.name}</option>`).join('');
+                    const sortedBuildings = [...(this.state.buildings || [])].sort((a, b) => {
+                        const nameA = (typeof a === 'object' ? a.name : a) || '';
+                        const nameB = (typeof b === 'object' ? b.name : b) || '';
+                        return nameA.localeCompare(nameB, 'th', { numeric: true, sensitivity: 'base' });
+                    });
+                    locSelect.innerHTML = '<option value="">--Select Location--</option>' + sortedBuildings.map(b => `<option value="${b.id}">${escapeHtml(b.name)}</option>`).join('');
                 }
                 const tbody = document.getElementById('admin-eq-tbody');
                 if (!tbody) return;
@@ -4581,17 +4583,31 @@
                 const locSelect = document.getElementById('cal-filter-loc');
                 const eqSelect = document.getElementById('cal-filter-eq');
 
-                if (locSelect && locSelect.options.length <= 1) {
+                if (locSelect) {
+                    const curLoc = locSelect.value;
                     locSelect.innerHTML = '<option value="">All Areas</option>';
-                    (this.state.buildings || []).forEach(a => {
+                    const sortedBuildings = [...(this.state.buildings || [])].sort((a, b) => {
+                        const nameA = (typeof a === 'object' ? a.name : a) || '';
+                        const nameB = (typeof b === 'object' ? b.name : b) || '';
+                        return nameA.localeCompare(nameB, 'th', { numeric: true, sensitivity: 'base' });
+                    });
+                    sortedBuildings.forEach(a => {
                         const name = typeof a === 'object' ? a.name : a;
                         const val = typeof a === 'object' ? a.id : a;
                         locSelect.add(new Option(name, val));
                     });
+                    if (curLoc) locSelect.value = curLoc;
                 }
-                if (eqSelect && eqSelect.options.length <= 1) {
+                if (eqSelect) {
+                    const curEq = eqSelect.value;
                     eqSelect.innerHTML = '<option value="">All Equipments</option>';
-                    (this.state.equipments || []).forEach(e => eqSelect.add(new Option(e.name, e.id)));
+                    const sortedEquipments = [...(this.state.equipments || [])].sort((a, b) => {
+                        const nameA = (a && a.name) || '';
+                        const nameB = (b && b.name) || '';
+                        return nameA.localeCompare(nameB, 'th', { numeric: true, sensitivity: 'base' });
+                    });
+                    sortedEquipments.forEach(e => eqSelect.add(new Option(e.name, e.id)));
+                    if (curEq) eqSelect.value = curEq;
                 }
             },
 
@@ -5644,7 +5660,7 @@
                     grouped[locName].push(eq);
                 });
 
-                Object.keys(grouped).sort().forEach(loc => {
+                Object.keys(grouped).sort((a, b) => a.localeCompare(b, 'th', { numeric: true, sensitivity: 'base' })).forEach(loc => {
                     const groupDiv = document.createElement('div');
                     groupDiv.className = 'location-group';
 
@@ -5656,7 +5672,7 @@
                     const grid = document.createElement('div');
                     grid.className = 'equipment-grid';
 
-                    grouped[loc].forEach(eq => {
+                    grouped[loc].sort((a, b) => (a.name || '').localeCompare(b.name || '', 'th', { numeric: true, sensitivity: 'base' })).forEach(eq => {
                         const card = document.createElement('div');
                         card.className = 'eq-card';
                         card.onclick = () => { window.location.hash = `#add?eq=${eq.id}`; };
@@ -5712,8 +5728,13 @@
                 const locSelect = document.getElementById('equipment-filter-loc');
                 if (!locSelect) return;
                 const currentVal = locSelect.value;
+                const sortedBuildings = [...(this.state.buildings || [])].sort((a, b) => {
+                    const nameA = (typeof a === 'object' ? a.name : a) || '';
+                    const nameB = (typeof b === 'object' ? b.name : b) || '';
+                    return nameA.localeCompare(nameB, 'th', { numeric: true, sensitivity: 'base' });
+                });
                 locSelect.innerHTML = '<option value="">All Locations</option>' +
-                    (this.state.buildings || []).map(b => `<option value="${b.id}">${escapeHtml(b.name)}</option>`).join('');
+                    sortedBuildings.map(b => `<option value="${b.id}">${escapeHtml(b.name)}</option>`).join('');
                 if (currentVal) locSelect.value = currentVal;
             },
 
@@ -5802,12 +5823,46 @@
             clearDataTableFilters() {
                 const sInput = document.getElementById('log-search-input');
                 const sStatus = document.getElementById('log-filter-status');
+                const sLoc = document.getElementById('log-filter-loc');
                 const sEq = document.getElementById('log-filter-eq');
                 if (sInput) sInput.value = '';
                 if (sStatus) sStatus.value = '';
+                if (sLoc) sLoc.value = '';
                 if (sEq) sEq.value = '';
                 if (window.LabAudio) LabAudio.playClick();
                 this.renderDataTable(true);
+            },
+
+            populateDataTableFilters() {
+                const locSelect = document.getElementById('log-filter-loc');
+                if (locSelect) {
+                    const curLoc = locSelect.value;
+                    locSelect.innerHTML = '<option value="">All Areas</option>';
+                    const sortedBuildings = [...(this.state.buildings || [])].sort((a, b) => {
+                        const nameA = (typeof a === 'object' ? a.name : a) || '';
+                        const nameB = (typeof b === 'object' ? b.name : b) || '';
+                        return nameA.localeCompare(nameB, 'th', { numeric: true, sensitivity: 'base' });
+                    });
+                    sortedBuildings.forEach(a => {
+                        const name = typeof a === 'object' ? a.name : a;
+                        const val = typeof a === 'object' ? a.id : a;
+                        locSelect.add(new Option(name, val));
+                    });
+                    if (curLoc) locSelect.value = curLoc;
+                }
+
+                const eqSelect = document.getElementById('log-filter-eq');
+                if (eqSelect) {
+                    const curEq = eqSelect.value;
+                    eqSelect.innerHTML = '<option value="">All Equipments</option>';
+                    const sortedEquipments = [...(this.state.equipments || [])].sort((a, b) => {
+                        const nameA = (a && a.name) || '';
+                        const nameB = (b && b.name) || '';
+                        return nameA.localeCompare(nameB, 'th', { numeric: true, sensitivity: 'base' });
+                    });
+                    sortedEquipments.forEach(e => eqSelect.add(new Option(e.name, e.id)));
+                    if (curEq) eqSelect.value = curEq;
+                }
             },
 
             renderDataTable(resetPage = false) {
@@ -5820,6 +5875,7 @@
                 const filterInput = document.getElementById('log-search-input');
                 const filterText = (filterInput ? filterInput.value : '').toLowerCase().trim();
                 const statusFilter = document.getElementById('log-filter-status')?.value || '';
+                const locFilter = document.getElementById('log-filter-loc')?.value || '';
                 const eqFilter = document.getElementById('log-filter-eq')?.value || '';
 
                 const tbody = document.getElementById('data-table-tbody');
@@ -5831,12 +5887,15 @@
                     .sort((a, b) => new Date(b.start) - new Date(a.start));
 
                 const filtered = sorted.filter(b => {
+                    const eq = this.findEquipment(b);
                     const eqName = this.getBookingEquipmentName(b);
                     const status = this.getBookingStatus(b);
 
                     if (statusFilter && status.toLowerCase() !== statusFilter.toLowerCase()) return false;
+                    if (locFilter) {
+                        if (!eq || String(eq.building_id) !== String(locFilter)) return false;
+                    }
                     if (eqFilter) {
-                        const eq = this.findEquipment(b);
                         const matchId = eq ? String(eq.id) : String(b.eqId || b.equipmentId);
                         if (matchId !== String(eqFilter)) return false;
                     }
@@ -5970,8 +6029,12 @@
                 document.getElementById('bk-repeat-section').classList.remove('hidden');
 
                 const areaSelect = document.getElementById('bk-area');
-                const areas = this.state.buildings || [];
-                areaSelect.innerHTML = '<option value="">เลือกพื้นที่ / อาคาร (Select Area)</option>' + areas.map(a => `<option value="${a.id}">${a.name}</option>`).join('');
+                const areas = [...(this.state.buildings || [])].sort((a, b) => {
+                    const nameA = (typeof a === 'object' ? a.name : a) || '';
+                    const nameB = (typeof b === 'object' ? b.name : b) || '';
+                    return nameA.localeCompare(nameB, 'th', { numeric: true, sensitivity: 'base' });
+                });
+                areaSelect.innerHTML = '<option value="">เลือกพื้นที่ / อาคาร (Select Area)</option>' + areas.map(a => `<option value="${a.id}">${escapeHtml(a.name)}</option>`).join('');
 
                 if (eqId) {
                     const eq = (this.state.equipments || []).find(e => String(e.id) === String(eqId));
@@ -6007,8 +6070,9 @@
                 if (area) localStorage.setItem('last_selected_area', area);
                 const eqSelect = document.getElementById('bk-equipment');
                 eqSelect.innerHTML = '<option value="">เลือกเครื่องมือ (Select Equipment)</option>';
-                const eqs = area ? this.state.equipments.filter(e => e.building_id == area) : this.state.equipments;
-                eqSelect.innerHTML += eqs.map(e => `<option value="${e.id}">${e.name}${e.model && e.model !== '-' ? ' (' + e.model + ')' : ''}</option>`).join('');
+                const eqs = area ? (this.state.equipments || []).filter(e => String(e.building_id) === String(area)) : [...(this.state.equipments || [])];
+                eqs.sort((a, b) => (a.name || '').localeCompare(b.name || '', 'th', { numeric: true, sensitivity: 'base' }));
+                eqSelect.innerHTML += eqs.map(e => `<option value="${e.id}">${escapeHtml(e.name)}${e.model && e.model !== '-' ? ' (' + escapeHtml(e.model) + ')' : ''}</option>`).join('');
                 if (selectEqId) eqSelect.value = String(selectEqId);
             },
 

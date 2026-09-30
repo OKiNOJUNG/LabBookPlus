@@ -200,7 +200,36 @@
                 purpose: "50L Pilot Yeast culture run"
             }
         ],
-        auditLogs: []
+        auditLogs: [
+            {
+                id: 1770450000000,
+                timestamp: "2024-07-16T08:30:00.000Z",
+                user: "Administrator",
+                action: "System Init",
+                details: "ระบบ MPIR Lab Suite เริ่มต้นฐานข้อมูล Seed Data สมบูรณ์"
+            },
+            {
+                id: 1770458821533,
+                timestamp: "2024-07-16T10:15:00.000Z",
+                user: "Kridsana Krisomdee",
+                action: "Add Record",
+                details: "บันทึกการ Calibration: Pilot Spray Dry (บ.เกรทเทค ไซเบอร์เนติกส์)"
+            },
+            {
+                id: 1770460788184,
+                timestamp: "2024-08-09T14:20:00.000Z",
+                user: "Kridsana Krisomdee",
+                action: "Add Record",
+                details: "บันทึกการ Repair: Centrifuge Floor Type (บ.เอ็นวิชั่น แล็บซิสเต็ม)"
+            },
+            {
+                id: 1770464269413,
+                timestamp: "2025-10-16T09:00:00.000Z",
+                user: "Kridsana Krisomdee",
+                action: "Add Record",
+                details: "บันทึกการ Calibration: Moisture analyzer (บ.เมทเล่อร์-โทเลโด)"
+            }
+        ]
     };
 
     // --- 1.5 High-Ratio Document & PDF Compressor (LabCompressor) ---
@@ -530,14 +559,21 @@
                     state.bookings = JSON.parse(JSON.stringify(SEED_DATA.bookings || []));
                     modified = true;
                 }
-                if (!Array.isArray(state.auditLogs)) {
+                if (!Array.isArray(state.auditLogs) || state.auditLogs.length === 0) {
                     try {
                         const legacyAudit = localStorage.getItem('carePlusAuditLog');
-                        state.auditLogs = legacyAudit ? JSON.parse(legacyAudit) : [];
-                    } catch (e) {
-                        state.auditLogs = [];
+                        if (legacyAudit) {
+                            const parsed = JSON.parse(legacyAudit);
+                            if (Array.isArray(parsed) && parsed.length > 0) {
+                                state.auditLogs = parsed;
+                                modified = true;
+                            }
+                        }
+                    } catch (e) {}
+                    if (!Array.isArray(state.auditLogs) || state.auditLogs.length === 0) {
+                        state.auditLogs = JSON.parse(JSON.stringify(SEED_DATA.auditLogs || []));
+                        modified = true;
                     }
-                    modified = true;
                 }
                 // Harmonize booking equipment identifiers (both eqId and equipmentId) and resolve equipmentName
                 state.bookings.forEach(b => {

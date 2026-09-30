@@ -1966,6 +1966,15 @@
         let equipment = _backupData.equipment || [];
         let poFilesDb = {};
 
+        if (!_backupData.auditLogs || !Array.isArray(_backupData.auditLogs) || _backupData.auditLogs.length === 0) {
+            _backupData.auditLogs = [
+                { id: 1770450000000, timestamp: "2024-07-16T08:30:00.000Z", user: "Administrator", action: "System Init", details: "ระบบ MPIR Lab Care+ เริ่มต้นฐานข้อมูลสมบูรณ์" },
+                { id: 1770458821533, timestamp: "2024-07-16T10:15:00.000Z", user: "Kridsana Krisomdee", action: "Add Record", details: "บันทึกการ Calibration: Pilot Spray Dry (บ.เกรทเทค ไซเบอร์เนติกส์)" },
+                { id: 1770460788184, timestamp: "2024-08-09T14:20:00.000Z", user: "Kridsana Krisomdee", action: "Add Record", details: "บันทึกการ Repair: Centrifuge Floor Type (บ.เอ็นวิชั่น แล็บซิสเต็ม)" },
+                { id: 1770464269413, timestamp: "2025-10-16T09:00:00.000Z", user: "Kridsana Krisomdee", action: "Add Record", details: "บันทึกการ Calibration: Moisture analyzer (บ.เมทเล่อร์-โทเลโด)" }
+            ];
+        }
+
         // Early sync from LabStateBridge if present
         if (typeof LabStateBridge !== 'undefined') {
             try {
@@ -2133,8 +2142,24 @@
                 } else if ((!buildings || buildings.length === 0) && Array.isArray(_backupData.buildings)) {
                     buildings = JSON.parse(JSON.stringify(_backupData.buildings));
                 }
-                if (Array.isArray(state.auditLogs)) {
+                if (Array.isArray(state.auditLogs) && state.auditLogs.length > 0) {
                     localStorage.setItem('carePlusAuditLog', JSON.stringify(state.auditLogs));
+                } else {
+                    try {
+                        const localAudit = JSON.parse(localStorage.getItem('carePlusAuditLog') || '[]');
+                        if (Array.isArray(localAudit) && localAudit.length > 0) {
+                            state.auditLogs = localAudit;
+                            if (typeof LabStateBridge !== 'undefined') {
+                                LabStateBridge.saveState({ ...state, auditLogs: localAudit }, true);
+                            }
+                        } else if (Array.isArray(_backupData.auditLogs) && _backupData.auditLogs.length > 0) {
+                            state.auditLogs = JSON.parse(JSON.stringify(_backupData.auditLogs));
+                            localStorage.setItem('carePlusAuditLog', JSON.stringify(state.auditLogs));
+                            if (typeof LabStateBridge !== 'undefined') {
+                                LabStateBridge.saveState({ ...state, auditLogs: state.auditLogs }, true);
+                            }
+                        }
+                    } catch (e) {}
                 }
                 if (state.poFilesDb) {
                     poFilesDb = { ...poFilesDb, ...state.poFilesDb }; // Fallback
@@ -2787,11 +2812,12 @@ function loadDashboard() {
         function initDashboardFilters() {
             const populate = (id, list) => {
                 const el = document.getElementById(id);
+                if (!el) return;
                 const currentVal = el.value;
-                el.innerHTML = el.firstElementChild.outerHTML;
-                const uniqueItems = [...new Set(list)].sort();
+                el.innerHTML = el.firstElementChild ? el.firstElementChild.outerHTML : '<option value="">All</option>';
+                const uniqueItems = [...new Set(list)].sort((a, b) => String(a).localeCompare(String(b), 'th', { numeric: true, sensitivity: 'base' }));
                 uniqueItems.forEach(item => {
-                    if (item) el.innerHTML += `<option value="${item}">${item}</option>`;
+                    if (item) el.innerHTML += `<option value="${escapeHtml(item)}">${escapeHtml(item)}</option>`;
                 });
                 el.value = currentVal;
             };
@@ -4050,7 +4076,14 @@ function renderCharts(data) {
                     }
                 }
                 const raw = localStorage.getItem(CAREPLUS_AUDIT_KEY);
-                return raw ? JSON.parse(raw) : [];
+                if (raw) {
+                    const parsed = JSON.parse(raw);
+                    if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+                }
+                if (typeof _backupData !== 'undefined' && Array.isArray(_backupData.auditLogs) && _backupData.auditLogs.length > 0) {
+                    return JSON.parse(JSON.stringify(_backupData.auditLogs));
+                }
+                return [];
             } catch { return []; }
         }
 
@@ -4616,7 +4649,7 @@ function renderCharts(data) {
             const filteredLocs = buildings.filter(b => {
                 if (!q) return true;
                 return (b.name || '').toLowerCase().includes(q);
-            });
+            }).sort((a, b) => (a.name || '').localeCompare(b.name || '', 'th', { numeric: true, sensitivity: 'base' }));
 
             if (countEl) {
                 countEl.textContent = q ? `${filteredLocs.length} / ${buildings.length} รายการ` : `${buildings.length} รายการ`;
@@ -4673,6 +4706,7 @@ function renderCharts(data) {
                     });
                 }
                 saveCarePlusState();
+                addCarePlusAudit('Update Location', `แก้ไขสถานที่ "${id}" เป็น "${name}"`);
                 LabAlert.toast('success', 'แก้ไขข้อมูลสถานที่เรียบร้อย');
             } else {
                 if (buildings.some(x => (x.name || '').toLowerCase() === name.toLowerCase())) {
@@ -4681,6 +4715,7 @@ function renderCharts(data) {
                 }
                 buildings.push({ id: Date.now(), name });
                 saveCarePlusState();
+                addCarePlusAudit('Add Location', `เพิ่มสถานที่ใหม่ "${name}"`);
                 LabAlert.toast('success', 'เพิ่มสถานที่ใหม่เรียบร้อย');
             }
             renderAdminLocations();
@@ -4708,6 +4743,7 @@ function renderCharts(data) {
                 if (confirmed) {
                     buildings = buildings.filter(x => String(x.id) !== String(id));
                     saveCarePlusState();
+                    addCarePlusAudit('Delete Location', `ลบสถานที่ "${b.name}"`);
                     renderAdminLocations();
                     renderAdminEquipment();
                     LabAlert.toast('success', 'ลบสถานที่เรียบร้อย');
@@ -4728,7 +4764,7 @@ function renderCharts(data) {
             const filteredComps = technicians.filter(t => {
                 if (!q) return true;
                 return (t || '').toLowerCase().includes(q);
-            });
+            }).sort((a, b) => (a || '').localeCompare(b || '', 'th', { numeric: true, sensitivity: 'base' }));
 
             if (countEl) {
                 countEl.textContent = q ? `${filteredComps.length} / ${technicians.length} รายการ` : `${technicians.length} รายการ`;
@@ -4784,6 +4820,7 @@ function renderCharts(data) {
                     }
                 });
                 saveCarePlusState();
+                addCarePlusAudit('Update Provider', `แก้ไขผู้ให้บริการ "${oldName}" เป็น "${name}"`);
                 LabAlert.toast('success', 'แก้ไขผู้ให้บริการเรียบร้อย');
             } else {
                 if (technicians.some(t => t.toLowerCase() === name.toLowerCase())) {
@@ -4792,6 +4829,7 @@ function renderCharts(data) {
                 }
                 technicians.push(name);
                 saveCarePlusState();
+                addCarePlusAudit('Add Provider', `เพิ่มผู้ให้บริการใหม่ "${name}"`);
                 LabAlert.toast('success', 'เพิ่มผู้ให้บริการใหม่เรียบร้อย');
             }
             renderAdminCompanies();
@@ -4812,6 +4850,7 @@ function renderCharts(data) {
                 if (confirmed) {
                     technicians = technicians.filter(t => t !== name);
                     saveCarePlusState();
+                    addCarePlusAudit('Delete Provider', `ลบผู้ให้บริการ "${name}"`);
                     renderAdminCompanies();
                     LabAlert.toast('success', 'ลบผู้ให้บริการเรียบร้อย');
                 }
@@ -4821,7 +4860,8 @@ function renderCharts(data) {
         function renderAdminEquipment() {
             const locSelect = document.getElementById('adminEquipLoc');
             if (locSelect) {
-                const sortedBuildings = [...(buildings || [])].sort((a, b) => (a.name || '').localeCompare(b.name || '', undefined, { numeric: true, sensitivity: 'base' }));
+                const currentVal = locSelect.value;
+                const sortedBuildings = [...(buildings || [])].sort((a, b) => (a.name || '').localeCompare(b.name || '', 'th', { numeric: true, sensitivity: 'base' }));
                 locSelect.innerHTML = sortedBuildings.map(b => `<option value="${b.id}">${escapeHtml(b.name)}</option>`).join('');
                 if (currentVal && buildings.some(b => String(b.id) === String(currentVal))) {
                     locSelect.value = currentVal;
@@ -4843,7 +4883,7 @@ function renderCharts(data) {
                 const eqModel = (e.model || '').toLowerCase();
                 const bName = (buildings.find(b => String(b.id) === String(e.building_id))?.name || '').toLowerCase();
                 return eqName.includes(q) || eqModel.includes(q) || bName.includes(q);
-            });
+            }).sort((a, b) => (a.name || '').localeCompare(b.name || '', 'th', { numeric: true, sensitivity: 'base' }));
 
             if (countEl) {
                 countEl.textContent = q ? `${filteredEquip.length} / ${equipment.length} รายการ` : `${equipment.length} รายการ`;
@@ -4997,7 +5037,7 @@ function renderCharts(data) {
             const filteredReps = reporters.filter(r => {
                 if (!q) return true;
                 return (r || '').toLowerCase().includes(q);
-            });
+            }).sort((a, b) => (a || '').localeCompare(b || '', 'th', { numeric: true, sensitivity: 'base' }));
 
             if (countEl) {
                 countEl.textContent = q ? `${filteredReps.length} / ${reporters.length} รายการ` : `${reporters.length} รายการ`;
@@ -5049,6 +5089,7 @@ function renderCharts(data) {
                 // Cascade update records
                 records.forEach(r => { if (r.reporter === oldName) r.reporter = name; });
                 saveCarePlusState();
+                addCarePlusAudit('Update Reporter', `แก้ไขผู้รายงาน "${oldName}" เป็น "${name}"`);
                 LabAlert.toast('success', 'แก้ไขข้อมูลผู้รายงานเรียบร้อย');
             } else {
                 if (reporters.some(r => r.toLowerCase() === name.toLowerCase())) {
@@ -5057,6 +5098,7 @@ function renderCharts(data) {
                 }
                 reporters.push(name);
                 saveCarePlusState();
+                addCarePlusAudit('Add Reporter', `เพิ่มผู้รายงานใหม่ "${name}"`);
                 LabAlert.toast('success', 'เพิ่มผู้รายงานใหม่เรียบร้อย');
             }
             renderAdminReporters();
@@ -5077,6 +5119,7 @@ function renderCharts(data) {
                 if (confirmed) {
                     reporters = reporters.filter(r => r !== name);
                     saveCarePlusState();
+                    addCarePlusAudit('Delete Reporter', `ลบผู้รายงาน "${name}"`);
                     renderAdminReporters();
                     LabAlert.toast('success', 'ลบผู้รายงานเรียบร้อย');
                 }
@@ -5165,12 +5208,14 @@ function renderCharts(data) {
             document.getElementById('saveBtn').innerText = 'Save Record';
 
             const bSel = document.getElementById('buildingSelect');
-            const sortedBuildings = [...(buildings || [])].sort((a, b) => (a.name || '').localeCompare(b.name || '', undefined, { numeric: true, sensitivity: 'base' }));
+            const sortedBuildings = [...(buildings || [])].sort((a, b) => (a.name || '').localeCompare(b.name || '', 'th', { numeric: true, sensitivity: 'base' }));
             bSel.innerHTML = '<option value="">Select location</option>' + sortedBuildings.map(b => `<option value="${b.id}">${escapeHtml(b.name)}</option>`).join('');
             const tSel = document.getElementById('technicianSelect');
-            tSel.innerHTML = '<option value="">Select Provider</option>' + technicians.map(t => `<option value="${t}">${t}</option>`).join('');
+            const sortedTechs = [...technicians].sort((a, b) => a.localeCompare(b, 'th', { numeric: true, sensitivity: 'base' }));
+            tSel.innerHTML = '<option value="">Select Provider</option>' + sortedTechs.map(t => `<option value="${escapeHtml(t)}">${escapeHtml(t)}</option>`).join('');
             const rSel = document.getElementById('reporterSelect');
-            rSel.innerHTML = '<option value="">Select Reporter</option>' + reporters.map(r => `<option value="${r}">${r}</option>`).join('');
+            const sortedReps = [...reporters].sort((a, b) => a.localeCompare(b, 'th', { numeric: true, sensitivity: 'base' }));
+            rSel.innerHTML = '<option value="">Select Reporter</option>' + sortedReps.map(r => `<option value="${escapeHtml(r)}">${escapeHtml(r)}</option>`).join('');
 
             const eqSel = document.getElementById('equipmentSelect');
             if (eqSel) eqSel.innerHTML = '<option value="">Select location first</option>';
