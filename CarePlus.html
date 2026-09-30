@@ -2212,8 +2212,13 @@
             const auditList = getCarePlusAuditLog();
             if (typeof LabStateBridge.deduplicateEquipments === 'function') {
                 equipment = LabStateBridge.deduplicateEquipments(equipment);
-                window.equipment = equipment;
             }
+            const deletedList = prevState.deletedEquipmentIds || [];
+            if (Array.isArray(deletedList) && deletedList.length > 0 && typeof LabStateBridge.isEquipmentDeleted === 'function') {
+                equipment = equipment.filter(e => !LabStateBridge.isEquipmentDeleted(e, deletedList));
+            }
+            window.equipment = equipment;
+
             LabStateBridge.saveState({
                 ...prevState,
                 users: users,
@@ -2224,7 +2229,7 @@
                 equipment: equipment,
                 buildings: buildings,
                 auditLogs: auditList,
-                deletedEquipmentIds: prevState.deletedEquipmentIds || []
+                deletedEquipmentIds: deletedList
             });
             if (typeof LabStateBridge.flushSync === 'function') {
                 LabStateBridge.flushSync();
@@ -4501,7 +4506,7 @@ function renderCharts(data) {
             try {
                 localStorage.setItem(CAREPLUS_AUDIT_KEY, JSON.stringify(logs));
                 if (typeof LabStateBridge !== 'undefined') {
-                    const prevState = LabStateBridge.getState() || {};
+                    const prevState = LabStateBridge.getStateInternal() || {};
                     LabStateBridge.saveState({ ...prevState, auditLogs: logs });
                     if (typeof LabStateBridge.flushSync === 'function') {
                         LabStateBridge.flushSync();
@@ -5405,18 +5410,17 @@ function renderCharts(data) {
                 if (confirmed) {
                     const targetId = String(id).trim();
 
-                    equipment = equipment.filter(item => item && String(item.id) !== targetId);
+                    if (typeof LabStateBridge !== 'undefined' && typeof LabStateBridge.deleteEquipment === 'function') {
+                        LabStateBridge.deleteEquipment(targetId, name);
+                    }
+
+                    equipment = equipment.filter(item => item && !LabStateBridge.isEquipmentDeleted(item, [targetId]));
                     window.equipment = equipment;
 
-                    // Track deleted ID to prevent cloud rollback (ONLY ID, NEVER NAME!)
-                    const curState = (typeof LabStateBridge !== 'undefined' ? LabStateBridge.getState() : {}) || {};
-                    let deletedList = curState.deletedEquipmentIds || [];
-                    if (!Array.isArray(deletedList)) deletedList = [];
-                    if (targetId && !deletedList.includes(targetId)) deletedList.push(targetId);
-                    curState.deletedEquipmentIds = deletedList;
-
-                    saveCarePlusState();
                     addCarePlusAudit('Delete Equipment', `ลบเครื่องมือ ${name || id}`);
+                    if (typeof LabStateBridge !== 'undefined' && typeof LabStateBridge.flushSync === 'function') {
+                        LabStateBridge.flushSync();
+                    }
                     renderAdminEquipment();
                     renderAdminLocations();
                     LabAlert.toast('success', 'ลบเครื่องมือเรียบร้อย');

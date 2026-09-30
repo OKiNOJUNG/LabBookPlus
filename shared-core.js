@@ -505,6 +505,98 @@
             return JSON.parse(JSON.stringify(SEED_DATA));
         },
 
+        isEquipmentDeleted(itemOrId, deletedIdsList) {
+            if (!itemOrId || !Array.isArray(deletedIdsList) || deletedIdsList.length === 0) return false;
+            const rawId = typeof itemOrId === 'object' ? String(itemOrId.id || '').trim() : String(itemOrId).trim();
+            if (!rawId) return false;
+
+            const lowerRaw = rawId.toLowerCase();
+            for (let i = 0; i < deletedIdsList.length; i++) {
+                const del = String(deletedIdsList[i] || '').trim();
+                if (!del) continue;
+                if (del.toLowerCase() === lowerRaw) return true;
+
+                // Compare numeric IDs: EQ-005 vs 5 vs EQ-5
+                const m1 = lowerRaw.match(/^(?:eq-)?(\d+)$/);
+                const m2 = del.toLowerCase().match(/^(?:eq-)?(\d+)$/);
+                if (m1 && m2 && parseInt(m1[1], 10) === parseInt(m2[1], 10)) {
+                    return true;
+                }
+            }
+            return false;
+        },
+
+        deleteEquipment(id, name = '') {
+            const targetId = String(id || '').trim();
+            if (!targetId) return null;
+
+            const state = this.getStateInternal();
+            let deletedIds = Array.isArray(state.deletedEquipmentIds) ? [...state.deletedEquipmentIds] : [];
+
+            if (!deletedIds.includes(targetId)) deletedIds.push(targetId);
+            const m = targetId.match(/^(?:EQ-)?(\d+)$/i);
+            if (m) {
+                const num = parseInt(m[1], 10);
+                const p1 = 'EQ-' + String(num).padStart(3, '0');
+                const p2 = 'EQ-' + String(num);
+                const p3 = String(num);
+                if (!deletedIds.includes(p1)) deletedIds.push(p1);
+                if (!deletedIds.includes(p2)) deletedIds.push(p2);
+                if (!deletedIds.includes(p3)) deletedIds.push(p3);
+            }
+
+            const curEquip = state.equipments || state.equipment || [];
+            const remainingEquip = curEquip.filter(e => !this.isEquipmentDeleted(e, deletedIds));
+
+            const updated = {
+                ...state,
+                deletedEquipmentIds: deletedIds,
+                equipments: remainingEquip,
+                equipment: remainingEquip
+            };
+
+            const saved = this.saveState(updated);
+            if (typeof this.flushSync === 'function') {
+                this.flushSync();
+            }
+            return saved;
+        },
+
+        addAuditLog(action, details = '', userName = '') {
+            try {
+                let user = userName;
+                if (!user && window.LabAuth && typeof LabAuth.getCurrentUser === 'function') {
+                    const u = LabAuth.getCurrentUser();
+                    if (u) user = u.name || u.username;
+                }
+                if (!user) user = 'Administrator';
+
+                const state = this.getStateInternal();
+                let logs = Array.isArray(state.auditLogs) ? [...state.auditLogs] : [];
+                logs.unshift({
+                    id: Date.now(),
+                    timestamp: new Date().toISOString(),
+                    user: user,
+                    action: action,
+                    details: details
+                });
+                if (logs.length > 500) logs.length = 500;
+
+                try {
+                    localStorage.setItem('carePlusAuditLog', JSON.stringify(logs));
+                } catch (e) {}
+
+                const saved = this.saveState({ ...state, auditLogs: logs });
+                if (typeof this.flushSync === 'function') {
+                    this.flushSync();
+                }
+                return saved;
+            } catch (e) {
+                console.warn("[LabStateBridge] addAuditLog notice:", e);
+                return null;
+            }
+        },
+
         deduplicateEquipments(list) {
             if (!Array.isArray(list)) return [];
             const result = [];
@@ -635,20 +727,13 @@
                 const origCount = eqList.length;
                 eqList = this.deduplicateEquipments(eqList);
 
-                // Restore any seed equipments missing unless legitimately deleted by ID
-                const existingNames = new Set(eqList.map(e => (e.name || '').trim().toLowerCase()));
-                const deletedSet = new Set((state.deletedEquipmentIds || []).map(String));
-                SEED_DATA.equipments.forEach(se => {
-                    const seNameNorm = (se.name || '').trim().toLowerCase();
-                    if (!existingNames.has(seNameNorm) && !deletedSet.has(String(se.id))) {
-                        eqList.push(JSON.parse(JSON.stringify(se)));
-                        existingNames.add(seNameNorm);
+                // Purge any equipment in eqList that matches deletedEquipmentIds
+                if (Array.isArray(state.deletedEquipmentIds) && state.deletedEquipmentIds.length > 0) {
+                    const beforeLen = eqList.length;
+                    eqList = eqList.filter(e => !this.isEquipmentDeleted(e, state.deletedEquipmentIds));
+                    if (eqList.length !== beforeLen) {
                         modified = true;
                     }
-                });
-
-                if (eqList.length !== origCount) {
-                    modified = true;
                 }
 
                 // Standardize equipment items (ensure String ID to prevent startsWith crash)
@@ -692,6 +777,50 @@
                     } catch (e) {}
                     if (!Array.isArray(state.auditLogs) || state.auditLogs.length === 0) {
                         state.auditLogs = JSON.parse(JSON.stringify(SEED_DATA.auditLogs || []));
+                        modified = true;
+                    }
+                }
+
+                // Recover any historically deleted equipments recorded in auditLogs
+                if (Array.isArray(state.auditLogs) && state.auditLogs.length > 0) {
+                    if (!Array.isArray(state.deletedEquipmentIds)) state.deletedEquipmentIds = [];
+                    let addedFromAudit = false;
+                    state.auditLogs.forEach(log => {
+                        if (log && typeof log === 'object' && (log.action === 'Delete Equipment' || log.action === 'ลบเครื่องมือ') && log.details) {
+                            const rawDetails = String(log.details);
+                            const match = rawDetails.match(/ลบเครื่องมือ\s*["']?([^"']+)["']?/i);
+                            const rawTarget = match ? match[1].trim() : rawDetails.replace(/^Delete Equipment\s*[:\-]?\s*/i, '').trim();
+                            if (rawTarget) {
+                                const found = (eqList || []).find(e => 
+                                    String(e.id || '').toLowerCase() === rawTarget.toLowerCase() || 
+                                    String(e.name || '').toLowerCase() === rawTarget.toLowerCase()
+                                ) || SEED_DATA.equipments.find(e => 
+                                    String(e.id || '').toLowerCase() === rawTarget.toLowerCase() || 
+                                    String(e.name || '').toLowerCase() === rawTarget.toLowerCase()
+                                );
+                                const targetId = found ? found.id : (rawTarget.startsWith('EQ-') || /^\d+$/.test(rawTarget) ? rawTarget : null);
+                                if (targetId && !this.isEquipmentDeleted(targetId, state.deletedEquipmentIds)) {
+                                    state.deletedEquipmentIds.push(String(targetId));
+                                    const m = String(targetId).match(/^(?:EQ-)?(\d+)$/i);
+                                    if (m) {
+                                        const num = parseInt(m[1], 10);
+                                        state.deletedEquipmentIds.push('EQ-' + String(num).padStart(3, '0'));
+                                        state.deletedEquipmentIds.push('EQ-' + String(num));
+                                        state.deletedEquipmentIds.push(String(num));
+                                    }
+                                    addedFromAudit = true;
+                                }
+                            }
+                        }
+                    });
+                    if (addedFromAudit) {
+                        state.deletedEquipmentIds = Array.from(new Set(state.deletedEquipmentIds));
+                        const beforeLen = eqList.length;
+                        eqList = eqList.filter(e => !this.isEquipmentDeleted(e, state.deletedEquipmentIds));
+                        if (eqList.length !== beforeLen) {
+                            state.equipments = eqList;
+                            state.equipment = eqList;
+                        }
                         modified = true;
                     }
                 }
@@ -760,21 +889,24 @@
                 const current = this.getStateInternal();
                 const merged = Object.assign({}, current, partialOrFull);
 
-                // Ensure equipment synonym stays bidirectional and deduplicated
+                // Combine deletedEquipmentIds from current and partialOrFull so deleted IDs never get lost
+                const combinedDeleted = Array.from(new Set(
+                    (Array.isArray(current.deletedEquipmentIds) ? current.deletedEquipmentIds : [])
+                    .concat(Array.isArray(partialOrFull.deletedEquipmentIds) ? partialOrFull.deletedEquipmentIds : [])
+                    .map(x => String(x || '').trim())
+                    .filter(Boolean)
+                ));
+                merged.deletedEquipmentIds = combinedDeleted;
+
+                // Ensure equipment synonym stays bidirectional, deduplicated, and free of deleted items
                 let targetEquip = partialOrFull.equipments || partialOrFull.equipment || merged.equipments || merged.equipment;
                 if (Array.isArray(targetEquip)) {
                     targetEquip = this.deduplicateEquipments(targetEquip);
+                    if (combinedDeleted.length > 0) {
+                        targetEquip = targetEquip.filter(e => !this.isEquipmentDeleted(e, combinedDeleted));
+                    }
                     merged.equipments = targetEquip;
                     merged.equipment = targetEquip;
-                }
-
-                // Clean deletedEquipmentIds: ensure no equipment names are stored
-                if (Array.isArray(merged.deletedEquipmentIds)) {
-                    merged.deletedEquipmentIds = merged.deletedEquipmentIds.filter(id => {
-                        if (!id) return false;
-                        const sId = String(id).trim().toLowerCase();
-                        return !SEED_DATA.equipments.some(se => (se.name || '').trim().toLowerCase() === sId);
-                    });
                 }
 
                 // Never store massive blobs into localStorage
@@ -2141,11 +2273,16 @@
                                 const finalRecords = Array.from(mergedRecordsMap.values());
 
                                 // Smart merge equipments and respect deletedEquipmentIds
-                                const deletedEqSet = new Set((current.deletedEquipmentIds || []).concat(remoteData.deletedEquipmentIds || []).map(String));
+                                const combinedDeletedIds = Array.from(new Set(
+                                    (Array.isArray(current.deletedEquipmentIds) ? current.deletedEquipmentIds : [])
+                                    .concat(Array.isArray(remoteData.deletedEquipmentIds) ? remoteData.deletedEquipmentIds : [])
+                                    .map(x => String(x || '').trim())
+                                    .filter(Boolean)
+                                ));
                                 const rawRemEquip = Array.isArray(remoteData.equipments) ? remoteData.equipments : (Array.isArray(remoteData.equipment) ? remoteData.equipment : []);
                                 const curEquip = current.equipments || current.equipment || [];
                                 const combinedEquip = LabStateBridge.deduplicateEquipments([...curEquip, ...rawRemEquip]);
-                                const mergedEquip = combinedEquip.filter(e => e && e.id && !deletedEqSet.has(String(e.id)));
+                                const mergedEquip = combinedEquip.filter(e => !LabStateBridge.isEquipmentDeleted(e, combinedDeletedIds));
 
                                 // Smart merge auditLogs
                                 const curAudit = Array.isArray(current.auditLogs) ? current.auditLogs : [];
@@ -2161,6 +2298,7 @@
                                     bookings: finalBookings,
                                     records: finalRecords,
                                     users: Array.isArray(remoteData.users) && remoteData.users.length > 0 ? remoteData.users : (current.users || []),
+                                    deletedEquipmentIds: combinedDeletedIds,
                                     equipments: mergedEquip,
                                     equipment: mergedEquip,
                                     buildings: Array.isArray(remoteData.buildings) && remoteData.buildings.length > 0 ? remoteData.buildings : (current.buildings || []),
@@ -2171,8 +2309,9 @@
                                 LabStateBridge.saveStateFromRemote(merged);
                                 window.dispatchEvent(new CustomEvent('labRemoteSync', { detail: merged }));
 
-                                // If remote cloud still had duplicates that were cleaned, push cleaned state to cloud once
-                                if (rawRemEquip.length > mergedEquip.length) {
+                                // If remote cloud still had deleted equipments or duplicates, push cleaned state to cloud once
+                                const remoteDeletedCount = (Array.isArray(remoteData.deletedEquipmentIds) ? remoteData.deletedEquipmentIds : []).length;
+                                if (rawRemEquip.length > mergedEquip.length || remoteDeletedCount < combinedDeletedIds.length) {
                                     if (this._cloudCleanTimeout) clearTimeout(this._cloudCleanTimeout);
                                     this._cloudCleanTimeout = setTimeout(() => {
                                         this.syncToCloud(merged);

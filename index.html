@@ -3780,13 +3780,26 @@
 
             saveState() {
                 const currentState = LabStateBridge.getState() || {};
+                const deletedList = Array.from(new Set(
+                    (Array.isArray(currentState.deletedEquipmentIds) ? currentState.deletedEquipmentIds : [])
+                    .concat(Array.isArray(this.state.deletedEquipmentIds) ? this.state.deletedEquipmentIds : [])
+                    .map(x => String(x || '').trim())
+                    .filter(Boolean)
+                ));
+                this.state.deletedEquipmentIds = deletedList;
+
                 if (typeof LabStateBridge !== 'undefined' && typeof LabStateBridge.deduplicateEquipments === 'function') {
                     this.state.equipments = LabStateBridge.deduplicateEquipments(this.state.equipments);
                 }
+                if (deletedList.length > 0 && typeof LabStateBridge !== 'undefined' && typeof LabStateBridge.isEquipmentDeleted === 'function') {
+                    this.state.equipments = (this.state.equipments || []).filter(e => !LabStateBridge.isEquipmentDeleted(e, deletedList));
+                }
                 this.state.equipment = this.state.equipments;
+
                 const merged = {
                     ...currentState,
                     ...this.state,
+                    deletedEquipmentIds: deletedList,
                     equipments: this.state.equipments,
                     equipment: this.state.equipments,
                     records: currentState.records || []
@@ -3796,6 +3809,7 @@
                     this.state = saved;
                     this.state.equipments = saved.equipments || saved.equipment || [];
                     this.state.equipment = this.state.equipments;
+                    this.state.deletedEquipmentIds = saved.deletedEquipmentIds || deletedList;
                 }
                 if (typeof LabStateBridge.flushSync === 'function') {
                     LabStateBridge.flushSync();
@@ -4279,12 +4293,9 @@
                 const executeDelete = () => {
                     const targetId = String(id).trim();
 
-                    this.state.equipments = (this.state.equipments || []).filter(e => {
-                        if (!e) return false;
-                        if (String(e.id) === targetId) return false;
-                        return true;
-                    });
-                    this.state.equipment = this.state.equipments;
+                    if (typeof LabStateBridge !== 'undefined' && typeof LabStateBridge.deleteEquipment === 'function') {
+                        LabStateBridge.deleteEquipment(targetId, eqName);
+                    }
 
                     if (!Array.isArray(this.state.deletedEquipmentIds)) {
                         this.state.deletedEquipmentIds = [];
@@ -4292,16 +4303,26 @@
                     if (targetId && !this.state.deletedEquipmentIds.includes(targetId)) {
                         this.state.deletedEquipmentIds.push(targetId);
                     }
-                    this.state.deletedEquipmentIds = this.state.deletedEquipmentIds.filter(x => {
-                        const s = String(x || '').trim();
-                        return s.startsWith('EQ-') || /^\d+$/.test(s);
-                    });
+
+                    if (typeof LabStateBridge !== 'undefined' && typeof LabStateBridge.isEquipmentDeleted === 'function') {
+                        this.state.equipments = (this.state.equipments || []).filter(e => !LabStateBridge.isEquipmentDeleted(e, this.state.deletedEquipmentIds));
+                    } else {
+                        this.state.equipments = (this.state.equipments || []).filter(e => e && String(e.id) !== targetId);
+                    }
+                    this.state.equipment = this.state.equipments;
+
+                    if (typeof LabStateBridge !== 'undefined' && typeof LabStateBridge.addAuditLog === 'function') {
+                        LabStateBridge.addAuditLog('Delete Equipment', `ลบเครื่องมือ "${eqName || id}"`, this.state.user ? this.state.user.name : 'Administrator');
+                    }
 
                     this.saveState();
                     if (typeof LabStateBridge.flushSync === 'function') {
                         LabStateBridge.flushSync();
                     }
                     this.renderAdminEquipments();
+                    if (typeof this.renderAdminActivityAudit === 'function') {
+                        this.renderAdminActivityAudit(true);
+                    }
                     if (window.LabAlert) {
                         LabAlert.toast('success', `ลบเครื่องมือ "${eqName || id}" เรียบร้อย`);
                     }
@@ -7500,12 +7521,9 @@
                 const executeDelete = () => {
                     const targetId = String(id).trim();
 
-                    this.state.equipments = (this.state.equipments || []).filter(e => {
-                        if (!e) return false;
-                        if (String(e.id) === targetId) return false;
-                        return true;
-                    });
-                    this.state.equipment = this.state.equipments;
+                    if (typeof LabStateBridge !== 'undefined' && typeof LabStateBridge.deleteEquipment === 'function') {
+                        LabStateBridge.deleteEquipment(targetId, eqName);
+                    }
 
                     if (!Array.isArray(this.state.deletedEquipmentIds)) {
                         this.state.deletedEquipmentIds = [];
@@ -7513,10 +7531,17 @@
                     if (targetId && !this.state.deletedEquipmentIds.includes(targetId)) {
                         this.state.deletedEquipmentIds.push(targetId);
                     }
-                    this.state.deletedEquipmentIds = this.state.deletedEquipmentIds.filter(x => {
-                        const s = String(x || '').trim();
-                        return s.startsWith('EQ-') || /^\d+$/.test(s);
-                    });
+
+                    if (typeof LabStateBridge !== 'undefined' && typeof LabStateBridge.isEquipmentDeleted === 'function') {
+                        this.state.equipments = (this.state.equipments || []).filter(e => !LabStateBridge.isEquipmentDeleted(e, this.state.deletedEquipmentIds));
+                    } else {
+                        this.state.equipments = (this.state.equipments || []).filter(e => e && String(e.id) !== targetId);
+                    }
+                    this.state.equipment = this.state.equipments;
+
+                    if (typeof LabStateBridge !== 'undefined' && typeof LabStateBridge.addAuditLog === 'function') {
+                        LabStateBridge.addAuditLog('Delete Equipment', `ลบเครื่องมือ "${eqName || id}"`, this.state.user ? this.state.user.name : 'Administrator');
+                    }
 
                     this.saveState();
                     if (typeof LabStateBridge.flushSync === 'function') {
@@ -7524,6 +7549,9 @@
                     }
                     this.closeModal('eq');
                     this.renderAdminData();
+                    if (typeof this.renderAdminActivityAudit === 'function') {
+                        this.renderAdminActivityAudit(true);
+                    }
                     if (window.LabAlert) {
                         LabAlert.toast('success', `ลบเครื่องมือ "${eqName || id}" เรียบร้อย`);
                     } else if (typeof Swal !== 'undefined') {
