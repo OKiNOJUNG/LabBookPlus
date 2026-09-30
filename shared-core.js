@@ -501,6 +501,93 @@
     const STORAGE_KEY = 'NoteLabState_Merged';
 
     const LabStateBridge = {
+        getSeedData() {
+            return JSON.parse(JSON.stringify(SEED_DATA));
+        },
+
+        deduplicateEquipments(list) {
+            if (!Array.isArray(list)) return [];
+            const result = [];
+            const seenName = new Map();
+            const seenId = new Map();
+
+            list.forEach(item => {
+                if (!item || typeof item !== 'object') return;
+                const rawName = (item.name || '').trim();
+                if (!rawName) return;
+                const normName = rawName.toLowerCase();
+                const rawId = String(item.id || '').trim();
+
+                let existingIdx = seenName.has(normName)
+                    ? seenName.get(normName)
+                    : (rawId && seenId.has(rawId) ? seenId.get(rawId) : -1);
+
+                if (existingIdx === -1 && rawId) {
+                    const numMatch = rawId.match(/^EQ-(\d+)$/i) || rawId.match(/^(\d+)$/);
+                    if (numMatch) {
+                        const targetNum = parseInt(numMatch[1], 10);
+                        existingIdx = result.findIndex(r => {
+                            const rId = String(r.id || '').trim();
+                            const rMatch = rId.match(/^EQ-(\d+)$/i) || rId.match(/^(\d+)$/);
+                            return rMatch && parseInt(rMatch[1], 10) === targetNum;
+                        });
+                    }
+                }
+
+                if (existingIdx !== -1) {
+                    const existing = result[existingIdx];
+                    if (!/^EQ-\d+$/i.test(existing.id) && /^EQ-\d+$/i.test(rawId)) {
+                        existing.id = rawId;
+                    } else if (!existing.id && rawId) {
+                        existing.id = rawId;
+                    }
+                    if (rawName && (!existing.name || existing.name.length < rawName.length)) {
+                        existing.name = rawName;
+                    }
+                    if ((!existing.building_id || existing.building_id === 1) && item.building_id) {
+                        existing.building_id = item.building_id;
+                    }
+                    if ((!existing.model || existing.model === '-') && (item.model && item.model !== '-')) {
+                        existing.model = item.model;
+                    }
+                    if ((!existing.serial || existing.serial === '-' || existing.serial === 'N/A') && (item.serial && item.serial !== '-' && item.serial !== 'N/A')) {
+                        existing.serial = item.serial;
+                    }
+                    if ((!existing.custodian || existing.custodian === '-' || existing.custodian === 'Admin') && (item.custodian && item.custodian !== '-' && item.custodian !== 'Admin')) {
+                        existing.custodian = item.custodian;
+                    }
+                    if (Array.isArray(item.fields) && item.fields.length > 0 && (!Array.isArray(existing.fields) || existing.fields.length === 0)) {
+                        existing.fields = item.fields;
+                    }
+                    seenId.set(String(existing.id), existingIdx);
+                    if (rawId) seenId.set(rawId, existingIdx);
+                } else {
+                    let id = rawId;
+                    if (!id) {
+                        id = 'EQ-' + String(result.length + 1).padStart(3, '0');
+                    } else if (/^\d+$/.test(id)) {
+                        id = 'EQ-' + String(parseInt(id, 10)).padStart(3, '0');
+                    }
+                    const cleanItem = {
+                        ...item,
+                        id: id,
+                        name: rawName,
+                        building_id: item.building_id || item.location_id || 5,
+                        model: (item.model && item.model !== '') ? item.model : '-',
+                        serial: (item.serial && item.serial !== '') ? item.serial : 'N/A',
+                        custodian: (item.custodian && item.custodian !== '') ? item.custodian : 'Admin'
+                    };
+                    const newIdx = result.length;
+                    result.push(cleanItem);
+                    seenName.set(normName, newIdx);
+                    seenId.set(String(cleanItem.id), newIdx);
+                    if (rawId) seenId.set(rawId, newIdx);
+                }
+            });
+
+            return result;
+        },
+
         getState() {
             try {
                 const raw = localStorage.getItem(STORAGE_KEY);
@@ -515,6 +602,19 @@
                 // Harmonize & fill missing arrays without clobbering
                 let modified = false;
 
+                // Clean deletedEquipmentIds: purge any equipment names accidentally saved as deleted IDs
+                if (Array.isArray(state.deletedEquipmentIds)) {
+                    const cleanedDeletedIds = state.deletedEquipmentIds.filter(id => {
+                        if (!id) return false;
+                        const sId = String(id).trim().toLowerCase();
+                        return !SEED_DATA.equipments.some(se => (se.name || '').trim().toLowerCase() === sId);
+                    });
+                    if (cleanedDeletedIds.length !== state.deletedEquipmentIds.length) {
+                        state.deletedEquipmentIds = cleanedDeletedIds;
+                        modified = true;
+                    }
+                }
+
                 if (!Array.isArray(state.users) || state.users.length === 0) {
                     state.users = JSON.parse(JSON.stringify(SEED_DATA.users));
                     modified = true;
@@ -525,12 +625,32 @@
                     state.buildings = JSON.parse(JSON.stringify(SEED_DATA.buildings));
                     modified = true;
                 }
-                // Handle equipment / equipments synonym
+                // Handle equipment / equipments synonym & deduplicate
                 let eqList = state.equipments || state.equipment;
                 if (!Array.isArray(eqList) || eqList.length === 0) {
                     eqList = JSON.parse(JSON.stringify(SEED_DATA.equipments));
                     modified = true;
                 }
+
+                const origCount = eqList.length;
+                eqList = this.deduplicateEquipments(eqList);
+
+                // Restore any seed equipments missing unless legitimately deleted by ID
+                const existingNames = new Set(eqList.map(e => (e.name || '').trim().toLowerCase()));
+                const deletedSet = new Set((state.deletedEquipmentIds || []).map(String));
+                SEED_DATA.equipments.forEach(se => {
+                    const seNameNorm = (se.name || '').trim().toLowerCase();
+                    if (!existingNames.has(seNameNorm) && !deletedSet.has(String(se.id))) {
+                        eqList.push(JSON.parse(JSON.stringify(se)));
+                        existingNames.add(seNameNorm);
+                        modified = true;
+                    }
+                });
+
+                if (eqList.length !== origCount) {
+                    modified = true;
+                }
+
                 // Standardize equipment items (ensure String ID to prevent startsWith crash)
                 eqList.forEach((e, idx) => {
                     if (!e || typeof e !== 'object') return;
@@ -603,19 +723,24 @@
                 });
 
                 if (modified) {
-                    this.saveState(state, true);
+                    try {
+                        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+                    } catch (e) {}
                 }
 
                 return state;
             } catch (err) {
                 console.error("LabStateBridge.getState error, restoring seed:", err);
                 const fresh = JSON.parse(JSON.stringify(SEED_DATA));
-                this.saveState(fresh, true);
+                try {
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(fresh));
+                } catch (e) {}
                 return fresh;
             }
         },
 
         _syncTimeout: null,
+        _isSaving: false,
         flushSync() {
             if (this._syncTimeout) {
                 clearTimeout(this._syncTimeout);
@@ -626,19 +751,30 @@
                 LabFirebase.syncToCloud(current);
             }
         },
-        saveState(partialOrFull, skipCloud = false) {
+        saveState(partialOrFull, skipCloud = false, isRemote = false) {
+            if (this._isSaving) {
+                return this.getStateInternal();
+            }
+            this._isSaving = true;
             try {
                 const current = this.getStateInternal();
                 const merged = Object.assign({}, current, partialOrFull);
 
-                // Ensure equipment synonym stays bidirectional
-                if (partialOrFull.equipments && !partialOrFull.equipment) {
-                    merged.equipment = partialOrFull.equipments;
-                } else if (partialOrFull.equipment && !partialOrFull.equipments) {
-                    merged.equipments = partialOrFull.equipment;
-                } else if (partialOrFull.equipments && partialOrFull.equipment) {
-                    merged.equipments = partialOrFull.equipments;
-                    merged.equipment = partialOrFull.equipments;
+                // Ensure equipment synonym stays bidirectional and deduplicated
+                let targetEquip = partialOrFull.equipments || partialOrFull.equipment || merged.equipments || merged.equipment;
+                if (Array.isArray(targetEquip)) {
+                    targetEquip = this.deduplicateEquipments(targetEquip);
+                    merged.equipments = targetEquip;
+                    merged.equipment = targetEquip;
+                }
+
+                // Clean deletedEquipmentIds: ensure no equipment names are stored
+                if (Array.isArray(merged.deletedEquipmentIds)) {
+                    merged.deletedEquipmentIds = merged.deletedEquipmentIds.filter(id => {
+                        if (!id) return false;
+                        const sId = String(id).trim().toLowerCase();
+                        return !SEED_DATA.equipments.some(se => (se.name || '').trim().toLowerCase() === sId);
+                    });
                 }
 
                 // Never store massive blobs into localStorage
@@ -646,10 +782,12 @@
 
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
 
-                // Dispatch local event for same-window / iframe listeners
-                try {
-                    window.dispatchEvent(new CustomEvent('labStateChange', { detail: merged }));
-                } catch (e) {}
+                // Dispatch local event for same-window / iframe listeners (only when not remote sync)
+                if (!isRemote) {
+                    try {
+                        window.dispatchEvent(new CustomEvent('labStateChange', { detail: merged }));
+                    } catch (e) {}
+                }
 
                 // Broadcast across tabs/windows immediately
                 if (typeof BroadcastChannel !== 'undefined') {
@@ -671,11 +809,13 @@
             } catch (err) {
                 console.error("LabStateBridge.saveState error:", err);
                 return null;
+            } finally {
+                this._isSaving = false;
             }
         },
 
         saveStateFromRemote(remoteData) {
-            return this.saveState(remoteData, true); // skipCloud = true to prevent echo loop
+            return this.saveState(remoteData, true, true); // skipCloud = true, isRemote = true
         },
 
         getStateInternal() {
@@ -694,13 +834,16 @@
                 }
             });
             window.addEventListener('labStateChange', (e) => {
-                callback(this.getState(), STORAGE_KEY);
+                if (this._isSaving) return;
+                const state = (e && e.detail) ? e.detail : this.getState();
+                callback(state, STORAGE_KEY);
             });
             if (typeof BroadcastChannel !== 'undefined') {
                 try {
                     if (!this._bc) this._bc = new BroadcastChannel('lab_state_sync');
                     this._bc.onmessage = (msg) => {
                         if (msg && msg.data && msg.data.type === 'state_updated') {
+                            if (this._isSaving) return;
                             callback(this.getState(), STORAGE_KEY);
                         }
                     };
@@ -766,10 +909,7 @@
                             const cloudEquip = Array.isArray(cloudState.equipments) ? cloudState.equipments : (Array.isArray(cloudState.equipment) ? cloudState.equipment : null);
                             if (cloudEquip && cloudEquip.length > 0) {
                                 const curEq = state.equipments || state.equipment || [];
-                                const eqMap = new Map();
-                                curEq.forEach(e => { if (e && e.id) eqMap.set(String(e.id), e); });
-                                cloudEquip.forEach(e => { if (e && e.id && !eqMap.has(String(e.id))) eqMap.set(String(e.id), e); });
-                                state.equipments = Array.from(eqMap.values());
+                                state.equipments = this.deduplicateEquipments([...curEq, ...cloudEquip]);
                                 state.equipment = state.equipments;
                             }
                             if (Array.isArray(cloudState.auditLogs) && cloudState.auditLogs.length > 0) {
@@ -789,7 +929,7 @@
 
                 const currentUser = LabAuth.getCurrentUser();
 
-                const exportEquipments = (state.equipments || state.equipment || []).map(eq => ({
+                const exportEquipments = this.deduplicateEquipments(state.equipments || state.equipment || []).map(eq => ({
                     ...eq,
                     id: String(eq.id),
                     name: eq.name || '',
@@ -897,7 +1037,7 @@
                     importedUsers = currentState.users || [];
                 }
 
-                // 2. Normalize Equipments
+                // 2. Normalize Equipments & Deduplicate
                 let rawImportedEquip = payload.equipments || payload.equipment || [];
                 let importedEquip = [];
                 if (Array.isArray(rawImportedEquip) && rawImportedEquip.length > 0) {
@@ -907,13 +1047,7 @@
                 } else if (Array.isArray(currentState.equipment) && currentState.equipment.length > 0) {
                     importedEquip = currentState.equipment;
                 }
-                importedEquip.forEach((eq, i) => {
-                    if (!eq.id) eq.id = 'EQ-' + String(i + 1).padStart(3, '0');
-                    else eq.id = String(eq.id);
-                    if (eq.model === undefined || eq.model === null || String(eq.model).trim() === '') eq.model = '-';
-                    if (!eq.serial) eq.serial = '-';
-                    if (!eq.custodian) eq.custodian = 'Admin';
-                });
+                importedEquip = this.deduplicateEquipments(importedEquip);
 
                 // 3. Buildings, Techs, Reporters
                 const importedBuildings = payload.buildings || currentState.buildings || [];
@@ -2006,28 +2140,12 @@
                                 });
                                 const finalRecords = Array.from(mergedRecordsMap.values());
 
-                                // Smart merge equipments using Map and respect deletedEquipmentIds
+                                // Smart merge equipments and respect deletedEquipmentIds
                                 const deletedEqSet = new Set((current.deletedEquipmentIds || []).concat(remoteData.deletedEquipmentIds || []).map(String));
                                 const rawRemEquip = Array.isArray(remoteData.equipments) ? remoteData.equipments : (Array.isArray(remoteData.equipment) ? remoteData.equipment : []);
                                 const curEquip = current.equipments || current.equipment || [];
-                                const mergedEquipMap = new Map();
-                                curEquip.forEach(ce => {
-                                    if (ce && ce.id && !deletedEqSet.has(String(ce.id)) && !deletedEqSet.has(String(ce.name))) {
-                                        mergedEquipMap.set(String(ce.id), ce);
-                                    }
-                                });
-                                rawRemEquip.forEach(re => {
-                                    if (re && re.id && !deletedEqSet.has(String(re.id)) && !deletedEqSet.has(String(re.name))) {
-                                        const key = String(re.id);
-                                        const existing = mergedEquipMap.get(key) || {};
-                                        mergedEquipMap.set(key, {
-                                            ...existing,
-                                            ...re,
-                                            model: (re.model && re.model !== '-') ? re.model : (existing?.model || re.model || '-')
-                                        });
-                                    }
-                                });
-                                const mergedEquip = Array.from(mergedEquipMap.values());
+                                const combinedEquip = LabStateBridge.deduplicateEquipments([...curEquip, ...rawRemEquip]);
+                                const mergedEquip = combinedEquip.filter(e => e && e.id && !deletedEqSet.has(String(e.id)));
 
                                 // Smart merge auditLogs
                                 const curAudit = Array.isArray(current.auditLogs) ? current.auditLogs : [];
@@ -2052,6 +2170,14 @@
                                 };
                                 LabStateBridge.saveStateFromRemote(merged);
                                 window.dispatchEvent(new CustomEvent('labRemoteSync', { detail: merged }));
+
+                                // If remote cloud still had duplicates that were cleaned, push cleaned state to cloud once
+                                if (rawRemEquip.length > mergedEquip.length) {
+                                    if (this._cloudCleanTimeout) clearTimeout(this._cloudCleanTimeout);
+                                    this._cloudCleanTimeout = setTimeout(() => {
+                                        this.syncToCloud(merged);
+                                    }, 2000);
+                                }
                             }
                         }
                     }
@@ -2189,6 +2315,7 @@
     });
 
     // Expose to window
+    window.SEED_DATA = SEED_DATA;
     window.LabCompressor = LabCompressor;
     window.LabPoStorage = LabPoStorage;
     window.LabStateBridge = LabStateBridge;
