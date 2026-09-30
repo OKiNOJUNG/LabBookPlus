@@ -5171,7 +5171,7 @@
                                             <span>📌 <strong>Status:</strong> <span class="font-semibold">${escapeHtml(b.calendar_status || 'Pending')}</span></span>
                                         </div>
                                     </div>
-                                    <a href="CarePlus.html" class="btn btn-outline text-xs px-3 py-2 self-end sm:self-center whitespace-nowrap flex items-center gap-1.5 text-rose-600 border-rose-200 hover:bg-rose-50" title="Open in Lab Care+">
+                                    <a href="CarePlus.html?recordId=${encodeURIComponent(b.id || '')}&date=${encodeURIComponent(b.service_date || '')}" onclick="LabAuth.syncSession()" class="btn btn-outline text-xs px-3 py-2 self-end sm:self-center whitespace-nowrap flex items-center gap-1.5 text-rose-600 border-rose-200 hover:bg-rose-50" title="Open in Lab Care+">
                                         <i class="fa-solid fa-screwdriver-wrench"></i> Open in Care+
                                     </a>
                                 </div>`;
@@ -5210,7 +5210,7 @@
                                     ${b.project ? `<div class="text-xs text-teal-700 dark:text-teal-300"><i class="fa-solid fa-diagram-project mr-1"></i> <strong>Project:</strong> ${escapeHtml(b.project)}</div>` : ''}
                                     ${(b.desc || b.purpose) ? `<div class="text-xs text-gray-500 dark:text-slate-400">📝 <strong>Purpose:</strong> ${escapeHtml(b.desc || b.purpose)}</div>` : ''}
                                 </div>
-                                <button type="button" class="btn btn-outline text-xs px-3 py-2 self-end sm:self-center whitespace-nowrap flex items-center gap-1.5" onclick="app.closeModal('cal-day'); app.showBookingDetails('${b.id}')">
+                                <button type="button" class="btn btn-outline text-xs px-3 py-2 self-end sm:self-center whitespace-nowrap flex items-center gap-1.5" onclick="app.showBookingDetails('${b.id}', true)">
                                     <i class="fa-solid fa-eye text-teal-600"></i> View Details
                                 </button>
                             </div>`;
@@ -5982,6 +5982,11 @@
                     modal.classList.add('hidden');
                     modal.style.display = 'none';
                 }
+
+                if (id === 'booking' && this._returnToCalDay) {
+                    this._returnToCalDay = false;
+                    this.openModal('cal-day');
+                }
             },
 
             showEqHistoryModal(eqId) {
@@ -6443,10 +6448,19 @@
                 this.goBack();
             },
 
-            showBookingDetails(bkId) {
+            showBookingDetails(bkId, fromCalDay = false) {
                 if (window.LabAudio) LabAudio.playClick();
                 const b = (this.state.bookings || []).find(x => String(x.id) === String(bkId));
                 if (!b) return;
+
+                this._returnToCalDay = Boolean(fromCalDay);
+                if (this._returnToCalDay) {
+                    const calDayModal = document.getElementById('modal-cal-day');
+                    if (calDayModal) {
+                        calDayModal.classList.add('hidden');
+                        calDayModal.style.display = 'none';
+                    }
+                }
 
                 const eq = (this.state.equipments || []).find(e => String(e.id) === String(b.eqId || b.equipmentId));
                 const locName = eq ? (this.getLocName(eq.building_id, this.state.buildings || []) || '-') : '-';
@@ -6562,6 +6576,14 @@
                             `;
                             }
                         }
+                    } else if (!isOwnerOrAdmin) {
+                        actions.innerHTML = `
+                            <div style="margin-left:auto;">
+                                <button type="button" class="btn btn-outline text-xs px-3 py-1.5" onclick="app.closeModal('booking')">
+                                    <i class="fa-solid fa-arrow-left mr-1"></i> Close
+                                </button>
+                            </div>
+                        `;
                     }
                 }
 
@@ -6569,6 +6591,7 @@
             },
 
             editBooking(bkId) {
+                this._returnToCalDay = false;
                 this.closeModal('booking');
                 const b = (this.state.bookings || []).find(x => String(x.id) === String(bkId));
                 if (!b) return;
@@ -6584,6 +6607,7 @@
             },
 
             deleteBooking(bkId) {
+                this._returnToCalDay = false;
                 Swal.fire({
                     title: 'Cancel / Delete Booking?',
                     text: "The booking will be removed from the calendar but retained in the Audit Log.",
@@ -6621,6 +6645,7 @@
             },
 
             openFinishModal(bkId) {
+                this._returnToCalDay = false;
                 this.closeModal('booking');
                 const b = (this.state.bookings || []).find(x => String(x.id) === String(bkId));
                 if (!b) return;

@@ -1717,9 +1717,10 @@
                             </div>
 
                             <div class="relative flex-1 min-w-[200px]">
-                                <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
-                                <input type="text" id="carePlusAuditSearch" placeholder="🔍 ค้นหากิจกรรม, ผู้ใช้, หรือรายละเอียด..." oninput="renderCarePlusAudit(true)"
-                                    class="w-full pl-7 pr-3 py-1.5 text-xs rounded-lg glass-input border border-indigo-200 dark:border-indigo-800 bg-white dark:bg-slate-800">
+                                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none z-10"></i>
+                                <input type="text" id="carePlusAuditSearch" placeholder="ค้นหากิจกรรม, ผู้ใช้, หรือรายละเอียด..." oninput="renderCarePlusAudit(true)"
+                                    style="padding-left: 2.25rem !important;"
+                                    class="w-full pr-3 py-1.5 text-xs rounded-lg glass-input border border-indigo-200 dark:border-indigo-800 bg-white dark:bg-slate-800">
                             </div>
 
                             <button type="button" onclick="resetCarePlusAuditFilter()" class="px-3 py-1.5 text-xs rounded-lg border border-gray-300 dark:border-slate-700 text-gray-600 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-800 transition flex items-center gap-1 font-semibold" title="ล้างตัวกรอง">
@@ -1869,15 +1870,45 @@
     </div>
 
     <div id="calendarModal"
-        class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4">
         <div
-            class="glass glass-dark rounded-3xl shadow-2xl w-[95%] max-w-3xl md:w-full h-[75vh] flex flex-col overflow-hidden">
-            <div class="p-5 border-b border-gray-100 flex justify-between items-center bg-white/40">
-                <h3 id="modalDateTitle" class="text-lg font-bold text-gray-800">Tasks</h3>
-                <button onclick="closeCalendarModal()"
-                    class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 text-gray-500">✕</button>
+            class="bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl rounded-3xl shadow-2xl w-[98%] max-w-5xl h-[90vh] max-h-[920px] flex flex-col overflow-hidden border border-white/60 dark:border-slate-800 transition-all">
+            <div class="px-5 py-4 border-b border-gray-100 dark:border-slate-800 flex flex-col md:flex-row justify-between items-start md:items-center gap-3 bg-white/70 dark:bg-slate-900/70">
+                <div id="modalDateTitle" class="flex-1 min-w-0">
+                    <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Schedule for</span>
+                    <h3 class="text-xl font-bold text-gray-800">Tasks</h3>
+                </div>
+                <div class="flex items-center gap-2 self-end md:self-auto">
+                    <button onclick="closeCalendarModal()"
+                        class="w-9 h-9 rounded-full bg-gray-100 dark:bg-slate-800 flex items-center justify-center hover:bg-gray-200 dark:hover:bg-slate-700 text-gray-500 dark:text-slate-400 hover:text-gray-800 dark:hover:text-white transition shadow-xs text-base" title="Close">✕</button>
+                </div>
             </div>
-            <div id="calendarModalContent" class="p-5 max-h-[60vh] overflow-y-auto space-y-4"></div>
+
+            <div id="calendarModalToolbar"
+                class="px-4 sm:px-5 py-2.5 bg-slate-50/80 dark:bg-slate-800/40 border-b border-gray-100 dark:border-slate-800 flex flex-wrap items-center justify-between gap-3">
+                <div class="flex items-center gap-1.5 flex-wrap" id="calModalFilterTabs"></div>
+                <div class="flex items-center gap-2 flex-grow sm:flex-grow-0 justify-end">
+                    <div class="relative flex-grow sm:w-64">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none z-10"></i>
+                        <input type="text" id="calModalSearch" placeholder="Search equipment, provider, model..."
+                            oninput="filterCalendarModal()"
+                            style="padding-left: 2.5rem !important;"
+                            class="w-full text-xs pr-3 py-1.5 rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-teal-500 shadow-2xs">
+                    </div>
+                    <div class="inline-flex rounded-xl p-0.5 bg-gray-200/80 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-xs font-semibold shrink-0">
+                        <button type="button" id="btnCalViewCards" onclick="setCalendarModalView('cards')"
+                            class="px-2.5 py-1 rounded-lg transition-all text-xs flex items-center gap-1 bg-white dark:bg-slate-700 shadow-xs text-teal-700 dark:text-teal-300 font-bold" title="Card View (Like Book+ Events)">
+                            <i class="fa-solid fa-grip-vertical"></i> <span class="hidden sm:inline">Cards</span>
+                        </button>
+                        <button type="button" id="btnCalViewTable" onclick="setCalendarModalView('table')"
+                            class="px-2.5 py-1 rounded-lg transition-all text-xs flex items-center gap-1 text-gray-500 dark:text-slate-400 hover:text-gray-800 dark:hover:text-slate-200" title="Table View">
+                            <i class="fa-solid fa-table"></i> <span class="hidden sm:inline">Table</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="calendarModalContent" class="p-3 sm:p-5 flex-1 overflow-y-auto overflow-x-hidden custom-scroll space-y-2.5"></div>
         </div>
     </div>
 
@@ -2276,7 +2307,9 @@
                 document.getElementById('settingsBtn')?.classList.add('hidden');
                 document.getElementById('settingsBtnMobile')?.classList.add('hidden');
             }
-            showPage('dashboard');
+            if (!handleIncomingDeepLink()) {
+                showPage('dashboard');
+            }
 
             document.getElementById('addRecordForm').addEventListener('submit', handleSaveRecord);
             document.getElementById('poFileUpload').addEventListener('change', handleFileSelect);
@@ -2284,6 +2317,99 @@
             window.fullEditRecord = loadEditForm;
             window.deleteRecord = deleteRecord;
             window.viewPO = viewPO;
+        }
+
+        function canUserEditRecord(record) {
+            if (!record) return false;
+            const user = currentUser || (typeof LabAuth !== 'undefined' ? LabAuth.getCurrentUser() : null);
+            if (!user) return false;
+
+            // Admin always has full access to edit and delete
+            if (user.role === 'admin') return true;
+
+            // Check creator id / username / email
+            const creator = record.created_by || record.createdBy || record.userId || record.user_id;
+            const creatorId = record.created_by_id;
+            const creatorName = record.created_by_name;
+
+            if (creatorId && user.id && String(creatorId).toLowerCase() === String(user.id).toLowerCase()) {
+                return true;
+            }
+            if (creator) {
+                const cLower = String(creator).toLowerCase();
+                if (user.id && String(user.id).toLowerCase() === cLower) return true;
+                if (user.username && String(user.username).toLowerCase() === cLower) return true;
+                if (user.email && String(user.email).toLowerCase() === cLower) return true;
+                if (user.name && String(user.name).toLowerCase() === cLower) return true;
+            }
+            if (creatorName && user.name && String(creatorName).toLowerCase() === String(user.name).toLowerCase()) {
+                return true;
+            }
+
+            // Fallback for legacy records: check reporter against current user's name or username
+            if (record.reporter) {
+                const repLower = String(record.reporter).toLowerCase();
+                if (user.name && String(user.name).toLowerCase() === repLower) return true;
+                if (user.username && String(user.username).toLowerCase() === repLower) return true;
+                if (typeof users !== 'undefined' && Array.isArray(users)) {
+                    const matchedUser = users.find(x => (x.name && x.name.toLowerCase() === repLower) || (x.username && x.username.toLowerCase() === repLower));
+                    if (matchedUser && (matchedUser.id === user.id || matchedUser.username === user.username)) return true;
+                }
+            }
+
+            return false;
+        }
+
+        function handleIncomingDeepLink() {
+            try {
+                const params = new URLSearchParams(window.location.search);
+                const hashParams = new URLSearchParams(window.location.hash.replace(/^[#?]+/, ''));
+                const recordId = params.get('recordId') || params.get('id') || hashParams.get('record') || hashParams.get('recordId') || hashParams.get('id');
+                const dateStr = params.get('date') || hashParams.get('date');
+
+                if (recordId) {
+                    const rec = (records || []).find(r => String(r.id) === String(recordId));
+                    const targetDate = dateStr || (rec ? rec.service_date : null);
+                    if (targetDate) {
+                        showPage('dashboard');
+                        setTimeout(() => {
+                            const dayItems = (records || []).filter(r => {
+                                if (!r.service_date) return false;
+                                const start = r.service_date;
+                                const end = r.end_date || start;
+                                return targetDate >= start && targetDate <= end;
+                            });
+                            openCalendarDay(targetDate, dayItems.length > 0 ? dayItems : (rec ? [rec] : []), recordId);
+                        }, 250);
+                        return true;
+                    } else if (rec) {
+                        showPage('records');
+                        setTimeout(() => {
+                            const filterInput = document.getElementById('filterSearch');
+                            if (filterInput) {
+                                filterInput.value = rec.equipment_name || '';
+                                applyFilters();
+                            }
+                        }, 150);
+                        return true;
+                    }
+                } else if (dateStr) {
+                    showPage('dashboard');
+                    setTimeout(() => {
+                        const dayItems = (records || []).filter(r => {
+                            if (!r.service_date) return false;
+                            const start = r.service_date;
+                            const end = r.end_date || start;
+                            return dateStr >= start && dateStr <= end;
+                        });
+                        openCalendarDay(dateStr, dayItems);
+                    }, 250);
+                    return true;
+                }
+            } catch (err) {
+                console.warn("[CarePlus] handleIncomingDeepLink error:", err);
+            }
+            return false;
         }
 
         async function handleFileSelect(e) {
@@ -2494,7 +2620,7 @@
                 chipsEl.innerHTML = chipData.map(c => {
                     const isActive = _upcomingFilterType === c.type;
                     const cls = isActive ? c.activeClass : c.inactiveClass;
-                    return `<button type="button" onclick="setUpcomingFilterType('${c.type}')" class="px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shrink-0 ${cls}">
+                    return `<button type="button" onclick="setUpcomingFilterType('${c.type}')" class="px-2.5 py-1 sm:py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ${cls}">
                         <span>${c.label}</span>
                         <span class="px-1.5 py-0.2 rounded-full text-[10px] ${isActive ? 'bg-white/25 text-white' : 'bg-black/5 dark:bg-white/10'}">${c.count}</span>
                     </button>`;
@@ -2548,7 +2674,7 @@
                 const daysDiff = Math.ceil((d.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
 
                 const model = getEquipmentModel(r);
-                const modelBadge = model ? `<span class="inline-flex items-center gap-1 text-[11px] font-semibold text-gray-700 dark:text-slate-300 bg-white/80 dark:bg-slate-800/80 px-2 py-0.5 rounded-md border border-gray-200 dark:border-slate-700 shadow-2xs">🏷️ Model: ${escapeHtml(model)}</span>` : '';
+                const modelBadge = model ? `<span class="inline-flex items-center gap-1 text-[11px] font-semibold text-gray-700 dark:text-slate-300 bg-white/80 dark:bg-slate-800/80 px-2 py-0.5 rounded-md border border-gray-200 dark:border-slate-700 shadow-2xs truncate max-w-[200px]">🏷️ ${escapeHtml(model)}</span>` : '';
 
                 // --- 1. Type Color Palette ---
                 let cardBorderClass = 'border-l-[6px] border-l-blue-500 border-blue-200/60 dark:border-blue-800/40';
@@ -2586,58 +2712,58 @@
 
                 if (isComplete) {
                     opacityClass = 'opacity-70 hover:opacity-100';
-                    statusBadge = `<span class="px-2.5 py-1 rounded-xl bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 text-[10px] font-extrabold flex items-center gap-1 shadow-2xs">✓ Complete</span>`;
+                    statusBadge = `<span class="px-2.5 py-1 rounded-xl bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 text-[10px] font-extrabold flex items-center gap-1 shadow-2xs whitespace-nowrap">✓ Complete</span>`;
                     countdownText = 'Task completed';
                     countdownColor = 'text-emerald-600 dark:text-emerald-400';
                 } else if (daysDiff < 0) {
                     const daysAgo = Math.abs(daysDiff);
-                    statusBadge = `<span class="px-2.5 py-1 rounded-xl bg-rose-600 text-white text-[10px] font-extrabold flex items-center gap-1 shadow-sm animate-pulse">⚠️ Overdue by ${daysAgo} day${daysAgo === 1 ? '' : 's'}</span>`;
+                    statusBadge = `<span class="px-2.5 py-1 rounded-xl bg-rose-600 text-white text-[10px] font-extrabold flex items-center gap-1 shadow-sm animate-pulse whitespace-nowrap">⚠️ Overdue ${daysAgo}d</span>`;
                     countdownText = `Overdue by ${daysAgo} day${daysAgo === 1 ? '' : 's'}`;
                     countdownColor = 'text-rose-600 dark:text-rose-400 font-extrabold';
                 } else if (daysDiff === 0) {
-                    statusBadge = `<span class="px-2.5 py-1 rounded-xl bg-red-500 text-white text-[10px] font-extrabold flex items-center gap-1 shadow-md ring-2 ring-red-300">🚨 Due Today!</span>`;
+                    statusBadge = `<span class="px-2.5 py-1 rounded-xl bg-red-500 text-white text-[10px] font-extrabold flex items-center gap-1 shadow-md ring-2 ring-red-300 whitespace-nowrap">🚨 Due Today!</span>`;
                     countdownText = 'Due Today';
                     countdownColor = 'text-red-600 dark:text-red-400 font-extrabold';
                 } else if (daysDiff <= 7) {
-                    statusBadge = `<span class="px-2.5 py-1 rounded-xl bg-amber-500 text-white text-[10px] font-extrabold flex items-center gap-1 shadow-xs">⚡ Urgent: in ${daysDiff} day${daysDiff === 1 ? '' : 's'}</span>`;
-                    countdownText = `In ${daysDiff} day${daysDiff === 1 ? '' : 's'} (within 7 days)`;
+                    statusBadge = `<span class="px-2.5 py-1 rounded-xl bg-amber-500 text-white text-[10px] font-extrabold flex items-center gap-1 shadow-xs whitespace-nowrap">⚡ Urgent: ${daysDiff}d</span>`;
+                    countdownText = `In ${daysDiff} days`;
                     countdownColor = 'text-amber-700 dark:text-amber-400 font-bold';
                 } else if (daysDiff <= 30) {
-                    statusBadge = `<span class="px-2.5 py-1 rounded-xl bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300 border border-sky-300 dark:border-sky-800 text-[10px] font-bold flex items-center gap-1">⏳ Pending (${daysDiff} days left)</span>`;
-                    countdownText = `In ${daysDiff} days (within 30 days)`;
+                    statusBadge = `<span class="px-2.5 py-1 rounded-xl bg-sky-100 text-sky-800 dark:bg-sky-950 dark:text-sky-300 border border-sky-300 dark:border-sky-800 text-[10px] font-bold flex items-center gap-1 whitespace-nowrap">⏳ In ${daysDiff}d</span>`;
+                    countdownText = `In ${daysDiff} days`;
                     countdownColor = 'text-sky-700 dark:text-sky-400';
                 } else {
-                    statusBadge = `<span class="px-2.5 py-1 rounded-xl bg-indigo-50 text-indigo-800 dark:bg-indigo-950 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 text-[10px] font-medium flex items-center gap-1">🗓️ In ${daysDiff} days</span>`;
+                    statusBadge = `<span class="px-2.5 py-1 rounded-xl bg-indigo-50 text-indigo-800 dark:bg-indigo-950 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 text-[10px] font-medium flex items-center gap-1 whitespace-nowrap">🗓️ In ${daysDiff}d</span>`;
                     countdownText = `In ${daysDiff} days`;
                     countdownColor = 'text-indigo-600 dark:text-indigo-400';
                 }
 
                 // Techs & Cost
                 const techs = (r.technicians || []).filter(Boolean);
-                const techHtml = techs.length > 0 ? `<span class="flex items-center gap-1"><i class="fa-solid fa-wrench text-gray-400"></i> ${escapeHtml(techs.join(', '))}</span>` : '';
-                const costHtml = r.maintenance_cost && parseFloat(r.maintenance_cost) > 0 ? `<span class="flex items-center gap-1 font-semibold text-emerald-700 dark:text-emerald-400">💰 ${formatCurrency(r.maintenance_cost)} ฿</span>` : '';
+                const techHtml = techs.length > 0 ? `<span class="flex items-center gap-1 truncate max-w-[180px]"><i class="fa-solid fa-wrench text-gray-400 shrink-0"></i> ${escapeHtml(techs.join(', '))}</span>` : '';
+                const costHtml = r.maintenance_cost && parseFloat(r.maintenance_cost) > 0 ? `<span class="flex items-center gap-1 font-semibold text-emerald-700 dark:text-emerald-400 shrink-0">💰 ${formatCurrency(r.maintenance_cost)} ฿</span>` : '';
 
                 return `
-                <div class="p-4 rounded-2xl shadow-sm border ${cardBorderClass} ${cardBgClass} hover:shadow-md transition ${opacityClass}">
-                    <div class="flex items-center justify-between flex-wrap gap-2 mb-2">
-                        <div class="flex items-center gap-2 flex-wrap">
-                            <span class="px-2.5 py-1 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 ${typeBadgeClass}">
+                <div class="p-3.5 sm:p-4 rounded-2xl shadow-sm border ${cardBorderClass} ${cardBgClass} hover:shadow-md transition ${opacityClass} w-full min-w-0 overflow-hidden box-border">
+                    <div class="flex items-center justify-between flex-wrap gap-2 mb-2 min-w-0">
+                        <div class="flex items-center gap-1.5 flex-wrap min-w-0">
+                            <span class="px-2.5 py-1 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 ${typeBadgeClass} shrink-0">
                                 <span>${typeIcon}</span> <span>${typeLabel}</span>
                             </span>
                             ${modelBadge}
                         </div>
-                        <div class="flex items-center gap-2">
+                        <div class="flex items-center gap-2 shrink-0">
                             ${statusBadge}
                         </div>
                     </div>
 
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mt-2">
-                        <div class="flex-1">
-                            <h4 class="font-extrabold text-gray-900 dark:text-slate-100 text-base leading-snug">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mt-2 min-w-0">
+                        <div class="flex-1 min-w-0">
+                            <h4 class="font-extrabold text-gray-900 dark:text-slate-100 text-sm sm:text-base leading-snug break-words">
                                 ${escapeHtml(r.equipment_name)}
                             </h4>
-                            <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1.5 text-xs text-gray-600 dark:text-slate-300">
-                                <span class="flex items-center gap-1 font-medium"><i class="fa-solid fa-location-dot text-rose-500"></i> ${escapeHtml(r.building || 'N/A')}</span>
+                            <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1.5 text-xs text-gray-600 dark:text-slate-300 min-w-0">
+                                <span class="flex items-center gap-1 font-medium shrink-0"><i class="fa-solid fa-location-dot text-rose-500"></i> ${escapeHtml(r.building || 'N/A')}</span>
                                 ${techHtml}
                                 ${costHtml}
                             </div>
@@ -2645,18 +2771,18 @@
 
                         <div class="sm:text-right shrink-0">
                             <div class="inline-flex flex-col sm:items-end bg-white/90 dark:bg-slate-800/90 px-3 py-1.5 rounded-xl border border-gray-200/70 dark:border-slate-700 shadow-2xs">
-                                <span class="text-[10px] font-bold text-gray-400 dark:text-slate-400 uppercase tracking-wider">Scheduled Date</span>
-                                <span class="text-xs sm:text-sm font-extrabold text-gray-800 dark:text-slate-100 flex items-center gap-1">
+                                <span class="text-[9px] font-bold text-gray-400 dark:text-slate-400 uppercase tracking-wider">Scheduled Date</span>
+                                <span class="text-xs sm:text-sm font-extrabold text-gray-800 dark:text-slate-100 flex items-center gap-1 whitespace-nowrap">
                                     🗓️ ${dateStr}
                                 </span>
-                                <span class="text-[10px] ${countdownColor}">${countdownText}</span>
+                                <span class="text-[10px] ${countdownColor} whitespace-nowrap">${countdownText}</span>
                             </div>
                         </div>
                     </div>
 
-                    <div class="pt-2.5 mt-2.5 border-t border-gray-200/50 dark:border-slate-800/70 flex items-center justify-between text-xs">
-                        <span class="text-gray-400 dark:text-slate-400 text-[11px]">Reporter: <strong class="text-gray-600 dark:text-slate-300 font-medium">${escapeHtml(r.reporter || '-')}</strong></span>
-                        <button type="button" onclick="closeUpcomingModal(); loadEditForm('${r.id}');" class="px-2.5 py-1 rounded-lg text-xs font-bold text-teal-600 dark:text-teal-400 hover:text-teal-700 hover:bg-teal-50 dark:hover:bg-slate-800 transition flex items-center gap-1">
+                    <div class="pt-2 mt-2.5 border-t border-gray-200/50 dark:border-slate-800/70 flex flex-wrap items-center justify-between gap-2 text-xs min-w-0">
+                        <span class="text-gray-400 dark:text-slate-400 text-[11px] truncate max-w-[220px]">Reporter: <strong class="text-gray-600 dark:text-slate-300 font-medium">${escapeHtml(r.reporter || '-')}</strong></span>
+                        <button type="button" onclick="closeUpcomingModal(); loadEditForm('${r.id}');" class="px-2.5 py-1 rounded-lg text-xs font-bold text-teal-600 dark:text-teal-400 hover:text-teal-700 hover:bg-teal-50 dark:hover:bg-slate-800 transition flex items-center gap-1 shrink-0">
                             <i class="fa-solid fa-pen-to-square"></i> View / Edit Record →
                         </button>
                     </div>
@@ -3147,8 +3273,48 @@ function loadDashboard() {
                 btnCal.className = 'px-3 py-1.5 rounded-lg text-xs font-bold text-gray-500 hover:text-gray-800 transition';
             }
         }
-        function openCalendarDay(dateStr, items) {
-            if (!items || items.length === 0) {
+        let currentCalModalItems = [];
+        let currentCalModalDateStr = '';
+        let currentCalModalFilter = 'all'; // 'all', 'pending', 'complete'
+        let currentCalModalView = 'cards'; // 'cards' or 'table'
+        let currentCalModalHighlightId = null;
+
+        function setCalendarModalView(view) {
+            currentCalModalView = view;
+            const btnCards = document.getElementById('btnCalViewCards');
+            const btnTable = document.getElementById('btnCalViewTable');
+            if (btnCards && btnTable) {
+                if (view === 'cards') {
+                    btnCards.className = 'px-2.5 py-1 rounded-lg transition-all text-xs flex items-center gap-1 bg-white dark:bg-slate-700 shadow-xs text-teal-700 dark:text-teal-300 font-bold';
+                    btnTable.className = 'px-2.5 py-1 rounded-lg transition-all text-xs flex items-center gap-1 text-gray-500 dark:text-slate-400 hover:text-gray-800 dark:hover:text-slate-200';
+                } else {
+                    btnTable.className = 'px-2.5 py-1 rounded-lg transition-all text-xs flex items-center gap-1 bg-white dark:bg-slate-700 shadow-xs text-teal-700 dark:text-teal-300 font-bold';
+                    btnCards.className = 'px-2.5 py-1 rounded-lg transition-all text-xs flex items-center gap-1 text-gray-500 dark:text-slate-400 hover:text-gray-800 dark:hover:text-slate-200';
+                }
+            }
+            renderCalendarModalContent();
+        }
+
+        function setCalendarModalFilter(status) {
+            currentCalModalFilter = status;
+            renderCalendarModalTabs();
+            renderCalendarModalContent();
+        }
+
+        function filterCalendarModal() {
+            renderCalendarModalContent();
+        }
+
+        function openCalendarDay(dateStr, items, highlightId = null) {
+            // Find all matching records on that day if list is partial or empty
+            const allForDay = (records || []).filter(r => {
+                if (!r.service_date) return false;
+                const start = r.service_date;
+                const end = r.end_date || start;
+                return dateStr >= start && dateStr <= end;
+            });
+
+            if ((!items || items.length === 0) && allForDay.length === 0) {
                 showPage('addRecord');
                 setTimeout(() => {
                     const s = document.getElementById('serviceDate');
@@ -3158,128 +3324,358 @@ function loadDashboard() {
                 }, 50);
                 return;
             }
-            const content = document.getElementById('calendarModalContent');
-            const modalTitle = document.getElementById('modalDateTitle');
+
+            // If caller passed 1 item but day has more items, show all items of the day and highlight the selected one
+            if (allForDay.length > (items ? items.length : 0)) {
+                if (items && items.length === 1 && !highlightId) {
+                    highlightId = items[0].id;
+                }
+                items = allForDay;
+            } else if (!items || items.length === 0) {
+                items = allForDay;
+            }
+
+            currentCalModalItems = items || [];
+            currentCalModalDateStr = dateStr;
+            currentCalModalFilter = 'all';
+            currentCalModalHighlightId = highlightId;
 
             const dateObj = new Date(dateStr);
-            modalTitle.innerHTML = `
-        <div class="flex flex-col">
-            <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Schedule for</span>
-            <span class="text-xl font-bold text-gray-800 flex items-center gap-2">
-                🗓️ ${dateObj.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}
-            </span>
-        </div>
-    `;
+            const dateFormatted = !isNaN(dateObj.getTime())
+                ? dateObj.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })
+                : dateStr;
 
-            content.innerHTML = items.map(i => {
-                const isComplete = i.calendar_status === 'complete';
+            const totalCount = currentCalModalItems.length;
+            const pendingCount = currentCalModalItems.filter(x => (x.calendar_status || 'pending').toLowerCase() !== 'complete').length;
+            const completeCount = currentCalModalItems.filter(x => (x.calendar_status || '').toLowerCase() === 'complete').length;
+            const totalCost = currentCalModalItems.reduce((acc, x) => acc + (parseFloat(x.maintenance_cost) || 0), 0);
 
-                let statusColor = 'bg-yellow-500'; // Default Pending
-                let statusBadgeClass = 'text-yellow-700 bg-yellow-50 border-yellow-200';
-
-                if (isComplete) {
-                    statusColor = 'bg-green-500';
-                    statusBadgeClass = 'text-green-700 bg-green-50 border-green-200';
-                }
-
-                let typeIcon = '🔧';
-                let typeStyle = 'text-orange-600 bg-orange-50';
-
-                if (i.type === 'calibration') {
-                    typeIcon = '⚖️';
-                    typeStyle = 'text-purple-600 bg-purple-50';
-                } else if (i.type === 'pm') {
-                    typeIcon = '🛡️';
-                    typeStyle = 'text-teal-600 bg-teal-50';
-                } else if (i.type === 'spare_parts') {
-                    typeIcon = '⚙️';
-                    typeStyle = 'text-amber-600 bg-amber-50';
-                }
-
-                const poFilesCount = (i.po_files && i.po_files.length) || (i.po_file ? 1 : 0) || (poFilesDb[i.id] && poFilesDb[i.id].length) || 0;
-                const poBtn = poFilesCount > 0 ?
-                    `<button onclick="viewPO(${i.id})" class="text-[10px] font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 px-2 py-1 rounded border border-blue-200 flex items-center gap-1 transition shadow-sm w-full truncate">
-                📄 View PO (${poFilesCount})
-            </button>` :
-                    `<span class="text-[10px] text-gray-400 italic flex items-center gap-1">🚫 No Doc</span>`;
-
-                const model = getEquipmentModel(i);
-
-                return `
-        <div class="bg-white rounded-2xl p-0 shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-all relative group mb-3 last:mb-0">
-            <div class="absolute left-0 top-0 bottom-0 w-1.5 ${statusColor}"></div>
-            
-            <div class="p-4 pl-5">
-                <div class="flex justify-between items-start mb-3">
-                    <div class="pr-2">
-                        <h4 class="font-bold text-gray-800 text-base leading-tight">${escapeHtml(i.equipment_name)}</h4>
-                        <div class="flex flex-wrap items-center gap-1.5 mt-1">
-                            ${model ? `<span class="text-[10px] font-bold text-teal-700 bg-teal-50 border border-teal-200 px-1.5 py-0.5 rounded">🏷️ Model: ${escapeHtml(model)}</span>` : ''}
-                            <span class="text-[10px] font-bold uppercase tracking-wider text-gray-500 flex items-center gap-1 bg-gray-50 px-1.5 py-0.5 rounded">
-                                📍 ${escapeHtml(i.building || 'N/A')}
+            const modalTitle = document.getElementById('modalDateTitle');
+            if (modalTitle) {
+                modalTitle.innerHTML = `
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 w-full">
+                        <div>
+                            <span class="text-[10px] text-gray-400 dark:text-slate-400 font-bold uppercase tracking-wider block">Schedule for</span>
+                            <h3 class="text-xl sm:text-2xl font-black text-gray-800 dark:text-slate-100 flex items-center gap-2">
+                                <span>🗓️</span> <span>${dateFormatted}</span>
+                            </h3>
+                        </div>
+                        <div class="flex items-center gap-2 flex-wrap text-xs">
+                            <span class="px-2.5 py-1 rounded-xl font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                                <strong>${totalCount}</strong> Tasks
+                            </span>
+                            <span class="px-2.5 py-1 rounded-xl font-bold bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800/50">
+                                <span class="w-1.5 h-1.5 rounded-full bg-amber-500 inline-block mr-1"></span><strong>${pendingCount}</strong> Pending
+                            </span>
+                            <span class="px-2.5 py-1 rounded-xl font-bold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/50">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block mr-1"></span><strong>${completeCount}</strong> Complete
+                            </span>
+                            <span class="px-2.5 py-1 rounded-xl font-bold font-mono bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800/50">
+                                ฿${formatCurrency(totalCost)}
                             </span>
                         </div>
                     </div>
-                    <span class="px-2 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wide border ${statusBadgeClass} shadow-sm whitespace-nowrap">
-                        ${i.calendar_status}
-                    </span>
-                </div>
+                `;
+            }
 
-                <div class="grid grid-cols-2 gap-y-3 gap-x-4 text-sm bg-gray-50/80 p-3 rounded-xl border border-gray-100">
-                    
-                    <div class="col-span-2 sm:col-span-1">
-                        <label class="text-[9px] font-bold text-gray-400 uppercase tracking-wider block mb-0.5">Job Type</label>
-                        <div class="inline-flex items-center gap-1.5 px-2 py-1 rounded-md ${typeStyle} text-xs font-bold capitalize border border-black/5">
-                            ${typeIcon} ${i.type}
-                        </div>
-                    </div>
-                    
-                    <div class="col-span-2 sm:col-span-1">
-                        <label class="text-[9px] font-bold text-gray-400 uppercase tracking-wider block mb-0.5">Est. Cost</label>
-                        <span class="font-mono text-gray-700 font-bold text-xs">฿${formatCurrency(i.maintenance_cost)}</span>
-                    </div>
+            const sInput = document.getElementById('calModalSearch');
+            if (sInput) sInput.value = '';
 
-                    <div class="col-span-2">
-                        <label class="text-[9px] font-bold text-gray-400 uppercase tracking-wider block mb-0.5">Service Provider</label>
-                        <div class="flex items-center gap-1">
-                            <span class="text-xs text-gray-700 font-medium truncate w-full" title="${i.technicians[0]}">🏢 ${i.technicians[0] || '-'}</span>
-                        </div>
-                    </div>
+            const btnCards = document.getElementById('btnCalViewCards');
+            const btnTable = document.getElementById('btnCalViewTable');
+            if (btnCards && btnTable) {
+                if (currentCalModalView === 'cards') {
+                    btnCards.className = 'px-2.5 py-1 rounded-lg transition-all text-xs flex items-center gap-1 bg-white dark:bg-slate-700 shadow-xs text-teal-700 dark:text-teal-300 font-bold';
+                    btnTable.className = 'px-2.5 py-1 rounded-lg transition-all text-xs flex items-center gap-1 text-gray-500 dark:text-slate-400 hover:text-gray-800 dark:hover:text-slate-200';
+                } else {
+                    btnTable.className = 'px-2.5 py-1 rounded-lg transition-all text-xs flex items-center gap-1 bg-white dark:bg-slate-700 shadow-xs text-teal-700 dark:text-teal-300 font-bold';
+                    btnCards.className = 'px-2.5 py-1 rounded-lg transition-all text-xs flex items-center gap-1 text-gray-500 dark:text-slate-400 hover:text-gray-800 dark:hover:text-slate-200';
+                }
+            }
 
-                    <div class="col-span-2 sm:col-span-1">
-                        <label class="text-[9px] font-bold text-gray-400 uppercase tracking-wider block mb-0.5">Reporter</label>
-                        <span class="text-xs text-gray-600 block truncate" title="${i.reporter}">👤 ${i.reporter || '-'}</span>
-                    </div>
-
-                    <div class="col-span-2 sm:col-span-1">
-                         <label class="text-[9px] font-bold text-gray-400 uppercase tracking-wider block mb-0.5">Reference</label>
-                         ${poBtn}
-                    </div>
-                </div>
-
-                <div class="mt-4 flex gap-2">
-                    <button onclick="updateCalStatus(${i.id}, 'complete')" class="flex-1 py-2 rounded-xl text-xs font-bold transition-all border ${isComplete ? 'bg-green-600 text-white border-green-600 shadow-md shadow-green-200' : 'bg-white text-gray-600 border-gray-200 hover:border-green-500 hover:text-green-600'}">
-                        ${isComplete ? '✓ Completed' : 'Mark Complete'}
-                    </button>
-                    
-                    <button onclick="updateCalStatus(${i.id}, 'pending')" class="flex-1 py-2 rounded-xl text-xs font-bold transition-all border ${!isComplete ? 'bg-yellow-500 text-white border-yellow-500 shadow-md shadow-yellow-200' : 'bg-white text-gray-600 border-gray-200 hover:border-yellow-500 hover:text-yellow-600'}">
-                        Pending
-                    </button>
-                </div>
-            </div>
-        </div>
-        `;
-            }).join('');
+            renderCalendarModalTabs();
+            renderCalendarModalContent();
 
             document.getElementById('calendarModal').classList.remove('hidden');
+
+            if (highlightId) {
+                currentCalModalHighlightId = highlightId;
+                setTimeout(() => {
+                    const el = document.getElementById(`schedule-item-${highlightId}`);
+                    if (el) {
+                        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        el.classList.add('animate-pulse');
+                        setTimeout(() => el.classList.remove('animate-pulse'), 3000);
+                    }
+                }, 250);
+            }
         }
 
-        function closeCalendarModal() { document.getElementById('calendarModal').classList.add('hidden'); renderCalendar(); }
+        function renderCalendarModalTabs() {
+            const tabsEl = document.getElementById('calModalFilterTabs');
+            if (!tabsEl) return;
+            const items = currentCalModalItems || [];
+            const total = items.length;
+            const pending = items.filter(x => (x.calendar_status || 'pending').toLowerCase() !== 'complete').length;
+            const complete = items.filter(x => (x.calendar_status || '').toLowerCase() === 'complete').length;
+
+            const tabs = [
+                { id: 'all', label: `All (${total})`, icon: 'fa-list-check' },
+                { id: 'pending', label: `Pending (${pending})`, dot: 'bg-amber-500' },
+                { id: 'complete', label: `Complete (${complete})`, dot: 'bg-emerald-500' }
+            ];
+
+            tabsEl.innerHTML = tabs.map(t => {
+                const isActive = currentCalModalFilter === t.id;
+                const dotHtml = t.dot ? `<span class="w-2 h-2 rounded-full ${t.dot}"></span>` : (t.icon ? `<i class="fa-solid ${t.icon} text-xs"></i>` : '');
+                const activeCls = isActive
+                    ? 'bg-teal-600 text-white shadow-xs font-bold'
+                    : 'bg-white dark:bg-slate-800 text-gray-600 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-750 border border-gray-200 dark:border-slate-700';
+                return `<button type="button" onclick="setCalendarModalFilter('${t.id}')" class="px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 transition-all ${activeCls}">
+                    ${dotHtml} <span>${t.label}</span>
+                </button>`;
+            }).join('');
+        }
+
+        function renderCalendarModalContent() {
+            const content = document.getElementById('calendarModalContent');
+            if (!content) return;
+
+            const items = currentCalModalItems || [];
+            const query = (document.getElementById('calModalSearch')?.value || '').trim().toLowerCase();
+
+            const filtered = items.filter(i => {
+                if (currentCalModalFilter === 'pending') {
+                    if ((i.calendar_status || 'pending').toLowerCase() === 'complete') return false;
+                } else if (currentCalModalFilter === 'complete') {
+                    if ((i.calendar_status || '').toLowerCase() !== 'complete') return false;
+                }
+
+                if (query) {
+                    const model = getEquipmentModel(i);
+                    const tech = (i.technicians || []).join(' ');
+                    const text = `${i.equipment_name || ''} ${model || ''} ${i.building || ''} ${i.reporter || ''} ${tech} ${i.type || ''}`.toLowerCase();
+                    if (!text.includes(query)) return false;
+                }
+                return true;
+            });
+
+            if (filtered.length === 0) {
+                content.innerHTML = `
+                    <div class="py-16 text-center text-gray-400 dark:text-slate-500">
+                        <i class="fa-solid fa-clipboard-question text-4xl mb-3 opacity-40"></i>
+                        <p class="font-bold text-sm">ไม่พบรายการที่ตรงกับเงื่อนไข</p>
+                        <p class="text-xs opacity-75 mt-1">ลองเปลี่ยนคำค้นหา หรือสลับแท็บฟิลเตอร์</p>
+                    </div>`;
+                return;
+            }
+
+            if (currentCalModalView === 'table') {
+                content.innerHTML = renderCalendarModalTable(filtered);
+            } else {
+                content.innerHTML = `<div class="space-y-3">` +
+                    filtered.map(i => renderCalendarModalCard(i)).join('') +
+                    `</div>`;
+            }
+        }
+
+        function renderCalendarModalCard(i) {
+            const isComplete = (i.calendar_status || 'pending').toLowerCase() === 'complete';
+            const canEdit = canUserEditRecord(i);
+            const poFilesCount = (i.po_files && i.po_files.length) || (i.po_file ? 1 : 0) || (poFilesDb[i.id] && poFilesDb[i.id].length) || 0;
+            const model = getEquipmentModel(i);
+            const isHighlighted = Boolean(currentCalModalHighlightId && String(i.id) === String(currentCalModalHighlightId));
+            const creatorDisplay = i.created_by_name || i.created_by || i.reporter || 'System';
+            const dateRangeStr = (i.end_date && i.end_date !== i.service_date) ? `${i.service_date} ~ ${i.end_date}` : (i.service_date || '-');
+
+            let typeIcon = '🔧';
+            let typeStyle = 'text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/40 border-orange-200 dark:border-orange-800/60';
+            if (i.type === 'calibration') {
+                typeIcon = '⚖️';
+                typeStyle = 'text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-950/40 border-purple-200 dark:border-purple-800/60';
+            } else if (i.type === 'pm') {
+                typeIcon = '🛡️';
+                typeStyle = 'text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/40 border-teal-200 dark:border-teal-800/60';
+            } else if (i.type === 'spare_parts') {
+                typeIcon = '⚙️';
+                typeStyle = 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 border-amber-200 dark:border-amber-800/60';
+            }
+
+            const statusBadgeClass = isComplete
+                ? 'text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/50 border-emerald-200 dark:border-emerald-800'
+                : 'text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/50 border-amber-200 dark:border-amber-800';
+
+            const cardHighlightClass = isHighlighted
+                ? 'ring-2 ring-teal-500 bg-teal-50/90 dark:bg-teal-950/60 border-teal-400 dark:border-teal-700 shadow-md'
+                : 'bg-gray-50/90 dark:bg-slate-800/90 border-gray-200/80 dark:border-slate-700/80 hover:shadow-sm';
+
+            return `
+            <div id="schedule-item-${i.id}" class="p-3.5 sm:p-4 ${cardHighlightClass} border rounded-xl flex flex-col sm:flex-row justify-between sm:items-center gap-3 transition">
+                <div class="space-y-1.5 flex-1 min-w-0">
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <strong class="text-gray-900 dark:text-slate-100 text-sm sm:text-base font-bold whitespace-normal break-words">🔧 ${escapeHtml(i.equipment_name || 'Equipment')}</strong>
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full ${typeStyle} text-[10px] font-bold capitalize border shrink-0">
+                            ${typeIcon} ${escapeHtml(i.type || '-')}
+                        </span>
+                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase border ${statusBadgeClass} shrink-0">
+                            ${i.calendar_status || 'pending'}
+                        </span>
+                        ${model ? `<span class="text-[11px] font-semibold text-teal-700 dark:text-teal-300 bg-teal-50 dark:bg-teal-950/40 border border-teal-200/80 dark:border-teal-800/60 px-2 py-0.5 rounded-full shrink-0">🏷️ ${escapeHtml(model)}</span>` : ''}
+                        ${isHighlighted ? `<span class="px-2 py-0.5 rounded-full text-[9px] font-black bg-teal-600 text-white animate-pulse shrink-0">SELECTED</span>` : ''}
+                    </div>
+
+                    <div class="text-xs text-gray-600 dark:text-slate-300 flex flex-wrap gap-x-3.5 gap-y-1">
+                        <span>📍 <strong>Location:</strong> ${escapeHtml(i.building || '-')}</span>
+                        <span>👤 <strong>Reporter:</strong> ${escapeHtml(i.reporter || '-')}</span>
+                        <span>🏢 <strong>Provider:</strong> ${escapeHtml((i.technicians && i.technicians[0]) || '-')}</span>
+                    </div>
+
+                    <div class="text-xs text-gray-600 dark:text-slate-300 flex flex-wrap gap-x-3.5 gap-y-1">
+                        <span>📅 <strong>Service Dates:</strong> <span class="font-bold text-teal-700 dark:text-teal-400">${dateRangeStr}</span></span>
+                        <span>💰 <strong>Est. Cost:</strong> <span class="font-mono font-bold text-gray-800 dark:text-slate-200">฿${formatCurrency(i.maintenance_cost)}</span></span>
+                        <span>📌 <strong>Status:</strong> <span class="font-semibold capitalize">${escapeHtml(i.calendar_status || 'Pending')}</span></span>
+                    </div>
+
+                    ${i.notes ? `<div class="text-xs text-gray-500 dark:text-slate-400 whitespace-normal break-words">📝 <strong>Notes:</strong> ${escapeHtml(i.notes)}</div>` : ''}
+                </div>
+
+                <div class="flex items-center gap-2 self-end sm:self-center whitespace-nowrap shrink-0 flex-wrap sm:flex-nowrap pt-2 sm:pt-0 border-t sm:border-t-0 border-gray-200/50 dark:border-slate-700/50 w-full sm:w-auto justify-end">
+                    ${poFilesCount > 0 ? `
+                    <button type="button" onclick="viewPO(${i.id})" class="px-3 py-1.5 rounded-xl text-xs font-semibold border border-blue-200 dark:border-blue-800 text-blue-600 dark:text-blue-400 bg-blue-50/80 dark:bg-blue-950/40 hover:bg-blue-100 flex items-center gap-1.5 transition">
+                        <i class="fa-solid fa-file-lines"></i> PO (${poFilesCount})
+                    </button>` : ''}
+
+                    ${canEdit ? `
+                    <button type="button" onclick="updateCalStatus(${i.id}, '${isComplete ? 'pending' : 'complete'}')" class="px-3 py-1.5 rounded-xl text-xs font-bold transition-all border flex items-center gap-1.5 ${isComplete ? 'bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800' : 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800'}">
+                        <span>${isComplete ? '⏳ Mark Pending' : '✓ Mark Complete'}</span>
+                    </button>` : `
+                    <span class="text-xs text-gray-400 dark:text-slate-500 py-1.5 px-3 bg-gray-100/80 dark:bg-slate-800/80 rounded-xl border border-gray-200/60 dark:border-slate-700/60" title="Created by ${escapeHtml(creatorDisplay)}">
+                        <i class="fa-solid fa-lock text-[10px] mr-1"></i> View Only
+                    </span>`}
+                </div>
+            </div>`;
+        }
+
+        function renderCalendarModalTable(items) {
+            return `
+            <div class="overflow-x-auto rounded-2xl border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-850 shadow-2xs">
+                <table class="w-full text-xs text-left border-collapse">
+                    <thead class="bg-gray-50/90 dark:bg-slate-800 text-gray-500 dark:text-slate-400 font-bold uppercase text-[10px] border-b border-gray-100 dark:border-slate-800">
+                        <tr>
+                            <th class="py-3 px-3.5 whitespace-nowrap">Status</th>
+                            <th class="py-3 px-3.5 min-w-[200px] max-w-[320px]">Equipment</th>
+                            <th class="py-3 px-3.5 min-w-[120px] max-w-[180px]">Location</th>
+                            <th class="py-3 px-3.5 whitespace-nowrap">Type</th>
+                            <th class="py-3 px-3.5 whitespace-nowrap">Est. Cost</th>
+                            <th class="py-3 px-3.5 min-w-[140px] max-w-[200px]">Service Provider</th>
+                            <th class="py-3 px-3.5 min-w-[120px] max-w-[180px]">Reporter</th>
+                            <th class="py-3 px-3.5 whitespace-nowrap text-center">Doc</th>
+                            <th class="py-3 px-3.5 text-center whitespace-nowrap">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100 dark:divide-slate-800">
+                        ${items.map(i => {
+                            const isComplete = (i.calendar_status || 'pending').toLowerCase() === 'complete';
+                            const canEdit = canUserEditRecord(i);
+                            const poFilesCount = (i.po_files && i.po_files.length) || (i.po_file ? 1 : 0) || (poFilesDb[i.id] && poFilesDb[i.id].length) || 0;
+                            const model = getEquipmentModel(i);
+                            const isHighlighted = Boolean(currentCalModalHighlightId && String(i.id) === String(currentCalModalHighlightId));
+                            const creatorDisplay = i.created_by_name || i.created_by || i.reporter || 'System';
+
+                            let typeIcon = '🔧';
+                            let typeStyle = 'text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/40 border-orange-200 dark:border-orange-800/60';
+                            if (i.type === 'calibration') {
+                                typeIcon = '⚖️';
+                                typeStyle = 'text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-950/40 border-purple-200 dark:border-purple-800/60';
+                            } else if (i.type === 'pm') {
+                                typeIcon = '🛡️';
+                                typeStyle = 'text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/40 border-teal-200 dark:border-teal-800/60';
+                            } else if (i.type === 'spare_parts') {
+                                typeIcon = '⚙️';
+                                typeStyle = 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 border-amber-200 dark:border-amber-800/60';
+                            }
+
+                            const poBtn = poFilesCount > 0 ?
+                                `<button onclick="viewPO(${i.id})" class="text-[10px] font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 px-2 py-0.5 rounded-lg border border-blue-200 dark:border-blue-800 flex items-center gap-1 transition shadow-2xs whitespace-nowrap mx-auto">
+                                    📄 PO (${poFilesCount})
+                                </button>` :
+                                `<span class="text-[10px] text-gray-300 dark:text-slate-600 italic">-</span>`;
+
+                            const trHighlightClass = isHighlighted
+                                ? 'bg-teal-50/95 dark:bg-teal-950/80 ring-2 ring-teal-500 ring-inset shadow-xs border-l-4 border-l-teal-600'
+                                : 'hover:bg-slate-50/80 dark:hover:bg-slate-800/50';
+
+                            return `
+                            <tr id="schedule-item-${i.id}" class="${trHighlightClass} transition-colors duration-200 align-top">
+                                <td class="py-3 px-3.5 whitespace-nowrap">
+                                    <div class="flex items-center gap-1.5 flex-wrap">
+                                        <span class="px-2 py-0.5 rounded-md text-[10px] font-extrabold uppercase ${isComplete ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800' : 'bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300 border border-amber-200 dark:border-amber-800'}">
+                                            ${i.calendar_status || 'pending'}
+                                        </span>
+                                        ${isHighlighted ? `<span class="px-1.5 py-0.5 rounded text-[9px] font-black bg-teal-600 text-white animate-pulse">SELECTED</span>` : ''}
+                                    </div>
+                                </td>
+                                <td class="py-3 px-3.5 text-gray-800 dark:text-slate-100">
+                                    <div class="font-bold text-xs sm:text-sm leading-snug whitespace-normal break-words">${escapeHtml(i.equipment_name)}</div>
+                                    ${model ? `<div class="text-[11px] text-teal-700 dark:text-teal-300 font-semibold whitespace-normal break-words leading-snug mt-0.5">🏷️ ${escapeHtml(model)}</div>` : ''}
+                                </td>
+                                <td class="py-3 px-3.5 text-gray-700 dark:text-slate-300 whitespace-normal break-words leading-snug">
+                                    <span>📍 ${escapeHtml(i.building || '-')}</span>
+                                </td>
+                                <td class="py-3 px-3.5 whitespace-nowrap">
+                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md ${typeStyle} text-[10px] font-bold capitalize border">
+                                        ${typeIcon} ${escapeHtml(i.type || '-')}
+                                    </span>
+                                </td>
+                                <td class="py-3 px-3.5 font-mono font-bold text-gray-900 dark:text-slate-100 whitespace-nowrap">
+                                    ฿${formatCurrency(i.maintenance_cost)}
+                                </td>
+                                <td class="py-3 px-3.5 text-gray-700 dark:text-slate-300 whitespace-normal break-words leading-snug">
+                                    <span>🏢 ${escapeHtml((i.technicians && i.technicians[0]) || '-')}</span>
+                                </td>
+                                <td class="py-3 px-3.5 text-gray-700 dark:text-slate-300 whitespace-normal break-words leading-snug">
+                                    <span>👤 ${escapeHtml(i.reporter || '-')}</span>
+                                </td>
+                                <td class="py-3 px-3.5 text-center whitespace-nowrap">
+                                    ${poBtn}
+                                </td>
+                                <td class="py-3 px-3.5 text-center whitespace-nowrap">
+                                    ${canEdit ? `
+                                    <div class="inline-flex items-center gap-1">
+                                        <button onclick="updateCalStatus(${i.id}, '${isComplete ? 'pending' : 'complete'}')" class="px-2.5 py-1 rounded-xl text-xs font-bold transition-all border flex items-center gap-1 mx-auto whitespace-nowrap ${isComplete ? 'bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800' : 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800'}">
+                                            <span>${isComplete ? '⏳ Mark Pending' : '✓ Mark Complete'}</span>
+                                        </button>
+                                    </div>` : `
+                                    <span class="text-[11px] text-gray-400 dark:text-slate-500 italic" title="Created by ${escapeHtml(creatorDisplay)}">
+                                        <i class="fa-solid fa-lock text-[9px] mr-1"></i>View Only
+                                    </span>`}
+                                </td>
+                            </tr>`;
+                        }).join('')}
+                    </tbody>
+                </table>
+            </div>`;
+        }
+
+        function closeCalendarModal() {
+            document.getElementById('calendarModal').classList.add('hidden');
+            renderCalendar();
+        }
+
         function updateCalStatus(id, status) {
             const r = (records || []).find(r => String(r.id) === String(id));
-            if (r) r.calendar_status = status;
+            if (!r) return;
+            if (!canUserEditRecord(r)) {
+                LabAlert.toast('error', 'คุณไม่มีสิทธิ์เปลี่ยนสถานะรายการนี้ (เฉพาะผู้สร้างหรือ Admin)');
+                return;
+            }
+            r.calendar_status = status;
+            saveCarePlusState();
+            addCarePlusAudit('Update Status', `เปลี่ยนสถานะ ${r.equipment_name} เป็น ${status.toUpperCase()}`);
             closeCalendarModal();
             loadRecords();
+            updateDashboardCards();
+            LabAlert.toast('success', `อัปเดตสถานะเป็น ${status.toUpperCase()} เรียบร้อย`);
         }
         function goToTodayCalendar() {
             currentCalendarMonth = new Date();
@@ -3867,7 +4263,7 @@ function renderCharts(data) {
                     else typeLabel = r.type;
                 }
 
-                const canEdit = currentUser.role === 'admin' || r.created_by === currentUser.email;
+                const canEdit = canUserEditRecord(r);
 
                 let actionButtons = `<span class="text-xs text-gray-400 italic">View Only</span>`;
                 if (canEdit) {
@@ -5132,6 +5528,10 @@ function renderCharts(data) {
                 if (window.LabAlert) LabAlert.toast('info', 'Record not found');
                 return;
             }
+            if (!canUserEditRecord(r)) {
+                if (window.LabAlert) LabAlert.error('คุณไม่มีสิทธิ์แก้ไขรายการนี้ (เฉพาะผู้สร้างหรือ Admin)', 'ไม่มีสิทธิ์เข้าถึง');
+                return;
+            }
             loadAddRecordForm(); showPage('addRecord');
             document.getElementById('formTitle').innerText = 'Edit Record';
             document.getElementById('editRecordId').value = r.id;
@@ -5179,9 +5579,13 @@ function renderCharts(data) {
         window.openEditRecordModal = loadEditForm;
 
         function deleteAttachedPO(recordId) {
+            const r = records.find(x => String(x.id) === String(recordId));
+            if (r && !canUserEditRecord(r)) {
+                if (window.LabAlert) LabAlert.error('คุณไม่มีสิทธิ์ลบไฟล์แนบของรายการนี้ (เฉพาะผู้สร้างหรือ Admin)', 'ไม่มีสิทธิ์เข้าถึง');
+                return;
+            }
             LabAlert.confirm('ต้องการลบไฟล์แนบ PO?', 'การลบไฟล์จะลบออกจากระบบทันที คุณแน่ใจหรือไม่?', 'ลบไฟล์', 'ยกเลิก').then(confirmed => {
                 if (confirmed) {
-                    const r = records.find(x => x.id === recordId);
                     if (r) {
                         r.po_file = '';
                         r.po_files = [];
@@ -5273,8 +5677,12 @@ function renderCharts(data) {
 
             const proceedSave = () => {
                 if (editId) {
-                    const index = records.findIndex(r => r.id == editId);
+                    const index = records.findIndex(r => String(r.id) === String(editId));
                     if (index !== -1) {
+                        if (!canUserEditRecord(records[index])) {
+                            if (window.LabAlert) LabAlert.error('คุณไม่มีสิทธิ์แก้ไขรายการนี้ (เฉพาะผู้สร้างหรือ Admin)', 'ไม่มีสิทธิ์เข้าถึง');
+                            return;
+                        }
                         records[index] = { ...records[index], ...recordData };
                         if (tempPoFiles.length > 0) {
                             records[index].po_files = tempPoFiles.map(f => f.name);
@@ -5292,7 +5700,16 @@ function renderCharts(data) {
                     }
                 } else {
                     const newId = Date.now();
-                    const newRec = { id: newId, ...recordData, po_file: '', po_files: tempPoFiles.map(f => f.name), created_by: currentUser.email };
+                    const user = currentUser || (typeof LabAuth !== 'undefined' ? LabAuth.getCurrentUser() : null) || {};
+                    const newRec = {
+                        id: newId,
+                        ...recordData,
+                        po_file: '',
+                        po_files: tempPoFiles.map(f => f.name),
+                        created_by: user.username || user.email || user.id || 'User',
+                        created_by_id: user.id || '',
+                        created_by_name: user.name || user.username || ''
+                    };
                     if (tempPoFiles.length > 0) {
                         if (typeof poFilesDb === 'undefined') window.poFilesDb = {};
                         poFilesDb[newId] = [...tempPoFiles];
@@ -5391,6 +5808,10 @@ function renderCharts(data) {
         }
         function deleteRecord(id) {
             const delRec = records.find(r => String(r.id) === String(id));
+            if (delRec && !canUserEditRecord(delRec)) {
+                if (window.LabAlert) LabAlert.error('คุณไม่มีสิทธิ์ลบรายการนี้ (เฉพาะผู้สร้างหรือ Admin)', 'ไม่มีสิทธิ์เข้าถึง');
+                return;
+            }
             LabAlert.confirm('ต้องการลบประวัติตรวจสอบ/ซ่อมบำรุง?', 'ข้อมูลนี้ไม่สามารถกู้คืนได้เมื่อลบไปแล้ว', 'ลบประวัติ', 'ยกเลิก').then(confirmed => {
                 if (confirmed) {
                     records = records.filter(r => String(r.id) !== String(id));
@@ -5734,11 +6155,12 @@ function renderCharts(data) {
             <div class="px-4 py-3 bg-gray-50/95 dark:bg-slate-900/95 border-b border-gray-100 dark:border-slate-800 flex flex-col gap-2.5">
                 <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
                     <div class="relative flex-1">
-                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
-                        <input type="text" id="upcomingSearchInput" placeholder="🔍 Search equipment, model, location, technician..." oninput="handleUpcomingSearch(this.value)"
-                            class="w-full pl-8 pr-3 py-1.5 text-xs rounded-xl glass-input border border-gray-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800/80 text-gray-800 dark:text-slate-200">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none z-10"></i>
+                        <input type="text" id="upcomingSearchInput" placeholder="Search equipment, model, location, technician..." oninput="handleUpcomingSearch(this.value)"
+                            style="padding-left: 2.5rem !important;"
+                            class="w-full pr-3 py-1.5 text-xs rounded-xl glass-input border border-gray-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800/80 text-gray-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-teal-500 shadow-2xs">
                     </div>
-                    <div class="flex items-center gap-2">
+                    <div class="flex items-center gap-2 shrink-0">
                         <select id="upcomingStatusFilter" onchange="setUpcomingFilterStatus(this.value)"
                             class="px-2.5 py-1.5 text-xs rounded-xl glass-input border border-gray-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800/80 font-bold text-gray-700 dark:text-slate-200">
                             <option value="all">⚡ All Statuses</option>
@@ -5749,13 +6171,13 @@ function renderCharts(data) {
                     </div>
                 </div>
 
-                <!-- Type Filter Chips (Injected dynamically) -->
-                <div class="flex items-center gap-2 overflow-x-auto custom-scroll pb-1" id="upcomingTypeChips">
+                <!-- Type Filter Chips (Wrapped cleanly to prevent horizontal scrollbar) -->
+                <div class="flex flex-wrap items-center gap-1.5 pt-0.5" id="upcomingTypeChips">
                 </div>
             </div>
 
-            <!-- Content Area -->
-            <div id="upcomingModalContent" class="p-4 sm:p-5 flex-1 overflow-y-auto custom-scroll space-y-3 bg-slate-100/50 dark:bg-slate-950/40">
+            <!-- Content Area: Strictly no horizontal scrollbar -->
+            <div id="upcomingModalContent" class="p-3 sm:p-5 flex-1 overflow-y-auto overflow-x-hidden custom-scroll space-y-2.5 bg-slate-100/50 dark:bg-slate-950/40 w-full box-border">
             </div>
 
             <!-- Footer Summary -->
@@ -5777,9 +6199,10 @@ function renderCharts(data) {
         </div>
         <div class="p-2.5 border-b border-gray-100 dark:border-slate-800">
             <div class="relative">
-                <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none z-10"></i>
                 <input type="text" id="colFilterSearch" placeholder="ค้นหาตัวเลือก..." oninput="renderColumnFilterList()"
-                    class="w-full pl-7 pr-3 py-1.5 text-xs rounded-lg glass-input border border-gray-200 dark:border-slate-700">
+                    style="padding-left: 2.25rem !important;"
+                    class="w-full pr-3 py-1.5 text-xs rounded-lg glass-input border border-gray-200 dark:border-slate-700">
             </div>
             <div class="flex justify-between items-center mt-2 px-0.5">
                 <button type="button" onclick="selectAllColumnFilter(true)" class="text-[11px] font-semibold text-teal-600 dark:text-teal-400 hover:underline">เลือกทั้งหมด</button>
