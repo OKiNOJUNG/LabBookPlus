@@ -654,6 +654,10 @@
             background: linear-gradient(135deg, #ea580c, #f97316);
         }
 
+        .bg-install {
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
+        }
+
         /* Multi-day Spanning Bar for Monthly Calendar */
         .cal-multiday-bar {
             position: relative;
@@ -943,6 +947,7 @@
                                 <option value="calibration">Calibration</option>
                                 <option value="pm">PM</option>
                                 <option value="spare_parts">Spare parts</option>
+                                <option value="installation">Installation</option>
                             </select>
                         </div>
 
@@ -963,7 +968,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
                     <div class="glass ios-card p-3 sm:p-4 flex justify-between items-center relative overflow-hidden">
                         <div class="absolute right-0 top-0 w-16 h-16 bg-blue-400/20 rounded-bl-full -mr-2 -mt-2 pointer-events-none"></div>
                         <div>
@@ -1003,6 +1008,16 @@
                         <div
                             class="w-10 h-10 bg-pink-100/80 dark:bg-pink-950/50 rounded-xl flex items-center justify-center text-xl shadow-xs">
                             ⚙️</div>
+                    </div>
+                    <div class="glass ios-card p-3 sm:p-4 flex justify-between items-center relative overflow-hidden">
+                        <div class="absolute right-0 top-0 w-16 h-16 bg-indigo-400/20 rounded-bl-full -mr-2 -mt-2 pointer-events-none"></div>
+                        <div>
+                            <p class="text-gray-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider mb-0.5">Installation</p>
+                            <h2 class="text-2xl sm:text-3xl font-extrabold text-indigo-600 dark:text-indigo-400" id="cardInstallations">0</h2>
+                        </div>
+                        <div
+                            class="w-10 h-10 bg-indigo-100/80 dark:bg-indigo-950/50 rounded-xl flex items-center justify-center text-xl shadow-xs">
+                            📦</div>
                     </div>
                     <div class="glass ios-card p-3 sm:p-4 flex justify-between items-center relative overflow-hidden cursor-pointer hover:bg-red-50/50 dark:hover:bg-red-950/30 transition-colors col-span-2 sm:col-span-1"
                         onclick="openUpcomingModal()">
@@ -1180,6 +1195,8 @@
                         <option value="repair">Repair</option>
                         <option value="calibration">Calibration</option>
                         <option value="pm">PM</option>
+                        <option value="spare_parts">Spare parts</option>
+                        <option value="installation">Installation</option>
                     </select>
                     <div class="flex gap-2">
                         <select id="filterMonth" onchange="applyFilters()"
@@ -1343,6 +1360,7 @@
                                     <option value="calibration">Calibration</option>
                                     <option value="pm">PM</option>
                                     <option value="spare_parts">Spare parts</option>
+                                    <option value="installation">Installation</option>
                                 </select>
                             </div>
                             <div class="space-y-1">
@@ -1960,6 +1978,9 @@
                 <button onclick="switchHistoryTab('spare_parts')" id="tabHistSpare"
                     class="hist-tab flex-1 px-4 py-2.5 rounded-xl text-sm font-bold bg-gray-100 text-gray-500 hover:bg-pink-100 hover:text-pink-700 transition">⚙️
                     Spare parts</button>
+                <button onclick="switchHistoryTab('installation')" id="tabHistInstall"
+                    class="hist-tab flex-1 px-4 py-2.5 rounded-xl text-sm font-bold bg-gray-100 text-gray-500 hover:bg-indigo-100 hover:text-indigo-700 transition">📦
+                    Installation</button>
             </div>
 
             <div id="historyModalContent" class="p-5 flex-1 overflow-y-auto bg-gray-50/50 custom-scroll space-y-3">
@@ -2556,7 +2577,7 @@
                 _upcomingRecordsCache = recs.filter(r => {
                     let checkDate = null;
                     if (r.type === 'calibration' && r.next_service_date) checkDate = new Date(r.next_service_date);
-                    else if ((r.type === 'repair' || r.type === 'pm') && r.service_date) checkDate = new Date(r.service_date);
+                    else if ((r.type === 'repair' || r.type === 'pm' || r.type === 'installation') && r.service_date) checkDate = new Date(r.service_date);
                     else if (r.next_service_date) checkDate = new Date(r.next_service_date);
                     else if (r.service_date) checkDate = new Date(r.service_date);
 
@@ -2627,13 +2648,17 @@
             const calibCount = _upcomingRecordsCache.filter(r => r.type === 'calibration').length;
             const pmCount = _upcomingRecordsCache.filter(r => r.type === 'pm').length;
             const repairCount = _upcomingRecordsCache.filter(r => r.type === 'repair').length;
+            const spareCount = _upcomingRecordsCache.filter(r => r.type === 'spare_parts').length;
+            const installCount = _upcomingRecordsCache.filter(r => r.type === 'installation' || (r.type || '').toLowerCase().includes('install')).length;
 
             if (chipsEl) {
                 const chipData = [
                     { type: 'all', label: 'All Tasks', count: totalCount, activeClass: 'bg-slate-800 text-white dark:bg-slate-200 dark:text-slate-900 shadow-sm', inactiveClass: 'bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-300 border border-gray-200 dark:border-slate-700 hover:bg-gray-100' },
                     { type: 'calibration', label: '⚖️ Calibration', count: calibCount, activeClass: 'bg-purple-600 text-white shadow-sm shadow-purple-300', inactiveClass: 'bg-purple-50 text-purple-700 dark:bg-purple-950/40 dark:text-purple-300 border border-purple-200 dark:border-purple-800 hover:bg-purple-100' },
                     { type: 'pm', label: '🛡️ PM (Preventive)', count: pmCount, activeClass: 'bg-teal-600 text-white shadow-sm shadow-teal-300', inactiveClass: 'bg-teal-50 text-teal-700 dark:bg-teal-950/40 dark:text-teal-300 border border-teal-200 dark:border-teal-800 hover:bg-teal-100' },
-                    { type: 'repair', label: '🔧 Repair', count: repairCount, activeClass: 'bg-amber-600 text-white shadow-sm shadow-amber-300', inactiveClass: 'bg-amber-50 text-amber-800 dark:bg-amber-950/40 dark:text-amber-300 border border-amber-200 dark:border-amber-800 hover:bg-amber-100' }
+                    { type: 'repair', label: '🔧 Repair', count: repairCount, activeClass: 'bg-amber-600 text-white shadow-sm shadow-amber-300', inactiveClass: 'bg-amber-50 text-amber-800 dark:bg-amber-950/40 dark:text-amber-300 border border-amber-200 dark:border-amber-800 hover:bg-amber-100' },
+                    { type: 'spare_parts', label: '⚙️ Spare parts', count: spareCount, activeClass: 'bg-pink-600 text-white shadow-sm shadow-pink-300', inactiveClass: 'bg-pink-50 text-pink-800 dark:bg-pink-950/40 dark:text-pink-300 border border-pink-200 dark:border-pink-800 hover:bg-pink-100' },
+                    { type: 'installation', label: '📦 Installation', count: installCount, activeClass: 'bg-indigo-600 text-white shadow-sm shadow-indigo-300', inactiveClass: 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 hover:bg-indigo-100' }
                 ];
 
                 chipsEl.innerHTML = chipData.map(c => {
@@ -2720,6 +2745,18 @@
                     typeBadgeClass = 'bg-amber-600 text-white shadow-xs shadow-amber-200';
                     typeIcon = '🔧';
                     typeLabel = 'REPAIR';
+                } else if (r.type === 'spare_parts') {
+                    cardBorderClass = 'border-l-[6px] border-l-pink-500 dark:border-l-pink-400 border-pink-200/80 dark:border-pink-800/40';
+                    cardBgClass = 'bg-gradient-to-r from-pink-50/90 via-pink-50/20 to-white dark:from-pink-950/40 dark:via-slate-900 dark:to-slate-900';
+                    typeBadgeClass = 'bg-pink-600 text-white shadow-xs shadow-pink-200';
+                    typeIcon = '⚙️';
+                    typeLabel = 'SPARE PARTS';
+                } else if (r.type === 'installation' || (r.type || '').toLowerCase().includes('install')) {
+                    cardBorderClass = 'border-l-[6px] border-l-indigo-600 dark:border-l-indigo-400 border-indigo-200/80 dark:border-indigo-800/40';
+                    cardBgClass = 'bg-gradient-to-r from-indigo-50/90 via-indigo-50/20 to-white dark:from-indigo-950/40 dark:via-slate-900 dark:to-slate-900';
+                    typeBadgeClass = 'bg-indigo-600 text-white shadow-xs shadow-indigo-200';
+                    typeIcon = '📦';
+                    typeLabel = 'INSTALLATION';
                 }
 
                 // --- 2. Status Color System ---
@@ -3018,13 +3055,15 @@ function loadDashboard() {
             document.getElementById('cardRepairs').innerText = sourceData.filter(r => r.type === 'repair').length;
             document.getElementById('cardCalibrations').innerText = sourceData.filter(r => r.type === 'calibration').length;
             document.getElementById('cardSpareParts').innerText = sourceData.filter(r => r.type === 'spare_parts').length;
+            const cardInst = document.getElementById('cardInstallations');
+            if (cardInst) cardInst.innerText = sourceData.filter(r => r.type === 'installation' || (r.type || '').toLowerCase().includes('install')).length;
 
             const today = new Date();
             const next90 = new Date(); next90.setDate(today.getDate() + 90);
             const upcoming = sourceData.filter(r => {
                 let checkDate = null;
                 if (r.type === 'calibration' && r.next_service_date) checkDate = new Date(r.next_service_date);
-                else if ((r.type === 'repair' || r.type === 'pm') && r.service_date) checkDate = new Date(r.service_date);
+                else if ((r.type === 'repair' || r.type === 'pm' || r.type === 'installation') && r.service_date) checkDate = new Date(r.service_date);
                 if (checkDate) return checkDate >= today && checkDate <= next90;
                 return false;
             }).length;
@@ -3183,7 +3222,7 @@ function loadDashboard() {
                         if (isRowStart && !isStart) spanClass += ' row-start';
                         if (isRowEnd && !isEnd) spanClass += ' row-end';
 
-                        const bgClass = evt.type === 'repair' ? 'bg-repair' : (evt.type === 'pm' ? 'bg-pm' : (evt.type === 'spare_parts' ? 'bg-spare' : 'bg-calib'));
+                        const bgClass = evt.type === 'repair' ? 'bg-repair' : (evt.type === 'pm' ? 'bg-pm' : (evt.type === 'spare_parts' ? 'bg-spare' : (evt.type === 'installation' ? 'bg-install' : 'bg-calib')));
                         const opacity = evt.calendar_status === 'complete' ? 'opacity-60' : 'opacity-100';
                         const labelText = (isStart || isRowStart)
                             ? `${escapeHtml(evt.equipment_name)}`
@@ -3202,7 +3241,7 @@ function loadDashboard() {
                 const singleOnDay = singleDayEvents.filter(e => e.startDate === dateStr);
                 const remainingSlots = Math.max(0, 3 - renderedMultiCount);
                 singleOnDay.slice(0, remainingSlots).forEach(i => {
-                    const bgClass = i.type === 'repair' ? 'bg-repair' : (i.type === 'pm' ? 'bg-pm' : (i.type === 'spare_parts' ? 'bg-spare' : 'bg-calib'));
+                    const bgClass = i.type === 'repair' ? 'bg-repair' : (i.type === 'pm' ? 'bg-pm' : (i.type === 'spare_parts' ? 'bg-spare' : (i.type === 'installation' ? 'bg-install' : 'bg-calib')));
                     const opacity = i.calendar_status === 'complete' ? 'opacity-60' : 'opacity-100';
                     const duePrefix = i.isNextDue ? '⚖️ Due: ' : '';
 
@@ -3244,6 +3283,7 @@ function loadDashboard() {
                         if (i.type === 'calibration') { typeIcon = '⚖️'; typeText = 'text-purple-600'; }
                         else if (i.type === 'pm') { typeIcon = '🛡️'; typeText = 'text-teal-600'; }
                         else if (i.type === 'spare_parts') { typeIcon = '⚙️'; typeText = 'text-amber-600'; }
+                        else if (i.type === 'installation') { typeIcon = '📦'; typeText = 'text-indigo-600'; }
 
                         const dateRangeLabel = (i.end_date && i.end_date !== i.service_date)
                             ? `<span class="text-[10px] text-blue-600 font-semibold bg-blue-50 px-1.5 py-0.5 rounded ml-1">📅 ${i.service_date} ~ ${i.end_date}</span>`
@@ -3518,6 +3558,9 @@ function loadDashboard() {
             } else if (i.type === 'spare_parts') {
                 typeIcon = '⚙️';
                 typeStyle = 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 border-amber-200 dark:border-amber-800/60';
+            } else if (i.type === 'installation' || (i.type || '').toLowerCase().includes('install')) {
+                typeIcon = '📦';
+                typeStyle = 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/40 border-indigo-200 dark:border-indigo-800/60';
             }
 
             const statusBadgeClass = isComplete
@@ -3612,6 +3655,9 @@ function loadDashboard() {
                             } else if (i.type === 'spare_parts') {
                                 typeIcon = '⚙️';
                                 typeStyle = 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 border-amber-200 dark:border-amber-800/60';
+                            } else if (i.type === 'installation' || (i.type || '').toLowerCase().includes('install')) {
+                                typeIcon = '📦';
+                                typeStyle = 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/40 border-indigo-200 dark:border-indigo-800/60';
                             }
 
                             const poBtn = poFilesCount > 0 ?
@@ -3719,12 +3765,14 @@ function renderCharts(data) {
             const calibData = new Array(12).fill(0);
             const pmData = new Array(12).fill(0);
             const spareData = new Array(12).fill(0);
+            const installData = new Array(12).fill(0);
 
             sourceData.forEach(r => {
                 const d = new Date(r.service_date);
                 if (r.type === 'repair') repairData[d.getMonth()]++;
                 else if (r.type === 'pm') pmData[d.getMonth()]++;
                 else if (r.type === 'spare_parts') spareData[d.getMonth()]++;
+                else if (r.type === 'installation') installData[d.getMonth()]++;
                 else calibData[d.getMonth()]++;
             });
 
@@ -3744,7 +3792,8 @@ function renderCharts(data) {
                         { label: 'Repairs', data: repairData, backgroundColor: 'rgba(251, 146, 60, 0.85)', borderRadius: 4 },
                         { label: 'Calibrations', data: calibData, backgroundColor: 'rgba(192, 132, 252, 0.85)', borderRadius: 4 },
                         { label: 'PM', data: pmData, backgroundColor: 'rgba(20, 184, 166, 0.85)', borderRadius: 4 },
-                        { label: 'Spare parts', data: spareData, backgroundColor: 'rgba(236, 72, 153, 0.85)', borderRadius: 4 }
+                        { label: 'Spare parts', data: spareData, backgroundColor: 'rgba(236, 72, 153, 0.85)', borderRadius: 4 },
+                        { label: 'Installation', data: installData, backgroundColor: 'rgba(99, 102, 241, 0.85)', borderRadius: 4 }
                     ]
                 },
                 options: {
@@ -3773,11 +3822,12 @@ function renderCharts(data) {
             const totalCalibs = sourceData.filter(r => r.type === 'calibration').length;
             const totalPM = sourceData.filter(r => r.type === 'pm').length;
             const totalSpare = sourceData.filter(r => r.type === 'spare_parts').length;
-            const totalAll = totalRepairs + totalCalibs + totalPM + totalSpare;
+            const totalInstall = sourceData.filter(r => r.type === 'installation' || (r.type || '').toLowerCase().includes('install')).length;
+            const totalAll = totalRepairs + totalCalibs + totalPM + totalSpare + totalInstall;
 
             charts.type = new Chart(document.getElementById('typeChart'), {
                 type: 'doughnut',
-                data: { labels: ['Repair', 'Calibration', 'PM', 'Spare parts'], datasets: [{ data: [totalRepairs, totalCalibs, totalPM, totalSpare], backgroundColor: ['#fb923c', '#c084fc', '#14b8a6', '#ec4899'], borderWidth: 0 }] },
+                data: { labels: ['Repair', 'Calibration', 'PM', 'Spare parts', 'Installation'], datasets: [{ data: [totalRepairs, totalCalibs, totalPM, totalSpare, totalInstall], backgroundColor: ['#fb923c', '#c084fc', '#14b8a6', '#ec4899', '#6366f1'], borderWidth: 0 }] },
                 options: {
                     responsive: true, maintainAspectRatio: false, cutout: '60%', animation: { duration: 500 },
                     plugins: {
@@ -3825,6 +3875,7 @@ function renderCharts(data) {
                         calibration: 0,
                         pm: 0,
                         spare_parts: 0,
+                        installation: 0,
                         total: 0
                     });
                 }
@@ -3833,6 +3884,7 @@ function renderCharts(data) {
                 else if (type === 'calibration') entry.calibration += cost;
                 else if (type === 'pm') entry.pm += cost;
                 else if (type === 'spare_parts' || type === 'spare parts') entry.spare_parts += cost;
+                else if (type === 'installation' || type.includes('install')) entry.installation += cost;
                 entry.total += cost;
             });
 
@@ -3876,6 +3928,7 @@ function renderCharts(data) {
             const costCalib = displayList.map(item => item.calibration);
             const costPM = displayList.map(item => item.pm);
             const costSpare = displayList.map(item => item.spare_parts);
+            const costInstall = displayList.map(item => item.installation);
 
             const costCanvas = document.getElementById('costChart');
             if (costCanvas) {
@@ -3887,7 +3940,8 @@ function renderCharts(data) {
                             { label: 'Repair', data: costRepair, backgroundColor: '#fb923c', borderRadius: 4 },
                             { label: 'Calibration', data: costCalib, backgroundColor: '#c084fc', borderRadius: 4 },
                             { label: 'PM', data: costPM, backgroundColor: '#14b8a6', borderRadius: 4 },
-                            { label: 'Spare parts', data: costSpare, backgroundColor: '#ec4899', borderRadius: 4 }
+                            { label: 'Spare parts', data: costSpare, backgroundColor: '#ec4899', borderRadius: 4 },
+                            { label: 'Installation', data: costInstall, backgroundColor: '#6366f1', borderRadius: 4 }
                         ]
                     },
                     options: {
@@ -4271,6 +4325,7 @@ function renderCharts(data) {
                 if (r.type === 'calibration') typeColor = 'bg-purple-400';
                 if (r.type === 'pm') typeColor = 'bg-teal-400';
                 if (r.type === 'spare_parts') typeColor = 'bg-pink-400';
+                if (r.type === 'installation') typeColor = 'bg-indigo-400';
 
                 let typeLabel = '-';
                 if (r.type) {
@@ -4279,6 +4334,7 @@ function renderCharts(data) {
                     else if (t === 'calibration') typeLabel = 'Calibration';
                     else if (t === 'repair') typeLabel = 'Repair';
                     else if (t === 'spare_parts' || t === 'spare parts') typeLabel = 'Spare parts';
+                    else if (t === 'installation' || t.includes('install')) typeLabel = 'Installation';
                     else typeLabel = r.type;
                 }
 
@@ -5651,8 +5707,15 @@ function renderCharts(data) {
                 return;
             }
             eqSel.innerHTML = '<option value="">Select equipment</option>';
+            const bObj = buildings.find(b => String(b.id) === String(bid));
+            const bName = bObj ? (bObj.name || '').toLowerCase() : '';
             const sortedEq = equipment
-                .filter(e => String(e.building_id) === String(bid))
+                .filter(e => {
+                    if (String(e.building_id) === String(bid)) return true;
+                    if (bName && e.location && e.location.toLowerCase() === bName) return true;
+                    if (String(bid) === '6' && e.name && (/vacuum\s*packager|packing\s*machine/i.test(e.name))) return true;
+                    return false;
+                })
                 .sort((a, b) => (a.name || '').localeCompare(b.name || '', undefined, { numeric: true, sensitivity: 'base' }));
             sortedEq.forEach(e => { eqSel.innerHTML += `<option value="${e.name}">${escapeHtml(e.name)}</option>`; });
         }
@@ -5776,7 +5839,9 @@ function renderCharts(data) {
                     }).join('');
 
                     const typeThai = recordData.type === 'repair' ? 'ซ่อมแซม (Repair)' :
-                                    (recordData.type === 'calibration' ? 'สอบเทียบ (Calibration)' : 'บำรุงรักษาเชิงป้องกัน (PM)');
+                                    (recordData.type === 'calibration' ? 'สอบเทียบ (Calibration)' :
+                                    (recordData.type === 'spare_parts' ? 'เปลี่ยนอะไหล่ (Spare parts)' :
+                                    (recordData.type === 'installation' ? 'ติดตั้งเครื่องมือ (Installation)' : 'บำรุงรักษาเชิงป้องกัน (PM)')));
 
                     Swal.fire({
                         title: '⚠️ ตรวจพบการจองเครื่องมือใน Lab Book+!',
@@ -6057,7 +6122,7 @@ function renderCharts(data) {
 
             const tableRows = filteredRecords.map(r => [
                 r.equipment_name,
-                r.type === 'repair' ? 'ซ่อมแซม' : (r.type === 'calibration' ? 'สอบเทียบ' : 'บำรุงรักษา (PM)'),
+                r.type === 'repair' ? 'ซ่อมแซม' : (r.type === 'calibration' ? 'สอบเทียบ' : (r.type === 'spare_parts' ? 'เปลี่ยนอะไหล่' : (r.type === 'installation' ? 'ติดตั้งเครื่องมือ' : 'บำรุงรักษา (PM)'))),
                 r.service_date,
                 r.maintenance_cost ? parseFloat(r.maintenance_cost).toLocaleString() : '-',
                 r.technicians[0] || '',
@@ -6112,6 +6177,8 @@ function renderCharts(data) {
             if (type === 'repair') document.getElementById('tabHistRepair').className = 'hist-tab flex-1 px-4 py-2.5 rounded-xl text-sm font-bold bg-orange-100 text-orange-700 transition shadow-sm';
             if (type === 'calibration') document.getElementById('tabHistCalib').className = 'hist-tab flex-1 px-4 py-2.5 rounded-xl text-sm font-bold bg-purple-100 text-purple-700 transition shadow-sm';
             if (type === 'pm') document.getElementById('tabHistPM').className = 'hist-tab flex-1 px-4 py-2.5 rounded-xl text-sm font-bold bg-teal-100 text-teal-700 transition shadow-sm';
+            if (type === 'spare_parts') document.getElementById('tabHistSpare').className = 'hist-tab flex-1 px-4 py-2.5 rounded-xl text-sm font-bold bg-pink-100 text-pink-700 transition shadow-sm';
+            if (type === 'installation') document.getElementById('tabHistInstall').className = 'hist-tab flex-1 px-4 py-2.5 rounded-xl text-sm font-bold bg-indigo-100 text-indigo-700 transition shadow-sm';
 
             const histRecords = records.filter(r => r.equipment_name === currentHistoryEquip && r.type === type)
                 .sort((a, b) => new Date(b.service_date) - new Date(a.service_date));

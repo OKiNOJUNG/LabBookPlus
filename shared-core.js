@@ -35,7 +35,7 @@
         ],
         buildings: [
             { id: 5, name: "Fermentation unit" },
-            { id: 6, name: "Production Trial Unit" },
+            { id: 6, name: "Production Trial Unit (P16)" },
             { id: 7, name: "Analytical Lab" },
             { id: 8, name: "General Micro Lab" },
             { id: 9, name: "Preparation room" },
@@ -696,9 +696,11 @@
 
                 // Clean deletedEquipmentIds: purge any equipment names accidentally saved as deleted IDs
                 if (Array.isArray(state.deletedEquipmentIds)) {
+                    const unblockNames = ['vacuum packager', 'packing machine', 'eq-016', 'eq-017', '16', '17'];
                     const cleanedDeletedIds = state.deletedEquipmentIds.filter(id => {
                         if (!id) return false;
                         const sId = String(id).trim().toLowerCase();
+                        if (unblockNames.includes(sId)) return false;
                         return !SEED_DATA.equipments.some(se => (se.name || '').trim().toLowerCase() === sId);
                     });
                     if (cleanedDeletedIds.length !== state.deletedEquipmentIds.length) {
@@ -716,6 +718,12 @@
                 if (!Array.isArray(state.buildings) || state.buildings.length === 0) {
                     state.buildings = JSON.parse(JSON.stringify(SEED_DATA.buildings));
                     modified = true;
+                } else {
+                    const b6 = state.buildings.find(b => b.id === 6 || String(b.id) === '6' || (b.name && b.name.includes('Production Trial Unit')));
+                    if (b6 && b6.name !== 'Production Trial Unit (P16)') {
+                        b6.name = 'Production Trial Unit (P16)';
+                        modified = true;
+                    }
                 }
                 // Handle equipment / equipments synonym & deduplicate
                 let eqList = state.equipments || state.equipment;
@@ -734,6 +742,18 @@
                     if (eqList.length !== beforeLen) {
                         modified = true;
                     }
+                }
+
+                // Ensure Vacuum packager & Packing machine are always present in Production Trial Unit (P16)
+                const vpExists = eqList.some(e => (e.name || '').toLowerCase().includes('vacuum packager') || String(e.id).toLowerCase() === 'eq-016');
+                if (!vpExists) {
+                    const seedVP = SEED_DATA.equipments.find(e => e.id === 'EQ-016');
+                    if (seedVP) { eqList.push(JSON.parse(JSON.stringify(seedVP))); modified = true; }
+                }
+                const pmExists = eqList.some(e => (e.name || '').toLowerCase().includes('packing machine') || String(e.id).toLowerCase() === 'eq-017');
+                if (!pmExists) {
+                    const seedPM = SEED_DATA.equipments.find(e => e.id === 'EQ-017');
+                    if (seedPM) { eqList.push(JSON.parse(JSON.stringify(seedPM))); modified = true; }
                 }
 
                 // Standardize equipment items (ensure String ID to prevent startsWith crash)
@@ -791,6 +811,15 @@
                             const match = rawDetails.match(/ลบเครื่องมือ\s*["']?([^"']+)["']?/i);
                             const rawTarget = match ? match[1].trim() : rawDetails.replace(/^Delete Equipment\s*[:\-]?\s*/i, '').trim();
                             if (rawTarget) {
+                                // If the equipment is actively present in eqList, or is Vacuum packager / Packing machine, never re-delete it!
+                                const isCurrentlyActive = (eqList || []).some(e => 
+                                    String(e.id || '').toLowerCase() === rawTarget.toLowerCase() || 
+                                    String(e.name || '').toLowerCase() === rawTarget.toLowerCase()
+                                );
+                                const lowerRaw = rawTarget.toLowerCase();
+                                if (isCurrentlyActive || lowerRaw.includes('vacuum') || lowerRaw.includes('packing')) {
+                                    return;
+                                }
                                 const found = (eqList || []).find(e => 
                                     String(e.id || '').toLowerCase() === rawTarget.toLowerCase() || 
                                     String(e.name || '').toLowerCase() === rawTarget.toLowerCase()
@@ -890,23 +919,43 @@
                 const merged = Object.assign({}, current, partialOrFull);
 
                 // Combine deletedEquipmentIds from current and partialOrFull so deleted IDs never get lost
-                const combinedDeleted = Array.from(new Set(
+                let combinedDeleted = Array.from(new Set(
                     (Array.isArray(current.deletedEquipmentIds) ? current.deletedEquipmentIds : [])
                     .concat(Array.isArray(partialOrFull.deletedEquipmentIds) ? partialOrFull.deletedEquipmentIds : [])
                     .map(x => String(x || '').trim())
                     .filter(Boolean)
                 ));
-                merged.deletedEquipmentIds = combinedDeleted;
 
                 // Ensure equipment synonym stays bidirectional, deduplicated, and free of deleted items
                 let targetEquip = partialOrFull.equipments || partialOrFull.equipment || merged.equipments || merged.equipment;
                 if (Array.isArray(targetEquip)) {
+                    // Un-delete any equipment actively being saved in targetEquip
+                    const explicitlyPresent = new Set();
+                    targetEquip.forEach(e => {
+                        if (!e) return;
+                        if (e.id) explicitlyPresent.add(String(e.id).trim().toLowerCase());
+                        if (e.name) explicitlyPresent.add(String(e.name).trim().toLowerCase());
+                        const m = String(e.id || '').match(/^(?:eq-)?(\d+)$/i);
+                        if (m) explicitlyPresent.add(String(parseInt(m[1], 10)));
+                    });
+
+                    combinedDeleted = combinedDeleted.filter(del => {
+                        const lowerDel = String(del || '').trim().toLowerCase();
+                        if (explicitlyPresent.has(lowerDel)) return false;
+                        const mDel = lowerDel.match(/^(?:eq-)?(\d+)$/i);
+                        if (mDel && explicitlyPresent.has(String(parseInt(mDel[1], 10)))) return false;
+                        return true;
+                    });
+                    merged.deletedEquipmentIds = combinedDeleted;
+
                     targetEquip = this.deduplicateEquipments(targetEquip);
                     if (combinedDeleted.length > 0) {
                         targetEquip = targetEquip.filter(e => !this.isEquipmentDeleted(e, combinedDeleted));
                     }
                     merged.equipments = targetEquip;
                     merged.equipment = targetEquip;
+                } else {
+                    merged.deletedEquipmentIds = combinedDeleted;
                 }
 
                 // Never store massive blobs into localStorage

@@ -200,6 +200,12 @@
             border: 1px solid rgba(234, 88, 12, 0.3);
         }
 
+        .eq-status-install {
+            background: rgba(99, 102, 241, 0.12);
+            color: #4f46e5;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+        }
+
         .eq-status-maint {
             background: rgba(239, 68, 68, 0.12);
             color: #dc2626;
@@ -2362,7 +2368,7 @@
                         <i
                             class="fa-solid fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
                         <input type="text" id="search-input" placeholder="Search name, serial, location..."
-                            oninput="app.filterEquipments()"
+                            oninput="app.filterEquipmentsDebounced()"
                             class="glass-input w-full pl-10 pr-4 py-2 text-sm rounded-xl">
                     </div>
                     <select id="equipment-filter-status" onchange="app.filterEquipments()"
@@ -2376,6 +2382,7 @@
                         <option value="calibration">🔵 Calibration</option>
                         <option value="pm">🟢 PM</option>
                         <option value="spare">🟠 Spare parts</option>
+                        <option value="installation">🟣 Installation</option>
                     </select>
                     <select id="equipment-filter-loc" onchange="app.filterEquipments()"
                         class="glass-input px-3 py-2 rounded-xl text-xs md:text-sm min-w-[150px]"
@@ -4561,8 +4568,7 @@
 
             getEquipmentCareRecord(eqName, eqId, targetDateStr = null) {
                 const checkDate = targetDateStr || moment().format('YYYY-MM-DD');
-                const allState = LabStateBridge.getState() || {};
-                const records = allState.records || this.state.records || [];
+                const records = (this.state && this.state.records) || (typeof LabStateBridge !== 'undefined' && LabStateBridge.getState()?.records) || [];
                 return records.find(r => {
                     if (r.deleted) return false;
                     const matchEq = (r.equipment_name && eqName && r.equipment_name.trim().toLowerCase() === eqName.trim().toLowerCase()) ||
@@ -4602,6 +4608,8 @@
                     return { label: 'PM', type: 'pm', badgeClass: 'eq-status-pm', dotClass: 'bg-teal-500', textClass: 'text-teal-600', icon: 'fa-sliders' };
                 } else if (t.includes('spare')) {
                     return { label: 'Spare parts', type: 'spare_parts', badgeClass: 'eq-status-spare', dotClass: 'bg-orange-500', textClass: 'text-orange-600', icon: 'fa-gears' };
+                } else if (t === 'installation' || t.includes('install')) {
+                    return { label: 'Installation', type: 'installation', badgeClass: 'eq-status-install', dotClass: 'bg-indigo-500', textClass: 'text-indigo-600', icon: 'fa-screwdriver' };
                 }
                 return { label: 'Maintenance', type: 'repair', badgeClass: 'eq-status-repair', dotClass: 'bg-rose-500', textClass: 'text-rose-600', icon: 'fa-screwdriver-wrench' };
             },
@@ -5638,14 +5646,79 @@
 
                 const container = document.getElementById('equipment-content');
                 if (!container) return;
-                container.innerHTML = '';
 
                 const searchTerm = (document.getElementById('search-input')?.value || '').toLowerCase().trim();
                 const statusFilter = document.getElementById('equipment-filter-status')?.value || '';
                 const locFilter = document.getElementById('equipment-filter-loc')?.value || '';
 
-                let filtered = (this.state.equipments || []).filter(eq => {
-                    const locName = this.getLocName(eq.building_id, this.state.buildings);
+                // Fast pre-index records and bookings ONCE to avoid repeated synchronous state parsing
+                const records = (this.state && this.state.records) || (typeof LabStateBridge !== 'undefined' && LabStateBridge.getState()?.records) || [];
+                const bookings = this.state.bookings || [];
+                const today = moment().format('YYYY-MM-DD');
+
+                // 1. Build fast active care map
+                const activeCareByEqId = new Map();
+                const activeCareByName = new Map();
+                for (let i = 0; i < records.length; i++) {
+                    const r = records[i];
+                    if (r.deleted) continue;
+                    if (r.calendar_status === 'complete' || r.status === 'completed') continue;
+
+                    const sDate = r.service_date;
+                    const eDate = r.end_date || r.service_date;
+                    let isActive = false;
+
+                    if (sDate && eDate) {
+                        if (today >= sDate && today <= eDate) isActive = true;
+                    } else if (sDate && today === sDate) {
+                        isActive = true;
+                    }
+
+                    if (!isActive && r.type === 'calibration' && r.next_service_date === today) {
+                        isActive = true;
+                    }
+
+                    if (!isActive && r.calendar_status === 'in_progress' && sDate && today >= sDate) {
+                        if (!r.end_date || today <= r.end_date) isActive = true;
+                    }
+
+                    if (isActive) {
+                        if (r.equipment_id && !activeCareByEqId.has(String(r.equipment_id))) {
+                            activeCareByEqId.set(String(r.equipment_id), r);
+                        }
+                        if (r.equipment_name) {
+                            const k = r.equipment_name.trim().toLowerCase();
+                            if (!activeCareByName.has(k)) {
+                                activeCareByName.set(k, r);
+                            }
+                        }
+                    }
+                }
+
+                // 2. Build fast busy equipment set
+                const nowTime = Date.now();
+                const busySet = new Set();
+                for (let i = 0; i < bookings.length; i++) {
+                    const b = bookings[i];
+                    if (b.deleted || b.finishDetails) continue;
+                    const sTime = new Date(b.start).getTime();
+                    const eTime = new Date(b.end).getTime();
+                    if (sTime <= nowTime && eTime >= nowTime) {
+                        const eid = String(b.eqId || b.equipmentId || '');
+                        if (eid) busySet.add(eid);
+                    }
+                }
+
+                // 3. Build fast building names map
+                const buildingMap = new Map();
+                (this.state.buildings || []).forEach(b => {
+                    buildingMap.set(String(b.id), b.name);
+                });
+                const getLocName = (bid) => buildingMap.get(String(bid)) || (bid ? `Area ${bid}` : 'General');
+
+                // Filter equipments using pre-indexed lookup
+                const filtered = (this.state.equipments || []).filter(eq => {
+                    const locName = getLocName(eq.building_id);
                     const matchesSearch = !searchTerm || (
                         (eq.name || '').toLowerCase().includes(searchTerm) ||
                         (eq.serial || '').toLowerCase().includes(searchTerm) ||
@@ -5655,8 +5728,8 @@
                     if (!matchesSearch) return false;
 
                     if (statusFilter) {
-                        const isBusy = this.isEquipmentInUse(eq.id);
-                        const careRec = this.getEquipmentCareRecord(eq.name, eq.id);
+                        const isBusy = busySet.has(String(eq.id));
+                        const careRec = activeCareByEqId.get(String(eq.id)) || activeCareByName.get((eq.name || '').trim().toLowerCase());
                         if (statusFilter === 'avail' && (isBusy || careRec)) return false;
                         if (statusFilter === 'busy' && (!isBusy || careRec)) return false;
                         if (statusFilter === 'care' && !careRec) return false;
@@ -5664,6 +5737,7 @@
                         if (statusFilter === 'calibration' && (!careRec || (careRec.type || '').toLowerCase() !== 'calibration')) return false;
                         if (statusFilter === 'pm' && (!careRec || (careRec.type || '').toLowerCase() !== 'pm')) return false;
                         if (statusFilter === 'spare' && (!careRec || !(careRec.type || '').toLowerCase().includes('spare'))) return false;
+                        if (statusFilter === 'installation' && (!careRec || !(careRec.type || '').toLowerCase().includes('install'))) return false;
                     }
 
                     if (locFilter && String(eq.building_id) !== String(locFilter)) {
@@ -5684,36 +5758,35 @@
                     return;
                 }
 
+                // Group by location
                 const grouped = {};
                 filtered.forEach(eq => {
-                    const locName = this.getLocName(eq.building_id, this.state.buildings);
+                    const locName = getLocName(eq.building_id);
                     if (!grouped[locName]) grouped[locName] = [];
                     grouped[locName].push(eq);
                 });
 
-                Object.keys(grouped).sort((a, b) => a.localeCompare(b, 'th', { numeric: true, sensitivity: 'base' })).forEach(loc => {
-                    const groupDiv = document.createElement('div');
-                    groupDiv.className = 'location-group';
+                // 4. Construct entire HTML string in one pass to avoid layout thrashing
+                let fullHtml = '';
+                const sortedLocs = Object.keys(grouped).sort((a, b) => a.localeCompare(b, 'th', { numeric: true, sensitivity: 'base' }));
 
-                    const header = document.createElement('div');
-                    header.className = 'location-header';
-                    header.innerHTML = `<i class="fa-solid fa-building"></i> ${escapeHtml(loc)}`;
-                    groupDiv.appendChild(header);
+                for (let i = 0; i < sortedLocs.length; i++) {
+                    const loc = sortedLocs[i];
+                    const eqs = grouped[loc];
+                    eqs.sort((a, b) => (a.name || '').localeCompare(b.name || '', 'th', { numeric: true, sensitivity: 'base' }));
 
-                    const grid = document.createElement('div');
-                    grid.className = 'equipment-grid';
-
-                    grouped[loc].sort((a, b) => (a.name || '').localeCompare(b.name || '', 'th', { numeric: true, sensitivity: 'base' })).forEach(eq => {
-                        const card = document.createElement('div');
-                        card.className = 'eq-card';
-                        card.onclick = () => { window.location.hash = `#add?eq=${eq.id}`; };
-
-                        const careRecord = this.getEquipmentCareRecord(eq.name, eq.id);
-                        const isBusy = this.isEquipmentInUse(eq.id);
+                    let cardsHtml = '';
+                    for (let j = 0; j < eqs.length; j++) {
+                        const eq = eqs[j];
+                        const careRecord = activeCareByEqId.get(String(eq.id)) || activeCareByName.get((eq.name || '').trim().toLowerCase());
+                        const isBusy = busySet.has(String(eq.id));
                         let statusBadge = '';
+
                         if (careRecord) {
                             const careInfo = this.getCareStatusInfo(careRecord);
-                            const rangeStr = (careRecord.end_date && careRecord.end_date !== careRecord.service_date) ? `${careRecord.service_date} ~ ${careRecord.end_date}` : (careRecord.service_date || '');
+                            const rangeStr = (careRecord.end_date && careRecord.end_date !== careRecord.service_date)
+                                ? `${careRecord.service_date} ~ ${careRecord.end_date}`
+                                : (careRecord.service_date || '');
                             statusBadge = `<span class="eq-card-status-pill ${careInfo.badgeClass}" title="Lab Care+: ${careInfo.label} (${rangeStr})"><span class="w-1.5 h-1.5 rounded-full ${careInfo.dotClass} animate-pulse"></span> ${careInfo.label}</span>`;
                         } else if (isBusy) {
                             statusBadge = `<span class="eq-card-status-pill eq-status-busy"><span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span> In Use</span>`;
@@ -5721,31 +5794,48 @@
                             statusBadge = `<span class="eq-card-status-pill eq-status-avail">Available</span>`;
                         }
 
-                        card.innerHTML = `
-                        <div class="eq-card-status-badge">${statusBadge}</div>
-                        <button class="btn-history" onclick="event.stopPropagation(); app.showEqHistoryModal('${eq.id}')" title="View History"><i class="fa-solid fa-clock-rotate-left"></i></button>
-                        <div class="eq-qr-trigger-wrap" style="display:flex; justify-content:center; align-items:center; margin: 1.25rem 0 0.75rem 0;">
-                            <button type="button" class="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-xl bg-teal-50 text-teal-700 hover:bg-teal-100 dark:bg-teal-950/40 dark:text-teal-400 dark:hover:bg-teal-900/50 border border-teal-200/80 dark:border-teal-800/60 transition-all shadow-xs" onclick="event.stopPropagation(); app.showEqQrModal('${eq.id}');">
-                                <i class="fa-solid fa-qrcode text-sm"></i>
-                                <span>View QR Code</span>
-                            </button>
-                        </div>
-                        <div id="qr-${eq.id}" class="eq-qr-container print-only hidden"></div>
-                        <div class="eq-title">${escapeHtml(eq.name)}</div>
-                        <div class="eq-detail"><i class="fa-solid fa-microchip"></i> Model: ${escapeHtml(eq.model || '-')}</div>
-                        <div class="eq-detail"><i class="fa-solid fa-barcode"></i> SN: ${escapeHtml(eq.serial)}</div>
-                        <div class="eq-detail"><i class="fa-solid fa-user-shield"></i> ${escapeHtml(eq.custodian)}</div>
-                        <div class="eq-detail" style="font-size: 0.8rem;"><i class="fa-solid fa-map-pin"></i> ${escapeHtml(this.getLocName(eq.building_id, this.state.buildings))}</div>
-                    `;
-                        grid.appendChild(card);
-                    });
+                        cardsHtml += `
+                            <div class="eq-card" onclick="window.location.hash = '#add?eq=${escapeHtml(String(eq.id))}';">
+                                <div class="eq-card-status-badge">${statusBadge}</div>
+                                <button class="btn-history" onclick="event.stopPropagation(); app.showEqHistoryModal('${escapeHtml(String(eq.id))}')" title="View History"><i class="fa-solid fa-clock-rotate-left"></i></button>
+                                <div class="eq-qr-trigger-wrap" style="display:flex; justify-content:center; align-items:center; margin: 1.25rem 0 0.75rem 0;">
+                                    <button type="button" class="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-xl bg-teal-50 text-teal-700 hover:bg-teal-100 dark:bg-teal-950/40 dark:text-teal-400 dark:hover:bg-teal-900/50 border border-teal-200/80 dark:border-teal-800/60 transition-all shadow-xs" onclick="event.stopPropagation(); app.showEqQrModal('${escapeHtml(String(eq.id))}');">
+                                        <i class="fa-solid fa-qrcode text-sm"></i>
+                                        <span>View QR Code</span>
+                                    </button>
+                                </div>
+                                <div id="qr-${escapeHtml(String(eq.id))}" class="eq-qr-container print-only hidden"></div>
+                                <div class="eq-title">${escapeHtml(eq.name)}</div>
+                                <div class="eq-detail"><i class="fa-solid fa-microchip"></i> Model: ${escapeHtml(eq.model || '-')}</div>
+                                <div class="eq-detail"><i class="fa-solid fa-barcode"></i> SN: ${escapeHtml(eq.serial || '-')}</div>
+                                <div class="eq-detail"><i class="fa-solid fa-user-shield"></i> ${escapeHtml(eq.custodian || '-')}</div>
+                                <div class="eq-detail" style="font-size: 0.8rem;"><i class="fa-solid fa-map-pin"></i> ${escapeHtml(loc)}</div>
+                            </div>
+                        `;
+                    }
 
-                    groupDiv.appendChild(grid);
-                    container.appendChild(groupDiv);
-                });
+                    fullHtml += `
+                        <div class="location-group">
+                            <div class="location-header"><i class="fa-solid fa-building"></i> ${escapeHtml(loc)}</div>
+                            <div class="equipment-grid">${cardsHtml}</div>
+                        </div>
+                    `;
+                }
+
+                container.innerHTML = fullHtml;
             },
-            filterEquipments() { this.renderEquipmentGrid(); },
+            filterEquipmentsDebounced() {
+                if (this._filterTimeout) clearTimeout(this._filterTimeout);
+                this._filterTimeout = setTimeout(() => {
+                    this.renderEquipmentGrid();
+                }, 120);
+            },
+            filterEquipments() {
+                if (this._filterTimeout) clearTimeout(this._filterTimeout);
+                this.renderEquipmentGrid();
+            },
             clearEquipmentFilters() {
+                if (this._filterTimeout) clearTimeout(this._filterTimeout);
                 const sInput = document.getElementById('search-input');
                 const sStatus = document.getElementById('equipment-filter-status');
                 const sLoc = document.getElementById('equipment-filter-loc');
@@ -6106,7 +6196,17 @@
                 if (area) localStorage.setItem('last_selected_area', area);
                 const eqSelect = document.getElementById('bk-equipment');
                 eqSelect.innerHTML = '<option value="">เลือกเครื่องมือ (Select Equipment)</option>';
-                const eqs = area ? (this.state.equipments || []).filter(e => String(e.building_id) === String(area)) : [...(this.state.equipments || [])];
+
+                const bObj = (this.state.buildings || []).find(b => String(b.id) === String(area));
+                const bName = bObj ? (bObj.name || '').toLowerCase() : '';
+
+                const eqs = area ? (this.state.equipments || []).filter(e => {
+                    if (String(e.building_id) === String(area)) return true;
+                    if (bName && e.location && e.location.toLowerCase() === bName) return true;
+                    if (String(area) === '6' && e.name && (/vacuum\s*packager|packing\s*machine/i.test(e.name))) return true;
+                    return false;
+                }) : [...(this.state.equipments || [])];
+
                 eqs.sort((a, b) => (a.name || '').localeCompare(b.name || '', 'th', { numeric: true, sensitivity: 'base' }));
                 eqSelect.innerHTML += eqs.map(e => `<option value="${e.id}">${escapeHtml(e.name)}${e.model && e.model !== '-' ? ' (' + escapeHtml(e.model) + ')' : ''}</option>`).join('');
                 if (selectEqId) eqSelect.value = String(selectEqId);
@@ -6923,11 +7023,11 @@
                 }
 
                 const listNames = document.getElementById('list-names');
-                if (listNames) listNames.innerHTML = [...new Set((this.state.equipments || []).map(e => e.name))].map(n => `<option value="${n}">`).join('');
+                if (listNames) listNames.innerHTML = [...new Set((this.state.equipments || []).map(e => e.name))].map(n => `<option value="${escapeHtml(n)}">`).join('');
                 const listLocs = document.getElementById('list-locations');
-                if (listLocs) listLocs.innerHTML = (this.state.buildings || []).map(b => `<li style="padding:0.5rem;border-bottom:1px solid #eee;">${b.name}</li>`).join('');
+                if (listLocs) listLocs.innerHTML = (this.state.buildings || []).map(b => `<option value="${escapeHtml(b.name)}">`).join('');
                 const listCusts = document.getElementById('list-custodians');
-                if (listCusts) listCusts.innerHTML = [...new Set((this.state.equipments || []).map(e => e.custodian))].map(n => `<option value="${n}">`).join('');
+                if (listCusts) listCusts.innerHTML = [...new Set((this.state.equipments || []).map(e => e.custodian))].map(n => `<option value="${escapeHtml(n)}">`).join('');
             },
 
             adminAuditTab: 'bookings',
@@ -7479,7 +7579,8 @@
                     document.getElementById('admin-eq-model').value = (eq.model && eq.model !== '-') ? eq.model : '';
                 }
                 document.getElementById('admin-eq-serial').value = eq.serial;
-                document.getElementById('admin-eq-location').value = eq.location || eq.building_id || '';
+                const bObj = (this.state.buildings || []).find(b => String(b.id) === String(eq.building_id));
+                document.getElementById('admin-eq-location').value = eq.location || (bObj ? bObj.name : eq.building_id) || '';
                 document.getElementById('admin-eq-custodian').value = eq.custodian;
                 document.getElementById('admin-eq-delete').classList.remove('hidden');
                 this.openModal('eq');
@@ -7490,22 +7591,46 @@
                 const id = document.getElementById('admin-eq-id').value;
                 const modelVal = (document.getElementById('admin-eq-model')?.value || '').trim();
                 const existing = id ? this.state.equipments.find(e => e.id === id) : null;
+                const locVal = (document.getElementById('admin-eq-location').value || '').trim();
+
+                // Find matching building from buildings list
+                let matchedBuilding = (this.state.buildings || []).find(b =>
+                    String(b.id) === locVal ||
+                    (b.name && b.name.toLowerCase() === locVal.toLowerCase()) ||
+                    (b.name && (locVal.toLowerCase().includes(b.name.toLowerCase()) || b.name.toLowerCase().includes(locVal.toLowerCase())))
+                );
+                if (!matchedBuilding && (/production\s*trial|p16/i.test(locVal))) {
+                    matchedBuilding = (this.state.buildings || []).find(b => String(b.id) === '6') || { id: 6, name: 'Production Trial Unit (P16)' };
+                }
+
+                const resolvedBuildingId = matchedBuilding ? matchedBuilding.id : (existing?.building_id || 1);
+                const resolvedLocName = matchedBuilding ? matchedBuilding.name : (locVal || 'Main Building');
+
                 const eq = {
                     id: id || 'EQ-' + Date.now(),
-                    name: document.getElementById('admin-eq-name').value,
+                    name: document.getElementById('admin-eq-name').value.trim(),
                     model: modelVal || (existing?.model || '-'),
-                    serial: document.getElementById('admin-eq-serial').value,
-                    location: document.getElementById('admin-eq-location').value,
-                    custodian: document.getElementById('admin-eq-custodian').value,
+                    serial: document.getElementById('admin-eq-serial').value.trim(),
+                    building_id: resolvedBuildingId,
+                    location: resolvedLocName,
+                    custodian: document.getElementById('admin-eq-custodian').value.trim(),
                     fields: [] // For simplicity, new eqs don't have custom fields unless coded
                 };
                 if (id) {
                     const idx = this.state.equipments.findIndex(e => e.id === id);
-                    eq.fields = this.state.equipments[idx].fields; // Preserve fields
+                    eq.fields = this.state.equipments[idx].fields || [];
                     this.state.equipments[idx] = eq;
                 } else {
                     this.state.equipments.push(eq);
                 }
+                this.state.equipment = this.state.equipments;
+
+                // Ensure saved equipment is unblocked from deletedEquipmentIds
+                if (Array.isArray(this.state.deletedEquipmentIds)) {
+                    const toRemove = [String(eq.id).toLowerCase(), (eq.name || '').toLowerCase()];
+                    this.state.deletedEquipmentIds = this.state.deletedEquipmentIds.filter(d => !toRemove.includes(String(d).toLowerCase()));
+                }
+
                 this.saveState();
                 this.closeModal('eq');
 
