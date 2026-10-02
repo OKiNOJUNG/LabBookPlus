@@ -2042,6 +2042,10 @@
                         class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/50">
                         <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Finished
                     </span>
+                    <span
+                        class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-50 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300 border border-rose-200 dark:border-rose-800/50">
+                        <span class="w-2 h-2 rounded-full bg-rose-500"></span> Lab Care+
+                    </span>
                 </div>
             </div>
 
@@ -2139,10 +2143,19 @@
                         class="text-sm font-bold text-gray-700 dark:text-slate-300 uppercase tracking-wider flex items-center gap-2">
                         <i class="fa-solid fa-filter text-teal-600 dark:text-teal-400"></i> Interactive Filters
                     </h3>
-                    <button onclick="app.clearCalendarFilters()"
-                        class="text-xs font-bold text-red-500 hover:text-red-700 bg-red-50 dark:bg-red-900/30 hover:bg-red-100 px-3 py-1.5 rounded-lg transition-colors border border-red-200/60 dark:border-red-800/40 flex items-center gap-1.5">
-                        <i class="fa-solid fa-xmark"></i> Clear Filters
-                    </button>
+                    <div class="flex items-center gap-2">
+                        <label class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-gray-50/80 dark:bg-slate-800/80 border border-gray-200/60 dark:border-slate-700/60 cursor-pointer select-none text-xs font-bold text-gray-700 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition" title="Toggle Lab Care+ maintenance and repair records on calendar">
+                            <input type="checkbox" id="filter-toggle-care" onchange="app.toggleCareEvents(this.checked)" checked class="rounded text-rose-600 focus:ring-rose-500 w-3.5 h-3.5 cursor-pointer accent-rose-600">
+                            <span class="flex items-center gap-1">
+                                <i class="fa-solid fa-screwdriver-wrench text-rose-500"></i>
+                                <span>Show Lab Care+</span>
+                            </span>
+                        </label>
+                        <button onclick="app.clearCalendarFilters()"
+                            class="text-xs font-bold text-red-500 hover:text-red-700 bg-red-50 dark:bg-red-900/30 hover:bg-red-100 px-3 py-1.5 rounded-lg transition-colors border border-red-200/60 dark:border-red-800/40 flex items-center gap-1.5">
+                            <i class="fa-solid fa-xmark"></i> Clear Filters
+                        </button>
+                    </div>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
                     <div>
@@ -2150,7 +2163,7 @@
                             class="text-[11px] font-bold text-gray-500 dark:text-slate-400 uppercase ml-1 block mb-1">
                             <i class="fa-solid fa-building mr-1 text-teal-500"></i> Area / Location
                         </label>
-                        <select id="cal-filter-loc" onchange="app.updateCalendarFilters()" class="glass-input w-full">
+                        <select id="cal-filter-loc" onchange="app.onCalendarLocationChange()" class="glass-input w-full">
                             <option value="">All Areas</option>
                         </select>
                     </div>
@@ -2202,6 +2215,13 @@
 
                     <div
                         class="flex flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto justify-between sm:justify-end">
+                        <label class="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-gray-200/60 dark:bg-slate-800/80 border border-gray-300/40 dark:border-slate-700/60 cursor-pointer select-none text-xs font-bold text-gray-700 dark:text-slate-300 hover:bg-gray-300/60 dark:hover:bg-slate-700/60 transition shadow-2xs" title="Toggle Lab Care+ records on calendar">
+                            <input type="checkbox" id="cal-toggle-care" onchange="app.toggleCareEvents(this.checked)" checked class="rounded text-rose-600 focus:ring-rose-500 w-3.5 h-3.5 cursor-pointer accent-rose-600">
+                            <span class="flex items-center gap-1">
+                                <i class="fa-solid fa-screwdriver-wrench text-rose-500"></i>
+                                <span>Lab Care+</span>
+                            </span>
+                        </label>
                         <div class="flex bg-gray-200/60 dark:bg-slate-800/80 p-1 rounded-xl">
                             <button onclick="app.toggleScheduleView('calendar')" id="btnViewCalendar"
                                 class="px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-bold bg-white dark:bg-slate-700 text-teal-700 dark:text-teal-400 shadow-sm transition">
@@ -3715,6 +3735,16 @@
 
             init() {
                 this.loadState();
+                try {
+                    this.showCareEvents = localStorage.getItem('cal_show_care_events') !== 'false';
+                } catch (e) {
+                    this.showCareEvents = true;
+                }
+                const calToggle = document.getElementById('cal-toggle-care');
+                const filterToggle = document.getElementById('filter-toggle-care');
+                if (calToggle) calToggle.checked = this.showCareEvents;
+                if (filterToggle) filterToggle.checked = this.showCareEvents;
+
                 window.addEventListener('hashchange', () => this.handleRouting());
 
                 let _renderTimer = null;
@@ -3898,6 +3928,12 @@
 
                 if (viewId === 'dashboard-view') {
                     window.location.hash = '';
+                    const showCare = this.showCareEvents !== false;
+                    const calToggle = document.getElementById('cal-toggle-care');
+                    const filterToggle = document.getElementById('filter-toggle-care');
+                    if (calToggle) calToggle.checked = showCare;
+                    if (filterToggle) filterToggle.checked = showCare;
+
                     this.populateCalendarDropdowns();
                     this.renderCharts();
                     this.updateDashboardMetrics();
@@ -4618,10 +4654,8 @@
                 return !!this.getEquipmentCareRecord(eqName, eqId, targetDateStr);
             },
 
-            populateCalendarDropdowns() {
+            populateCalendarDropdowns(keepSelection = true) {
                 const locSelect = document.getElementById('cal-filter-loc');
-                const eqSelect = document.getElementById('cal-filter-eq');
-
                 if (locSelect) {
                     const curLoc = locSelect.value;
                     locSelect.innerHTML = '<option value="">All Areas</option>';
@@ -4635,19 +4669,55 @@
                         const val = typeof a === 'object' ? a.id : a;
                         locSelect.add(new Option(name, val));
                     });
-                    if (curLoc) locSelect.value = curLoc;
+                    if (keepSelection && curLoc) locSelect.value = curLoc;
                 }
-                if (eqSelect) {
-                    const curEq = eqSelect.value;
-                    eqSelect.innerHTML = '<option value="">All Equipments</option>';
-                    const sortedEquipments = [...(this.state.equipments || [])].sort((a, b) => {
-                        const nameA = (a && a.name) || '';
-                        const nameB = (b && b.name) || '';
-                        return nameA.localeCompare(nameB, 'th', { numeric: true, sensitivity: 'base' });
+                this.updateCalendarEquipmentDropdown(keepSelection);
+            },
+
+            updateCalendarEquipmentDropdown(keepSelection = true) {
+                const locSelect = document.getElementById('cal-filter-loc');
+                const eqSelect = document.getElementById('cal-filter-eq');
+                if (!eqSelect) return;
+
+                const curEq = eqSelect.value;
+                const locVal = locSelect ? locSelect.value : '';
+
+                eqSelect.innerHTML = '<option value="">All Equipments</option>';
+
+                const bObj = (this.state.buildings || []).find(b => String(b.id) === String(locVal));
+                const bName = bObj ? (bObj.name || '').toLowerCase() : '';
+
+                let eqs = this.state.equipments || [];
+                if (locVal) {
+                    eqs = eqs.filter(e => {
+                        if (String(e.building_id) === String(locVal)) return true;
+                        if (bName && e.location && e.location.toLowerCase() === bName) return true;
+                        if (String(locVal) === '6' && e.name && (/vacuum\s*packager|packing\s*machine/i.test(e.name))) return true;
+                        return false;
                     });
-                    sortedEquipments.forEach(e => eqSelect.add(new Option(e.name, e.id)));
-                    if (curEq) eqSelect.value = curEq;
                 }
+
+                const sortedEquipments = [...eqs].sort((a, b) => {
+                    const nameA = (a && a.name) || '';
+                    const nameB = (b && b.name) || '';
+                    return nameA.localeCompare(nameB, 'th', { numeric: true, sensitivity: 'base' });
+                });
+
+                sortedEquipments.forEach(e => {
+                    const modelTag = (e.model && e.model !== '-') ? ` (${e.model})` : '';
+                    eqSelect.add(new Option(e.name + modelTag, e.id));
+                });
+
+                if (keepSelection && curEq && Array.from(eqSelect.options).some(o => o.value === curEq)) {
+                    eqSelect.value = curEq;
+                } else {
+                    eqSelect.value = '';
+                }
+            },
+
+            onCalendarLocationChange() {
+                this.updateCalendarEquipmentDropdown(false);
+                this.updateCalendarFilters();
             },
 
             getFilteredBookings() {
@@ -4708,6 +4778,7 @@
                 const statusSelect = document.getElementById('cal-filter-status');
                 const timeSelect = document.getElementById('cal-filter-time');
                 if (locSelect) locSelect.value = '';
+                this.updateCalendarEquipmentDropdown(false);
                 if (eqSelect) eqSelect.value = '';
                 if (statusSelect) statusSelect.value = '';
                 if (timeSelect) timeSelect.value = 'all';
@@ -4717,6 +4788,22 @@
                 this.initCalendar();
                 this.renderCharts();
                 this.updateDashboardMetrics();
+            },
+
+            toggleCareEvents(checked) {
+                if (window.LabAudio) LabAudio.playClick();
+                if (window.LabHaptic) LabHaptic.tap();
+                this.showCareEvents = !!checked;
+                try {
+                    localStorage.setItem('cal_show_care_events', this.showCareEvents ? 'true' : 'false');
+                } catch (e) {}
+
+                const calToggle = document.getElementById('cal-toggle-care');
+                const filterToggle = document.getElementById('filter-toggle-care');
+                if (calToggle && calToggle.checked !== this.showCareEvents) calToggle.checked = this.showCareEvents;
+                if (filterToggle && filterToggle.checked !== this.showCareEvents) filterToggle.checked = this.showCareEvents;
+
+                this.initCalendar();
             },
 
             toggleScheduleView(viewType) {
@@ -4771,27 +4858,77 @@
                     return dateStr >= bStart && dateStr <= bEnd;
                 });
 
+                // If Care+ events are turned off by user, return only bookings
+                if (this.showCareEvents === false) {
+                    return bookings;
+                }
+
                 const allState = LabStateBridge.getState() || {};
                 const careRecords = allState.records || this.state.records || [];
                 const locFilter = document.getElementById('cal-filter-loc')?.value;
                 const eqFilter = document.getElementById('cal-filter-eq')?.value;
                 const statusFilter = document.getElementById('cal-filter-status')?.value;
+                const timeFilter = document.getElementById('cal-filter-time')?.value || 'all';
+
+                const bObj = locFilter ? (this.state.buildings || []).find(b => String(b.id) === String(locFilter)) : null;
+                const bName = bObj ? (bObj.name || '').toLowerCase() : '';
+                const todayStr = moment().format('YYYY-MM-DD');
+                const thisMonthStr = moment().format('YYYY-MM');
 
                 const matchedCare = careRecords.filter(r => {
                     if (r.deleted) return false;
                     const matchEq = (this.state.equipments || []).find(e =>
-                        (r.equipment_name && e.name && e.name.trim().toLowerCase() === r.equipment_name.trim().toLowerCase()) ||
-                        (r.equipment_id && String(e.id) === String(r.equipment_id))
+                        (r.equipment_id && String(e.id) === String(r.equipment_id)) ||
+                        (r.equipment_name && e.name && e.name.trim().toLowerCase() === r.equipment_name.trim().toLowerCase())
                     );
-                    if (locFilter && matchEq && String(matchEq.building_id) !== String(locFilter)) return false;
-                    if (eqFilter && matchEq && String(matchEq.id) !== String(eqFilter)) return false;
-                    if (statusFilter && statusFilter !== 'care' && statusFilter !== r.type) return false;
 
+                    // 1. Strict Location filter
+                    if (locFilter) {
+                        let matchLoc = false;
+                        if (matchEq) {
+                            if (String(matchEq.building_id) === String(locFilter)) matchLoc = true;
+                            if (bName && matchEq.location && matchEq.location.toLowerCase() === bName) matchLoc = true;
+                        }
+                        if (!matchLoc) {
+                            if (r.building_id && String(r.building_id) === String(locFilter)) matchLoc = true;
+                            if (bName && r.building && r.building.toLowerCase() === bName) matchLoc = true;
+                            if (String(locFilter) === '6' && ((r.building && /p16|production trial/i.test(r.building)) || (r.equipment_name && /vacuum\s*packager|packing\s*machine/i.test(r.equipment_name)))) matchLoc = true;
+                        }
+                        if (!matchLoc) return false;
+                    }
+
+                    // 2. Strict Equipment filter
+                    if (eqFilter) {
+                        let matchEquipment = false;
+                        if (matchEq && String(matchEq.id) === String(eqFilter)) matchEquipment = true;
+                        if (r.equipment_id && String(r.equipment_id) === String(eqFilter)) matchEquipment = true;
+                        if (!matchEquipment) return false;
+                    }
+
+                    // 3. Status filter
+                    if (statusFilter) {
+                        const sLow = statusFilter.toLowerCase();
+                        if (['booked', 'inuse', 'finished'].includes(sLow)) return false;
+                        if (sLow !== 'care' && sLow !== (r.type || '').toLowerCase()) return false;
+                    }
+
+                    // 4. Time Scope filter
                     const sDate = r.service_date;
                     const eDate = r.end_date || r.service_date;
                     const inRange = sDate && (dateStr >= sDate && dateStr <= eDate);
                     const isNextCalib = r.type === 'calibration' && r.next_service_date === dateStr;
-                    return inRange || isNextCalib;
+
+                    if (!inRange && !isNextCalib) return false;
+
+                    if (timeFilter === 'today') {
+                        if (dateStr !== todayStr) return false;
+                    } else if (timeFilter === 'month') {
+                        if (dateStr.substring(0, 7) !== thisMonthStr) return false;
+                    } else if (timeFilter === 'upcoming') {
+                        if (dateStr < todayStr) return false;
+                    }
+
+                    return true;
                 }).map(r => ({
                     ...r,
                     isCareRecord: true
@@ -4849,60 +4986,110 @@
                 });
 
                 // Collect synced Care+ maintenance records
-                const allState = LabStateBridge.getState() || {};
-                const careRecords = allState.records || this.state.records || [];
-                const locFilter = document.getElementById('cal-filter-loc')?.value;
-                const eqFilter = document.getElementById('cal-filter-eq')?.value;
-                const statusFilter = document.getElementById('cal-filter-status')?.value;
+                if (this.showCareEvents !== false) {
+                    const allState = LabStateBridge.getState() || {};
+                    const careRecords = allState.records || this.state.records || [];
+                    const locFilter = document.getElementById('cal-filter-loc')?.value;
+                    const eqFilter = document.getElementById('cal-filter-eq')?.value;
+                    const statusFilter = document.getElementById('cal-filter-status')?.value;
+                    const timeFilter = document.getElementById('cal-filter-time')?.value || 'all';
 
-                careRecords.forEach(r => {
-                    if (r.deleted) return;
-                    const matchEq = (this.state.equipments || []).find(e =>
-                        (r.equipment_name && e.name && e.name.trim().toLowerCase() === r.equipment_name.trim().toLowerCase()) ||
-                        (r.equipment_id && String(e.id) === String(r.equipment_id))
-                    );
-                    if (locFilter && matchEq && String(matchEq.building_id) !== String(locFilter)) return;
-                    if (eqFilter && matchEq && String(matchEq.id) !== String(eqFilter)) return;
-                    if (statusFilter && statusFilter !== 'care' && statusFilter !== r.type) return;
+                    const bObj = locFilter ? (this.state.buildings || []).find(b => String(b.id) === String(locFilter)) : null;
+                    const bName = bObj ? (bObj.name || '').toLowerCase() : '';
+                    const todayStr = moment().format('YYYY-MM-DD');
+                    const viewMonthStr = moment(this.currentCalendarMonth).format('YYYY-MM');
 
-                    const sDate = r.service_date;
-                    const eDate = r.end_date || r.service_date;
-                    const eqName = matchEq ? matchEq.name : (r.equipment_name || 'Equipment');
-                    const locName = matchEq ? (this.getLocName(matchEq.building_id, this.state.buildings || []) || '-') : (r.building || '-');
-                    const careInfo = this.getCareStatusInfo(r);
+                    careRecords.forEach(r => {
+                        if (r.deleted) return;
+                        const matchEq = (this.state.equipments || []).find(e =>
+                            (r.equipment_id && String(e.id) === String(r.equipment_id)) ||
+                            (r.equipment_name && e.name && e.name.trim().toLowerCase() === r.equipment_name.trim().toLowerCase())
+                        );
 
-                    if (sDate) {
-                        allEvents.push({
-                            id: 'care-' + r.id,
-                            source: 'care',
-                            careType: (r.type || '').toLowerCase(),
-                            careLabel: careInfo.label,
-                            equipment_name: eqName,
-                            locName: locName,
-                            startDate: sDate,
-                            endDate: eDate,
-                            isMultiDay: sDate < eDate,
-                            calendar_status: r.calendar_status,
-                            raw: { ...r, isCareRecord: true }
-                        });
-                    }
-                    if (r.type === 'calibration' && r.next_service_date && r.next_service_date !== sDate) {
-                        allEvents.push({
-                            id: 'care-due-' + r.id,
-                            source: 'care',
-                            careType: 'calibration',
-                            careLabel: 'Due: Calibration',
-                            equipment_name: eqName,
-                            locName: locName,
-                            startDate: r.next_service_date,
-                            endDate: r.next_service_date,
-                            isMultiDay: false,
-                            isNextDue: true,
-                            calendar_status: r.calendar_status,
-                            raw: { ...r, isCareRecord: true }
-                        });
-                    }
-                });
+                        // 1. Strict Location filter
+                        if (locFilter) {
+                            let matchLoc = false;
+                            if (matchEq) {
+                                if (String(matchEq.building_id) === String(locFilter)) matchLoc = true;
+                                if (bName && matchEq.location && matchEq.location.toLowerCase() === bName) matchLoc = true;
+                            }
+                            if (!matchLoc) {
+                                if (r.building_id && String(r.building_id) === String(locFilter)) matchLoc = true;
+                                if (bName && r.building && r.building.toLowerCase() === bName) matchLoc = true;
+                                if (String(locFilter) === '6' && ((r.building && /p16|production trial/i.test(r.building)) || (r.equipment_name && /vacuum\s*packager|packing\s*machine/i.test(r.equipment_name)))) matchLoc = true;
+                            }
+                            if (!matchLoc) return;
+                        }
+
+                        // 2. Strict Equipment filter
+                        if (eqFilter) {
+                            let matchEquipment = false;
+                            if (matchEq && String(matchEq.id) === String(eqFilter)) matchEquipment = true;
+                            if (r.equipment_id && String(r.equipment_id) === String(eqFilter)) matchEquipment = true;
+                            if (!matchEquipment) return;
+                        }
+
+                        // 3. Status filter
+                        if (statusFilter) {
+                            const sLow = statusFilter.toLowerCase();
+                            if (['booked', 'inuse', 'finished'].includes(sLow)) return;
+                            if (sLow !== 'care' && sLow !== (r.type || '').toLowerCase()) return;
+                        }
+
+                        const sDate = r.service_date;
+                        const eDate = r.end_date || r.service_date;
+
+                        // 4. Time Scope filter
+                        if (timeFilter === 'today') {
+                            const inToday = sDate && (sDate <= todayStr && eDate >= todayStr);
+                            const calibToday = r.type === 'calibration' && r.next_service_date === todayStr;
+                            if (!inToday && !calibToday) return;
+                        } else if (timeFilter === 'month') {
+                            const inMonth = sDate && (sDate.substring(0, 7) === viewMonthStr || eDate.substring(0, 7) === viewMonthStr);
+                            const calibMonth = r.type === 'calibration' && r.next_service_date && r.next_service_date.substring(0, 7) === viewMonthStr;
+                            if (!inMonth && !calibMonth) return;
+                        } else if (timeFilter === 'upcoming') {
+                            const isUpcoming = (eDate && eDate >= todayStr) || (r.type === 'calibration' && r.next_service_date && r.next_service_date >= todayStr);
+                            if (!isUpcoming) return;
+                        }
+
+                        const eqName = matchEq ? matchEq.name : (r.equipment_name || 'Equipment');
+                        const locName = matchEq ? (this.getLocName(matchEq.building_id, this.state.buildings || []) || '-') : (r.building || '-');
+                        const careInfo = this.getCareStatusInfo(r);
+
+                        if (sDate) {
+                            allEvents.push({
+                                id: 'care-' + r.id,
+                                source: 'care',
+                                careType: (r.type || '').toLowerCase(),
+                                careLabel: careInfo.label,
+                                equipment_name: eqName,
+                                locName: locName,
+                                startDate: sDate,
+                                endDate: eDate,
+                                isMultiDay: sDate < eDate,
+                                calendar_status: r.calendar_status,
+                                raw: { ...r, isCareRecord: true }
+                            });
+                        }
+                        if (r.type === 'calibration' && r.next_service_date && r.next_service_date !== sDate) {
+                            allEvents.push({
+                                id: 'care-due-' + r.id,
+                                source: 'care',
+                                careType: 'calibration',
+                                careLabel: 'Due: Calibration',
+                                equipment_name: eqName,
+                                locName: locName,
+                                startDate: r.next_service_date,
+                                endDate: r.next_service_date,
+                                isMultiDay: false,
+                                isNextDue: true,
+                                calendar_status: r.calendar_status,
+                                raw: { ...r, isCareRecord: true }
+                            });
+                        }
+                    });
+                }
 
                 // Filter events that intersect with this month
                 const activeEvents = allEvents.filter(e => e.startDate <= monthEndStr && e.endDate >= monthStartStr);
