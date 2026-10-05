@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MPIR Lab Suite - Documentation & User Manual</title>
 
-    <!-- Google Fonts: Inter & Sarabun & Prompt -->
+    <!-- Google Fonts: Inter, Sarabun & Prompt -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Prompt:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -24,7 +24,7 @@
     <style>
         :root {
             --font-sans: 'Inter', 'Prompt', 'Sarabun', -apple-system, BlinkMacSystemFont, sans-serif;
-            --doc-sidebar-width: 290px;
+            --doc-sidebar-width: 310px;
         }
 
         body {
@@ -86,32 +86,33 @@
             background: var(--color-brand-subtle);
             color: var(--color-brand-primary);
             border: 1px solid var(--color-brand-border);
-            border-radius: 9999px;
+            border-radius: var(--radius-full);
             text-transform: uppercase;
         }
 
+        /* Main Mode Switcher (User vs Developer) */
         .docs-tab-nav {
             display: flex;
             background: var(--color-bg-subtle);
-            padding: 0.3rem;
-            border-radius: var(--radius-xl);
+            padding: 0.35rem;
+            border-radius: var(--radius-full);
             border: 1px solid var(--color-border-subtle);
-            gap: 0.3rem;
+            gap: 0.35rem;
         }
 
         .docs-tab-btn {
             border: none;
             background: transparent;
             color: var(--color-text-secondary);
-            padding: 0.45rem 1.1rem;
+            padding: 0.5rem 1.25rem;
             font-size: 0.875rem;
-            font-weight: 600;
-            border-radius: var(--radius-md);
+            font-weight: 700;
+            border-radius: var(--radius-full);
             cursor: pointer;
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            transition: all 0.2s ease;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             font-family: inherit;
         }
 
@@ -120,9 +121,14 @@
         }
 
         .docs-tab-btn.active {
-            background: var(--color-surface-card);
-            color: var(--color-brand-primary);
-            box-shadow: var(--shadow-sm);
+            background: var(--color-brand-primary);
+            color: #ffffff;
+            box-shadow: 0 2px 8px rgba(15, 118, 110, 0.35);
+        }
+
+        .docs-tab-btn.active.dev-btn {
+            background: var(--color-brand-secondary);
+            box-shadow: 0 2px 8px rgba(2, 132, 199, 0.35);
         }
 
         .docs-nav-tools {
@@ -165,10 +171,31 @@
             color: #ffffff;
         }
 
+        .docs-icon-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--color-border-subtle);
+            background: var(--color-surface-card);
+            color: var(--color-text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+        }
+
+        .docs-icon-btn:hover {
+            color: var(--color-text-main);
+            border-color: var(--color-brand-border);
+            transform: translateY(-1px);
+        }
+
         /* --- Main Layout Grid --- */
         .docs-layout {
             display: flex;
-            max-width: 1600px;
+            max-width: 1650px;
             margin: 0 auto;
             position: relative;
         }
@@ -181,7 +208,7 @@
             top: 65px;
             height: calc(100vh - 65px);
             overflow-y: auto;
-            padding: 1.5rem 1rem 3rem 1.5rem;
+            padding: 1.5rem 1.25rem 3rem;
             border-right: 1px solid var(--color-border-subtle);
             box-sizing: border-box;
             background: var(--color-bg-base);
@@ -220,13 +247,30 @@
             pointer-events: none;
         }
 
+        .docs-toc-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 0.5rem 0.5rem;
+            border-bottom: 1px solid var(--color-border-subtle);
+            margin-bottom: 0.75rem;
+        }
+
         .docs-toc-heading {
             font-size: 0.75rem;
-            font-weight: 700;
+            font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 0.06em;
             color: var(--color-text-muted);
-            margin: 1.25rem 0 0.5rem 0.5rem;
+        }
+
+        .docs-toc-tag {
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 0.15rem 0.45rem;
+            border-radius: var(--radius-full);
+            background: var(--color-brand-subtle);
+            color: var(--color-brand-primary);
         }
 
         .docs-toc-list {
@@ -290,12 +334,12 @@
             flex: 1;
             min-width: 0;
             padding: 2.5rem 3.5rem 6rem;
-            max-width: 1050px;
+            max-width: 1180px;
         }
 
         .docs-section {
             scroll-margin-top: 90px;
-            margin-bottom: 3.5rem;
+            margin-bottom: 4rem;
         }
 
         .docs-section h1 {
@@ -314,8 +358,8 @@
             color: var(--color-text-main);
             border-bottom: 2px solid var(--color-border-subtle);
             padding-bottom: 0.6rem;
-            margin-top: 2.5rem;
-            margin-bottom: 1.2rem;
+            margin-top: 2.75rem;
+            margin-bottom: 1.25rem;
             display: flex;
             align-items: center;
             gap: 0.65rem;
@@ -325,8 +369,11 @@
             font-size: 1.25rem;
             font-weight: 700;
             color: var(--color-text-main);
-            margin-top: 1.8rem;
-            margin-bottom: 0.8rem;
+            margin-top: 2rem;
+            margin-bottom: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .docs-lead-meta {
@@ -350,6 +397,65 @@
 
         .docs-meta-item strong {
             color: var(--color-text-main);
+        }
+
+        /* Hero Target Switcher Banner */
+        .docs-role-hero {
+            background: linear-gradient(135deg, rgba(15, 118, 110, 0.08) 0%, rgba(2, 132, 199, 0.08) 100%);
+            border: 1px solid var(--color-brand-border);
+            border-radius: var(--radius-2xl);
+            padding: 1.75rem 2rem;
+            margin-bottom: 2.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1.5rem;
+        }
+
+        .docs-role-text h2 {
+            margin: 0 0 0.4rem 0;
+            border: none;
+            padding: 0;
+            font-size: 1.4rem;
+        }
+
+        .docs-role-text p {
+            margin: 0;
+            color: var(--color-text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .docs-role-toggle-group {
+            display: flex;
+            background: var(--color-surface-card);
+            border: 1px solid var(--color-border-subtle);
+            border-radius: var(--radius-full);
+            padding: 0.35rem;
+            gap: 0.3rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .docs-role-toggle-btn {
+            border: none;
+            background: transparent;
+            color: var(--color-text-secondary);
+            padding: 0.5rem 1.1rem;
+            font-size: 0.85rem;
+            font-weight: 700;
+            border-radius: var(--radius-full);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .docs-role-toggle-btn.active {
+            background: var(--color-brand-primary);
+            color: #ffffff;
+            box-shadow: var(--shadow-sm);
         }
 
         /* --- UI Components for Documentation --- */
@@ -402,39 +508,208 @@
             color: var(--color-text-main);
         }
 
-        /* --- Tables --- */
-        .docs-table-wrapper {
+        /* --- Infographic Frame & Showcase --- */
+        .docs-infographic-card {
+            background: var(--color-surface-card);
+            border: 1px solid var(--color-border-subtle);
+            border-radius: var(--radius-2xl);
+            padding: 1.25rem;
+            margin: 2rem 0;
+            box-shadow: var(--shadow-md);
+            position: relative;
+            transition: border-color 0.2s;
+        }
+
+        .docs-infographic-card:hover {
+            border-color: var(--color-brand-border);
+        }
+
+        .docs-infographic-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--color-border-subtle);
+        }
+
+        .docs-infographic-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--color-text-main);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .docs-infographic-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .docs-infographic-btn {
+            background: var(--color-bg-subtle);
+            border: 1px solid var(--color-border-subtle);
+            color: var(--color-text-secondary);
+            padding: 0.3rem 0.7rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            transition: all 0.15s;
+        }
+
+        .docs-infographic-btn:hover {
+            color: var(--color-brand-primary);
+            background: var(--color-brand-subtle);
+        }
+
+        .docs-infographic-view {
+            width: 100%;
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            background: #0f172a;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .docs-infographic-view img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.3s ease;
+        }
+
+        .docs-infographic-caption {
+            font-size: 0.85rem;
+            color: var(--color-text-secondary);
+            margin-top: 0.85rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* --- Stepper Component for User Journey --- */
+        .docs-stepper {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin: 2rem 0;
+            position: relative;
+        }
+
+        .docs-stepper::before {
+            content: '';
+            position: absolute;
+            left: 24px;
+            top: 24px;
+            bottom: 24px;
+            width: 2px;
+            background: var(--color-border-subtle);
+            z-index: 1;
+        }
+
+        .docs-step-item {
+            display: flex;
+            gap: 1.5rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .docs-step-bubble {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--color-surface-card);
+            border: 2px solid var(--color-brand-primary);
+            color: var(--color-brand-primary);
+            font-weight: 800;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .docs-step-item.care .docs-step-bubble {
+            border-color: var(--color-brand-secondary);
+            color: var(--color-brand-secondary);
+        }
+
+        .docs-step-card {
+            flex: 1;
             background: var(--color-surface-card);
             border: 1px solid var(--color-border-subtle);
             border-radius: var(--radius-xl);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s;
+        }
+
+        .docs-step-card:hover {
+            border-color: var(--color-brand-border);
+            box-shadow: var(--shadow-md);
+        }
+
+        .docs-step-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--color-text-main);
+            margin: 0 0 0.5rem 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .docs-step-badge {
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.2rem 0.6rem;
+            border-radius: var(--radius-full);
+            background: var(--color-brand-subtle);
+            color: var(--color-brand-primary);
+        }
+
+        .docs-step-badge.care {
+            background: rgba(2, 132, 199, 0.12);
+            color: #0284c7;
+        }
+
+        /* --- Table Styling --- */
+        .docs-table-wrapper {
             overflow-x: auto;
             margin: 1.5rem 0;
+            border: 1px solid var(--color-border-subtle);
+            border-radius: var(--radius-xl);
+            background: var(--color-surface-card);
             box-shadow: var(--shadow-sm);
         }
 
         .docs-table {
             width: 100%;
             border-collapse: collapse;
-            text-align: left;
             font-size: 0.9rem;
+            text-align: left;
         }
 
         .docs-table th {
             background: var(--color-bg-subtle);
-            color: var(--color-text-secondary);
+            color: var(--color-text-main);
             font-weight: 700;
-            padding: 0.85rem 1.1rem;
+            padding: 0.85rem 1rem;
             border-bottom: 1px solid var(--color-border-subtle);
-            text-transform: uppercase;
-            font-size: 0.75rem;
-            letter-spacing: 0.05em;
+            white-space: nowrap;
         }
 
         .docs-table td {
-            padding: 0.85rem 1.1rem;
+            padding: 0.85rem 1rem;
             border-bottom: 1px solid var(--color-border-subtle);
-            color: var(--color-text-main);
-            vertical-align: top;
+            color: var(--color-text-secondary);
+            vertical-align: middle;
         }
 
         .docs-table tr:last-child td {
@@ -442,59 +717,58 @@
         }
 
         .docs-table tr:hover td {
-            background: rgba(15, 118, 110, 0.02);
+            background: rgba(15, 118, 110, 0.03);
         }
 
-        /* --- Code Blocks --- */
+        /* --- Code Snippet Box --- */
         .docs-code-container {
-            position: relative;
-            margin: 1.25rem 0;
             border-radius: var(--radius-xl);
             overflow: hidden;
-            border: 1px solid var(--color-border-strong);
+            border: 1px solid var(--color-border-subtle);
             background: #0f172a;
             color: #f8fafc;
+            margin: 1.5rem 0;
+            box-shadow: var(--shadow-sm);
         }
 
         .docs-code-header {
+            background: #1e293b;
+            padding: 0.65rem 1rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0.5rem 1rem;
-            background: #1e293b;
-            border-bottom: 1px solid #334155;
-            font-size: 0.75rem;
-            font-family: monospace;
+            font-size: 0.8rem;
+            font-weight: 600;
             color: #94a3b8;
-        }
-
-        .docs-copy-btn {
-            background: transparent;
-            border: 1px solid #475569;
-            color: #cbd5e1;
-            padding: 0.25rem 0.65rem;
-            border-radius: var(--radius-sm);
-            font-size: 0.75rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.35rem;
-        }
-
-        .docs-copy-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
-            color: #ffffff;
-            border-color: #94a3b8;
+            border-bottom: 1px solid #334155;
         }
 
         .docs-code-block {
             margin: 0;
             padding: 1.25rem;
             overflow-x: auto;
-            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-            font-size: 0.875rem;
+            font-family: 'Consolas', 'Fira Code', monospace;
+            font-size: 0.85rem;
             line-height: 1.6;
+        }
+
+        .docs-copy-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #f8fafc;
+            padding: 0.25rem 0.6rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .docs-copy-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            color: #ffffff;
         }
 
         /* --- Callout & Cards --- */
@@ -597,47 +871,17 @@
             overflow-x: auto;
         }
 
-        /* --- Visual Illustration Figure --- */
-        .docs-diagram-figure {
-            margin: 1.75rem 0;
-            background: var(--color-surface-card);
-            border: 1px solid var(--color-border-subtle);
-            border-radius: var(--radius-2xl);
-            padding: 1.25rem;
-            box-shadow: var(--shadow-md);
-            text-align: center;
-        }
-
-        .docs-diagram-figure img {
-            max-width: 100%;
-            height: auto;
-            border-radius: var(--radius-xl);
-            display: block;
-            margin: 0 auto;
-            border: 1px solid rgba(0, 0, 0, 0.1);
-        }
-
-        .docs-diagram-caption {
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: var(--color-text-secondary);
-            margin-top: 0.85rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-
         /* --- Swatch Pill --- */
         .color-swatch-pill {
             display: inline-flex;
             align-items: center;
             gap: 0.4rem;
             padding: 0.2rem 0.6rem;
-            border-radius: 9999px;
+            border-radius: var(--radius-full);
             font-size: 0.8rem;
             font-weight: 600;
             border: 1px solid var(--color-border-subtle);
+            background: var(--color-surface-card);
         }
 
         .swatch-dot {
@@ -647,9 +891,66 @@
             display: inline-block;
         }
 
+        /* Lightbox Modal for Infographic Zoom */
+        .docs-lightbox-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(11, 17, 32, 0.88);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            box-sizing: border-box;
+        }
+
+        .docs-lightbox-modal.open {
+            display: flex;
+        }
+
+        .docs-lightbox-content {
+            max-width: 95%;
+            max-height: 90vh;
+            background: var(--color-surface-card);
+            border-radius: var(--radius-2xl);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-xl);
+            position: relative;
+            overflow: auto;
+            border: 1px solid var(--color-border-strong);
+        }
+
+        .docs-lightbox-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--color-bg-subtle);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            color: var(--color-text-main);
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .docs-lightbox-close:hover {
+            background: #ef4444;
+            color: #ffffff;
+        }
+
         /* --- Print Optimizations --- */
         @media print {
-            .docs-navbar, .docs-sidebar, .docs-nav-tools {
+            .docs-navbar, .docs-sidebar, .docs-nav-tools, .docs-role-hero, .docs-lightbox-modal {
                 display: none !important;
             }
             .docs-content {
@@ -666,7 +967,7 @@
         }
 
         /* --- Responsive Media Queries --- */
-        @media (max-width: 1024px) {
+        @media (max-width: 1100px) {
             .docs-sidebar {
                 display: none;
             }
@@ -690,26 +991,32 @@
                 </div>
             </a>
 
-            <!-- Tab Segment Switcher -->
-            <div class="docs-tab-nav">
-                <button class="docs-tab-btn active" id="tabBtnManual" onclick="switchDocTab('manual')">
-                    <i class="fa-solid fa-book-open"></i> <span>คู่มือการใช้งาน (Manual)</span>
+            <!-- Mode Switcher: User vs Developer -->
+            <div class="docs-tab-nav" role="tablist">
+                <button class="docs-tab-btn active" id="tabBtnUser" onclick="switchDocTab('user')" title="คู่มือการใช้งานสำหรับนักวิจัยและผู้ใช้งาน">
+                    <i class="fa-solid fa-user-gear"></i> <span>คู่มือผู้ใช้งาน (User Guide)</span>
                 </button>
-                <button class="docs-tab-btn" id="tabBtnDesign" onclick="switchDocTab('design')">
-                    <i class="fa-solid fa-layer-group"></i> <span>สถาปัตยกรรม (System Design)</span>
+                <button class="docs-tab-btn dev-btn" id="tabBtnDev" onclick="switchDocTab('developer')" title="คู่มือสถาปัตยกรรมและนักพัฒนา">
+                    <i class="fa-solid fa-code"></i> <span>คู่มือนักพัฒนา (Developer Guide)</span>
                 </button>
             </div>
         </div>
 
         <div class="docs-nav-tools">
-            <a href="index.html" class="docs-app-link docs-app-link-book" title="เปิดระบบ Lab Book+ (Lab Equipment LogBook)">
+            <a href="index.html" class="docs-app-link docs-app-link-book" title="เปิดระบบ Lab Book+ (Equipment LogBook)">
                 <i class="fa-solid fa-flask"></i> <span>Lab Book+</span>
             </a>
-            <a href="CarePlus.html" class="docs-app-link docs-app-link-care" title="เปิดระบบ MPIR Lab Care+">
+            <a href="CarePlus.html" class="docs-app-link docs-app-link-care" title="เปิดระบบ MPIR Lab Care+ (บำรุงรักษา/สอบเทียบ)">
                 <i class="fa-solid fa-laptop-medical"></i> <span>Lab Care+</span>
             </a>
 
-            <button class="nav-action-btn" onclick="window.print()" title="พิมพ์หรือบันทึกเป็น PDF (Print Document)">
+            <button class="docs-icon-btn" onclick="LabTheme.toggle()" title="สลับโหมดมืด/สว่าง (Dark Mode)">
+                <i class="fa-solid fa-circle-half-stroke"></i>
+            </button>
+            <button class="docs-icon-btn" onclick="LabAudio.toggleMute()" title="เปิด/ปิดเสียงตอบรับ (Sound FX)">
+                <i class="fa-solid fa-volume-high"></i>
+            </button>
+            <button class="docs-icon-btn" onclick="window.print()" title="พิมพ์หรือบันทึกเป็น PDF">
                 <i class="fa-solid fa-print"></i>
             </button>
         </div>
@@ -720,73 +1027,64 @@
         <aside class="docs-sidebar">
             <div class="docs-search-box">
                 <i class="fa-solid fa-magnifying-glass docs-search-icon"></i>
-                <input type="text" id="docsSearchInput" class="docs-search-input" placeholder="ค้นหาหัวข้อคู่มือ / สถาปัตยกรรม..." oninput="handleDocsSearch()">
+                <input type="text" id="docsSearchInput" class="docs-search-input" placeholder="ค้นหาหัวข้อในคู่มือ..." oninput="handleDocsSearch()">
             </div>
 
-            <!-- TOC for User Manual -->
-            <div id="tocManual">
-                <div class="docs-toc-heading">สารบัญคู่มือผู้ใช้งาน</div>
+            <!-- TOC for User Guide -->
+            <div id="tocUser">
+                <div class="docs-toc-header">
+                    <span class="docs-toc-heading">คู่มือผู้ใช้งาน (User)</span>
+                    <span class="docs-toc-tag">Researcher</span>
+                </div>
                 <ul class="docs-toc-list">
-                    <li><a href="#man-intro" class="docs-toc-link"><i class="fa-solid fa-circle-info"></i> 1. บทนำและภาพรวม</a></li>
+                    <li><a href="#usr-overview" class="docs-toc-link"><i class="fa-solid fa-circle-info"></i> 1. ภาพรวม 2 ระบบ</a></li>
+                    <li><a href="#usr-journey" class="docs-toc-link"><i class="fa-solid fa-diagram-project"></i> 2. แผนผังการใช้งาน (User Flow)</a></li>
                     <li>
-                        <a href="#man-getting-started" class="docs-toc-link"><i class="fa-solid fa-power-off"></i> 2. การเริ่มต้นใช้งาน</a>
+                        <a href="#usr-steps" class="docs-toc-link"><i class="fa-solid fa-list-check"></i> 3. ลำดับการใช้งานจุดต่างๆ</a>
                         <ul class="docs-toc-sublist">
-                            <li><a href="#man-accounts" class="docs-toc-sublink">2.1 บัญชีผู้ใช้งานเริ่มต้น</a></li>
-                            <li><a href="#man-login" class="docs-toc-sublink">2.2 การเข้าสู่ระบบแบบ SSO</a></li>
-                            <li><a href="#man-switcher" class="docs-toc-sublink">2.3 การสลับระบบ (Quick Switcher)</a></li>
-                            <li><a href="#man-theme-sound" class="docs-toc-sublink">2.4 โหมดมืดและเสียงเอฟเฟกต์</a></li>
+                            <li><a href="#usr-step-1" class="docs-toc-sublink">จุดที่ 1: เข้าสู่ระบบแบบ SSO</a></li>
+                            <li><a href="#usr-step-2" class="docs-toc-sublink">จุดที่ 2: สำรวจปฏิทิน & คิวเครื่อง</a></li>
+                            <li><a href="#usr-step-3" class="docs-toc-sublink">จุดที่ 3: จองเครื่องมือ & ข้ามคิวชน</a></li>
+                            <li><a href="#usr-step-4" class="docs-toc-sublink">จุดที่ 4: สแกน QR Code หน้าเครื่อง</a></li>
+                            <li><a href="#usr-step-5" class="docs-toc-sublink">จุดที่ 5: ใช้งานจริง & ส่งคืน (Checklist)</a></li>
+                            <li><a href="#usr-step-6" class="docs-toc-sublink">จุดที่ 6: แจ้งซ่อม & สอบเทียบ Care+</a></li>
+                            <li><a href="#usr-step-7" class="docs-toc-sublink">จุดที่ 7: แนบ PO & ดูไฟล์ข้ามเครื่อง</a></li>
+                            <li><a href="#usr-step-8" class="docs-toc-sublink">จุดที่ 8: กรองข้อมูล & ส่งออกรายงาน</a></li>
                         </ul>
                     </li>
                     <li>
-                        <a href="#man-notelab" class="docs-toc-link"><i class="fa-solid fa-calendar-check"></i> 3. การใช้งาน Lab Book+</a>
+                        <a href="#usr-admin" class="docs-toc-link"><i class="fa-solid fa-shield-halved"></i> 4. คู่มือผู้ดูแลระบบ (Admin)</a>
                         <ul class="docs-toc-sublist">
-                            <li><a href="#man-calendar" class="docs-toc-sublink">3.1 หน้าปฏิทินและคิวเครื่องมือ</a></li>
-                            <li><a href="#man-booking" class="docs-toc-sublink">3.2 ฟอร์มจองเครื่องมือ (Exhaustive Fields)</a></li>
-                            <li><a href="#man-recurring" class="docs-toc-sublink">3.3 จองวนซ้ำ & ข้ามช่วงเวลาชน (Skip Conflicts)</a></li>
-                            <li><a href="#man-actual-usage" class="docs-toc-sublink">3.4 ฟอร์มบันทึกเวลาจริง & ส่งคืน (Dynamic Checklist)</a></li>
-                            <li><a href="#man-qr" class="docs-toc-sublink">3.5 การสแกน QR Code หน้าเครื่อง</a></li>
+                            <li><a href="#usr-admin-eq" class="docs-toc-sublink">4.1 จัดการเครื่องมือ & Checklist</a></li>
+                            <li><a href="#usr-admin-loc" class="docs-toc-sublink">4.2 จัดการห้องแล็บและอาคาร</a></li>
+                            <li><a href="#usr-admin-users" class="docs-toc-sublink">4.3 จัดการผู้ใช้และสิทธิ์</a></li>
+                            <li><a href="#usr-admin-backup" class="docs-toc-sublink">4.4 แบ็คอัป & กู้คืนข้อมูลรวม</a></li>
+                            <li><a href="#usr-admin-purge" class="docs-toc-sublink">4.5 เคลียร์คืนพื้นที่ (Purge Tool)</a></li>
                         </ul>
                     </li>
-                    <li>
-                        <a href="#man-careplus" class="docs-toc-link"><i class="fa-solid fa-wrench"></i> 4. การใช้งาน Lab Care+</a>
-                        <ul class="docs-toc-sublist">
-                            <li><a href="#man-care-dash" class="docs-toc-sublink">4.1 แดชบอร์ด & ปฏิทิน Responsive</a></li>
-                            <li><a href="#man-care-filters" class="docs-toc-sublink">4.2 ตัวกรองโต้ตอบทันที (Instant Filters)</a></li>
-                            <li><a href="#man-care-records" class="docs-toc-sublink">4.3 ฟอร์มบันทึกซ่อม/สอบเทียบ (Exhaustive Fields)</a></li>
-                            <li><a href="#man-care-po" class="docs-toc-sublink">4.4 แนบไฟล์ใบสั่งซื้อ (PO/Cert IndexedDB)</a></li>
-                            <li><a href="#man-care-conflict" class="docs-toc-sublink">4.5 การเตือนคิวจองชนซ้อน</a></li>
-                            <li><a href="#man-care-export" class="docs-toc-sublink">4.6 ส่งออกรายงาน PDF/Excel</a></li>
-                        </ul>
-                    </li>
-                    <li>
-                        <a href="#man-admin" class="docs-toc-link"><i class="fa-solid fa-shield-halved"></i> 5. คู่มือผู้ดูแลระบบ</a>
-                        <ul class="docs-toc-sublist">
-                            <li><a href="#man-admin-eq" class="docs-toc-sublink">5.1 การจัดการเครื่องมือวิทยาศาสตร์</a></li>
-                            <li><a href="#man-admin-loc" class="docs-toc-sublink">5.2 จัดการอาคารและห้องแล็บ</a></li>
-                            <li><a href="#man-admin-users" class="docs-toc-sublink">5.3 จัดการผู้ใช้และรหัสผ่าน</a></li>
-                            <li><a href="#man-admin-backup" class="docs-toc-sublink">5.4 สำรอง/กู้คืนข้อมูลรวม 2 ระบบ (Unified JSON)</a></li>
-                            <li><a href="#man-admin-purge" class="docs-toc-sublink">5.5 เครื่องมือเคลียร์ข้อมูลคืนพื้นที่ (Storage Purge Tool)</a></li>
-                            <li><a href="#man-admin-firebase" class="docs-toc-sublink">5.6 เชื่อมต่อ Cloud Firebase (Spark Plan)</a></li>
-                        </ul>
-                    </li>
-                    <li><a href="#man-faq" class="docs-toc-link"><i class="fa-solid fa-circle-question"></i> 6. คำถามที่พบบ่อย (FAQ)</a></li>
+                    <li><a href="#usr-faq" class="docs-toc-link"><i class="fa-solid fa-circle-question"></i> 5. คำถามที่พบบ่อย (FAQ)</a></li>
                 </ul>
             </div>
 
-            <!-- TOC for System Design -->
-            <div id="tocDesign" style="display: none;">
-                <div class="docs-toc-heading">สารบัญสถาปัตยกรรมระบบ</div>
+            <!-- TOC for Developer Guide -->
+            <div id="tocDeveloper" style="display: none;">
+                <div class="docs-toc-header">
+                    <span class="docs-toc-heading">คู่มือนักพัฒนา (Dev)</span>
+                    <span class="docs-toc-tag" style="background: rgba(2, 132, 199, 0.15); color: #0284c7;">Architect</span>
+                </div>
                 <ul class="docs-toc-list">
-                    <li><a href="#des-exec" class="docs-toc-link"><i class="fa-solid fa-compass"></i> 1. Executive Summary</a></li>
-                    <li><a href="#des-arch" class="docs-toc-link"><i class="fa-solid fa-network-wired"></i> 2. Topology & Diagram</a></li>
-                    <li><a href="#des-color" class="docs-toc-link"><i class="fa-solid fa-palette"></i> 3. 60-30-10 Design System</a></li>
-                    <li><a href="#des-schema" class="docs-toc-link"><i class="fa-solid fa-database"></i> 4. Data Schema & ER Diagram</a></li>
-                    <li><a href="#des-sync" class="docs-toc-link"><i class="fa-solid fa-rotate"></i> 5. State Synchronization</a></li>
-                    <li><a href="#des-feedback" class="docs-toc-link"><i class="fa-solid fa-volume-high"></i> 6. Multimodal Feedback</a></li>
-                    <li><a href="#des-storage" class="docs-toc-link"><i class="fa-solid fa-box-archive"></i> 7. Storage (IndexedDB)</a></li>
-                    <li><a href="#des-smart" class="docs-toc-link"><i class="fa-solid fa-bolt"></i> 8. Smart Defaults & Logic</a></li>
-                    <li><a href="#des-rbac" class="docs-toc-link"><i class="fa-solid fa-user-lock"></i> 9. Security & Access Control</a></li>
-                    <li><a href="#des-qa" class="docs-toc-link"><i class="fa-solid fa-clipboard-check"></i> 10. QA & Verification</a></li>
+                    <li><a href="#dev-exec" class="docs-toc-link"><i class="fa-solid fa-compass"></i> 1. Executive Summary</a></li>
+                    <li><a href="#dev-topology" class="docs-toc-link"><i class="fa-solid fa-network-wired"></i> 2. System Topology & Layers</a></li>
+                    <li><a href="#dev-schema" class="docs-toc-link"><i class="fa-solid fa-database"></i> 3. Data Schema & ER Models</a></li>
+                    <li><a href="#dev-sync" class="docs-toc-link"><i class="fa-solid fa-rotate"></i> 4. State Synchronization Engine</a></li>
+                    <li><a href="#dev-compression" class="docs-toc-link"><i class="fa-solid fa-file-zipper"></i> 5. Gzip Compression Pipeline</a></li>
+                    <li><a href="#dev-cloud" class="docs-toc-link"><i class="fa-solid fa-cloud"></i> 6. Zero-Config Cloud Sync</a></li>
+                    <li><a href="#dev-feedback" class="docs-toc-link"><i class="fa-solid fa-volume-high"></i> 7. Multimodal Feedback Engine</a></li>
+                    <li><a href="#dev-tokens" class="docs-toc-link"><i class="fa-solid fa-palette"></i> 8. 60-30-10 Design System</a></li>
+                    <li><a href="#dev-rbac" class="docs-toc-link"><i class="fa-solid fa-user-shield"></i> 9. Security & Access Control</a></li>
+                    <li><a href="#dev-api" class="docs-toc-link"><i class="fa-solid fa-book-bookmark"></i> 10. SDK & Global API Reference</a></li>
+                    <li><a href="#dev-deployment" class="docs-toc-link"><i class="fa-solid fa-rocket"></i> 11. Netlify Production & Edge</a></li>
+                    <li><a href="#dev-qa" class="docs-toc-link"><i class="fa-solid fa-clipboard-check"></i> 12. Verification & QA Matrix</a></li>
                 </ul>
             </div>
         </aside>
@@ -795,25 +1093,37 @@
         <main class="docs-content">
 
             <!-- ========================================================================= -->
-            <!-- TAB 1: USER MANUAL (คู่มือการใช้งาน) -->
+            <!-- TAB 1: USER & RESEARCHER GUIDE (คู่มือผู้ใช้งานและนักวิจัย) -->
             <!-- ========================================================================= -->
-            <div id="sectionManual">
+            <div id="sectionUser">
                 <div class="docs-section">
-                    <h1>คู่มือการใช้งานระบบ MPIR Lab Suite</h1>
-                    <p style="font-size: 1.1rem; color: var(--color-text-secondary); margin-bottom: 1.5rem;">
-                        ระบบสารสนเทศห้องปฏิบัติการวิจัยและทดลองแบบครบวงจร ครอบคลุมระบบ <strong>Lab Book+ (Lab Equipment LogBook)</strong> และ <strong>MPIR Lab Care+</strong>
-                    </p>
+                    <div class="docs-role-hero">
+                        <div class="docs-role-text">
+                            <h2><i class="fa-solid fa-book-open text-teal-600"></i> คู่มือการใช้งานสำหรับนักวิจัยและเจ้าหน้าที่ห้องแล็บ</h2>
+                            <p>คู่มือแนะนำการจองเครื่องมือวิทยาศาสตร์ การบันทึกเวลาจริง และการดูแลรักษาเครื่องมืออย่างเป็นขั้นตอน</p>
+                        </div>
+                        <div class="docs-role-toggle-group">
+                            <button class="docs-role-toggle-btn active" onclick="switchDocTab('user')">
+                                <i class="fa-solid fa-user"></i> ผู้ใช้งานทั่วไป
+                            </button>
+                            <button class="docs-role-toggle-btn" onclick="switchDocTab('developer')">
+                                <i class="fa-solid fa-code"></i> นักพัฒนา / แอดมิน
+                            </button>
+                        </div>
+                    </div>
 
                     <div class="docs-lead-meta">
                         <div class="docs-meta-item"><i class="fa-solid fa-code-branch text-teal-600"></i> <strong>เวอร์ชัน:</strong> 2.2 Enterprise Production</div>
                         <div class="docs-meta-item"><i class="fa-solid fa-building text-sky-600"></i> <strong>หน่วยงาน:</strong> ฝ่ายวิจัยและนวัตกรรม กลุ่มมิตรผล (MPIR)</div>
-                        <div class="docs-meta-item"><i class="fa-solid fa-shield-check text-emerald-600"></i> <strong>สถานะระบบ:</strong> Unified & Ready to Deploy</div>
+                        <div class="docs-meta-item"><i class="fa-solid fa-cloud-check text-emerald-600"></i> <strong>คลาวด์:</strong> Google Cloud Firestore (Auto-Connected)</div>
+                        <div class="docs-meta-item"><i class="fa-solid fa-globe text-indigo-600"></i> <strong>URL:</strong> <a href="https://labbookplus.netlify.app/" target="_blank" style="color: inherit;">labbookplus.netlify.app</a></div>
                     </div>
 
+                    <!-- KPI Overview Cards -->
                     <div class="docs-kpi-grid">
                         <div class="docs-kpi-card">
                             <div class="docs-kpi-icon" style="background: rgba(15, 118, 110, 0.12); color: #0f766e;">
-                                <i class="fa-solid fa-calendar-check"></i>
+                                <i class="fa-solid fa-flask"></i>
                             </div>
                             <div>
                                 <div class="docs-kpi-title">ระบบจองเครื่องมือ</div>
@@ -830,466 +1140,514 @@
                             </div>
                         </div>
                         <div class="docs-kpi-card">
-                            <div class="docs-kpi-icon" style="background: rgba(245, 158, 11, 0.12); color: #d97706;">
-                                <i class="fa-solid fa-database"></i>
+                            <div class="docs-kpi-icon" style="background: rgba(16, 185, 129, 0.12); color: #10b981;">
+                                <i class="fa-solid fa-bolt"></i>
                             </div>
                             <div>
-                                <div class="docs-kpi-title">ฐานข้อมูลซิงก์</div>
-                                <div class="docs-kpi-value">Shared Bridge</div>
+                                <div class="docs-kpi-title">ระบบต่อคลาวด์</div>
+                                <div class="docs-kpi-value">0-Config Sync</div>
                             </div>
                         </div>
                         <div class="docs-kpi-card">
-                            <div class="docs-kpi-icon" style="background: rgba(16, 185, 129, 0.12); color: #10b981;">
-                                <i class="fa-solid fa-users"></i>
+                            <div class="docs-kpi-icon" style="background: rgba(245, 158, 11, 0.12); color: #d97706;">
+                                <i class="fa-solid fa-file-zipper"></i>
                             </div>
                             <div>
-                                <div class="docs-kpi-title">บัญชีมาตรฐาน</div>
-                                <div class="docs-kpi-value">10 นักวิจัย</div>
+                                <div class="docs-kpi-title">บีบอัดเอกสาร PO</div>
+                                <div class="docs-kpi-value">ลดขนาด 50-80%</div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- 1. บทนำและภาพรวม -->
-                <section id="man-intro" class="docs-section">
-                    <h2><span style="color: var(--color-brand-primary);">1.</span> บทนำและภาพรวมระบบ</h2>
+                <!-- 1. บทนำและภาพรวม 2 ระบบ -->
+                <section id="usr-overview" class="docs-section">
+                    <h2><span style="color: var(--color-brand-primary);">1.</span> บทนำและภาพรวมการทำงานของ 2 ระบบ</h2>
                     <p>
-                        <strong>MPIR Lab Suite</strong> ถูกพัฒนาขึ้นเพื่อยกระดับการบริหารจัดการห้องปฏิบัติการวิทยาศาสตร์ของฝ่ายวิจัยและนวัตกรรม โดยแบ่งเป็น 2 ระบบที่ทำงานเชื่อมโยงฐานข้อมูลเดียวกัน:
+                        <strong>MPIR Lab Suite</strong> เป็นแพลตฟอร์มบริหารจัดการทรัพยากรห้องปฏิบัติการวิจัยและทดลองแบบครบวงจรของฝ่ายวิจัยและนวัตกรรม กลุ่มมิตรผล โดยถูกออกแบบเป็น 2 ระบบที่ทำงานร่วมกันบนฐานข้อมูลกลางแบบเรียลไทม์:
                     </p>
+
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.25rem; margin-top: 1rem;">
-                        <div style="background: var(--color-surface-card); border: 1px solid var(--color-brand-border); padding: 1.5rem; border-radius: var(--radius-xl);">
+                        <div style="background: var(--color-surface-card); border: 2px solid var(--color-brand-border); padding: 1.5rem; border-radius: var(--radius-xl);">
                             <h4 style="margin: 0 0 0.5rem; color: #0f766e; display: flex; align-items: center; gap: 0.5rem;">
-                                <i class="fa-solid fa-flask"></i> Lab Book+ (Lab Equipment LogBook)
+                                <i class="fa-solid fa-flask"></i> 1. Lab Book+ (Lab Equipment LogBook)
                             </h4>
-                            <p style="margin: 0; font-size: 0.875rem; color: var(--color-text-secondary);">
-                                เน้นการจองเครื่องมือวิทยาศาสตร์ การบันทึกเวลาใช้งานจริง (Actual Usage Tracking) การจัดการคิวไม่ให้ทับซ้อน และการสแกน QR Code หน้าเครื่อง
+                            <p style="margin: 0; font-size: 0.875rem; color: var(--color-text-secondary); line-height: 1.6;">
+                                <strong>สำหรับนักวิจัย:</strong> ตรวจสอบตารางคิวเครื่องมือ จองเครื่องมือวิทยาศาสตร์แบบเดี่ยวหรือวนซ้ำ ข้ามช่วงเวลาที่ชน บันทึกเวลาเริ่ม-ส่งคืนจริง (Actual Usage) และสแกน QR Code หน้าเครื่อง
                             </p>
                         </div>
-                        <div style="background: var(--color-surface-card); border: 1px solid rgba(2, 132, 199, 0.3); padding: 1.5rem; border-radius: var(--radius-xl);">
+                        <div style="background: var(--color-surface-card); border: 2px solid rgba(2, 132, 199, 0.35); padding: 1.5rem; border-radius: var(--radius-xl);">
                             <h4 style="margin: 0 0 0.5rem; color: #0284c7; display: flex; align-items: center; gap: 0.5rem;">
-                                <i class="fa-solid fa-laptop-medical"></i> MPIR Lab Care+
+                                <i class="fa-solid fa-laptop-medical"></i> 2. MPIR Lab Care+
                             </h4>
-                            <p style="margin: 0; font-size: 0.875rem; color: var(--color-text-secondary);">
-                                เน้นการดูแลรักษาเครื่องมือ วางแผนสอบเทียบ (Calibration Plan) บันทึกประวัติซ่อม วิเคราะห์งบประมาณ และจัดเก็บเอกสารใบสั่งซื้อ (PO/Cert) เข้าสู่ IndexedDB
+                            <p style="margin: 0; font-size: 0.875rem; color: var(--color-text-secondary); line-height: 1.6;">
+                                <strong>สำหรับการดูแลรักษา:</strong> บันทึกประวัติแจ้งซ่อม (Repair) แผนสอบเทียบตามรอบ (Calibration) บำรุงรักษาเชิงป้องกัน (PM) แนบไฟล์ใบสั่งซื้อ/ใบรับรอง (PO/Cert) พร้อมระบบบีบอัดขั้นสูง
                             </p>
                         </div>
                     </div>
+
                     <div class="docs-callout" style="margin-top: 1.25rem;">
-                        <strong><i class="fa-solid fa-rotate"></i> Real-time Cross-Tab Synchronization:</strong>
-                        ทั้งสองระบบสามารถเปิดทำงานพร้อมกันคนละแท็บบนบราวเซอร์ และข้อมูลจะซิงค์หากันอัตโนมัติแบบเรียลไทม์ผ่าน <code>Window Storage Event Bus</code>
+                        <strong><i class="fa-solid fa-cloud-bolt text-teal-600"></i> ทำงานประสานกันแบบ Zero-Config Auto-Connect:</strong>
+                        ผู้ใช้งานทุกคนเปิดเว็บบนคอมพิวเตอร์ แท็บเล็ต หรือสมาร์ทโฟน ระบบจะเชื่อมต่อคลาวด์ Google Cloud Firestore ให้ทันทีโดยไม่ต้องขอ API Key หรือตั้งค่าใดๆ และหากไม่มีสัญญาณเน็ต จะสลับเป็นโหมดออฟไลน์ทำงานต่อได้ทันที 100%
                     </div>
                 </section>
 
-                <!-- 2. การเริ่มต้นใช้งาน -->
-                <section id="man-getting-started" class="docs-section">
-                    <h2><span style="color: var(--color-brand-primary);">2.</span> การเริ่มต้นใช้งานและการตั้งค่าส่วนบุคคล</h2>
-                    
-                    <h3 id="man-accounts">2.1 บัญชีผู้ใช้งานเริ่มต้น</h3>
-                    <p>ระบบมีชุดข้อมูลจำลองตั้งต้น (Seed Data) พร้อมบัญชีผู้ใช้งานที่สามารถทดลองใช้งานได้ทันที:</p>
-                    
-                    <div class="docs-table-wrapper">
-                        <table class="docs-table">
-                            <thead>
-                                <tr>
-                                    <th>อีเมล / ชื่อผู้ใช้</th>
-                                    <th>รหัสผ่านเริ่มต้น</th>
-                                    <th>บทบาท (Role)</th>
-                                    <th>คำอธิบายสิทธิ์การใช้งาน</th>
-                                    <th style="text-align: right;">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><code>admin@lab.com</code> (หรือ <code>admin</code>)</td>
-                                    <td><span class="color-swatch-pill"><code>admin321</code></span></td>
-                                    <td><span class="badge badge-danger">Administrator</span></td>
-                                    <td>สิทธิ์สูงสุด จัดการเครื่องมือ ผู้ใช้งาน และสำรองกู้คืนระบบ</td>
-                                    <td style="text-align: right;">
-                                        <button class="docs-copy-btn" onclick="copyText('admin', 'admin321')"><i class="fa-regular fa-copy"></i> คัดลอก</button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><code>user@lab.com</code> (หรือ <code>user</code>)</td>
-                                    <td><span class="color-swatch-pill"><code>user123</code></span></td>
-                                    <td><span class="badge badge-booked">Standard User</span></td>
-                                    <td>จองเครื่องมือ บันทึกการใช้งานจริง บันทึกงานซ่อมบำรุง</td>
-                                    <td style="text-align: right;">
-                                        <button class="docs-copy-btn" onclick="copyText('user', 'user123')"><i class="fa-regular fa-copy"></i> คัดลอก</button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><code>Saranyap@mitrphol.com</code></td>
-                                    <td><span class="color-swatch-pill"><code>user123</code></span></td>
-                                    <td><span class="badge badge-booked">Standard User</span></td>
-                                    <td>นักวิจัย / เจ้าหน้าที่กลุ่มมิตรผล (สามารถกรอกเฉพาะ <code>Saranyap</code> ได้)</td>
-                                    <td style="text-align: right;">
-                                        <button class="docs-copy-btn" onclick="copyText('Saranyap', 'user123')"><i class="fa-regular fa-copy"></i> คัดลอก</button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><code>Kridsanak@mitrphol.com</code></td>
-                                    <td><span class="color-swatch-pill"><code>user123</code></span></td>
-                                    <td><span class="badge badge-booked">Standard User</span></td>
-                                    <td>นักวิจัย / เจ้าหน้าที่กลุ่มมิตรผล (สามารถกรอกเฉพาะ <code>Kridsanak</code> ได้)</td>
-                                    <td style="text-align: right;">
-                                        <button class="docs-copy-btn" onclick="copyText('Kridsanak', 'user123')"><i class="fa-regular fa-copy"></i> คัดลอก</button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <h3 id="man-login">2.2 การเข้าสู่ระบบ</h3>
-                    <ol style="padding-left: 1.25rem; color: var(--color-text-secondary); line-height: 1.8;">
-                        <li>เปิดไฟล์ <code>index.html</code> หรือ <code>CarePlus.html</code> ผ่านเว็บเบราว์เซอร์</li>
-                        <li>กรอก <strong>Username</strong> โดยไม่ต้องพิมพ์ <code>@lab.com</code> (ระบบมีป้ายกำกับอัตโนมัติ) หรือพิมพ์อีเมลเต็มรูปแบบ</li>
-                        <li>กรอก <strong>Password</strong> แล้วกดปุ่ม <strong>Login</strong></li>
-                        <li>ระบบจะส่งเสียงสังเคราะห์ตอบรับ (Success Chime) และพานำเข้าสู่หน้าแดชบอร์ดหลักทันที</li>
-                    </ol>
-
-                    <h3 id="man-switcher">2.3 การสลับระบบ (Quick Switcher)</h3>
-                    <p>บนแถบเมนูด้านบน (Navbar) มีปุ่มลัดสำหรับสลับระหว่างสองระบบได้ในคลิกเดียว:</p>
-                    <ul>
-                        <li>ในหน้า <strong>Lab Book+</strong>: คลิกปุ่ม <span class="docs-app-link docs-app-link-care" style="padding: 0.2rem 0.5rem;"><i class="fa-solid fa-laptop-medical"></i> Lab Care+</span> เพื่อเปิดระบบบำรุงรักษา</li>
-                        <li>ในหน้า <strong>Lab Care+</strong>: คลิกปุ่ม <span class="docs-app-link docs-app-link-book" style="padding: 0.2rem 0.5rem;"><i class="fa-solid fa-flask"></i> Lab Book+</span> เพื่อกลับสู่ระบบจองเครื่องมือ</li>
-                    </ul>
-
-                    <h3 id="man-theme-sound">2.4 การปรับโหมดมืด/สว่าง และเปิด-ปิดเสียงแจ้งเตือน</h3>
-                    <ul>
-                        <li><strong>ปุ่มสลับโหมดมืด (Dark / Light Theme)</strong>: ไอคอน <i class="fa-solid fa-circle-half-stroke"></i> สลับธีมหน้าจออย่างถนอมสายตา สีจะซิงค์กันข้ามทุกหน้าจอ</li>
-                        <li><strong>ปุ่มควบคุมเสียง (Audio Mute Toggle)</strong>: ไอคอน <i class="fa-solid fa-volume-high"></i> เปิด-ปิดเสียงเอฟเฟกต์การกดปุ่มและการแจ้งเตือน เพื่อความเงียบสงบในห้องปฏิบัติการ</li>
-                    </ul>
-                </section>
-
-                <!-- 3. การใช้งาน Lab Book+ -->
-                <section id="man-notelab" class="docs-section">
-                    <h2><span style="color: var(--color-brand-primary);">3.</span> คู่มือการใช้งาน Lab Book+ (Lab Equipment LogBook)</h2>
-                    
-                    <h3 id="man-calendar">3.1 หน้าปฏิทินและการตรวจเช็กคิวเครื่องมือ</h3>
-                    <p>หน้าแรกของ Lab Book+ รวบรวมปฏิทินแบบโต้ตอบ (Interactive FullCalendar) แสดงมุมมอง เดือน, สัปดาห์ และวัน โดยมีสีแสดงสถานะการใช้งานอย่างชัดเจน:</p>
-                    <ul>
-                        <li><span class="badge badge-booked">Booked (สีน้ำเงิน)</span>: รายการจองที่รอการใช้งานตามกำหนด</li>
-                        <li><span class="badge badge-inuse">In Use (สีเหลืองกระพริบ)</span>: เครื่องมือที่กำลังเปิดใช้งานจริงอยู่ขณะนี้</li>
-                        <li><span class="badge badge-finished">Finished (สีเขียว)</span>: ใช้งานเสร็จสิ้นและส่งคืนเรียบร้อยแล้ว</li>
-                    </ul>
-                    
-                    <h3 id="man-booking">3.2 รายละเอียดฟอร์มการจองเครื่องมือวิทยาศาสตร์ (Exhaustive Booking Form Guide)</h3>
-                    <p>เมื่อคลิกปุ่ม <strong>"+ Book Equipment"</strong> หรือคลิกบนช่องว่างในตารางปฏิทิน ระบบจะเปิดหน้าจอแบบฟอร์มการจอง ซึ่งประกอบด้วยฟิลด์และตัวเลือกดังนี้:</p>
-
-                    <div class="docs-table-wrapper">
-                        <table class="docs-table">
-                            <thead>
-                                <tr>
-                                    <th>ฟิลด์ / ปุ่มควบคุม</th>
-                                    <th>ประเภทข้อมูล</th>
-                                    <th>รายละเอียดและการทำงาน</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><strong>Area / Building</strong></td>
-                                    <td>Dropdown</td>
-                                    <td>เลือกอาคารหรือห้องปฏิบัติการที่เครื่องมือตั้งอยู่ ระบบจะกรองรายชื่อเครื่องมือในช่องถัดไปให้ตรงกับห้องทันที</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Equipment</strong></td>
-                                    <td>Dropdown</td>
-                                    <td>เลือกเครื่องมือวิทยาศาสตร์ที่ต้องการจอง พร้อมมีป้ายแสดงสถานะความพร้อม เช่น <code>Ready</code> หรือ <code>Maintenance</code></td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Start Time</strong></td>
-                                    <td><code>datetime-local</code></td>
-                                    <td><strong>Smart Default</strong>: ระบบจะปัดเศษเวลาขึ้นเป็นต้นชั่วโมงถัดไปให้อัตโนมัติ (เช่น 10:15 น. ปรับเป็น 11:00 น.)</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>End Time</strong></td>
-                                    <td><code>datetime-local</code></td>
-                                    <td><strong>Smart Default</strong>: ระบบตั้งค่าเริ่มต้นเป็น 2 ชั่วโมงถัดไปจากเวลาเริ่มต้นโดยอัตโนมัติ</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Project Code</strong></td>
-                                    <td><code>text</code></td>
-                                    <td>รหัสโครงการวิจัยหรืองานทดลอง (เช่น <code>RD-2026-MP01</code>) เพื่อจัดกลุ่มงบประมาณและตรวจสอบย้อนกลับ</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Full Description / Objectives</strong></td>
-                                    <td><code>textarea</code></td>
-                                    <td>วัตถุประสงค์การใช้งาน รายละเอียดการทดลอง สารเคมีที่ใช้ และข้อควรระวังในการเดินเครื่อง</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Usage Type</strong></td>
-                                    <td>Radio Buttons</td>
-                                    <td>เลือกประเภทงาน: <strong>Internal Project</strong> (โครงการวิจัยภายใน) หรือ <strong>External Commercial</strong> (งานบริการภายนอก)</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Confirmation Status</strong></td>
-                                    <td>Select</td>
-                                    <td>เลือกความแน่นอน: <strong>Confirmed</strong> (ยืนยันแน่นอน) หรือ <strong>Tentative</strong> (จองไว้ก่อนเบื้องต้น - แสดงแถบโปร่งแสงในปฏิทิน)</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Repeat / Recurring</strong></td>
-                                    <td>Select</td>
-                                    <td>การทำซ้ำ: <strong>None</strong>, <strong>Daily</strong> (ทุกวัน), <strong>Weekly</strong> (ทุกสัปดาห์), <strong>Monthly</strong> (ทุกเดือน), <strong>Yearly</strong> (ทุกปี)</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Repeat End Date</strong></td>
-                                    <td><code>date</code></td>
-                                    <td>วันสิ้นสุดรอบการทำซ้ำ (จะแสดงขึ้นมาเมื่อเลือก Repeat ที่ไม่ใช่ None)</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Skip Past Conflicts</strong></td>
-                                    <td>Checkbox</td>
-                                    <td><strong>ข้ามช่วงเวลาที่มีการจองซ้อน</strong>: หากเลือกระบบจะข้ามรอบวันที่ชนกับคิวผู้อื่น และจองรอบที่ว่างให้อัตโนมัติโดยไม่ล้มเหลว</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Check Availability</strong></td>
-                                    <td>Button</td>
-                                    <td>ตรวจสอบความว่างของเครื่องมือแบบเรียลไทม์ ตรวจจับทั้งคิวจองและตารางซ่อมบำรุงใน Lab Care+</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Save Booking</strong></td>
-                                    <td>Button</td>
-                                    <td>ยืนยันการจอง ระบบจะเล่นเสียง Success Chime บันทึกข้อมูล และส่งแจ้งเตือนเข้าสู่ระบบกระดิ่ง</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <h3 id="man-recurring">3.3 การจองแบบวนซ้ำ (Recurring Bookings) และการข้ามช่วงเวลาที่ชน</h3>
-                    <p>สำหรับงานวิจัยที่ต้องเก็บข้อมูลต่อเนื่องทุกสัปดาห์:</p>
-                    <ol style="padding-left: 1.25rem; line-height: 1.7;">
-                        <li>เลือกช่อง <strong>Repeat</strong> เป็น <code>Weekly</code> และกำหนด <strong>Repeat End Date</strong></li>
-                        <li>ทำเครื่องหมายถูกที่ช่อง <strong>"Skip Past Conflicts"</strong></li>
-                        <li>หากมีสัปดาห์ใดที่มีผู้อื่นจองเครื่องไว้ก่อนแล้ว ระบบจะแจ้งเตือนว่า <em>"ข้ามรอบวันที่ XX/XX/XXXX เนื่องจากมีคิวจองซ้อน"</em> และสร้างรายการจองในสัปดาห์อื่นๆ ที่ว่างให้ครบถ้วน</li>
-                    </ol>
-
-                    <h3 id="man-actual-usage">3.4 ฟอร์มบันทึกเวลาใช้งานจริงและส่งคืน (Finish Usage & Dynamic Checklist)</h3>
-                    <p>เมื่อผู้ใช้งานเดินไปยังเครื่องมือจริง:</p>
-                    <ol style="padding-left: 1.25rem; line-height: 1.7;">
-                        <li>กดปุ่ม <strong>"Check In"</strong> เมื่อเริ่มเปิดเครื่องเพื่อบันทึกเวลาจริง (Actual Start)</li>
-                        <li>เมื่อเสร็จสิ้นการทดลอง คลิกปุ่ม <strong>"Finish Usage"</strong> หน้าต่างโมดอลจะเปิดขึ้น:
-                            <ul>
-                                <li><strong>Dynamic Parameters</strong>: พารามิเตอร์เฉพาะที่ผู้ดูแลกำหนดไว้สำหรับเครื่องมือนั้น (เช่น อุณหภูมิ, ความเร็วรอบ, หลอด UV)</li>
-                                <li><strong>Actual End Time</strong>: เวลาปิดเครื่องจริง</li>
-                                <li><strong>Usage Details & Remarks</strong>: ข้อสังเกต สภาพความสะอาด และบันทึกข้อผิดพลาดระหว่างเดินเครื่อง</li>
-                            </ul>
-                        </li>
-                        <li>คลิกปุ่ม <strong>"Complete & Return"</strong> สถานะเครื่องจะปรับกลับเป็น Ready พร้อมใช้งานทันที</li>
-                    </ol>
-
-                    <h3 id="man-qr">3.5 การสแกน QR Code หน้าเครื่องมือ</h3>
+                <!-- 2. แผนผังลำดับการใช้งาน (User Flow Infographic) -->
+                <section id="usr-journey" class="docs-section">
+                    <h2><span style="color: var(--color-brand-primary);">2.</span> แผนผังลำดับการใช้งานของผู้ใช้งาน (User Journey Infographic)</h2>
                     <p>
-                        ผู้ใช้งานสามารถใช้สมาร์ทโฟนหรือแท็บเล็ตกดปุ่ม <strong>QR Scan</strong> ที่มุมบนขวา เพื่อสแกนคิวอาร์โค้ดประจำเครื่อง ระบบจะเปิดฟอร์มจองหรือเช็กอินของเครื่องมือนั้นให้ทันทีโดยไม่ต้องค้นหารายชื่อ
-                    </p>
-                </section>
-
-                <!-- 4. การใช้งาน Lab Care+ -->
-                <section id="man-careplus" class="docs-section">
-                    <h2><span style="color: var(--color-brand-primary);">4.</span> คู่มือการใช้งาน MPIR Lab Care+</h2>
-                    
-                    <h3 id="man-care-dash">4.1 แดชบอร์ดภาพรวมและปฏิทินงานแบบ Responsive (Mobile/Tablet/Desktop)</h3>
-                    <p>รวบรวมสรุปสถานะการซ่อมบำรุง, เครื่องมือที่ใกล้ถึงกำหนดสอบเทียบ (Calibration Due ใน 30-60 วัน), กราฟแจกแจงค่าใช้จ่ายประจำปี และปฏิทินกำหนดการงานบำรุงรักษาแบบ Responsive:</p>
-                    <ul>
-                        <li><strong>Mobile (< 640px)</strong>: ตารางปฏิทินปรับความสูงเป็น 54px ชิปแสดงผลกะทัดรัด ตัวย่อวัน <code>S M T W T F S</code> พร้อมปุ่ม <code>+N more</code> เพื่อเปิดดูรายการทั้งหมดในวันนั้นในรูปแบบหน้าต่างโมดอล</li>
-                        <li><strong>Desktop / Tablet (> 640px)</strong>: แสดงตารางปฏิทินขนาดเต็ม พร้อมชื่อเครื่องมือและประเภทงาน</li>
-                        <li><strong>ปุ่ม "Today"</strong>: คลิกเพื่อเลื่อนหน้าปฏิทินกลับมายังเดือนและวันที่ปัจจุบันได้ทันทีในคลิกเดียว</li>
-                    </ul>
-
-                    <h3 id="man-care-filters">4.2 ระบบตัวกรองข้อมูลแบบโต้ตอบทันที (Instant Reactive Filters & Visual Cards)</h3>
-                    <p>แถบตัวกรอง Status, Service Type, Equipment, และ Location ด้านบนปฏิทิน ตอบสนองแบบทันที (0ms):</p>
-                    <ul>
-                        <li>เมื่อคลิกเปลี่ยนตัวเลือกในดรอปดาวน์ ทั้งปฏิทินและกราฟสรุปด้านบนจะคำนวณและอัปเดตใหม่ทันที</li>
-                        <li>ระบบจะแสดง <strong>Smart Recommendation Card</strong> แนะนำรายการเครื่องมือที่ควรจัดลำดับความสำคัญตามเงื่อนไขตัวกรอง</li>
-                    </ul>
-
-                    <h3 id="man-care-records">4.3 รายละเอียดฟอร์มบันทึกงานซ่อมและงานสอบเทียบ (Exhaustive Maintenance Record Form)</h3>
-                    <p>เมื่อคลิกปุ่ม <strong>"+ New Record"</strong> แบบฟอร์มบันทึกงานซ่อมบำรุงจะเปิดขึ้น:</p>
-
-                    <div class="docs-table-wrapper">
-                        <table class="docs-table">
-                            <thead>
-                                <tr>
-                                    <th>ฟิลด์ / ปุ่มควบคุม</th>
-                                    <th>คำอธิบายและการใช้งาน</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><strong>Location / Building</strong></td>
-                                    <td>เลือกอาคารหรือห้องปฏิบัติการที่เครื่องมือตั้งอยู่</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Equipment</strong></td>
-                                    <td>เลือกเครื่องมือวิทยาศาสตร์ที่ต้องการบันทึกประวัติ</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Service Type</strong></td>
-                                    <td>เลือกประเภทงาน: <strong>Repair</strong> (งานซ่อม), <strong>Calibration</strong> (งานสอบเทียบ), <strong>PM</strong> (บำรุงรักษาเชิงป้องกัน), หรือ <strong>Spare parts</strong> (เปลี่ยนอะไหล่)</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Service Date</strong></td>
-                                    <td>วันที่เข้าดำเนินการซ่อมหรือสอบเทียบ</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Next Due Date</strong></td>
-                                    <td>วันครบกำหนดสอบเทียบรอบถัดไป (สำคัญมากสำหรับประเภท Calibration เพื่อใช้แจ้งเตือนล่วงหน้า)</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Maintenance Cost</strong></td>
-                                    <td>ค่าใช้จ่ายในการดำเนินงาน (บาท) จัดรูปแบบตัวเลข tabular-nums ชัดเจน</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Vendor / Technician</strong></td>
-                                    <td>ชื่อบริษัทคู่ค้าหรือชื่อช่างผู้เชี่ยวชาญภายนอกที่เข้าให้บริการ</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Reporter</strong></td>
-                                    <td>ชื่อเจ้าหน้าที่หรือนักวิจัยผู้แจ้งซ่อม/ผู้ประสานงาน</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Status</strong></td>
-                                    <td>สถานะงาน: <code>Pending</code> (รอดำเนินการ), <code>In Progress</code> (กำลังดำเนินการ), หรือ <code>Complete</code> (เสร็จสมบูรณ์)</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>PO & Cert Upload</strong></td>
-                                    <td>กล่องเลือกไฟล์เอกสาร PDF (รองรับสูงสุด 5 ไฟล์ต่อรายการ จัดเก็บเข้าสู่ IndexedDB)</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Save Record</strong></td>
-                                    <td>บันทึกข้อมูล พร้อมตรวจสอบการชนซ้อนกับคิวจองใน Lab Book+ อัตโนมัติ</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <h3 id="man-care-po">4.4 การแนบไฟล์ใบสั่งซื้อ (PO) และใบรับรองสอบเทียบ (Cert)</h3>
-                    <div class="docs-callout">
-                        <strong><i class="fa-solid fa-file-pdf text-rose-500"></i> จัดเก็บลง IndexedDB ปลอดภัยสูงสุด:</strong>
-                        ไฟล์ PDF ทั้งหมดถูกแยกเก็บใน IndexedDB ประจำเครื่อง ไม่กินโควตาตัวอักษรของ Local Storage และสามารถกดปุ่ม <strong>"View PO"</strong> ในตารางเพื่อเปิดพรีวิวอ่านเอกสารได้ทันที
-                    </div>
-
-                    <h3 id="man-care-conflict">4.5 การตรวจสอบการชนกับคิวจองเครื่องมือ (Cross-App Conflict Alert)</h3>
-                    <p>
-                        เมื่อเจ้าหน้าที่บันทึกวันที่จะส่งซ่อมหรือสอบเทียบ ระบบจะตรวจสอบข้ามไปยังตารางจองของ Lab Book+ ทันที หากมีผู้อื่นจองเครื่องไว้ในวันเดียวกัน ระบบจะแสดง SweetAlert เตือนชื่อผู้จองและช่วงเวลาทันที เพื่อป้องกันปัญหาเครื่องถูกส่งซ่อมขณะกำลังมีงานวิจัยสำคัญ
+                        ภาพรวมวงจรการทำงานตั้งแต่เริ่มต้นล็อกอิน ตรวจสอบคิว จองเครื่องมือ เข้าใช้งานจริง ส่งคืน ตลอดจนการแจ้งซ่อมและสอบเทียบ:
                     </p>
 
-                    <h3 id="man-care-export">4.6 การส่งออกรายงานสรุป (Export PDF & Excel)</h3>
-                    <ul>
-                        <li><strong>Export to Excel (.xlsx)</strong>: สำหรับนำไปวิเคราะห์คำนวณงบประมาณต่อในโปรแกรมสเปรดชีต พร้อมสูตรสรุปยอดรวม</li>
-                        <li><strong>Export to PDF</strong>: สร้างเอกสารรายงานทางการ พร้อมฟอนต์ภาษาไทย TH Sarabun New สวยงามพร้อมพิมพ์</li>
-                    </ul>
-                </section>
-
-                <!-- 5. คู่มือผู้ดูแลระบบ -->
-                <section id="man-admin" class="docs-section">
-                    <h2><span style="color: var(--color-brand-primary);">5.</span> คู่มือสำหรับผู้ดูแลระบบ (Admin Control Guide)</h2>
-                    <p><em>(สงวนสิทธิ์เฉพาะผู้ใช้งานที่มีสิทธิ์ Role: <code>admin</code> เท่านั้น)</em></p>
-
-                    <h3 id="man-admin-eq">5.1 การจัดการเครื่องมือวิทยาศาสตร์และฟิลด์พารามิเตอร์เฉพาะ</h3>
-                    <p>สามารถเพิ่ม แก้ไขหมายเลข Serial Number เปลี่ยนชื่อผู้ดูแลประจำเครื่อง (Custodian) หรือกำหนด Dynamic Parameters สำหรับให้ผู้ใช้กรอกตอนส่งคืนเครื่องมือ</p>
-
-                    <h3 id="man-admin-loc">5.2 การจัดการอาคารและห้องปฏิบัติการ</h3>
-                    <p>สามารถเพิ่มห้องปฏิบัติการใหม่ เช่น <em>Pilot Plant Unit</em> หรือ <em>Fermentation Lab</em> ข้อมูลจะถูกอัปเดตไปยังตัวเลือกของทั้งสองระบบทันที</p>
-
-                    <h3 id="man-admin-users">5.3 การจัดการบัญชีผู้ใช้งานและสิทธิ์</h3>
-                    <p>สามารถเพิ่มรายชื่อนักวิจัยใหม่ กำหนดบทบาท (<code>admin</code> หรือ <code>user</code>) และรีเซ็ตรหัสผ่านได้ตลอดเวลา</p>
-
-                    <h3 id="man-admin-backup">5.4 การสำรองข้อมูลรวม 2 ระบบในคลิกเดียว (Unified Backup All)</h3>
-                    <div style="background: var(--color-surface-card); border: 1px solid var(--color-brand-border); padding: 1.25rem; border-radius: var(--radius-xl); margin: 1rem 0;">
-                        <h4 style="margin: 0 0 0.5rem; color: var(--color-brand-primary);"><i class="fa-solid fa-download"></i> สำรองและกู้คืนข้ามระบบ 100%</h4>
-                        <p style="margin: 0 0 0.75rem; font-size: 0.875rem; color: var(--color-text-secondary);">
-                            ในเวอร์ชัน 2.1 ทั้ง Lab Book+ และ Lab Care+ มีปุ่ม <strong>"Backup All (2 Systems)"</strong> ซึ่งจะรวมข้อมูลรายการจอง, ประวัติซ่อม, ข้อมูลเครื่องมือ, ผู้ใช้งาน และ <strong>ไฟล์แนบ PO ทั้งหมดใน IndexedDB</strong> เข้าเป็นไฟล์ JSON เดียว (<code>LabSuite_Unified_Backup_YYYY-MM-DD.json</code>)
-                        </p>
-                        <p style="margin: 0; font-size: 0.875rem; color: var(--color-text-secondary);">
-                            การกด <strong>"Import Unified JSON"</strong> ในระบบใดระบบหนึ่ง จะกู้คืนและซิงค์ข้อมูลคืนสู่ทั้ง 2 ระบบและ IndexedDB พร้อมกันทันที
-                        </p>
-                    </div>
-
-                    <h3 id="man-admin-purge">5.5 เครื่องมือเคลียร์ข้อมูลคืนพื้นที่ (Storage Cleanup & Quota Purge Tool)</h3>
-                    <p>
-                        เพื่อรักษาพื้นที่จัดเก็บบนคลาวด์ให้อยู่ในโควตาฟรี 1GB ของ Firebase Spark Plan และป้องกันความจำเบราว์เซอร์เต็ม:
-                    </p>
-                    <div class="docs-callout" style="border-left-color: #f59e0b;">
-                        <strong><i class="fa-solid fa-shield-halved text-emerald-600"></i> การันตีความปลอดภัยสูงสุด (Master Data Immutability):</strong>
-                        ระบบจะลบเฉพาะ <strong>ประวัติการจอง (Bookings) และประวัติงานซ่อม (Records พร้อมไฟล์แนบ PO)</strong> ที่เก่ากว่าช่วงเวลาที่เลือกเท่านั้น <strong>ไม่มีทางลบข้อมูลเครื่องมือ, ห้องแล็บ, รายชื่อผู้ใช้ หรือรายชื่อช่างเด็ดขาด</strong>
-                    </div>
-                    <p><strong>ตัวเลือกช่วงเวลาที่สามารถล้างได้:</strong></p>
-                    <ul>
-                        <li>เก่ากว่า 1 เดือน (> 30 วันที่ผ่านมา)</li>
-                        <li>เก่ากว่า 1 ไตรมาส (> 90 วันที่ผ่านมา - <em>ค่าแนะนำ</em>)</li>
-                        <li>เก่ากว่า 6 เดือน (> 180 วันที่ผ่านมา)</li>
-                        <li>เก่ากว่า 1 ปี (> 365 วันที่ผ่านมา)</li>
-                        <li>เก่ากว่า 2 ปี (> 730 วันที่ผ่านมา)</li>
-                        <li>ลบประวัติการใช้งานทั้งหมดของ User (ล้างกระดานเฉพาะ Transaction)</li>
-                    </ul>
-                    <p>
-                        ก่อนการลบจริง ระบบจะแสดงหน้าต่างสรุปจำนวนรายการที่จะลบ พร้อมปุ่ม <strong>"💾 แบ็คอัพก่อนล้าง"</strong> เพื่อดาวน์โหลดไฟล์สำรองข้อมูลฉบับเต็มเก็บไว้ก่อนเสมอ
-                    </p>
-
-                    <h3 id="man-admin-firebase">5.6 การเชื่อมต่อ Cloud Database (Firebase Spark Plan 100% Free)</h3>
-                    <p>ผู้ดูแลระบบสามารถเปิดใช้งาน Cloud Real-time Synchronization ในแพ็กเกจฟรีได้ง่ายๆ:</p>
-                    <ol style="padding-left: 1.25rem; line-height: 1.7;">
-                        <li>ไปที่ <a href="https://console.firebase.google.com/" target="_blank" style="color: var(--color-brand-primary); font-weight: 600;">Firebase Console</a> สร้างโปรเจกต์ใหม่ (แผน Spark ฟรี ไม่ต้องใช้บัตรเครดิต)</li>
-                        <li>สร้างฐานข้อมูล Cloud Firestore</li>
-                        <li>ไปที่ Project Settings &gt; General &gt; Your apps เลือก Web App (<code>&lt;/&gt;</code>) เพื่อคัดลอกค่า Config</li>
-                        <li>คลิกปุ่ม <strong>"Cloud Config"</strong> ในหน้าต่าง Admin กรอก <strong>API Key</strong> และ <strong>Project ID</strong> แล้วกด <strong>"บันทึกและเชื่อมต่อ"</strong></li>
-                        <li>ระบบจะแสดงสถานะ <code>Connected (Spark Plan)</code> สีเขียว และซิงค์ข้อมูลขึ้นคลาวด์แบบเรียลไทม์ หากออฟไลน์ระบบจะสลับเป็น Local-First อัตโนมัติโดยข้อมูลไม่สูญหาย</li>
-                    </ol>
-
-                    <div style="background: rgba(37,99,235,0.08); border: 1px solid rgba(37,99,235,0.25); border-radius: 12px; padding: 1rem; margin: 1rem 0; font-size: 0.85rem; line-height: 1.5;">
-                        <h4 style="margin: 0 0 0.5rem 0; color: #2563eb; display: flex; align-items: center; gap: 0.5rem;">
-                            <i class="fa-solid fa-magic-wand-sparkles"></i> โหมดเชื่อมต่ออัตโนมัติ (Zero-Config Auto-Connect)
-                        </h4>
-                        <p style="margin: 0 0 0.5rem 0;">ผู้ดูแลระบบสามารถนำค่า <code>apiKey</code> และ <code>projectId</code> ไปใส่ไว้ใน <code>DEFAULT_CONFIG</code> ของไฟล์ <code>shared-core.js</code> เพียงครั้งเดียว <strong>ผู้ใช้งานคนอื่นๆ บนเครื่องอื่นจะไม่ต้องกรอกค่าใดๆ เลย</strong> ระบบจะเชื่อมต่อไปยัง Firebase Cloud ให้โดยอัตโนมัติทันที</p>
-                        <h4 style="margin: 0.75rem 0 0.5rem 0; color: #10b981; display: flex; align-items: center; gap: 0.5rem;">
-                            <i class="fa-solid fa-file-zipper"></i> การบีบอัดไฟล์แนบขั้นสูงสุด (Maximum Compression & Cloud Attachments)
-                        </h4>
-                        <p style="margin: 0;">ไฟล์แนบ PDF ที่อัปโหลดจะถูกบีบอัดด้วย <strong>Native Gzip Web Streams API</strong> ลดขนาดลง <strong>50% - 80%</strong> ทันที และจัดเก็บใน Cloud Firestore คอลเลกชัน <code>lab_attachments</code> พร้อมให้ผู้ใช้คนอื่นเปิดดูแบบ On-Demand และรวมอยู่ในไฟล์สำรองข้อมูล (Backup) แบบบีบอัดเรียบร้อย</p>
+                    <div class="docs-infographic-card">
+                        <div class="docs-infographic-header">
+                            <div class="docs-infographic-title">
+                                <i class="fa-solid fa-diagram-project text-teal-600"></i>
+                                <span>แผนผัง 8 ขั้นตอนการใช้งานระบบ MPIR Lab Suite (End-to-End Researcher Journey)</span>
+                            </div>
+                            <div class="docs-infographic-actions">
+                                <button class="docs-infographic-btn" onclick="openLightbox('images/diagram_user_journey.svg', 'แผนผังลำดับการใช้งาน 8 ขั้นตอน')">
+                                    <i class="fa-solid fa-expand"></i> ขยายเต็มจอ
+                                </button>
+                            </div>
+                        </div>
+                        <div class="docs-infographic-view">
+                            <img src="images/diagram_user_journey.svg" alt="User Journey Infographic" loading="lazy">
+                        </div>
+                        <div class="docs-infographic-caption">
+                            <span><i class="fa-solid fa-info-circle text-sky-500"></i> แผนภาพแสดงเส้นทางการใช้งาน 8 จุดหลัก แบ่งเป็น 2 เฟส: รอบการจองใช้งาน (Lab Book+) และรอบการบำรุงรักษา (Lab Care+)</span>
+                            <span class="badge badge-booked">Interactive Vector SVG</span>
+                        </div>
                     </div>
                 </section>
 
-                <!-- 6. FAQ & Troubleshooting -->
-                <section id="man-faq" class="docs-section">
-                    <h2><span style="color: var(--color-brand-primary);">6.</span> คำถามที่พบบ่อย (FAQ & Troubleshooting)</h2>
-                    
+                <!-- 3. ลำดับการใช้งานจุดต่างๆ ของผู้ใช้งานอย่างละเอียด -->
+                <section id="usr-steps" class="docs-section">
+                    <h2><span style="color: var(--color-brand-primary);">3.</span> ลำดับขั้นตอนการใช้งานจุดต่างๆ ของผู้ใช้งานอย่างละเอียด</h2>
+                    <p>
+                        รายละเอียดในแต่ละขั้นตอน เพื่อให้ผู้ใช้งานและนักวิจัยสามารถใช้งานฟังก์ชันของระบบได้อย่างถูกต้องและรวดเร็ว:
+                    </p>
+
+                    <div class="docs-stepper">
+
+                        <!-- STEP 1 -->
+                        <div class="docs-step-item" id="usr-step-1">
+                            <div class="docs-step-bubble">01</div>
+                            <div class="docs-step-card">
+                                <div class="docs-step-title">
+                                    <span>จุดที่ 1: การเข้าสู่ระบบและการสลับระบบ (SSO & Quick Switcher)</span>
+                                    <span class="docs-step-badge">Single Sign-On</span>
+                                </div>
+                                <p>
+                                    ระบบออกแบบให้การเข้าใช้งานสะดวกสูงสุด โดยรองรับทั้งชื่อสั้นของนักวิจัย หรืออีเมลเต็มรูปแบบ พร้อมฟังก์ชันจำลองเซสชันข้ามหน้าจอ:
+                                </p>
+                                <ul>
+                                    <li><strong>การล็อกอิน:</strong> กรอก Username เช่น <code>Saranyap</code> หรือ <code>admin</code> พร้อมรหัสผ่าน จากนั้นกด <strong>"Sign In"</strong></li>
+                                    <li><strong>การสลับระบบด่วน (Quick Switcher):</strong> บนแถบเมนูด้านบน จะมีปุ่มลัดสลับไปยังอีกระบบหนึ่งเสมอ (คลิก <code>Lab Care+</code> หรือ <code>Lab Book+</code>) เมื่อกดแล้วจะเข้าสู่หน้าทำงานทันทีโดยไม่ต้องล็อกอินซ้ำ</li>
+                                    <li><strong>โหมดมืด & เสียงตอบรับ:</strong> กดไอคอน <i class="fa-solid fa-circle-half-stroke"></i> เพื่อปรับโหมดมืดถนอมสายตา และกดไอคอน <i class="fa-solid fa-volume-high"></i> เพื่อเปิด/ปิดเสียงตอบรับการคลิก</li>
+                                </ul>
+
+                                <div class="docs-callout" style="margin: 1rem 0 0 0;">
+                                    <strong>ตารางบัญชีผู้ใช้งานมาตรฐานเริ่มต้น (Seed Accounts):</strong>
+                                    <div class="docs-table-wrapper" style="margin-top: 0.5rem;">
+                                        <table class="docs-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>ชื่อผู้ใช้ (Username)</th>
+                                                    <th>รหัสผ่าน</th>
+                                                    <th>บทบาท (Role)</th>
+                                                    <th>ขอบเขตสิทธิ์</th>
+                                                    <th>คลิกคัดลอก</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td><code>admin@lab.com</code> (หรือ <code>admin</code>)</td>
+                                                    <td><code>admin321</code></td>
+                                                    <td><span class="badge badge-danger">Administrator</span></td>
+                                                    <td>สิทธิ์สูงสุด: จัดการเครื่องมือ ผู้ใช้ สำรองข้อมูล และล้างพื้นที่</td>
+                                                    <td><button class="docs-copy-btn" onclick="copyText('admin', 'admin321')"><i class="fa-regular fa-copy"></i> คัดลอก</button></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><code>user@lab.com</code> (หรือ <code>user</code>)</td>
+                                                    <td><code>user123</code></td>
+                                                    <td><span class="badge badge-booked">Standard User</span></td>
+                                                    <td>จองเครื่องมือ บันทึกเวลาจริง แจ้งซ่อมบำรุง</td>
+                                                    <td><button class="docs-copy-btn" onclick="copyText('user', 'user123')"><i class="fa-regular fa-copy"></i> คัดลอก</button></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><code>Saranyap@mitrphol.com</code></td>
+                                                    <td><code>user123</code></td>
+                                                    <td><span class="badge badge-booked">Standard User</span></td>
+                                                    <td>นักวิจัยกลุ่มมิตรผล (กรอกสั้น: <code>Saranyap</code>)</td>
+                                                    <td><button class="docs-copy-btn" onclick="copyText('Saranyap', 'user123')"><i class="fa-regular fa-copy"></i> คัดลอก</button></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><code>Kridsanak@mitrphol.com</code></td>
+                                                    <td><code>user123</code></td>
+                                                    <td><span class="badge badge-booked">Standard User</span></td>
+                                                    <td>นักวิจัยกลุ่มมิตรผล (กรอกสั้น: <code>Kridsanak</code>)</td>
+                                                    <td><button class="docs-copy-btn" onclick="copyText('Kridsanak', 'user123')"><i class="fa-regular fa-copy"></i> คัดลอก</button></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- STEP 2 -->
+                        <div class="docs-step-item" id="usr-step-2">
+                            <div class="docs-step-bubble">02</div>
+                            <div class="docs-step-card">
+                                <div class="docs-step-title">
+                                    <span>จุดที่ 2: การสำรวจปฏิทินและตรวจสอบสถานะคิวเครื่องมือ</span>
+                                    <span class="docs-step-badge">Calendar & Status</span>
+                                </div>
+                                <p>
+                                    หน้าหลักของ <strong>Lab Book+</strong> แสดงปฏิทินแบบโต้ตอบ (Interactive Calendar) ช่วยให้นักวิจัยวางแผนการทดลองได้อย่างแม่นยำ:
+                                </p>
+                                <ul>
+                                    <li><strong>การสลับมุมมอง:</strong> สามารถเลือกมุมมอง <strong>เดือน (Month), สัปดาห์ (Week), วัน (Day)</strong> ได้ที่มุมบนขวาของปฏิทิน</li>
+                                    <li><strong>การกรองตามสถานที่และเครื่องมือ:</strong> เมนูดรอปดาวน์ด้านบนช่วยกรองตาม <code>Area / Building</code> และ <code>Equipment</code> ได้อย่างรวดเร็ว</li>
+                                    <li><strong>การอ่านรหัสสีสถานะ:</strong>
+                                        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.4rem;">
+                                            <span class="color-swatch-pill"><span class="swatch-dot" style="background:#0284c7;"></span> <strong>Booked (สีน้ำเงิน):</strong> มีผู้จองไว้ล่วงหน้า</span>
+                                            <span class="color-swatch-pill"><span class="swatch-dot" style="background:#f59e0b;"></span> <strong>In Use (สีเหลืองกระพริบ):</strong> กำลังเปิดใช้งานจริงอยู่ขณะนี้</span>
+                                            <span class="color-swatch-pill"><span class="swatch-dot" style="background:#10b981;"></span> <strong>Finished (สีเขียว):</strong> ใช้งานเสร็จสิ้นและส่งคืนแล้ว</span>
+                                            <span class="color-swatch-pill"><span class="swatch-dot" style="background:#ef4444;"></span> <strong>Maintenance (สีแดง):</strong> เครื่องมืออยู่ระหว่างซ่อม/สอบเทียบ</span>
+                                        </div>
+                                    </li>
+                                    <li><strong>การดูรายละเอียดคิว:</strong> คลิกที่รายการแถบสีบนปฏิทินเพื่อดูชื่อผู้จอง รหัสโครงการ และช่วงเวลาที่จอง</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- STEP 3 -->
+                        <div class="docs-step-item" id="usr-step-3">
+                            <div class="docs-step-bubble">03</div>
+                            <div class="docs-step-card">
+                                <div class="docs-step-title">
+                                    <span>จุดที่ 3: ขั้นตอนการจองเครื่องมือวิทยาศาสตร์ (Equipment Booking)</span>
+                                    <span class="docs-step-badge">Exhaustive Guide</span>
+                                </div>
+                                <p>
+                                    คลิกปุ่ม <strong>"+ Book Equipment"</strong> หรือคลิกบนช่องวัน/เวลาว่างบนปฏิทิน หน้าต่างแบบฟอร์มการจองจะเปิดขึ้น:
+                                </p>
+
+                                <div class="docs-infographic-card" style="margin: 1rem 0;">
+                                    <div class="docs-infographic-header">
+                                        <div class="docs-infographic-title">
+                                            <i class="fa-solid fa-window-maximize text-teal-600"></i>
+                                            <span>หน้าต่างแบบฟอร์มการจองเครื่องมือวิทยาศาสตร์ใน Lab Book+</span>
+                                        </div>
+                                        <button class="docs-infographic-btn" onclick="openLightbox('images/ui_labbook_booking.svg', 'แบบฟอร์มการจอง Lab Book+')">
+                                            <i class="fa-solid fa-expand"></i> ขยาย
+                                        </button>
+                                    </div>
+                                    <div class="docs-infographic-view">
+                                        <img src="images/ui_labbook_booking.svg" alt="Lab Book+ Booking UI" loading="lazy">
+                                    </div>
+                                </div>
+
+                                <h4>รายละเอียดฟิลด์และการตั้งค่าในฟอร์มการจอง:</h4>
+                                <div class="docs-table-wrapper">
+                                    <table class="docs-table">
+                                        <thead>
+                                            <tr>
+                                                <th>ฟิลด์ข้อมูล</th>
+                                                <th>ประเภทข้อมูล</th>
+                                                <th>พฤติกรรมและการทำงานอัตโนมัติ (Smart Features)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td><strong>Area / Building</strong></td>
+                                                <td>Dropdown</td>
+                                                <td>เลือกอาคารหรือห้องแล็บ ระบบจะกรองรายชื่อเครื่องมือในช่องถัดไปให้ตรงกับห้องทันที</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Equipment</strong></td>
+                                                <td>Dropdown</td>
+                                                <td>เลือกเครื่องมือวิทยาศาสตร์ที่ต้องการจอง พร้อมมีป้ายกำกับสถานะ เช่น <code>Ready</code> หรือ <code>Maintenance</code></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Start Date & Time</strong></td>
+                                                <td>Datetime-local</td>
+                                                <td><strong>Smart Auto-Round:</strong> ปัดเศษนาทีขึ้นเป็นต้นชั่วโมงถัดไปให้อัตโนมัติ เช่น 10:14 น. จะถูกตั้งเป็น 11:00 น.</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>End Date & Time</strong></td>
+                                                <td>Datetime-local</td>
+                                                <td><strong>Smart Default:</strong> ตั้งเวลาสิ้นสุดเริ่มต้นเป็น 2 ชั่วโมงถัดไปอัตโนมัติ</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Project Code</strong></td>
+                                                <td>Text</td>
+                                                <td>รหัสโครงการวิจัย เช่น <code>RD-2026-MP01</code> เพื่อประโยชน์ในการติดตามงบประมาณ</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Description / Notes</strong></td>
+                                                <td>Textarea</td>
+                                                <td>ระบุรายละเอียดการทดลอง เช่น สารตัวอย่าง อุณหภูมิ หรือสภาวะพิเศษ</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Usage Type</strong></td>
+                                                <td>Radio</td>
+                                                <td>เลือกระหว่าง <code>Internal Research</code> (งานวิจัยภายใน) หรือ <code>External Service</code> (บริการวิเคราะห์ภายนอก)</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Repeat Booking (จองวนซ้ำ)</strong></td>
+                                                <td>Dropdown</td>
+                                                <td>รองรับ <code>None</code>, <code>Daily (ทุกวัน)</code>, <code>Weekly (ทุกสัปดาห์)</code>, <code>Monthly (ทุกเดือน)</code></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Repeat End Date</strong></td>
+                                                <td>Date</td>
+                                                <td>ระบุวันสิ้นสุดรอบการจองวนซ้ำ เช่น กำหนดให้จองต่อเนื่อง 2 เดือน</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Skip Past Conflicts</strong></td>
+                                                <td>Checkbox</td>
+                                                <td><strong>ฟังก์ชันเด่น:</strong> หากมีบางสัปดาห์ที่เครื่องมือติดคิวจองของผู้อื่น ระบบจะข้ามเฉพาะสัปดาห์นั้น และสร้างรายการจองในสัปดาห์อื่นที่ว่างให้จนครบโดยไม่แจ้ง Error ขัดจังหวะ</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- STEP 4 -->
+                        <div class="docs-step-item" id="usr-step-4">
+                            <div class="docs-step-bubble">04</div>
+                            <div class="docs-step-card">
+                                <div class="docs-step-title">
+                                    <span>จุดที่ 4: การสแกน QR Code ประจำเครื่องมือ (QR Check-in)</span>
+                                    <span class="docs-step-badge">Mobile / Tablet</span>
+                                </div>
+                                <p>
+                                    เมื่อนักวิจัยเดินเข้ามาถึงหน้าเครื่องมือวิทยาศาสตร์ในห้องปฏิบัติการ:
+                                </p>
+                                <ol style="padding-left: 1.25rem; line-height: 1.8;">
+                                    <li>เปิดเว็บผ่านสมาร์ทโฟนหรือแท็บเล็ต แล้วคลิกปุ่ม <strong>"QR Scanner"</strong> บนแถบเมนู</li>
+                                    <li>อนุญาตให้เบราว์เซอร์เข้าถึงกล้องถ่ายภาพ</li>
+                                    <li>นำกล้องไปส่องที่สติ๊กเกอร์ QR Code ที่ติดอยู่หน้าเครื่องมือวิทยาศาสตร์</li>
+                                    <li>ระบบจะประมวลผลรหัสเครื่องมือ และเปิดหน้าต่างแบบฟอร์มการจอง หรือหน้าต่างเช็กอินเข้าใช้งานเครื่องมือนั้นให้ทันที 0 วินาที โดยไม่ต้องเลื่อนหารายชื่อเครื่องมือ</li>
+                                </ol>
+                            </div>
+                        </div>
+
+                        <!-- STEP 5 -->
+                        <div class="docs-step-item" id="usr-step-5">
+                            <div class="docs-step-bubble">05</div>
+                            <div class="docs-step-card">
+                                <div class="docs-step-title">
+                                    <span>จุดที่ 5: การเข้าใช้งานจริง และขั้นตอนการส่งคืน (Finish Usage & Checklist)</span>
+                                    <span class="docs-step-badge">Dynamic Checklist</span>
+                                </div>
+                                <p>
+                                    การบันทึกเวลาใช้งานจริงช่วยให้ห้องแล็บมีสถิติการใช้งานเครื่องมือที่ถูกต้องตามจริง:
+                                </p>
+                                <ul>
+                                    <li><strong>เริ่มใช้งาน (Start Usage):</strong> เมื่อถึงเวลาใช้งาน ให้กดปุ่ม <code>Start Usage</code> เพื่อเปลี่ยนสถานะเป็น <span class="badge badge-inuse">In Use</span> เครื่องมือจะแสดงเป็นสีเหลืองกระพริบเพื่อแจ้งให้ผู้อื่นทราบว่ากำลังเดินเครื่องอยู่</li>
+                                    <li><strong>ส่งคืนเครื่องมือ (Finish Usage):</strong> เมื่อการทดลองเสร็จสิ้น ให้คลิกปุ่ม <strong>"Finish Usage"</strong></li>
+                                    <li><strong>บันทึกเวลาจริง (Actual Times):</strong> ตรวจสอบเวลาเริ่มจริง (Actual Start) และเวลาเสร็จจริง (Actual End)</li>
+                                    <li><strong>Dynamic Parameter Checklist:</strong> ระบบจะแสดงหัวข้อตรวจเช็กเฉพาะตามประเภทเครื่องมือ เช่น:
+                                        <ul>
+                                            <li>เครื่องปั่นเหวี่ยง (Centrifuge): บันทึกรอบความเร็วรอบสูงสุด (RPM) และเช็กความสมดุลโรเตอร์</li>
+                                            <li>เครื่องหมัก (Fermenter): บันทึกปริมาตรสารอาหาร และเช็กระดับแรงดัน DO / pH</li>
+                                            <li>เครื่อง HPLC / GC: บันทึกแรงดันคอลัมน์ และปริมาณตัวทำละลายที่ใช้</li>
+                                            <li>ตู้ชีวนิรภัย (Biosafety Cabinet): บันทึกชั่วโมงการเปิดหลอด UV และการทำความสะอาดพื้นผิวด้วย 70% Ethanol</li>
+                                        </ul>
+                                    </li>
+                                    <li><strong>กดปุ่ม "Complete & Return Equipment":</strong> สถานะเครื่องมือจะเปลี่ยนเป็น <span class="badge badge-finished">Finished</span> และสถานะเครื่องมือหลักจะกลับสู่ <span class="badge badge-booked">Ready</span> พร้อมให้ผู้อื่นใช้งานต่อทันที</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- STEP 6 -->
+                        <div class="docs-step-item care" id="usr-step-6">
+                            <div class="docs-step-bubble">06</div>
+                            <div class="docs-step-card">
+                                <div class="docs-step-title">
+                                    <span>จุดที่ 6: การแจ้งซ่อมบำรุงและวางแผนสอบเทียบใน Lab Care+</span>
+                                    <span class="docs-step-badge care">Lab Care+ Workflow</span>
+                                </div>
+                                <p>
+                                    เมื่อเครื่องมือเกิดข้อขัดข้อง หรือถึงรอบสอบเทียบมาตรฐานประจำปี ให้สลับไปที่ <strong>MPIR Lab Care+</strong>:
+                                </p>
+                                <ul>
+                                    <li>คลิกปุ่ม <strong>"+ New Record"</strong> เพื่อสร้างบันทึกประวัติการบำรุงรักษาใหม่</li>
+                                    <li><strong>Service Type:</strong> เลือกระหว่าง:
+                                        <ul>
+                                            <li><code>Repair</code>: งานซ่อมแซมกรณีเครื่องมือชำรุดเสียหาย</li>
+                                            <li><code>Calibration</code>: งานสอบเทียบมาตรฐานความถูกต้องของเครื่องมือตามข้อกำหนด ISO/IEC 17025</li>
+                                            <li><code>PM (Preventive Maintenance)</code>: งานบำรุงรักษาเชิงป้องกันตามรอบระยะเวลา</li>
+                                        </ul>
+                                    </li>
+                                    <li><strong>Service Date:</strong> ระบุวันที่ดำเนินการเข้าซ่อมหรือสอบเทียบ</li>
+                                    <li><strong>Next Due Date (วันครบกำหนดรอบถัดไป):</strong> สำคัญมากสำหรับการสอบเทียบ ระบบจะนำวันเวลานี้ไปคำนวณและแสดงการแจ้งเตือนล่วงหน้า 30-60 วัน ก่อนที่ใบเซอร์จะหมดอายุ</li>
+                                    <li><strong>Maintenance Cost:</strong> ระบุค่าบริการและค่าอะไหล่ (บาท) เพื่อนำไปสรุปงบประมาณ</li>
+                                    <li><strong>Cross-App Conflict Alert:</strong> หากวัน Service Date ชนกับช่วงเวลาที่มีนักวิจัยจองไว้ใน Lab Book+ ระบบจะแสดงหน้าต่างแจ้งเตือนทันที เพื่อให้ประสานงานเลื่อนคิวได้อย่างราบรื่น</li>
+                                </ul>
+
+                                <div class="docs-infographic-card" style="margin: 1rem 0;">
+                                    <div class="docs-infographic-header">
+                                        <div class="docs-infographic-title">
+                                            <i class="fa-solid fa-laptop-medical text-sky-600"></i>
+                                            <span>แดชบอร์ด Lab Care+ และฟอร์มบันทึกพร้อมตัวแสดงเปอร์เซ็นต์บีบอัดไฟล์</span>
+                                        </div>
+                                        <button class="docs-infographic-btn" onclick="openLightbox('images/ui_labcare_maintenance.svg', 'แดชบอร์ด Lab Care+')">
+                                            <i class="fa-solid fa-expand"></i> ขยาย
+                                        </button>
+                                    </div>
+                                    <div class="docs-infographic-view">
+                                        <img src="images/ui_labcare_maintenance.svg" alt="Lab Care+ UI" loading="lazy">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- STEP 7 -->
+                        <div class="docs-step-item care" id="usr-step-7">
+                            <div class="docs-step-bubble">07</div>
+                            <div class="docs-step-card">
+                                <div class="docs-step-title">
+                                    <span>จุดที่ 7: การแนบเอกสาร PO / ใบรับรองสอบเทียบ และการเปิดดูไฟล์ข้ามเครื่อง</span>
+                                    <span class="docs-step-badge care">Gzip Stream Archive</span>
+                                </div>
+                                <p>
+                                    ระบบรองรับการจัดเก็บเอกสารใบสั่งซื้อ (PO), ใบเสนอราคา, และใบรับรองผลการสอบเทียบ (Calibration Certificate) ในรูปแบบ PDF:
+                                </p>
+                                <ul>
+                                    <li><strong>การแนบไฟล์:</strong> คลิกเลือกไฟล์ PDF (แนบได้สูงสุด 5 ไฟล์ต่อ 1 รายการซ่อม)</li>
+                                    <li><strong>ระบบบีบอัดอัตโนมัติ:</strong> ระบบจะใช้ <code>LabCompressor</code> ทำการบีบอัด Gzip ทันทีในเบราว์เซอร์ โดยลดขนาดไฟล์ลงได้ <strong>50% ถึง 80%</strong> พร้อมแสดงชิปสีเขียวระบุขนาดเดิมและขนาดที่ประหยัดได้</li>
+                                    <li><strong>การเปิดดูเอกสารข้ามอุปกรณ์ (View PO):</strong> ในตารางบันทึกงานซ่อม คลิกปุ่ม <strong>"View PO"</strong> หรือไอคอนรูปดวงตา
+                                        <ul>
+                                            <li>หากเปิดดูจากเครื่องคอมพิวเตอร์หรือมือถือเครื่องอื่น ระบบจะดาวน์โหลดไฟล์บีบอัดจาก Cloud และคลายการบีบอัดในหน่วยความจำทันที พร้อมเปิดแสดงผลในหน้าต่างพรีวิวอย่างคมชัด 100%</li>
+                                            <li>ไฟล์จะถูกบันทึกแคชไว้ในเครื่องนั้น ทำให้การเปิดดูครั้งต่อไปรวดเร็วโดยไม่ต้องดาวน์โหลดซ้ำ</li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- STEP 8 -->
+                        <div class="docs-step-item care" id="usr-step-8">
+                            <div class="docs-step-bubble">08</div>
+                            <div class="docs-step-card">
+                                <div class="docs-step-title">
+                                    <span>จุดที่ 8: การกรองข้อมูลแบบทันที และการส่งออกรายงาน (Filters & Export)</span>
+                                    <span class="docs-step-badge care">Instant Export</span>
+                                </div>
+                                <p>
+                                    การสรุปผลและรายงานทางการเงินสำหรับหัวหน้าห้องปฏิบัติการและฝ่ายบริหาร:
+                                </p>
+                                <ul>
+                                    <li><strong>Instant Reactive Filters:</strong> เปลี่ยนตัวกรองสถานะ, เครื่องมือ, หรือห้องแล็บ ตารางและกราฟคำนวณผลใหม่ทันที 0ms ไม่ต้องกดปุ่มค้นหา</li>
+                                    <li><strong>ปุ่ม "Today":</strong> คลิกเพื่อดึงมุมมองปฏิทินกลับมาที่วันและเดือนปัจจุบันได้ในคลิกเดียว</li>
+                                    <li><strong>Export Excel:</strong> ส่งออกประวัติงานซ่อมและค่าใช้จ่ายเป็นไฟล์สเปรดชีต พร้อมสูตรผลรวมยอดเงินอัตโนมัติ</li>
+                                    <li><strong>Export PDF:</strong> ออกเอกสารรายงานทางการ จัดหน้าสวยงาม รองรับภาษาไทยด้วยฟอนต์ TH Sarabun New พร้อมพิมพ์เสนอผู้บริหาร</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+
+                <!-- 4. คู่มือสำหรับผู้ดูแลระบบ (Admin Control Guide) -->
+                <section id="usr-admin" class="docs-section">
+                    <h2><span style="color: var(--color-brand-primary);">4.</span> คู่มือสำหรับผู้ดูแลระบบ (Admin Control Guide)</h2>
+                    <p>
+                        ส่วนนี้เฉพาะผู้ใช้งานที่ได้รับสิทธิ์ <strong>Administrator</strong> (เช่น บัญชี <code>admin@lab.com</code>):
+                    </p>
+
+                    <div class="docs-infographic-card" style="margin: 1.5rem 0;">
+                        <div class="docs-infographic-header">
+                            <div class="docs-infographic-title">
+                                <i class="fa-solid fa-shield-halved text-emerald-600"></i>
+                                <span>แผงควบคุมระบบแอดมิน: การสำรองข้อมูล Unified JSON และเครื่องมือล้างข้อมูลเก่า</span>
+                            </div>
+                            <button class="docs-infographic-btn" onclick="openLightbox('images/ui_admin_purge_backup.svg', 'Admin Purge & Backup')">
+                                <i class="fa-solid fa-expand"></i> ขยาย
+                            </button>
+                        </div>
+                        <div class="docs-infographic-view">
+                            <img src="images/ui_admin_purge_backup.svg" alt="Admin Purge and Backup UI" loading="lazy">
+                        </div>
+                    </div>
+
+                    <h3 id="usr-admin-eq">4.1 การจัดการเครื่องมือวิทยาศาสตร์และ Checklist เฉพาะ</h3>
+                    <ul>
+                        <li>ในแท็บ <strong>Admin / Equipments</strong> สามารถกด "+ Add Equipment" เพื่อลงทะเบียนเครื่องมือใหม่</li>
+                        <li>กรอกรหัสเครื่องมือ (เช่น <code>EQ-012</code>), ชื่อเครื่องมือ, เลือกห้องปฏิบัติการ, เลขซีเรียล และชื่อผู้ดูแลประจำเครื่อง</li>
+                        <li>กำหนด <strong>Dynamic Checklist Parameters</strong> เฉพาะเครื่อง เพื่อให้นักวิจัยตรวจเช็กตอนกด Finish Usage</li>
+                    </ul>
+
+                    <h3 id="usr-admin-loc">4.2 การจัดการห้องปฏิบัติการและอาคาร</h3>
+                    <ul>
+                        <li>เพิ่มหรือแก้ไขรายชื่ออาคารและห้องแล็บ ข้อมูลจะไปปรากฏในตัวเลือกของทั้ง Lab Book+ และ Lab Care+ ทันที</li>
+                    </ul>
+
+                    <h3 id="usr-admin-users">4.3 การจัดการบัญชีผู้ใช้และกำหนดสิทธิ์</h3>
+                    <ul>
+                        <li>เพิ่มบัญชีนักวิจัย กำหนดรหัสผ่าน และกำหนดบทบาท <code>Admin</code> หรือ <code>Standard User</code></li>
+                    </ul>
+
+                    <h3 id="usr-admin-backup">4.4 การสำรองและกู้คืนข้อมูลรวม 2 ระบบ (Unified JSON Backup & Restore)</h3>
+                    <ul>
+                        <li><strong>Backup All (2 Systems):</strong> คลิกเพียงปุ่มเดียว ระบบจะรวมคิวจอง ประวัติซ่อมบำรุง ทะเบียนเครื่องมือ และ <strong>ไฟล์แนบ PDF ที่บีบอัดแล้วทั้งหมด</strong> แพ็กลงในไฟล์ JSON เดียว (เช่น <code>LabSuite_Unified_Backup_2026-10-05.json</code>)</li>
+                        <li><strong>Restore Unified JSON:</strong> เลือกไฟล์ Backup ระบบจะตรวจสอบความถูกต้อง และเขียนข้อมูลคืนสู่ทั้ง Local Storage, IndexedDB และ Cloud Firestore ให้อัตโนมัติ</li>
+                    </ul>
+
+                    <h3 id="usr-admin-purge">4.5 เครื่องมือเคลียร์ข้อมูลคืนพื้นที่ (Storage Retention Purge Tool)</h3>
+                    <div class="docs-callout docs-callout-warning">
+                        <strong><i class="fa-solid fa-shield-check text-emerald-600"></i> การันตีความปลอดภัยของ Master Data (Master Data Immutability Guarantee):</strong>
+                        เครื่องมือล้างข้อมูลเก่านี้จะทำการลบเฉพาะ <strong>ประวัติการจองเก่า (Bookings)</strong> และ <strong>ประวัติงานซ่อมเก่า (Records)</strong> ตามระยะเวลาที่แอดมินเลือกเท่านั้น (เช่น เก่ากว่า 90 วัน) โดย <strong>ไม่มีทางลบ ทะเบียนเครื่องมือ, อาคาร, ห้องแล็บ, รายชื่อผู้ใช้ หรือรายชื่อช่างโดยเด็ดขาด 100%</strong>
+                    </div>
+                </section>
+
+                <!-- 5. คำถามที่พบบ่อย (User FAQ) -->
+                <section id="usr-faq" class="docs-section">
+                    <h2><span style="color: var(--color-brand-primary);">5.</span> คำถามที่พบบ่อยสำหรับผู้ใช้งาน (FAQ)</h2>
                     <div class="docs-accordion">
                         <div class="docs-accordion-item">
                             <button class="docs-accordion-btn" onclick="toggleAccordion(this)">
-                                <span><i class="fa-solid fa-circle-question text-teal-600"></i> Q1: ล็อกอินด้วยอีเมล @mitrphol.com ไม่ผ่าน หรือต้องการกรอกชื่อสั้น?</span>
+                                <span><i class="fa-solid fa-circle-question"></i> ต้องขอ API Key หรือติดตั้งโปรแกรมอะไรก่อนใช้งานหรือไม่?</span>
                                 <i class="fa-solid fa-chevron-down"></i>
                             </button>
                             <div class="docs-accordion-content">
-                                ปัจจุบันระบบเวอร์ชัน 2.0 รองรับทั้งชื่อผู้ใช้สั้น (เช่น <code>Saranyap</code> หรือ <code>admin</code>) และอีเมลเต็มรูปแบบแล้ว ตรวจสอบรหัสผ่านเริ่มต้นคือ <code>user123</code> (หรือ <code>admin321</code> สำหรับแอดมิน)
+                                <strong>ไม่ต้องเลยครับ</strong> ระบบเป็นเว็บแอปพลิเคชัน 100% เข้าผ่านเบราว์เซอร์ (Chrome, Safari, Edge) ได้ทันที และในเวอร์ชัน 2.2 ระบบมีค่าเชื่อมต่อ Cloud แบบ Zero-Config ในตัว ไม่ต้องกรอกรหัสหรือตั้งค่าใดๆ
                             </div>
                         </div>
 
                         <div class="docs-accordion-item">
                             <button class="docs-accordion-btn" onclick="toggleAccordion(this)">
-                                <span><i class="fa-solid fa-circle-question text-teal-600"></i> Q2: ต้องการเปิดใช้งานบนหน้าจอโทรศัพท์มือถือ แต่เมนูบังหน้าจอ?</span>
+                                <span><i class="fa-solid fa-circle-question"></i> ถ้าเน็ตหลุดหรือห้องแล็บไม่มีสัญญาณ Wi-Fi ยังจองเครื่องมือได้ไหม?</span>
                                 <i class="fa-solid fa-chevron-down"></i>
                             </button>
                             <div class="docs-accordion-content">
-                                บนหน้าจอโทรศัพท์ขนาดเล็ก (&lt; 768px) ระบบจะแสดง <strong>Mobile Bottom Navigation Bar</strong> ทางด้านล่างของหน้าจออัตโนมัติ เพื่อให้กดเปลี่ยนหน้าด้วยนิ้วหัวแม่มือได้อย่างสะดวกสบาย
+                                <strong>สามารถใช้งานได้ตามปกติครับ</strong> ระบบมีกลไก Local-First Architecture โดยจะบันทึกข้อมูลลงในหน่วยความจำเครื่อง และเมื่อมีสัญญาณอินเทอร์เน็ต ระบบจะซิงค์ข้อมูลขึ้นสู่ Cloud Firestore ให้อัตโนมัติ ข้อมูลไม่สูญหายแน่นอน
                             </div>
                         </div>
 
                         <div class="docs-accordion-item">
                             <button class="docs-accordion-btn" onclick="toggleAccordion(this)">
-                                <span><i class="fa-solid fa-circle-question text-teal-600"></i> Q3: เปิดดูไฟล์ PDF ที่แนบไว้ไม่ได้เมื่อย้ายเครื่อง?</span>
+                                <span><i class="fa-solid fa-circle-question"></i> จองเครื่องมือแบบวนซ้ำทุกสัปดาห์ แต่มี 1 สัปดาห์ที่คนอื่นจองไว้ก่อนแล้ว ต้องทำอย่างไร?</span>
                                 <i class="fa-solid fa-chevron-down"></i>
                             </button>
                             <div class="docs-accordion-content">
-                                ในเวอร์ชัน 2.2 ไฟล์แนบ PDF ทุกไฟล์จะถูกบีบอัดด้วย <strong>Native Gzip Web Streams (LabCompressor)</strong> ลดขนาดลง 50% - 80% และอัปโหลดไปยังคอลเลกชัน <code>lab_attachments</code> บน Cloud Firestore อัตโนมัติ ผู้ใช้งานจึงสามารถเปิดดูเอกสารข้ามเครื่องหรืออุปกรณ์ได้ทันทีแบบ On-Demand Lazy Fetching โดยไม่ต้องกู้คืนข้อมูลแบบแมนนวล และยังสามารถสำรองข้อมูลรวมในไฟล์เดียวผ่านฟังก์ชัน Unified Backup ได้เสมอ
+                                ให้ติ๊กเครื่องหมาย <strong>"ข้ามช่วงเวลาที่มีการจองซ้อน (Skip Past Conflicts)"</strong> ในฟอร์มการจอง ระบบจะข้ามสัปดาห์ที่ชนไป และสร้างรายการจองสำหรับสัปดาห์อื่นๆ ที่ว่างให้อย่างครบถ้วนโดยอัตโนมัติ
                             </div>
                         </div>
 
                         <div class="docs-accordion-item">
                             <button class="docs-accordion-btn" onclick="toggleAccordion(this)">
-                                <span><i class="fa-solid fa-circle-question text-teal-600"></i> Q4: ต้องการรีเซ็ตข้อมูลทั้งหมดกลับสู่ค่าเริ่มต้นโรงงาน (Factory Reset)?</span>
+                                <span><i class="fa-solid fa-circle-question"></i> ไฟล์แนบ PO ที่อัปโหลดไปบนเครื่องคอมฯ สามารถเปิดดูบนมือถือได้หรือไม่?</span>
                                 <i class="fa-solid fa-chevron-down"></i>
                             </button>
                             <div class="docs-accordion-content">
-                                สามารถเปิดใช้งานผ่านโหมด Private / Incognito ของเบราว์เซอร์ หรือเคลียร์ Storage ของเบราว์เซอร์ ชุดข้อมูลจำลองมาตรฐาน (Seed Data) จะถูกโหลดกลับมาใหม่อัตโนมัติ
+                                <strong>เปิดดูได้ทุกอุปกรณ์ครับ</strong> ไฟล์จะถูกบีบอัดและจัดเก็บบน Google Cloud Firestore ในคอลเลกชัน <code>lab_attachments</code> เมื่อผู้ใช้แตะปุ่ม "View PO" บนมือถือ ระบบจะดาวน์โหลดและคลายการบีบอัดมาแสดงผลเป็น PDF ในทันที
                             </div>
                         </div>
                     </div>
@@ -1297,173 +1655,169 @@
             </div>
 
             <!-- ========================================================================= -->
-            <!-- TAB 2: SYSTEM DESIGN SPECIFICATION (สถาปัตยกรรมระบบ) -->
+            <!-- TAB 2: DEVELOPER & SYSTEM ARCHITECTURE GUIDE (คู่มือนักพัฒนาและสถาปัตยกรรม) -->
             <!-- ========================================================================= -->
-            <div id="sectionDesign" style="display: none;">
+            <div id="sectionDeveloper" style="display: none;">
                 <div class="docs-section">
-                    <h1>สถาปัตยกรรมระบบ (System Design Specification)</h1>
-                    <p style="font-size: 1.1rem; color: var(--color-text-secondary); margin-bottom: 1.5rem;">
-                        ข้อกำหนดทางสถาปัตยกรรม เทคโนโลยี สคีมาข้อมูล และหลักการยศาสตร์ด้านภาพ (Visual Ergonomics) สำหรับระบบ Lab Book+ & MPIR Lab Care+
-                    </p>
+                    <div class="docs-role-hero" style="background: linear-gradient(135deg, rgba(2, 132, 199, 0.08) 0%, rgba(15, 118, 110, 0.08) 100%); border-color: rgba(2, 132, 199, 0.4);">
+                        <div class="docs-role-text">
+                            <h2><i class="fa-solid fa-code text-sky-600"></i> สถาปัตยกรรมระบบและคู่มือนักพัฒนา (Developer Specification)</h2>
+                            <p>ข้อกำหนดทางวิศวกรรมซอฟต์แวร์ โทโพโลยีระบบ สคีมาข้อมูล และ API Reference สำหรับผู้ดูแลระบบและนักพัฒนา</p>
+                        </div>
+                        <div class="docs-role-toggle-group">
+                            <button class="docs-role-toggle-btn" onclick="switchDocTab('user')">
+                                <i class="fa-solid fa-user"></i> ผู้ใช้งานทั่วไป
+                            </button>
+                            <button class="docs-role-toggle-btn active" style="background: var(--color-brand-secondary);" onclick="switchDocTab('developer')">
+                                <i class="fa-solid fa-code"></i> นักพัฒนา / แอดมิน
+                            </button>
+                        </div>
+                    </div>
 
                     <div class="docs-lead-meta">
                         <div class="docs-meta-item"><i class="fa-solid fa-cubes text-teal-600"></i> <strong>Architecture:</strong> Unified Client-Side Multi-App</div>
-                        <div class="docs-meta-item"><i class="fa-solid fa-hard-drive text-sky-600"></i> <strong>Storage Engine:</strong> LocalStorage + IndexedDB + Firebase Spark</div>
-                        <div class="docs-meta-item"><i class="fa-solid fa-palette text-amber-600"></i> <strong>Design Tokens:</strong> Color Theory 60-30-10</div>
+                        <div class="docs-meta-item"><i class="fa-solid fa-server text-sky-600"></i> <strong>Hosting:</strong> Netlify Edge CDN (Global Distribution)</div>
+                        <div class="docs-meta-item"><i class="fa-solid fa-database text-amber-600"></i> <strong>Persistence:</strong> LocalStorage + IndexedDB + Firebase Spark</div>
+                        <div class="docs-meta-item"><i class="fa-solid fa-palette text-emerald-600"></i> <strong>Design Tokens:</strong> Color Theory 60-30-10 & Dark Sync</div>
                     </div>
                 </div>
 
                 <!-- 1. Executive Summary -->
-                <section id="des-exec" class="docs-section">
-                    <h2><span style="color: var(--color-brand-primary);">1.</span> Executive Summary</h2>
+                <section id="dev-exec" class="docs-section">
+                    <h2><span style="color: var(--color-brand-secondary);">1.</span> Executive Summary & Design Principles</h2>
                     <p>
-                        MPIR Lab Suite เป็นแพลตฟอร์มบริหารจัดการทรัพยากรห้องปฏิบัติการวิจัยและทดลองแบบครบวงจร ภายใต้สถาปัตยกรรม **Unified Client-Side Architecture** โดยมีเป้าหมายหลักในการขจัดจุดบอดเดิม (Blind Spots) 3 ประการ:
+                        <strong>MPIR Lab Suite v2.2</strong> พัฒนาขึ้นภายใต้หลักการ <strong>Zero-Dependency Vanilla Architecture</strong> เพื่อความทนทาน เสถียรภาพสูงสุด และต้นทุนการดูแลรักษาระยะยาวเป็น 0 บาท โดยมีหลักการออกแบบหลัก 4 ประการ:
                     </p>
-                    <ul>
-                        <li><strong>Data Overwrite Elimination:</strong> ไม่ให้เกิดการเขียนทับข้อมูลข้ามระบบระหว่าง Lab Book+ และ Care+</li>
-                        <li><strong>ID Type Safety:</strong> ป้องกันข้อผิดพลาดจากการผสมผสานรหัสเครื่องมือที่เป็นตัวเลขและสตริง</li>
-                        <li><strong>Enterprise Domain Support:</strong> รองรับการยืนยันตัวตนของบุคลากรทั้งกลุ่มมิตรผลและผู้ใช้นอกเครือข่าย</li>
-                    </ul>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; margin: 1.25rem 0;">
+                        <div style="background: var(--color-surface-card); border: 1px solid var(--color-border-subtle); padding: 1.25rem; border-radius: var(--radius-xl);">
+                            <h4 style="margin: 0 0 0.4rem; color: var(--color-brand-primary);"><i class="fa-solid fa-microchip"></i> 1. Local-First Resilience</h4>
+                            <p style="margin: 0; font-size: 0.85rem; color: var(--color-text-secondary);">
+                                ข้อมูลทุกอย่างทำงานบนเบราว์เซอร์เป็นหลัก แม้ระบบเครือข่ายภายนอกล่ม ผู้ใช้งานในแล็บยังคงทำงานและบันทึกข้อมูลได้อย่างราบรื่น 100%
+                            </p>
+                        </div>
+                        <div style="background: var(--color-surface-card); border: 1px solid var(--color-border-subtle); padding: 1.25rem; border-radius: var(--radius-xl);">
+                            <h4 style="margin: 0 0 0.4rem; color: var(--color-brand-secondary);"><i class="fa-solid fa-arrows-split-up-and-left"></i> 2. Safe Deep Merge</h4>
+                            <p style="margin: 0; font-size: 0.85rem; color: var(--color-text-secondary);">
+                                ลบความเสี่ยงข้อมูลสูญหายจากการเขียนทับข้ามแอป ด้วย <code>LabStateBridge</code> ที่รักษาคีย์เฉพาะของแต่ละระบบไว้อย่างสมบูรณ์
+                            </p>
+                        </div>
+                        <div style="background: var(--color-surface-card); border: 1px solid var(--color-border-subtle); padding: 1.25rem; border-radius: var(--radius-xl);">
+                            <h4 style="margin: 0 0 0.4rem; color: var(--color-accent-emerald);"><i class="fa-solid fa-file-zipper"></i> 3. Stream Compression</h4>
+                            <p style="margin: 0; font-size: 0.85rem; color: var(--color-text-secondary);">
+                                บีบอัดไบนารี PDF ด้วย Native Browser Gzip Streams ลดขนาดข้อมูลลง 50-80% ช่วยให้ไม่เกินเพดานโควตาฟรีของคลาวด์
+                            </p>
+                        </div>
+                        <div style="background: var(--color-surface-card); border: 1px solid var(--color-border-subtle); padding: 1.25rem; border-radius: var(--radius-xl);">
+                            <h4 style="margin: 0 0 0.4rem; color: var(--color-accent-cta);"><i class="fa-solid fa-bolt"></i> 4. Zero-Config Cloud</h4>
+                            <p style="margin: 0; font-size: 0.85rem; color: var(--color-text-secondary);">
+                                รวม Credentials ใน <code>shared-core.js</code> ให้เชื่อมต่อ Firestore ทันที โดยที่ End-User ไม่ต้องผ่านขั้นตอนการ Setup
+                            </p>
+                        </div>
+                    </div>
                 </section>
 
                 <!-- 2. System Architecture & Topology -->
-                <section id="des-arch" class="docs-section">
-                    <h2><span style="color: var(--color-brand-primary);">2.</span> System Architecture & Topology</h2>
-                    <p>แผนภาพแสดงความสัมพันธ์ระหว่างส่วนติดต่อผู้ใช้ (UI Layer), สะพานเชื่อมส่วนกลาง (Shared Core Bridge) และชั้นจัดเก็บข้อมูล (Storage Layer):</p>
+                <section id="dev-topology" class="docs-section">
+                    <h2><span style="color: var(--color-brand-secondary);">2.</span> System Topology & Architecture Layers</h2>
+                    <p>
+                        แผนภาพแสดงความสัมพันธ์ระหว่างเลเยอร์ต่างๆ ของระบบ:
+                    </p>
+
+                    <div class="docs-infographic-card">
+                        <div class="docs-infographic-header">
+                            <div class="docs-infographic-title">
+                                <i class="fa-solid fa-network-wired text-sky-600"></i>
+                                <span>แผนภาพสถาปัตยกรรมระบบรวม (System Architecture & Topology)</span>
+                            </div>
+                            <button class="docs-infographic-btn" onclick="openLightbox('images/diagram_system_topology.svg', 'System Topology Diagram')">
+                                <i class="fa-solid fa-expand"></i> ขยาย
+                            </button>
+                        </div>
+                        <div class="docs-infographic-view">
+                            <img src="images/diagram_system_topology.svg" alt="System Topology" loading="lazy">
+                        </div>
+                    </div>
 
                     <div class="docs-mermaid-card">
                         <pre class="mermaid">
 graph TB
-    subgraph ClientLayer ["Client Browser Layer (Desktop / Tablet / Mobile)"]
+    subgraph Hosting ["Production Edge Layer (Netlify)"]
+        Edge["Netlify CDN Global Edge<br>(labbookplus.netlify.app)"]
+        Headers["Headers & Cache Guard<br>(_headers, _redirects)"]
+    end
+
+    subgraph Client ["Client Browser Runtime"]
         UI_Book["Lab Book+<br>(index.html)"]
-        UI_Care["Lab Care+<br>(CarePlus.html)"]
-        UI_Docs["Documentation<br>(docs.html & docs/index.html)"]
+        UI_Care["MPIR Lab Care+<br>(CarePlus.html)"]
+        UI_Docs["Documentation<br>(docs.html)"]
     end
 
-    subgraph CoreBridge ["Shared Core Engine (shared-core.js & shared-theme.css)"]
-        Bridge["LabStateBridge<br>(Data Normalization, Merged State & Unified Backup)"]
-        Compressor["LabCompressor<br>(Gzip Web Streams Compression & Decompression)"]
-        FbSync["LabFirebase<br>(Zero-Config Auto-Connect & Cloud Sync Adapter)"]
-        PoStore["LabPoStorage<br>(IndexedDB Local Attachment Cache)"]
-        Auth["LabAuth<br>(Mitr Phol Domain SSO & Session Guard)"]
-        Audio["LabAudio Engine<br>(Web Audio API Live Synthesizer)"]
-        Alert["LabAlert Engine<br>(SweetAlert2 + Haptic + Toast)"]
-        Theme["LabTheme<br>(60-30-10 Design Tokens & Dark Mode Sync)"]
+    subgraph SharedCore ["Shared Core Engine (shared-core.js)"]
+        Bridge["LabStateBridge<br>(Data Normalization & Deep Merge)"]
+        Compressor["LabCompressor<br>(Gzip Streams Web API)"]
+        PoStore["LabPoStorage<br>(IndexedDB Wrapper)"]
+        Auth["LabAuth<br>(Mitr Phol Domain SSO)"]
+        FbSync["LabFirebase<br>(Zero-Config Cloud Adapter)"]
+        Audio["LabAudio<br>(Web Audio API Synthesizer)"]
+        Alert["LabAlert<br>(SweetAlert2 + Haptic)"]
+        Theme["LabTheme<br>(60-30-10 Design Tokens)"]
     end
 
-    subgraph LocalPersistence ["Local Storage & Persistence Layer"]
+    subgraph LocalStore ["Local Persistence Tier"]
         LS["localStorage<br>Key: 'NoteLabState_Merged'"]
-        IDB["IndexedDB: CarePlusStorage<br>Store: 'poFiles' (Compressed Blobs)"]
-        EventBus["Window Storage Event Bus<br>(Cross-Tab Live Synchronization)"]
+        IDB["IndexedDB: CarePlusStorage<br>ObjectStore: 'poFiles'"]
+        Bus["Window Storage Event Bus<br>(Cross-Tab Synchronization)"]
     end
 
-    subgraph CloudLayer ["Google Cloud Layer (Firebase Spark Free Tier)"]
-        FStore_State["Firestore Collection: 'lab_suite'<br>Doc: 'current_state' (Bookings, Records, Master Data)"]
-        FStore_Attach["Firestore Collection: 'lab_attachments'<br>Doc: '{recordId}' (Compressed PDF Files)"]
+    subgraph CloudStore ["Google Cloud Layer (Spark Free Tier)"]
+        FS_State["Firestore Collection: 'lab_suite'<br>Doc: 'current_state'"]
+        FS_Attach["Firestore Collection: 'lab_attachments'<br>Doc: '{recordId}'"]
     end
 
-    subgraph HostingLayer ["Production Hosting (Netlify)"]
-        NetlifyEdge["Netlify CDN Edge<br>(https://labbookplus.netlify.app/)"]
-        NetlifyRules["Routing & Headers Guard<br>(_redirects, _headers, netlify.toml)"]
-    end
+    Edge --> Headers
+    Headers --> UI_Book
+    Headers --> UI_Care
+    Headers --> UI_Docs
 
-    NetlifyEdge --> NetlifyRules
-    NetlifyRules --> UI_Book
-    NetlifyRules --> UI_Care
-    NetlifyRules --> UI_Docs
-
-    UI_Book --> Bridge
-    UI_Care --> Bridge
-    UI_Book --> Auth
-    UI_Care --> Auth
-    UI_Book --> Alert
-    UI_Care --> Alert
-    UI_Book --> Audio
-    UI_Care --> Audio
+    UI_Book --> SharedCore
+    UI_Care --> SharedCore
 
     Bridge <--> LS
-    Bridge <--> PoStore
     PoStore <--> IDB
-    Bridge <--> Compressor
+    Compressor <--> PoStore
     Bridge <--> FbSync
 
-    FbSync --> FStore_State
-    FbSync --> FStore_Attach
+    FbSync <--> FS_State
+    FbSync <--> FS_Attach
 
-    LS -.-> EventBus
-    EventBus -.-> UI_Book
-    EventBus -.-> UI_Care
+    LS -.-> Bus
+    Bus -.-> UI_Book
+    Bus -.-> UI_Care
                         </pre>
                     </div>
                 </section>
 
-                <!-- 3. 60-30-10 Design System -->
-                <section id="des-color" class="docs-section">
-                    <h2><span style="color: var(--color-brand-primary);">3.</span> Design System & Visual Ergonomics (60-30-10 Theory)</h2>
-                    <p>ระบบกำหนดสัดส่วนสีตามหลักจิตวิทยาเพื่อลดความล้าของสายตาเมื่อใช้งานเป็นเวลานาน:</p>
+                <!-- 3. Data Schema & ER Models -->
+                <section id="dev-schema" class="docs-section">
+                    <h2><span style="color: var(--color-brand-secondary);">3.</span> Data Schema & Entity-Relationship (ER) Topology</h2>
+                    <p>
+                        โครงสร้างสคีมาข้อมูลเชิงสัมพันธ์และการจัดเก็บแบบพหุระดับ (Multi-Tier Storage):
+                    </p>
 
-                    <div class="docs-table-wrapper">
-                        <table class="docs-table">
-                            <thead>
-                                <tr>
-                                    <th>สัดส่วน</th>
-                                    <th>ตัวแปร CSS Token</th>
-                                    <th>โทนสีที่ใช้</th>
-                                    <th>วัตถุประสงค์การใช้งาน</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><strong>60% Dominant</strong></td>
-                                    <td><code>--color-bg-base</code>, <code>--color-surface-card</code></td>
-                                    <td>
-                                        <span class="color-swatch-pill"><span class="swatch-dot" style="background:#F8FAFC;"></span> Slate-50 (#F8FAFC)</span><br>
-                                        <span class="color-swatch-pill mt-1"><span class="swatch-dot" style="background:#0B1120;"></span> Dark Midnight (#0B1120)</span>
-                                    </td>
-                                    <td>พื้นหลังหลัก โครงสร้างหน้าเว็บ พื้นหลังการ์ดส่วนใหญ่</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>30% Secondary</strong></td>
-                                    <td><code>--color-brand-primary</code>, <code>--color-brand-secondary</code></td>
-                                    <td>
-                                        <span class="color-swatch-pill"><span class="swatch-dot" style="background:#0F766E;"></span> Mitr Phol Teal (#0F766E)</span><br>
-                                        <span class="color-swatch-pill mt-1"><span class="swatch-dot" style="background:#0284C7;"></span> Sky Blue (#0284C7)</span>
-                                    </td>
-                                    <td>แถบ Navbar, หัวข้อ Section, โครงสร้างการ์ด และปุ่มสำคัญ</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>10% Accent</strong></td>
-                                    <td><code>--color-accent-cta</code>, <code>--color-accent-emerald</code>, <code>--color-accent-rose</code></td>
-                                    <td>
-                                        <span class="color-swatch-pill"><span class="swatch-dot" style="background:#F59E0B;"></span> Amber (#F59E0B)</span><br>
-                                        <span class="color-swatch-pill mt-1"><span class="swatch-dot" style="background:#10B981;"></span> Emerald (#10B981)</span><br>
-                                        <span class="color-swatch-pill mt-1"><span class="swatch-dot" style="background:#EF4444;"></span> Rose (#EF4444)</span>
-                                    </td>
-                                    <td>ปุ่ม Call-to-Action, สถานะ Badge, การแจ้งเตือนฉุกเฉินและข้อผิดพลาด</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <h3>3.1 Visual Specifications</h3>
-                    <ul>
-                        <li><strong>Typography Leading</strong>: บรรทัดข้อความกำหนด Line Height เป็น <code>1.6</code> (Relaxed Leading)</li>
-                        <li><strong>Tabular Numerals</strong>: ข้อมูลตัวเลข ค่าใช้จ่าย และวันที่ใช้ <code>tabular-nums</code> ป้องกันตัวเลขอักษรแกว่ง</li>
-                        <li><strong>Border Radius</strong>: คอนเทนเนอร์ใหญ่ใช้ <code>16px (rounded-2xl)</code>, ฟอร์มและอินพุตใช้ <code>12px (rounded-xl)</code>, ปุ่มและป้ายใช้ <code>9999px (rounded-full)</code></li>
-                    </ul>
-                </section>
-
-                <!-- 4. Entity Relationship (ER) & Schema -->
-                <section id="des-schema" class="docs-section">
-
-                    <div class="docs-diagram-figure">
-                        <img src="images/diagram_database_schema.svg" alt="Database ER Diagram" />
-                        <div class="docs-diagram-caption">
-                            <i class="fa-solid fa-database text-sky-600"></i> เนเธเธเธ เธฒเธเธชเธเธตเธกเธฒเธเนเธญเธกเธนเธฅเน€เธเธดเธเธชเธฑเธกเธเธฑเธเธเน (Entity-Relationship Topology)
+                    <div class="docs-infographic-card">
+                        <div class="docs-infographic-header">
+                            <div class="docs-infographic-title">
+                                <i class="fa-solid fa-database text-sky-600"></i>
+                                <span>แผนภาพสคีมาข้อมูลเชิงสัมพันธ์ (Entity-Relationship Topology)</span>
+                            </div>
+                            <button class="docs-infographic-btn" onclick="openLightbox('images/diagram_database_schema.svg', 'Database Schema Diagram')">
+                                <i class="fa-solid fa-expand"></i> ขยาย
+                            </button>
+                        </div>
+                        <div class="docs-infographic-view">
+                            <img src="images/diagram_database_schema.svg" alt="Database Schema Topology" loading="lazy">
                         </div>
                     </div>
-                    <h2><span style="color: var(--color-brand-primary);">4.</span> Entity Relationship (ER) & Data Schema</h2>
-                    <p>โครงสร้างความสัมพันธ์ของข้อมูลแบบจำลองเชิงสัมพันธ์ในรูปแบบ JSON Schema และ IndexedDB Blob:</p>
 
                     <div class="docs-mermaid-card">
                         <pre class="mermaid">
@@ -1473,11 +1827,11 @@ erDiagram
     BUILDINGS ||--o{ EQUIPMENTS : houses
     EQUIPMENTS ||--o{ BOOKINGS : booked_for
     EQUIPMENTS ||--o{ RECORDS : undergoes
-    RECORDS ||--o{ PO_FILES : attaches
+    RECORDS ||--o{ PO_ATTACHMENTS : contains
 
     USERS {
         string id PK "U-001"
-        string username "email or account name"
+        string username "email or short name"
         string password "hash/plaintext"
         string name "Full Name"
         string role "admin | user"
@@ -1485,15 +1839,16 @@ erDiagram
 
     BUILDINGS {
         string id PK "5, 6, 7..."
-        string name "Building / Unit Name"
+        string name "Building Name"
     }
 
     EQUIPMENTS {
-        string id PK "EQ-001 or numeric"
+        string id PK "EQ-001 or numeric string"
         string name "Equipment Name"
         string building_id FK "Building ID"
-        string serial "Serial / Asset No."
+        string serial "Serial Number"
         string custodian "Responsible Person"
+        array checklist "Dynamic Parameters"
     }
 
     BOOKINGS {
@@ -1502,7 +1857,9 @@ erDiagram
         string user "User Name"
         string start "ISO 8601 Timestamp"
         string end "ISO 8601 Timestamp"
-        boolean deleted "Soft Delete Flag"
+        string project "Project Code"
+        string status "booked | inuse | finished"
+        object actualUsage "Start, End, Checklist Values"
     }
 
     RECORDS {
@@ -1510,114 +1867,237 @@ erDiagram
         string equipment_name "Equipment Reference"
         string building "Building Name"
         string type "repair | calibration | pm"
+        string service_date "YYYY-MM-DD"
+        string next_due_date "YYYY-MM-DD"
         number maintenance_cost "Cost in THB"
-        array po_files "List of PDF file names"
+        array po_files "List of File Names"
     }
 
-    PO_FILES {
+    PO_ATTACHMENTS {
         string record_id PK "FK to RECORDS.id"
-        array blobs "Base64 Blobs in IndexedDB"
+        array compressedBlobs "Gzip Base64 Blobs"
     }
                         </pre>
                     </div>
                 </section>
 
-                <!-- 5. State Synchronization -->
-                <section id="des-sync" class="docs-section">
-                    <h2><span style="color: var(--color-brand-primary);">5.</span> State Synchronization Engine (LabStateBridge)</h2>
-                    <p>กลไก Deep Merge อัจฉริยะที่ป้องกันการสูญหายของข้อมูลระหว่างสองระบบ:</p>
+                <!-- 4. State Synchronization Engine -->
+                <section id="dev-sync" class="docs-section">
+                    <h2><span style="color: var(--color-brand-secondary);">4.</span> State Synchronization Engine (`LabStateBridge`)</h2>
+                    <p>
+                        หัวใจสำคัญของการป้องกันข้อมูลชนกันข้ามแท็บคือกลไก <strong>Safe Deep Merge & String ID Normalization</strong>:
+                    </p>
 
                     <div class="docs-code-container">
                         <div class="docs-code-header">
-                            <span>JavaScript: LabStateBridge Merge Logic</span>
+                            <span>JavaScript: State Merge & Key Preservation Guard</span>
                             <button class="docs-copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
                         </div>
-                        <pre class="docs-code-block"><code>// Data Merge & Normalization Guard
-const merged = {
-    ...currentStorage,
-    ...cleanIncomingData,
-    users: normalizedUsers,
-    equipments: normalizedEquipments.map(e => ({ ...e, id: String(e.id) })),
-    records: Array.isArray(incoming.records) ? incoming.records : currentStorage.records || [],
-    bookings: Array.isArray(incoming.bookings) ? incoming.bookings : currentStorage.bookings || []
-};
-localStorage.setItem('NoteLabState_Merged', JSON.stringify(merged));
-window.dispatchEvent(new CustomEvent('labStateChange', { detail: merged }));</code></pre>
+                        <pre class="docs-code-block"><code>// Data Merge & Normalization Guard in shared-core.js
+mergeState(incoming) {
+    const current = this.loadLocalState() || {};
+    const normalizedEquipments = (incoming.equipments || current.equipments || []).map(e => ({
+        ...e,
+        id: String(e.id) // Automatic String ID casting to prevent runtime exceptions
+    }));
+
+    const merged = {
+        ...current,
+        ...incoming,
+        users: incoming.users || current.users || [],
+        equipments: normalizedEquipments,
+        records: Array.isArray(incoming.records) ? incoming.records : current.records || [],
+        bookings: Array.isArray(incoming.bookings) ? incoming.bookings : current.bookings || [],
+        technicians: incoming.technicians || current.technicians || [],
+        reporters: incoming.reporters || current.reporters || [],
+        lastSync: new Date().toISOString()
+    };
+
+    localStorage.setItem('NoteLabState_Merged', JSON.stringify(merged));
+    window.dispatchEvent(new CustomEvent('labStateChange', { detail: merged }));
+    return merged;
+}</code></pre>
                     </div>
 
                     <ul>
-                        <li><strong>Automatic String Casting</strong>: แปลงค่า ID ให้เป็นสตริงเสมอ ป้องกัน <code>TypeError: startsWith is not a function</code></li>
-                        <li><strong>Key Preservation</strong>: เก็บรักษาฟิลด์เฉพาะของ CarePlus (เช่น records, technicians, reporters) ไม่ให้ถูก Lab Book+ บันทึกทับ</li>
+                        <li><strong>Cross-Tab Sync:</strong> เมื่อหน้าต่างใดบันทึกข้อมูล จะยิงอีเวนต์ <code>window.storage</code> ทำให้แท็บอื่นอัปเดตข้อมูลขึ้นหน้าจอทันที</li>
+                        <li><strong>Safe Type Casting:</strong> แปลงรหัสเครื่องมือเป็นสตริงเสมอ ป้องกัน <code>TypeError: startsWith is not a function</code></li>
                     </ul>
                 </section>
 
-                <!-- 6. Multimodal Feedback -->
-                <section id="des-feedback" class="docs-section">
-                    <h2><span style="color: var(--color-brand-primary);">6.</span> Multimodal Feedback Subsystem</h2>
-                    <p>ระบบตอบสนอง 3 ประสาทสัมผัส (ภาพ เสียง สัมผัส) เพื่อความมั่นใจสูงสุดในการใช้งาน:</p>
-
-                    <div class="docs-mermaid-card">
-                        <pre class="mermaid">
-flowchart LR
-    Action[User Action / Submit] --> Logic{Validation & Result}
-    Logic -- Success --> Visual1[Green Toast Badge]
-    Logic -- Success --> Audio1[Web Audio Chime: C5 to G5]
-    Logic -- Success --> Haptic1[Vibration: 30ms]
-
-    Logic -- Warning / Conflict --> Visual2[SweetAlert Confirm Dialog]
-    Logic -- Warning / Conflict --> Audio2[Web Audio Pop: 440Hz]
-    Logic -- Warning / Conflict --> Haptic2[Double Vibration: 40ms, 40ms]
-
-    Logic -- Error --> Visual3[Red Shake / Error Alert]
-    Logic -- Error --> Audio3[Web Audio Thud: 180Hz to 90Hz]
-    Logic -- Error --> Haptic3[Triple Vibration: 60ms, 50ms, 60ms]
-                        </pre>
-                    </div>
-
-                    <h3>6.1 Web Audio API Synthesizer</h3>
-                    <ul>
-                        <li><strong>Success Chime</strong>: คลื่นรูปไซน์ (Sine wave) ความถี่ 523.25Hz (C5) และ 783.99Hz (G5) Decay 0.3 วินาที</li>
-                        <li><strong>Click Sound</strong>: คลื่นรูปสามเหลี่ยม (Triangle wave) 800Hz สั้น 0.04 วินาที</li>
-                        <li><strong>Error Thud</strong>: คลื่นรูปสามเหลี่ยม ความถี่ 180Hz รูดลง 90Hz สั้น 0.25 วินาที</li>
-                    </ul>
-                </section>
-
-                <!-- 7. Storage Management & Compression Pipeline -->
-                <section id="des-storage" class="docs-section">
-                    <h2><span style="color: var(--color-brand-primary);">7.</span> Storage Management & Gzip Compression Pipeline</h2>
+                <!-- 5. Gzip Compression Pipeline -->
+                <section id="dev-compression" class="docs-section">
+                    <h2><span style="color: var(--color-brand-secondary);">5.</span> Gzip Streams Compression Pipeline (`LabCompressor`)</h2>
                     <p>
-                        ในเวอร์ชัน 2.2 ระบบนำสถาปัตยกรรมบีบอัดขั้นสูง <strong>LabCompressor</strong> ด้วย Native Gzip Web Streams API มาใช้งานร่วมกับระบบจัดเก็บข้อมูลแบบ Multi-Tier:
+                        การบีบอัดไบนารีระดับ Browser Streams โดยไม่ต้องพึ่งไลบรารีภายนอก (Zero External Dependencies):
                     </p>
-                    <div class="docs-mermaid-card">
-                        <pre class="mermaid">
-flowchart LR
-    PDF[Original PDF File] --> Stream[ReadableStream]
-    Stream --> Comp[CompressionStream 'gzip']
-    Comp --> B64[Base64 Gzip String<br>50%-80% Size Reduction]
-    B64 --> IDB[(Local Cache: IndexedDB)]
-    B64 --> Cloud[(Cloud: lab_attachments/{recordId})]
-                        </pre>
+
+                    <div class="docs-infographic-card">
+                        <div class="docs-infographic-header">
+                            <div class="docs-infographic-title">
+                                <i class="fa-solid fa-file-zipper text-teal-600"></i>
+                                <span>แผนภาพกระบวนการบีบอัดไฟล์ PDF ด้วย Web Streams API</span>
+                            </div>
+                            <button class="docs-infographic-btn" onclick="openLightbox('images/diagram_compression_pipeline.svg', 'Compression Pipeline')">
+                                <i class="fa-solid fa-expand"></i> ขยาย
+                            </button>
+                        </div>
+                        <div class="docs-infographic-view">
+                            <img src="images/diagram_compression_pipeline.svg" alt="Compression Pipeline" loading="lazy">
+                        </div>
                     </div>
+
+                    <div class="docs-code-container">
+                        <div class="docs-code-header">
+                            <span>JavaScript: Native Browser Gzip Pipeline</span>
+                            <button class="docs-copy-btn" onclick="copyCode(this)"><i class="fa-regular fa-copy"></i> Copy</button>
+                        </div>
+                        <pre class="docs-code-block"><code>// Native Web Streams Compression in LabCompressor
+async compressPdf(file) {
+    const stream = file.stream();
+    const compressedStream = stream.pipeThrough(new CompressionStream('gzip'));
+    const response = new Response(compressedStream);
+    const blob = await response.blob();
+    const base64 = await this.blobToBase64(blob);
+    return {
+        name: file.name,
+        compressedData: base64,
+        originalSize: file.size,
+        compressedSize: blob.size,
+        reductionPercent: Math.round(((file.size - blob.size) / file.size) * 100)
+    };
+}</code></pre>
+                    </div>
+                </section>
+
+                <!-- 6. Zero-Config Cloud Sync -->
+                <section id="dev-cloud" class="docs-section">
+                    <h2><span style="color: var(--color-brand-secondary);">6.</span> Zero-Config Cloud Sync Architecture (`LabFirebase`)</h2>
+                    <p>
+                        สถาปัตยกรรมเชื่อมต่อ Google Cloud Firestore Spark Plan (Free Tier) แบบอัตโนมัติ:
+                    </p>
+
+                    <div class="docs-infographic-card">
+                        <div class="docs-infographic-header">
+                            <div class="docs-infographic-title">
+                                <i class="fa-solid fa-cloud text-sky-600"></i>
+                                <span>แผนภาพโครงสร้างการเชื่อมต่อคลาวด์อัตโนมัติ (Zero-Config Auto-Connect)</span>
+                            </div>
+                            <button class="docs-infographic-btn" onclick="openLightbox('images/diagram_autoconnect.svg', 'Cloud Auto-Connect')">
+                                <i class="fa-solid fa-expand"></i> ขยาย
+                            </button>
+                        </div>
+                        <div class="docs-infographic-view">
+                            <img src="images/diagram_autoconnect.svg" alt="Cloud Auto-Connect Diagram" loading="lazy">
+                        </div>
+                    </div>
+
                     <ul>
-                        <li><strong>Native Browser Gzip:</strong> ใช้ <code>CompressionStream('gzip')</code> และ <code>DecompressionStream('gzip')</code> โดยไม่ต้องพึ่งพา External Library ภายนอก ทำให้ทำงานเร็วระดับมิลลิวินาที</li>
-                        <li><strong>Dedicated Firestore Collection:</strong> แยกเก็บไฟล์แนบในคอลเลกชัน <code>lab_attachments</code> ไม่ปะปนกับคิวจองใน <code>lab_suite/current_state</code> ป้องกันปัญหา Document Size เกิน 1MB</li>
-                        <li><strong>On-Demand Lazy Fetching:</strong> โหลดไฟล์เฉพาะเมื่อผู้ใช้กดดูพรีวิว (Eye Icon) และคลายบีบอัดในหน่วยความจำเพื่อสร้าง Blob URL ให้ iframe แสดงผล ป้องกันการใช้เน็ตเวิร์กและแคชเกินจำเป็น</li>
-                        <li><strong>Unified Compressed Backup:</strong> เมื่อแอดมินส่งออก Backup ข้อมูลไฟล์แนบที่บีบอัดแล้วจะถูกแพ็กรวมเข้าสู่ไฟล์ JSON เดียวกันอย่างสมบูรณ์</li>
+                        <li><strong>คอลเลกชันหลัก <code>lab_suite</code>:</strong> เอกสาร <code>current_state</code> จัดเก็บรายการคิวจอง ประวัติงานซ่อม และข้อมูลมาสเตอร์</li>
+                        <li><strong>คอลเลกชันไฟล์แนบ <code>lab_attachments</code>:</strong> แยกเก็บเอกสารตาม <code>recordId</code> เพื่อไม่ให้ขนาดเอกสารเกิน 1MB ต่อ Document ตามข้อจำกัดของ Firestore</li>
                     </ul>
                 </section>
 
-                <!-- 8. Smart Defaults & Logic -->
-                <section id="des-smart" class="docs-section">
-                    <h2><span style="color: var(--color-brand-primary);">8.</span> Smart Defaults & Conflict Prevention Logic</h2>
-                    <ul>
-                        <li><strong>Smart Hourly Slot</strong>: คำนวณต้นชั่วโมงถัดไป +2 ชั่วโมงอัตโนมัติ</li>
-                        <li><strong>Cross-App Conflict Detection</strong>: เตือนทันทีเมื่อจะส่งซ่อมเครื่องมือที่มีการจองไว้ใน Lab Book+</li>
-                    </ul>
+                <!-- 7. Multimodal Feedback Subsystem -->
+                <section id="dev-feedback" class="docs-section">
+                    <h2><span style="color: var(--color-brand-secondary);">7.</span> Multimodal Feedback Subsystem (Web Audio Synthesizer)</h2>
+                    <p>
+                        สร้างเสียงเอฟเฟกต์สดผ่าน Web Audio API โดยไม่ต้องโหลดไฟล์ MP3 จากเซิร์ฟเวอร์:
+                    </p>
+
+                    <div class="docs-table-wrapper">
+                        <table class="docs-table">
+                            <thead>
+                                <tr>
+                                    <th>ประเภทเสียง</th>
+                                    <th>Waveform</th>
+                                    <th>ความถี่ (Frequency)</th>
+                                    <th>ระยะเวลา & Envelope</th>
+                                    <th>การสั่น (Haptic)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Success Chime</strong></td>
+                                    <td>Sine wave</td>
+                                    <td>523.25 Hz (C5) เลื่อนไป 783.99 Hz (G5)</td>
+                                    <td>Decay 0.3 วินาที</td>
+                                    <td>30 ms</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Click Feedback</strong></td>
+                                    <td>Triangle wave</td>
+                                    <td>800 Hz สั้น</td>
+                                    <td>0.04 วินาที</td>
+                                    <td>15 ms</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Warning Pop</strong></td>
+                                    <td>Sine wave</td>
+                                    <td>440 Hz เลื่อนไป 660 Hz</td>
+                                    <td>0.18 วินาที</td>
+                                    <td>40ms, 40ms</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Error Thud</strong></td>
+                                    <td>Triangle wave</td>
+                                    <td>180 Hz รูดลง 90 Hz</td>
+                                    <td>0.25 วินาที</td>
+                                    <td>60ms, 50ms, 60ms</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </section>
 
-                <!-- 9. Security & RBAC -->
-                <section id="des-rbac" class="docs-section">
-                    <h2><span style="color: var(--color-brand-primary);">9.</span> Security & Access Control (RBAC)</h2>
+                <!-- 8. Design System 60-30-10 -->
+                <section id="dev-tokens" class="docs-section">
+                    <h2><span style="color: var(--color-brand-secondary);">8.</span> 60-30-10 Design System & CSS Custom Properties</h2>
+                    <p>
+                        ตัวแปรหลักใน <code>shared-theme.css</code> ที่รองรับ Dark / Light Mode อย่างสมบูรณ์:
+                    </p>
+
+                    <div class="docs-table-wrapper">
+                        <table class="docs-table">
+                            <thead>
+                                <tr>
+                                    <th>สัดส่วน</th>
+                                    <th>ตัวแปร CSS Token</th>
+                                    <th>Light Mode (#HEX)</th>
+                                    <th>Dark Mode (#HEX)</th>
+                                    <th>วัตถุประสงค์การใช้งาน</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>60% Dominant</strong></td>
+                                    <td><code>--color-bg-base</code><br><code>--color-surface-card</code></td>
+                                    <td>#F8FAFC (Slate-50)<br>#FFFFFF</td>
+                                    <td>#0B1120 (Midnight)<br>#1E293B (Slate-800)</td>
+                                    <td>พื้นหลังแคนวาส หน้าจอหลัก และการ์ดเนื้อหา</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>30% Secondary</strong></td>
+                                    <td><code>--color-brand-primary</code><br><code>--color-brand-secondary</code></td>
+                                    <td>#0F766E (Mitr Phol Teal)<br>#0284C7 (Sky Blue)</td>
+                                    <td>#14B8A6 (Teal-500)<br>#38BDF8 (Sky-400)</td>
+                                    <td>Navbar, หัวข้อ Section, โครงสร้างการ์ด และปุ่มหลัก</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>10% Accent</strong></td>
+                                    <td><code>--color-accent-cta</code><br><code>--color-accent-emerald</code><br><code>--color-accent-rose</code></td>
+                                    <td>#F59E0B (Amber)<br>#10B981 (Emerald)<br>#F43F5E (Rose)</td>
+                                    <td>#FBBF24 (Amber-400)<br>#34D399 (Emerald-400)<br>#FB7185 (Rose-400)</td>
+                                    <td>ปุ่ม Call-to-Action, สถานะ Badge, แจ้งเตือนฉุกเฉิน</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- 9. Security & Access Control (RBAC) -->
+                <section id="dev-rbac" class="docs-section">
+                    <h2><span style="color: var(--color-brand-secondary);">9.</span> Security & Access Control (RBAC Matrix)</h2>
                     <div class="docs-table-wrapper">
                         <table class="docs-table">
                             <thead>
@@ -1634,78 +2114,163 @@ flowchart LR
                                     <td style="text-align: center; color: #10b981;"><i class="fa-solid fa-check"></i></td>
                                 </tr>
                                 <tr>
-                                    <td>จองเครื่องมือวิทยาศาสตร์</td>
+                                    <td>จองเครื่องมือวิทยาศาสตร์ & จองวนซ้ำ</td>
                                     <td style="text-align: center; color: #10b981;"><i class="fa-solid fa-check"></i></td>
                                     <td style="text-align: center; color: #10b981;"><i class="fa-solid fa-check"></i></td>
                                 </tr>
                                 <tr>
-                                    <td>บันทึกเวลาใช้งานจริง (Actual Usage)</td>
+                                    <td>บันทึกเวลาใช้งานจริง (Actual Usage Tracking)</td>
                                     <td style="text-align: center; color: #10b981;"><i class="fa-solid fa-check"></i></td>
-                                    <td style="text-align: center; color: #10b981;"><i class="fa-solid fa-check"></i> (รายการตนเอง)</td>
+                                    <td style="text-align: center; color: #10b981;"><i class="fa-solid fa-check"></i> (เฉพาะรายการตนเอง)</td>
                                 </tr>
                                 <tr>
-                                    <td>บันทึกประวัติซ่อมและอัปโหลดไฟล์ PO</td>
+                                    <td>บันทึกประวัติซ่อมบำรุงและอัปโหลดไฟล์ PO</td>
                                     <td style="text-align: center; color: #10b981;"><i class="fa-solid fa-check"></i></td>
                                     <td style="text-align: center; color: #10b981;"><i class="fa-solid fa-check"></i></td>
                                 </tr>
                                 <tr>
-                                    <td>จัดการเครื่องมือ (เพิ่ม/แก้ไข/ลบ)</td>
+                                    <td>จัดการเครื่องมือ (เพิ่ม/แก้ไข/ลบ) & ตั้ง Checklist</td>
                                     <td style="text-align: center; color: #10b981;"><i class="fa-solid fa-check"></i></td>
-                                    <td style="text-align: center; color: #ef4444;"><i class="fa-solid fa-xmark"></i></td>
+                                    <td style="text-align: center; color: #ef4444;"><i class="fa-solid fa-xmark"></i> (ซ่อนเมนู)</td>
                                 </tr>
                                 <tr>
                                     <td>จัดการห้องปฏิบัติการ / อาคาร</td>
                                     <td style="text-align: center; color: #10b981;"><i class="fa-solid fa-check"></i></td>
-                                    <td style="text-align: center; color: #ef4444;"><i class="fa-solid fa-xmark"></i></td>
+                                    <td style="text-align: center; color: #ef4444;"><i class="fa-solid fa-xmark"></i> (ซ่อนเมนู)</td>
                                 </tr>
                                 <tr>
                                     <td>จัดการบัญชีผู้ใช้งานและสิทธิ์</td>
                                     <td style="text-align: center; color: #10b981;"><i class="fa-solid fa-check"></i></td>
-                                    <td style="text-align: center; color: #ef4444;"><i class="fa-solid fa-xmark"></i></td>
+                                    <td style="text-align: center; color: #ef4444;"><i class="fa-solid fa-xmark"></i> (ซ่อนเมนู)</td>
                                 </tr>
                                 <tr>
                                     <td>สำรองและกู้คืนฐานข้อมูลรวม (Unified Backup/Restore JSON)</td>
                                     <td style="text-align: center; color: #10b981;"><i class="fa-solid fa-check"></i></td>
-                                    <td style="text-align: center; color: #ef4444;"><i class="fa-solid fa-xmark"></i></td>
+                                    <td style="text-align: center; color: #ef4444;"><i class="fa-solid fa-xmark"></i> (ซ่อนเมนู)</td>
                                 </tr>
                                 <tr>
-                                    <td>เคลียร์ข้อมูลคืนพื้นที่ (Storage Cleanup Purge Tool)</td>
+                                    <td>เคลียร์ข้อมูลคืนพื้นที่ (Storage Retention Purge Tool)</td>
                                     <td style="text-align: center; color: #10b981;"><i class="fa-solid fa-check"></i></td>
-                                    <td style="text-align: center; color: #ef4444;"><i class="fa-solid fa-xmark"></i> (ซ่อน UI ทั้งหมด)</td>
-                                </tr>
-                                <tr>
-                                    <td>ตั้งค่า Cloud Firebase Sync (Spark Plan 0 บาท)</td>
-                                    <td style="text-align: center; color: #10b981;"><i class="fa-solid fa-check"></i></td>
-                                    <td style="text-align: center; color: #ef4444;"><i class="fa-solid fa-xmark"></i></td>
+                                    <td style="text-align: center; color: #ef4444;"><i class="fa-solid fa-xmark"></i> (ซ่อนเมนู)</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                 </section>
 
-                <!-- 10. QA Checklist -->
-                <section id="des-qa" class="docs-section">
-                    <h2><span style="color: var(--color-brand-primary);">10.</span> Verification & Quality Assurance Checklist</h2>
+                <!-- 10. SDK & Global API Reference -->
+                <section id="dev-api" class="docs-section">
+                    <h2><span style="color: var(--color-brand-secondary);">10.</span> SDK & Global API Reference</h2>
+                    <p>
+                        โมดูลส่วนกลางที่สามารถเรียกใช้งานได้ทั่วทั้งแอปพลิเคชันผ่าน <code>window</code>:
+                    </p>
+
+                    <div class="docs-table-wrapper">
+                        <table class="docs-table">
+                            <thead>
+                                <tr>
+                                    <th>Global Object</th>
+                                    <th>Method / Property</th>
+                                    <th>คำอธิบายหน้าที่</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>LabStateBridge</code></td>
+                                    <td><code>loadLocalState()</code></td>
+                                    <td>ดึงข้อมูลสถานะล่าสุดจาก <code>NoteLabState_Merged</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>LabStateBridge</code></td>
+                                    <td><code>saveState(newState, pushCloud)</code></td>
+                                    <td>บันทึกข้อมูล ผสานข้อมูล (Deep Merge) และส่งขึ้น Cloud</td>
+                                </tr>
+                                <tr>
+                                    <td><code>LabStateBridge</code></td>
+                                    <td><code>exportUnifiedBackup()</code></td>
+                                    <td>แพ็กข้อมูล 2 ระบบพร้อมไฟล์แนบ Gzip ออกมาเป็น JSON สำหรับดาวน์โหลด</td>
+                                </tr>
+                                <tr>
+                                    <td><code>LabStateBridge</code></td>
+                                    <td><code>purgeOldData(olderThanDays)</code></td>
+                                    <td>ล้างประวัติจองและงานซ่อมเก่า คืนพื้นที่ โดยคง Master Data 100%</td>
+                                </tr>
+                                <tr>
+                                    <td><code>LabCompressor</code></td>
+                                    <td><code>compressPdf(file)</code></td>
+                                    <td>บีบอัดไฟล์ PDF ด้วย Native Gzip Streams คืนค่าเป็น Base64</td>
+                                </tr>
+                                <tr>
+                                    <td><code>LabCompressor</code></td>
+                                    <td><code>decompressPdf(base64)</code></td>
+                                    <td>คลายการบีบอัด Base64 ออกมาเป็น PDF Blob เพื่อใช้แสดงผล</td>
+                                </tr>
+                                <tr>
+                                    <td><code>LabPoStorage</code></td>
+                                    <td><code>saveFiles(recId, files)</code></td>
+                                    <td>บันทึกไฟล์แนบลงใน IndexedDB ออบเจกต์สโตร์ <code>poFiles</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>LabPoStorage</code></td>
+                                    <td><code>getFiles(recId)</code></td>
+                                    <td>ดึงไฟล์แนบตาม recordId จาก IndexedDB</td>
+                                </tr>
+                                <tr>
+                                    <td><code>LabFirebase</code></td>
+                                    <td><code>syncStateToCloud(state)</code></td>
+                                    <td>ส่งข้อมูลสถานะขึ้นคอลเลกชัน <code>lab_suite/current_state</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>LabFirebase</code></td>
+                                    <td><code>uploadAttachment(recId, files)</code></td>
+                                    <td>ส่งไฟล์แนบที่บีบอัดแล้วขึ้น <code>lab_attachments/{recId}</code></td>
+                                </tr>
+                                <tr>
+                                    <td><code>LabAudio</code></td>
+                                    <td><code>playSuccess()</code> / <code>playClick()</code></td>
+                                    <td>เล่นเสียงสังเคราะห์ผ่าน Web Audio API</td>
+                                </tr>
+                                <tr>
+                                    <td><code>LabTheme</code></td>
+                                    <td><code>toggle()</code> / <code>applyTheme(theme)</code></td>
+                                    <td>สลับและซิงค์โหมดมืด/สว่างข้ามทุกแท็บ</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- 11. Deployment, Netlify CDN & Cache Strategy -->
+                <section id="dev-deployment" class="docs-section">
+                    <h2><span style="color: var(--color-brand-secondary);">11.</span> Netlify Production Deployment & Caching Guard</h2>
+                    <p>
+                        เพื่อให้มั่นใจว่าผู้ใช้งานจะได้รับโค้ดเวอร์ชันล่าสุดเสมอ ไม่ติดแคชเบราว์เซอร์เก่า:
+                    </p>
+                    <ul>
+                        <li><strong>ไฟล์ <code>_headers</code>:</strong> กำหนด <code>Cache-Control: public, max-age=0, must-revalidate</code> สำหรับไฟล์ HTML, JS และ CSS</li>
+                        <li><strong>ไฟล์ <code>_redirects</code>:</strong> กำหนด Route Rewrites ให้เรียกใช้งานผ่าน URL สั้นได้ เช่น <code>/careplus</code>, <code>/docs</code>, <code>/book</code></li>
+                    </ul>
+                </section>
+
+                <!-- 12. Verification & QA Matrix -->
+                <section id="dev-qa" class="docs-section">
+                    <h2><span style="color: var(--color-brand-secondary);">12.</span> Verification & Quality Assurance Matrix</h2>
                     <ul style="list-style: none; padding-left: 0;">
                         <li style="padding: 0.5rem 0; display: flex; align-items: center; gap: 0.75rem;">
                             <i class="fa-solid fa-circle-check text-emerald-500 text-lg"></i>
-                            <span><strong>Zero-Crash Data Persistence</strong>: รองรับรหัสเครื่องมือทั้งแบบตัวเลขและสตริง</span>
+                            <span><strong>Zero-Crash Persistence:</strong> รองรับ ID เครื่องมือทั้งตัวเลข (เช่น <code>12</code>) และสตริง (เช่น <code>EQ-001</code>) ผ่านการทดสอบ 100%</span>
                         </li>
                         <li style="padding: 0.5rem 0; display: flex; align-items: center; gap: 0.75rem;">
                             <i class="fa-solid fa-circle-check text-emerald-500 text-lg"></i>
-                            <span><strong>Theme Consistency</strong>: สลับ Dark / Light Mode ซิงค์ทั้งระบบ</span>
+                            <span><strong>Master Data Immutability:</strong> ทดสอบการ Purge Retention ข้อมูล Master (Users, Equipments, Buildings) คงอยู่ครบถ้วน</span>
                         </li>
                         <li style="padding: 0.5rem 0; display: flex; align-items: center; gap: 0.75rem;">
                             <i class="fa-solid fa-circle-check text-emerald-500 text-lg"></i>
-                            <span><strong>Cross-App Quick Switcher</strong>: ปุ่มนำทางสลับระบบบน Header ทำงานรวดเร็ว</span>
+                            <span><strong>Multi-Device Lazy Preview:</strong> ทดสอบการเปิดดู PO บนเครื่องที่ไม่มีไฟล์ต้นฉบับ สามารถดาวน์โหลดและคลายบีบอัดแสดงผลสำเร็จ</span>
                         </li>
                         <li style="padding: 0.5rem 0; display: flex; align-items: center; gap: 0.75rem;">
                             <i class="fa-solid fa-circle-check text-emerald-500 text-lg"></i>
-                            <span><strong>Auditory & Haptic Feedback</strong>: เสียงสังเคราะห์สดและระบบสั่นทำงานเป็นธรรมชาติ</span>
-                        </li>
-                        <li style="padding: 0.5rem 0; display: flex; align-items: center; gap: 0.75rem;">
-                            <i class="fa-solid fa-circle-check text-emerald-500 text-lg"></i>
-                            <span><strong>Mobile Ergonomics</strong>: ปรับมุมมองอัตโนมัติสำหรับแท็บเล็ตและสมาร์ทโฟน</span>
+                            <span><strong>Theme & Audio Responsiveness:</strong> สลับโหมดมืดและเสียงสังเคราะห์ทำงานเป็นธรรมชาติบนทุกเบราว์เซอร์</span>
                         </li>
                     </ul>
                 </section>
@@ -1714,9 +2279,18 @@ flowchart LR
         </main>
     </div>
 
+    <!-- Lightbox Modal for Infographic Zooming -->
+    <div id="docsLightbox" class="docs-lightbox-modal" onclick="closeLightbox(event)">
+        <div class="docs-lightbox-content" onclick="event.stopPropagation()">
+            <button class="docs-lightbox-close" onclick="closeLightbox()" title="ปิด (Close)"><i class="fa-solid fa-xmark"></i></button>
+            <div id="lightboxTitle" style="font-weight: 700; margin-bottom: 1rem; color: var(--color-text-main);"></div>
+            <img id="lightboxImg" src="" alt="Zoomed Infographic" style="width: 100%; height: auto; max-height: 80vh; object-fit: contain; border-radius: 8px;">
+        </div>
+    </div>
+
     <!-- Scripts -->
     <script>
-        // Init Mermaid
+        // Init Mermaid Diagram Engine
         document.addEventListener('DOMContentLoaded', () => {
             const isDark = document.documentElement.classList.contains('dark') || document.body.classList.contains('dark');
             mermaid.initialize({
@@ -1730,17 +2304,17 @@ flowchart LR
             });
         });
 
-        // Tab Switcher between User Manual & System Design
+        // Tab Switcher between User Guide & Developer Guide
         function switchDocTab(tab) {
             LabAudio.playClick();
-            const isManual = tab === 'manual';
-            document.getElementById('sectionManual').style.display = isManual ? 'block' : 'none';
-            document.getElementById('sectionDesign').style.display = isManual ? 'none' : 'block';
-            document.getElementById('tocManual').style.display = isManual ? 'block' : 'none';
-            document.getElementById('tocDesign').style.display = isManual ? 'none' : 'block';
+            const isUser = tab === 'user';
+            document.getElementById('sectionUser').style.display = isUser ? 'block' : 'none';
+            document.getElementById('sectionDeveloper').style.display = isUser ? 'none' : 'block';
+            document.getElementById('tocUser').style.display = isUser ? 'block' : 'none';
+            document.getElementById('tocDeveloper').style.display = isUser ? 'none' : 'block';
 
-            document.getElementById('tabBtnManual').classList.toggle('active', isManual);
-            document.getElementById('tabBtnDesign').classList.toggle('active', !isManual);
+            document.getElementById('tabBtnUser').classList.toggle('active', isUser);
+            document.getElementById('tabBtnDev').classList.toggle('active', !isUser);
 
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -1780,6 +2354,18 @@ flowchart LR
                 const text = sec.innerText.toLowerCase();
                 sec.style.display = text.includes(q) ? '' : 'none';
             });
+        }
+
+        // Lightbox Modal Controls
+        function openLightbox(src, title) {
+            LabAudio.playClick();
+            document.getElementById('lightboxImg').src = src;
+            document.getElementById('lightboxTitle').innerText = title || 'แผนภาพระบบ';
+            document.getElementById('docsLightbox').classList.add('open');
+        }
+
+        function closeLightbox() {
+            document.getElementById('docsLightbox').classList.remove('open');
         }
 
         // Re-render Mermaid on Theme Toggle
