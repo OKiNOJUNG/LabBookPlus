@@ -2222,6 +2222,27 @@
                 if (state.poFilesDb) {
                     poFilesDb = { ...poFilesDb, ...state.poFilesDb }; // Fallback
                 }
+
+                // Sync / purge cached attachments for records that have no attached files or were deleted
+                if (Array.isArray(records)) {
+                    records.forEach(r => {
+                        const hasNoFiles = Array.isArray(r.po_files) ? r.po_files.length === 0 : (!r.po_file);
+                        if (hasNoFiles && r && r.id) {
+                            delete poFilesDb[r.id];
+                            delete poFilesDb[String(r.id)];
+                            if (!isNaN(Number(r.id))) delete poFilesDb[Number(r.id)];
+                            deletePoFileFromIDB(r.id);
+                        }
+                    });
+                }
+                if (Array.isArray(state.deletedRecordIds)) {
+                    state.deletedRecordIds.forEach(delId => {
+                        delete poFilesDb[delId];
+                        delete poFilesDb[String(delId)];
+                        if (!isNaN(Number(delId))) delete poFilesDb[Number(delId)];
+                        deletePoFileFromIDB(delId);
+                    });
+                }
             } catch (err) {
                 console.warn("[CarePlus] loadCarePlusState notice:", err);
             }
@@ -2235,8 +2256,12 @@
                 equipment = LabStateBridge.deduplicateEquipments(equipment);
             }
             const deletedList = prevState.deletedEquipmentIds || [];
+            const deletedRecordList = prevState.deletedRecordIds || [];
             if (Array.isArray(deletedList) && deletedList.length > 0 && typeof LabStateBridge.isEquipmentDeleted === 'function') {
                 equipment = equipment.filter(e => !LabStateBridge.isEquipmentDeleted(e, deletedList));
+            }
+            if (Array.isArray(deletedRecordList) && deletedRecordList.length > 0) {
+                records = (records || []).filter(r => r && !deletedRecordList.includes(String(r.id).trim()));
             }
             window.equipment = equipment;
 
@@ -2250,7 +2275,8 @@
                 equipment: equipment,
                 buildings: buildings,
                 auditLogs: auditList,
-                deletedEquipmentIds: deletedList
+                deletedEquipmentIds: deletedList,
+                deletedRecordIds: deletedRecordList
             });
             if (typeof LabStateBridge.flushSync === 'function') {
                 LabStateBridge.flushSync();
@@ -2540,6 +2566,27 @@
         function removeTempPoFile(index) {
             tempPoFiles.splice(index, 1);
             renderPoFilesList();
+            const editId = document.getElementById('editRecordId')?.value;
+            const label = document.getElementById('existingPoLabel');
+            if (label) {
+                if (tempPoFiles.length > 0) {
+                    label.classList.remove('hidden');
+                    label.innerHTML = `✓ Attached: <span class="text-gray-600 dark:text-slate-300">${tempPoFiles.length} file(s)</span> ${editId ? `<button type="button" onclick="deleteAttachedPO('${editId}')" class="ml-3 px-2 py-0.5 bg-red-100 text-red-600 rounded hover:bg-red-200 transition text-[10px] uppercase font-bold tracking-wider">Delete</button>` : ''}`;
+                } else {
+                    label.classList.add('hidden');
+                }
+            }
+        }
+
+        function getRecordPoCount(r) {
+            if (!r) return 0;
+            if (Array.isArray(r.po_files)) {
+                return r.po_files.length;
+            }
+            if (r.po_file) {
+                return 1;
+            }
+            return 0;
         }
 
         function formatCurrency(num) {
@@ -3541,7 +3588,7 @@ function loadDashboard() {
         function renderCalendarModalCard(i) {
             const isComplete = (i.calendar_status || 'pending').toLowerCase() === 'complete';
             const canEdit = canUserEditRecord(i);
-            const poFilesCount = (i.po_files && i.po_files.length) || (i.po_file ? 1 : 0) || (poFilesDb[i.id] && poFilesDb[i.id].length) || 0;
+            const poFilesCount = getRecordPoCount(i);
             const model = getEquipmentModel(i);
             const isHighlighted = Boolean(currentCalModalHighlightId && String(i.id) === String(currentCalModalHighlightId));
             const creatorDisplay = i.created_by_name || i.created_by || i.reporter || 'System';
@@ -3639,7 +3686,7 @@ function loadDashboard() {
                         ${items.map(i => {
                             const isComplete = (i.calendar_status || 'pending').toLowerCase() === 'complete';
                             const canEdit = canUserEditRecord(i);
-                            const poFilesCount = (i.po_files && i.po_files.length) || (i.po_file ? 1 : 0) || (poFilesDb[i.id] && poFilesDb[i.id].length) || 0;
+                            const poFilesCount = getRecordPoCount(i);
                             const model = getEquipmentModel(i);
                             const isHighlighted = Boolean(currentCalModalHighlightId && String(i.id) === String(currentCalModalHighlightId));
                             const creatorDisplay = i.created_by_name || i.created_by || i.reporter || 'System';
@@ -4314,7 +4361,7 @@ function renderCharts(data) {
                     '<span class="bg-yellow-100 text-yellow-700 text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wide">Pending</span>';
 
                 let poBtn = '';
-                const poFilesCount = (r.po_files && r.po_files.length) || (r.po_file ? 1 : 0) || (poFilesDb[r.id] && poFilesDb[r.id].length) || 0;
+                const poFilesCount = getRecordPoCount(r);
                 if (poFilesCount > 0) {
                     poBtn = `<button onclick="viewPO(${r.id})" class="text-blue-600 hover:text-blue-800 text-xs font-bold bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg shadow-sm border border-blue-100 transition whitespace-nowrap w-full mb-1">📄 VIEW PO (${poFilesCount})</button>`;
                 } else {
@@ -5612,6 +5659,7 @@ function renderCharts(data) {
             document.getElementById('reporterSelect').value = r.reporter || '';
             document.getElementById('recordStatus').value = r.calendar_status || 'pending';
 
+            const hasExistingFiles = (Array.isArray(r.po_files) && r.po_files.length > 0) || Boolean(r.po_file);
             if (r.po_files && r.po_files.length > 0) {
                 document.getElementById('existingPoLabel').classList.remove('hidden');
                 document.getElementById('existingPoLabel').innerHTML = `✓ Attached: <span class="text-gray-600 dark:text-slate-300">${r.po_files.length} file(s)</span> <button type="button" onclick="deleteAttachedPO('${r.id}')" class="ml-3 px-2 py-0.5 bg-red-100 text-red-600 rounded hover:bg-red-200 transition text-[10px] uppercase font-bold tracking-wider">Delete</button>`;
@@ -5623,15 +5671,16 @@ function renderCharts(data) {
                 document.getElementById('existingPoLabel').innerHTML = '✓ Current file attached';
             }
 
-            tempPoFiles = poFilesDb[r.id] ? [...poFilesDb[r.id]] : [];
+            tempPoFiles = hasExistingFiles && poFilesDb[r.id] ? [...poFilesDb[r.id]] : [];
             renderPoFilesList();
 
             // Asynchronously fetch from Cloud if missing in local IDB
-            if (tempPoFiles.length === 0 && r.po_files && r.po_files.length > 0 && window.LabFirebase && LabFirebase.isConfigured()) {
+            if (hasExistingFiles && tempPoFiles.length === 0 && window.LabFirebase && LabFirebase.isConfigured()) {
                 LabFirebase.fetchAttachmentFromCloud(r.id).then(cloudFiles => {
                     if (cloudFiles && Array.isArray(cloudFiles) && cloudFiles.length > 0) {
                         if (typeof poFilesDb === 'undefined') window.poFilesDb = {};
                         poFilesDb[r.id] = cloudFiles;
+                        poFilesDb[String(r.id)] = cloudFiles;
                         savePoFileToIDB(r.id, cloudFiles);
                         tempPoFiles = [...cloudFiles];
                         renderPoFilesList();
@@ -5648,18 +5697,24 @@ function renderCharts(data) {
                 if (window.LabAlert) LabAlert.error('คุณไม่มีสิทธิ์ลบไฟล์แนบของรายการนี้ (เฉพาะผู้สร้างหรือ Admin)', 'ไม่มีสิทธิ์เข้าถึง');
                 return;
             }
-            LabAlert.confirm('ต้องการลบไฟล์แนบ PO?', 'การลบไฟล์จะลบออกจากระบบทันที คุณแน่ใจหรือไม่?', 'ลบไฟล์', 'ยกเลิก').then(confirmed => {
+            LabAlert.confirm('ต้องการลบไฟล์แนบ PO?', 'การลบไฟล์จะลบออกจากระบบทันที คุณแน่ใจหรือไม่?', 'ลบไฟล์', 'ยกเลิก').then(async confirmed => {
                 if (confirmed) {
                     if (r) {
                         r.po_file = '';
                         r.po_files = [];
+                        tempPoFiles = [];
+                        renderPoFilesList();
                         delete poFilesDb[recordId];
+                        delete poFilesDb[String(recordId)];
+                        if (!isNaN(Number(recordId))) delete poFilesDb[Number(recordId)];
                         deletePoFileFromIDB(recordId);
                         if (window.LabFirebase) {
-                            LabFirebase.deleteAttachmentFromCloud(recordId);
+                            await LabFirebase.deleteAttachmentFromCloud(recordId);
                         }
                         saveCarePlusState();
                         loadEditForm(recordId);
+                        if (typeof loadRecords === 'function') loadRecords();
+                        if (typeof updateDashboardCards === 'function') updateDashboardCards();
                         LabAlert.toast('success', 'ลบไฟล์แนบสำเร็จ');
                     }
                 }
@@ -5760,9 +5815,20 @@ function renderCharts(data) {
                             records[index].po_file = ''; // Clear legacy field
                             if (typeof poFilesDb === 'undefined') window.poFilesDb = {};
                             poFilesDb[editId] = [...tempPoFiles];
+                            poFilesDb[String(editId)] = [...tempPoFiles];
                             savePoFileToIDB(editId, poFilesDb[editId]);
                             if (window.LabFirebase) {
                                 LabFirebase.syncAttachmentToCloud(editId, poFilesDb[editId]);
+                            }
+                        } else {
+                            records[index].po_files = [];
+                            records[index].po_file = '';
+                            delete poFilesDb[editId];
+                            delete poFilesDb[String(editId)];
+                            if (!isNaN(Number(editId))) delete poFilesDb[Number(editId)];
+                            deletePoFileFromIDB(editId);
+                            if (window.LabFirebase) {
+                                LabFirebase.deleteAttachmentFromCloud(editId);
                             }
                         }
                         saveCarePlusState();
@@ -5885,17 +5951,21 @@ function renderCharts(data) {
                 if (window.LabAlert) LabAlert.error('คุณไม่มีสิทธิ์ลบรายการนี้ (เฉพาะผู้สร้างหรือ Admin)', 'ไม่มีสิทธิ์เข้าถึง');
                 return;
             }
-            LabAlert.confirm('ต้องการลบประวัติตรวจสอบ/ซ่อมบำรุง?', 'ข้อมูลนี้ไม่สามารถกู้คืนได้เมื่อลบไปแล้ว', 'ลบประวัติ', 'ยกเลิก').then(confirmed => {
+            LabAlert.confirm('ต้องการลบประวัติตรวจสอบ/ซ่อมบำรุง?', 'ข้อมูลนี้ไม่สามารถกู้คืนได้เมื่อลบไปแล้ว', 'ลบประวัติ', 'ยกเลิก').then(async confirmed => {
                 if (confirmed) {
                     records = records.filter(r => String(r.id) !== String(id));
-                    if (poFilesDb[id]) {
-                        delete poFilesDb[id];
-                        deletePoFileFromIDB(id);
-                    }
+                    delete poFilesDb[id];
+                    delete poFilesDb[String(id)];
+                    if (!isNaN(Number(id))) delete poFilesDb[Number(id)];
+                    deletePoFileFromIDB(id);
                     if (window.LabFirebase) {
-                        LabFirebase.deleteAttachmentFromCloud(id);
+                        await LabFirebase.deleteAttachmentFromCloud(id);
                     }
-                    saveCarePlusState();
+                    if (typeof LabStateBridge !== 'undefined' && typeof LabStateBridge.deleteRecordById === 'function') {
+                        LabStateBridge.deleteRecordById(id);
+                    } else {
+                        saveCarePlusState();
+                    }
                     addCarePlusAudit('Delete Record', `ลบเรคอร์ด ID:${id}${delRec ? ' - ' + delRec.equipment_name : ''}`);
                     loadRecords();
                     updateDashboardCards();
@@ -5904,8 +5974,18 @@ function renderCharts(data) {
             });
         }
         async function viewPO(id) {
-            const r = records.find(rec => rec.id == id);
+            const r = records.find(rec => String(rec.id) === String(id));
             if (!r) return;
+
+            const hasFiles = (Array.isArray(r.po_files) && r.po_files.length > 0) || Boolean(r.po_file);
+            if (!hasFiles) {
+                delete poFilesDb[id];
+                delete poFilesDb[String(id)];
+                if (!isNaN(Number(id))) delete poFilesDb[Number(id)];
+                deletePoFileFromIDB(id);
+                if (window.LabAlert) LabAlert.toast('info', 'รายการนี้ไม่มีไฟล์แนบ');
+                return;
+            }
 
             const sidebar = document.getElementById('poSidebar');
             const preview = document.getElementById('poPdfPreviewArea');

@@ -562,6 +562,27 @@
             return saved;
         },
 
+        deleteRecordById(id) {
+            const state = this.getStateInternal();
+            let deletedIds = Array.isArray(state.deletedRecordIds) ? [...state.deletedRecordIds] : [];
+            const strId = String(id).trim();
+            if (!deletedIds.includes(strId)) {
+                deletedIds.push(strId);
+            }
+            const curRecords = state.records || [];
+            const remainingRecords = curRecords.filter(r => r && String(r.id).trim() !== strId);
+            const updated = {
+                ...state,
+                deletedRecordIds: deletedIds,
+                records: remainingRecords
+            };
+            const saved = this.saveState(updated);
+            if (typeof this.flushSync === 'function') {
+                this.flushSync();
+            }
+            return saved;
+        },
+
         addAuditLog(action, details = '', userName = '') {
             try {
                 let user = userName;
@@ -925,6 +946,17 @@
                     .map(x => String(x || '').trim())
                     .filter(Boolean)
                 ));
+
+                let combinedDeletedRecords = Array.from(new Set(
+                    (Array.isArray(current.deletedRecordIds) ? current.deletedRecordIds : [])
+                    .concat(Array.isArray(partialOrFull.deletedRecordIds) ? partialOrFull.deletedRecordIds : [])
+                    .map(x => String(x || '').trim())
+                    .filter(Boolean)
+                ));
+                merged.deletedRecordIds = combinedDeletedRecords;
+                if (Array.isArray(merged.records)) {
+                    merged.records = merged.records.filter(r => r && !combinedDeletedRecords.includes(String(r.id).trim()));
+                }
 
                 // Ensure equipment synonym stays bidirectional, deduplicated, and free of deleted items
                 let targetEquip = partialOrFull.equipments || partialOrFull.equipment || merged.equipments || merged.equipment;
@@ -2271,14 +2303,15 @@
         getSignature(data) {
             if (!data) return '';
             const b = (data.bookings || []).map(x => `${x.id}:${x.status || ''}:${x.start || ''}:${x.end || ''}:${x.eqId || x.equipmentId || ''}:${x.project || ''}:${x.desc || ''}:${x.user || ''}:${x.deleted ? 1 : 0}`).join('|');
-            const r = (data.records || []).map(x => `${x.id}:${x.type || ''}:${x.service_date || ''}:${x.next_service_date || ''}:${x.calendar_status || ''}:${x.maintenance_cost || ''}:${(x.technicians || []).join(',')}:${x.reporter || ''}`).join('|');
+            const r = (data.records || []).map(x => `${x.id}:${x.type || ''}:${x.service_date || ''}:${x.next_service_date || ''}:${x.calendar_status || ''}:${x.maintenance_cost || ''}:${(x.technicians || []).join(',')}:${x.reporter || ''}:${(x.po_files || []).join(',')}:${x.po_file || ''}`).join('|');
             const u = (data.users || []).map(x => `${x.id}:${x.username}:${x.name}:${x.role}:${x.password}`).join('|');
             const e = (data.equipments || data.equipment || []).map(x => `${x.id}:${x.name}:${x.building_id || ''}:${x.model || ''}:${x.serial || ''}`).join('|');
             const loc = (data.buildings || []).map(x => `${x.id}:${x.name || ''}`).join('|');
             const tech = (data.technicians || []).join('|');
             const rep = (data.reporters || []).join('|');
             const a = (data.auditLogs || []).slice(0, 20).map(x => `${x.id}:${x.action || ''}:${x.timestamp || ''}`).join('|');
-            return `${b}##${r}##${u}##${e}##${loc}##${tech}##${rep}##${a}`;
+            const delRec = (data.deletedRecordIds || []).join('|');
+            return `${b}##${r}##${u}##${e}##${loc}##${tech}##${rep}##${a}##${delRec}`;
         },
 
         listenToRemote() {
@@ -2308,9 +2341,16 @@
                                 });
                                 const finalBookings = Array.from(mergedBookingsMap.values());
 
-                                // Smart merge records
-                                const curRecords = current.records || [];
-                                const remRecords = Array.isArray(remoteData.records) ? remoteData.records : [];
+                                // Smart merge records and respect deletedRecordIds
+                                const combinedDeletedRecordIds = Array.from(new Set(
+                                    (Array.isArray(current.deletedRecordIds) ? current.deletedRecordIds : [])
+                                    .concat(Array.isArray(remoteData.deletedRecordIds) ? remoteData.deletedRecordIds : [])
+                                    .map(x => String(x || '').trim())
+                                    .filter(Boolean)
+                                ));
+
+                                const curRecords = (current.records || []).filter(r => r && r.id && !combinedDeletedRecordIds.includes(String(r.id).trim()));
+                                const remRecords = (Array.isArray(remoteData.records) ? remoteData.records : []).filter(r => r && r.id && !combinedDeletedRecordIds.includes(String(r.id).trim()));
                                 const mergedRecordsMap = new Map();
                                 curRecords.forEach(r => { if (r && r.id) mergedRecordsMap.set(String(r.id), r); });
                                 remRecords.forEach(r => {
@@ -2319,7 +2359,7 @@
                                         mergedRecordsMap.set(String(r.id), { ...existing, ...r });
                                     }
                                 });
-                                const finalRecords = Array.from(mergedRecordsMap.values());
+                                const finalRecords = Array.from(mergedRecordsMap.values()).filter(r => !combinedDeletedRecordIds.includes(String(r.id).trim()));
 
                                 // Smart merge equipments and respect deletedEquipmentIds
                                 const combinedDeletedIds = Array.from(new Set(
@@ -2346,6 +2386,7 @@
                                     ...remoteData,
                                     bookings: finalBookings,
                                     records: finalRecords,
+                                    deletedRecordIds: combinedDeletedRecordIds,
                                     users: Array.isArray(remoteData.users) && remoteData.users.length > 0 ? remoteData.users : (current.users || []),
                                     deletedEquipmentIds: combinedDeletedIds,
                                     equipments: mergedEquip,
@@ -2358,9 +2399,10 @@
                                 LabStateBridge.saveStateFromRemote(merged);
                                 window.dispatchEvent(new CustomEvent('labRemoteSync', { detail: merged }));
 
-                                // If remote cloud still had deleted equipments or duplicates, push cleaned state to cloud once
+                                // If remote cloud still had deleted equipments, deleted records or duplicates, push cleaned state to cloud once
                                 const remoteDeletedCount = (Array.isArray(remoteData.deletedEquipmentIds) ? remoteData.deletedEquipmentIds : []).length;
-                                if (rawRemEquip.length > mergedEquip.length || remoteDeletedCount < combinedDeletedIds.length) {
+                                const remoteDeletedRecordCount = (Array.isArray(remoteData.deletedRecordIds) ? remoteData.deletedRecordIds : []).length;
+                                if (rawRemEquip.length > mergedEquip.length || remoteDeletedCount < combinedDeletedIds.length || remoteDeletedRecordCount < combinedDeletedRecordIds.length) {
                                     if (this._cloudCleanTimeout) clearTimeout(this._cloudCleanTimeout);
                                     this._cloudCleanTimeout = setTimeout(() => {
                                         this.syncToCloud(merged);
